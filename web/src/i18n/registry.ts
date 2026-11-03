@@ -176,7 +176,7 @@ export const NAMESPACES = {
   b7team: { complete: true, files: ['pages/TeamCalendarEditor.tsx', 'pages/TeamCalendarKit.tsx', 'pages/TeamInboxSettings.tsx'] },
   b7video: { complete: true, files: ['pages/VideoStudio.tsx', 'pages/VideoRecycle.tsx'] },
   b7umzug: { complete: true, files: ['pages/umzug-format.ts', 'pages/UmzugAssistent.tsx', 'pages/UmzugConnect.tsx', 'pages/UmzugMapping.tsx', 'pages/UmzugPointer.tsx', 'pages/UmzugRun.tsx', 'pages/UmzugZustellung.tsx'] },
-  b7werk: { complete: true, files: ['werkstatt/Admin.tsx', 'werkstatt/badges.tsx', 'werkstatt/Build.tsx', 'werkstatt/ChatCards.tsx', 'werkstatt/Marktplatz.tsx', 'werkstatt/PluginFrame.tsx', 'werkstatt/Plugins.tsx', 'werkstatt/scopes.tsx', 'werkstatt/tour.ts', 'werkstatt/Werkstatt.tsx'] },
+  b7werk: { complete: true, files: ['werkstatt/Admin.tsx', 'werkstatt/badges.tsx', 'werkstatt/Build.tsx', 'werkstatt/ChatCards.tsx', 'werkstatt/Marktplatz.tsx', 'werkstatt/PluginFrame.tsx', 'werkstatt/Plugins.tsx', 'werkstatt/scopes.tsx', 'werkstatt/Werkstatt.tsx'] },
   b7xr: { complete: true, files: ['xr/engine/board-scene.ts', 'xr/engine/canvas-scene.ts', 'xr/engine/runtime.ts', 'xr/engine/textures.ts', 'xr/install.ts', 'xr/SpatialCard.tsx', 'xr/SpatialSuggest.tsx', 'xr/Workspace.tsx', 'xr/XrButton.tsx', 'xr/XrViewer.tsx'] },
   b7misc: { complete: true, files: ['pages/Stripe.tsx#stripeStatus,useStripe,EVENTS,SUB_EVENTS,CodeList,StripeSettings,useStripePayments,StripeInvoiceBox,useProductLinks,ProductBuyLink,ProductTriggerField', 'pages/SupabaseMirror.tsx', 'pages/Surveys.tsx', 'pages/SystemHealth.tsx', 'pages/TodoistSync.tsx', 'pages/Trash.tsx', 'pwa.tsx'] },
   b7voice: { complete: true, files: ['pages/Voice.tsx', 'pages/VoiceAi.tsx'] },

@@ -5,6 +5,7 @@ import { HUD_POSE, arrangeOnArc, cellSize, withSavedPoses, DEFAULT_RADIUS } from
 import type { Scene } from './scene';
 import { drawPanel, type HudButton, type HudState } from './textures';
 import { PushToTalk, micAvailable, type MicState } from './voice';
+import { tr } from '../../i18n';
 
 /**
  * A Living Board in XR: its widgets as floating panels on a curved wall, kept current by the board's own realtime stream, with the
@@ -35,6 +36,7 @@ export interface BoardXrOptions {
 }
 
 export async function openBoardXr(o: BoardXrOptions): Promise<BoardXr> {
+  const tt = tr('b7xr');
   const { scene, boardId } = o;
   const cid = clientId();
   const [board, cat, layoutRes, dataRes, micOk] = await Promise.all([
@@ -63,7 +65,7 @@ export async function openBoardXr(o: BoardXrOptions): Promise<BoardXr> {
     return t;
   };
 
-  const titleOf = (w: { id: string; title: string; type: string }) => w.title || data[w.id]?.view?.title || labels.get(w.type) || 'Widget';
+  const titleOf = (w: { id: string; title: string; type: string }) => w.title || data[w.id]?.view?.title || labels.get(w.type) || tt('Widget');
 
   // --- panels ---------------------------------------------------------------------------------------------------
   const arc = () => arrangeOnArc(spec.widgets.map((w) => ({ id: w.id, ...w.layout.lg })), { radius: layout?.radius ?? DEFAULT_RADIUS });
@@ -86,11 +88,11 @@ export async function openBoardXr(o: BoardXrOptions): Promise<BoardXr> {
     scene.setHud(
       {
         title: name,
-        live: live || (canEdit ? 'Live' : 'Live · nur Ansicht'),
+        live: live || (canEdit ? tt('Live') : tt('Live · nur Ansicht')),
         mic,
         message,
         messageTone: tone,
-        proposal: proposal ? { summary: proposal.summary || proposal.message || 'Änderung', risk: proposal.risk } : null,
+        proposal: proposal ? { summary: proposal.summary || proposal.message || tt('Änderung'), risk: proposal.risk } : null,
         buttons: ['mic', 'reset', 'exit'],
         readOnly: !canEdit,
       },
@@ -114,7 +116,7 @@ export async function openBoardXr(o: BoardXrOptions): Promise<BoardXr> {
       const panels: Record<string, Pose> = {};
       for (const w of spec.widgets) if (poses[w.id] && (scene.movedIds().includes(w.id) || layout?.panels[w.id])) panels[w.id] = poses[w.id];
       layout = { v: 1, radius: layout?.radius ?? DEFAULT_RADIUS, panels, ...(hudPose ? { hud: hudPose } : {}) };
-      api.put(`/api/boards/${boardId}/xr-layout`, { layout }).catch((e: Error) => o.onError(`Anordnung nicht gespeichert: ${e.message}`));
+      api.put(`/api/boards/${boardId}/xr-layout`, { layout }).catch((e: Error) => o.onError(tt('Anordnung nicht gespeichert: {message}', { message: e.message })));
     }, 800);
   };
   scene.onMoved = save;
@@ -144,7 +146,7 @@ export async function openBoardXr(o: BoardXrOptions): Promise<BoardXr> {
       hud();
       later(() => ((live = ''), hud()), 8000);
     });
-    es.addEventListener('deleted', () => say('Dieses Board wurde gelöscht.', 'error'));
+    es.addEventListener('deleted', () => say(tt('Dieses Board wurde gelöscht.'), 'error'));
     // the server ended the stream for good (signed out, no access any more): no reconnect loop
     es.addEventListener('bye', () => es?.close());
   }
@@ -152,16 +154,16 @@ export async function openBoardXr(o: BoardXrOptions): Promise<BoardXr> {
 
   // --- the wish: voice → compose → proposal ---------------------------------------------------------------------------
   const compose = async (prompt: string) => {
-    say(`„${prompt}“ – ich überlege …`);
+    say(tt('„{prompt}“ – ich überlege …', { prompt }));
     mic = 'working';
     hud();
     try {
       const r = await api.post<ComposeResult>(`/api/boards/${boardId}/compose`, { prompt, voice: true, client_id: cid });
-      if (r.applied) say(r.proposal?.summary || r.message || 'Übernommen', 'good');
+      if (r.applied) say(r.proposal?.summary || r.message || tt('Übernommen'), 'good');
       else if (r.proposal) {
         proposal = r.proposal;
-        say(r.message || r.proposal.summary || 'Vorschlag bereit', 'normal');
-      } else say(r.message || 'Dafür gibt es noch kein passendes Widget.', 'normal');
+        say(r.message || r.proposal.summary || tt('Vorschlag bereit'), 'normal');
+      } else say(r.message || tt('Dafür gibt es noch kein passendes Widget.'), 'normal');
     } catch (e) {
       say((e as Error).message, 'error');
     } finally {
@@ -182,11 +184,11 @@ export async function openBoardXr(o: BoardXrOptions): Promise<BoardXr> {
     const p = proposal;
     if (!p) return;
     proposal = null;
-    say(apply ? 'Ich übernehme …' : 'Verworfen.');
+    say(apply ? tt('Ich übernehme …') : tt('Verworfen.'));
     try {
       if (apply) {
         const r = await api.post<{ summary: string }>(`/api/boards/${boardId}/proposals/${p.id}/apply`, { client_id: cid });
-        say(r.summary || 'Übernommen', 'good');
+        say(r.summary || tt('Übernommen'), 'good');
       } else await api.post(`/api/boards/${boardId}/proposals/${p.id}/reject`, { client_id: cid });
     } catch (e) {
       say((e as Error).message, 'error');
@@ -200,7 +202,7 @@ export async function openBoardXr(o: BoardXrOptions): Promise<BoardXr> {
     scene.setPoses(Object.fromEntries(placed.map((p) => [p.id, p.pose])));
     scene.setPoses({ __hud: HUD_POSE });
     api.del(`/api/boards/${boardId}/xr-layout`).catch(() => undefined);
-    say('Anordnung wie im Browser.', 'good');
+    say(tt('Anordnung wie im Browser.'), 'good');
   };
 
   scene.onHud = (b: HudButton, phase) => {

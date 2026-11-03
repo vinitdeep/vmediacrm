@@ -5,6 +5,7 @@ import { act, Badge, confirmAsk, Copy, Empty, Field, Input, Link, Modal, navigat
 import { WebinarEditor } from './WebinarEditor';
 import { fmtSession } from './WebinarKit';
 import './webinar.css';
+import { useT } from '../i18n';
 
 /**
  * Webinare: automated webinars – the video plays at the appointment, for everybody who registered. List here, the editor in
@@ -12,12 +13,13 @@ import './webinar.css';
  */
 
 function NewWebinar({ onClose }: { onClose: () => void }) {
+  const t = useT('b7webinar');
   const [title, setTitle] = useState('');
   const [presenter, setPresenter] = useState('');
   const [busy, setBusy] = useState(false);
   const create = async () => {
     setBusy(true);
-    const w = await act(() => api.post('/api/webinars', { title, presenter_name: presenter }), 'Webinar angelegt');
+    const w = await act(() => api.post('/api/webinars', { title, presenter_name: presenter }), t('Webinar angelegt'));
     setBusy(false);
     if (w) {
       onClose();
@@ -26,7 +28,7 @@ function NewWebinar({ onClose }: { onClose: () => void }) {
   };
   return (
     <Modal
-      title="Neues Webinar"
+      title={t('Neues Webinar')}
       onClose={onClose}
       footer={
         <>
@@ -45,11 +47,11 @@ function NewWebinar({ onClose }: { onClose: () => void }) {
           if (title.trim() && !busy) void create();
         }}
       >
-        <Field label="Titel *" hint="Video, Termine und Texte richtest du danach im Editor ein. Ein neues Webinar ist erst ein Entwurf – niemand sieht es.">
-          <Input value={title} onChange={setTitle} autoFocus maxLength={160} placeholder="Mehr Kunden mit automatisierten Webinaren" data-tour="webinar-new-title" />
+        <Field label={t('Titel *')} hint={t('Video, Termine und Texte richtest du danach im Editor ein. Ein neues Webinar ist erst ein Entwurf – niemand sieht es.')}>
+          <Input value={title} onChange={setTitle} autoFocus maxLength={160} placeholder={t('Mehr Kunden mit automatisierten Webinaren')} data-tour="webinar-new-title" />
         </Field>
-        <Field label="Vortragende:r (optional)">
-          <Input value={presenter} onChange={setPresenter} placeholder="Erika Muster" />
+        <Field label={t('Vortragende:r (optional)')}>
+          <Input value={presenter} onChange={setPresenter} placeholder={t('Erika Muster')} />
         </Field>
       </form>
     </Modal>
@@ -62,21 +64,22 @@ export function Webinars({ id, tab }: { id?: string; tab?: string }) {
 }
 
 function WebinarList() {
+  const t = useT('b7webinar');
   const { data, loading, error, reload } = useLoad(() => api.get<any[]>('/api/webinars'), []);
   const [creating, setCreating] = useState(false);
   const duplicate = async (w: any) => {
-    const r = await act(() => api.post(`/api/webinars/${w.id}/duplicate`), 'Kopie angelegt (als Entwurf)');
+    const r = await act(() => api.post(`/api/webinars/${w.id}/duplicate`), t('Kopie angelegt (als Entwurf)'));
     if (r) navigate(`webinars/${r.id}`);
   };
   const remove = async (w: any) => {
-    if (!confirmAsk(`„${w.title}“ mit allen Anmeldungen und Auswertungen löschen?`)) return;
+    if (!confirmAsk(t('„{title}“ mit allen Anmeldungen und Auswertungen löschen?', { title: w.title }))) return;
     if (await act(() => api.del(`/api/webinars/${w.id}`), 'Gelöscht')) reload();
   };
   return (
     <>
-      <PageHead title="Webinare" sub="Das Video läuft zum Termin – für alle Angemeldeten zur gleichen Zeit. Mit Anmeldeseite, Erinnerungen, Fragen, Umfragen und Angebot.">
+      <PageHead title={t('Webinare')} sub={t('Das Video läuft zum Termin – für alle Angemeldeten zur gleichen Zeit. Mit Anmeldeseite, Erinnerungen, Fragen, Umfragen und Angebot.')}>
         <button className="btn" data-tour="webinars-new" onClick={() => setCreating(true)}>
-          <Icon name="webinar" /> Neues Webinar
+          <Icon name="webinar" /> {t('Neues Webinar')}
         </button>
       </PageHead>
       {loading && !data ? (
@@ -88,23 +91,23 @@ function WebinarList() {
           tour="webinars-empty"
           action={
             <button className="btn" onClick={() => setCreating(true)}>
-              Erstes Webinar anlegen
+              {t('Erstes Webinar anlegen')}
             </button>
           }
         >
-          Noch kein Webinar. Lade ein Video hoch, wähle Termine – und lass dich von der Seite anmelden.
+          {t('Noch kein Webinar. Lade ein Video hoch, wähle Termine – und lass dich von der Seite anmelden.')}
         </Empty>
       ) : (
         <div className="table-wrap" data-tour="webinars-list">
           <table className="t">
             <thead>
               <tr>
-                <th>Webinar</th>
+                <th>{t('Webinar')}</th>
                 <th>Status</th>
-                <th>Nächster Termin</th>
-                <th className="num">Anmeldungen</th>
-                <th className="num">Teilgenommen</th>
-                <th>Geändert</th>
+                <th>{t('Nächster Termin')}</th>
+                <th className="num">{t('Anmeldungen')}</th>
+                <th className="num">{t('Teilgenommen')}</th>
+                <th>{t('Geändert')}</th>
                 <th />
               </tr>
             </thead>
@@ -117,11 +120,11 @@ function WebinarList() {
                     </Link>
                     <div className="muted small">{w.presenter_name || '–'}</div>
                   </td>
-                  <td>{w.status === 'published' ? <Badge tone="green">Veröffentlicht</Badge> : <Badge>Entwurf</Badge>}</td>
-                  <td>{w.next_session ? fmtSession(w.next_session, '') : w.status === 'published' ? 'Sofort / Just in time' : '–'}</td>
+                  <td>{w.status === 'published' ? <Badge tone="green">{t('Veröffentlicht')}</Badge> : <Badge>Entwurf</Badge>}</td>
+                  <td>{w.next_session ? fmtSession(w.next_session, '') : w.status === 'published' ? t('Sofort / Just in time') : '–'}</td>
                   <td className="num">
                     {w.registrations}
-                    {w.upcoming_registrations ? <span className="muted small"> ({w.upcoming_registrations} offen)</span> : null}
+                    {w.upcoming_registrations ? <span className="muted small"> {t('({upcoming_registrations} offen)', { upcoming_registrations: w.upcoming_registrations })}</span> : null}
                   </td>
                   <td className="num">{w.attended}</td>
                   <td className="muted small">{dt(w.updated_at)}</td>
@@ -131,7 +134,7 @@ function WebinarList() {
                       <button className="btn small secondary" onClick={() => duplicate(w)}>
                         Kopieren
                       </button>
-                      <button className="icon-btn" aria-label={`${w.title} löschen`} onClick={() => remove(w)}>
+                      <button className="icon-btn" aria-label={t('{title} löschen', { title: w.title })} onClick={() => remove(w)}>
                         <Icon name="trash" size={15} />
                       </button>
                     </div>

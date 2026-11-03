@@ -4,6 +4,8 @@
  * files, and German labels.
  */
 
+import { tr } from '../i18n';
+
 export class UmzugApiError extends Error {
   constructor(
     public status: number,
@@ -86,16 +88,17 @@ export const STD_FIELDS: [string, string][] = [
 
 /** What a mapping target means, in words. */
 export function targetLabel(t: string, custom: { key: string; label: string }[] = []): string {
-  if (!t) return 'Überspringen';
+  const tt = tr('b7umzug');
+  if (!t) return tt('Überspringen');
   const std = STD_FIELDS.find(([k]) => k === t);
-  if (std) return std[1];
-  if (t === 'tag') return 'Als Tag';
-  if (t.startsWith('tag:')) return `Als Tag „${t.slice(4)}…“`;
-  if (t === 'note') return 'Als Notiz';
-  if (t.startsWith('custom:')) return `Eigenes Feld: ${custom.find((c) => c.key === t.slice(7))?.label ?? t.slice(7)}`;
+  if (std) return tt(std[1]);
+  if (t === 'tag') return tt('Als Tag');
+  if (t.startsWith('tag:')) return tt('Als Tag „{v1}…“', { v1: t.slice(4) });
+  if (t === 'note') return tt('Als Notiz');
+  if (t.startsWith('custom:')) return tt('Eigenes Feld: {label}', { label: custom.find((c) => c.key === t.slice(7))?.label ?? t.slice(7) });
   if (t.startsWith('new:')) {
     const [, type, ...label] = t.split(':');
-    return `Neues Feld: ${label.join(':')} (${FIELD_TYPE_LABELS.find(([k]) => k === type)?.[1] ?? type})`;
+    return tt('Neues Feld: {v1} ({v2})', { v1: label.join(':'), v2: tt(FIELD_TYPE_LABELS.find(([k]) => k === type)?.[1] ?? type) });
   }
   return t;
 }

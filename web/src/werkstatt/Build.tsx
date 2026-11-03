@@ -5,6 +5,7 @@ import { Badge, Check, Field, Link, Modal, Spinner, Textarea, act, navigate, use
 import { NAMES, STATUS_TONE, openBuild, pendingBuild, refreshPlugins, usd } from './shared';
 import { ScopeList } from './scopes';
 import { AiLine, DiffList, ModelGateNotice, type DiffData, type ModelGateData } from './badges';
+import { useT, intlLocale } from '../i18n';
 
 /**
  * „Bauen lassen“: the order → the AI's plan (what gets created, which permissions, what it may cost) → confirm →
@@ -77,6 +78,7 @@ export function useBuild(id: string | undefined) {
 
 /** What the build is doing right now – with step names, updated by polling. */
 export function Progress({ b }: { b: Pick<Build, 'progress' | 'status'> }) {
+  const tt = useT('b7werk');
   const p = b.progress;
   if (!p?.label || !['planning', 'building'].includes(b.status)) return null;
   const pct = p.total && p.total > 1 ? Math.round(((p.current ?? 0) / p.total) * 100) : 0;
@@ -84,7 +86,7 @@ export function Progress({ b }: { b: Pick<Build, 'progress' | 'status'> }) {
     <div className="wk-progress" role="status" aria-live="polite" data-tour="wk-progress">
       <div className="row" style={{ gap: 8, alignItems: 'center' }}>
         <Spinner /> <strong>{p.label}</strong>
-        {p.total && p.total > 1 ? <span className="muted small">{p.current} von {p.total}</span> : null}
+        {p.total && p.total > 1 ? <span className="muted small">{tt('{current} von {total}', { current: p.current ?? 0, total: p.total ?? 0 })}</span> : null}
       </div>
       {pct > 0 && (
         <div className="wk-meter" aria-hidden>
@@ -110,7 +112,7 @@ export function LogView({ log }: { log: NonNullable<Build['log']> }) {
     <div className="wk-log" data-tour="wk-log" role="log">
       {log.map((l, i) => (
         <div key={i} className={l.level === 'error' ? 'err' : ''}>
-          <span className="muted small">{new Date(l.at).toLocaleTimeString('de-DE')}</span> {l.text}
+          <span className="muted small">{new Date(l.at).toLocaleTimeString(intlLocale())}</span> {l.text}
         </div>
       ))}
       <div ref={end} />
@@ -119,12 +121,13 @@ export function LogView({ log }: { log: NonNullable<Build['log']> }) {
 }
 
 function ManifestSummary({ m }: { m: any }) {
+  const tt = useT('b7werk');
   const parts: string[] = [];
-  if (m.entries?.page) parts.push(`Seite im Menü: „${m.entries.page.title}“`);
-  for (const p of m.entries?.panels ?? []) parts.push(`Panel auf der ${p.on === 'contact' ? 'Kontakt' : 'Deal'}-Seite: „${p.title}“`);
-  for (const w of m.entries?.widgets ?? []) parts.push(`Dashboard-Widget: „${w.title}“`);
-  for (const a of m.entries?.actions ?? []) parts.push(`Automations-Schritt: „${a.label}“`);
-  for (const j of m.entries?.jobs ?? []) parts.push(`Geplanter Job: „${j.label}“ (${{ hourly: 'stündlich', daily: 'täglich', weekly: 'wöchentlich' }[j.every as 'daily']}${j.at ? ` um ${j.at}` : ''})`);
+  if (m.entries?.page) parts.push(tt('Seite im Menü: „{title}“', { title: m.entries.page.title }));
+  for (const p of m.entries?.panels ?? []) parts.push(tt('Panel auf der {v1}-Seite: „{title}“', { v1: p.on === 'contact' ? tt('Kontakt') : tt('Deal'), title: p.title }));
+  for (const w of m.entries?.widgets ?? []) parts.push(tt('Dashboard-Widget: „{title}“', { title: w.title }));
+  for (const a of m.entries?.actions ?? []) parts.push(tt('Automations-Schritt: „{label}“', { label: a.label }));
+  for (const j of m.entries?.jobs ?? []) parts.push(tt('Geplanter Job: „{label}“ ({every}{at})', { label: j.label, every: { hourly: tt('stündlich'), daily: tt('täglich'), weekly: tt('wöchentlich') }[j.every as 'daily'], at: j.at ? tt(' um {at}', { at: j.at }) : '' }));
   return (
     <div className="wk-manifest">
       <strong>{m.name}</strong>
@@ -132,7 +135,7 @@ function ManifestSummary({ m }: { m: any }) {
         {parts.map((x) => (
           <li key={x}>{x}</li>
         ))}
-        {m.server && <li>Server-Logik: {m.server.mode === 'script' ? 'Skript in der Sandbox' : 'deklarative Schritte (ohne Code)'}</li>}
+        {m.server && <li>{tt('Server-Logik:')} {m.server.mode === 'script' ? tt('Skript in der Sandbox') : tt('deklarative Schritte (ohne Code)')}</li>}
       </ul>
     </div>
   );
@@ -140,6 +143,7 @@ function ManifestSummary({ m }: { m: any }) {
 
 /** The plan: what gets created, which permissions it needs, what it costs – with the confirmation. */
 export function PlanView({ b, me, onChange }: { b: Build; me?: WerkstattMe; onChange: () => void }) {
+  const tt = useT('b7werk');
   const plan = b.plan ?? {};
   const [ok, setOk] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -155,12 +159,12 @@ export function PlanView({ b, me, onChange }: { b: Build; me?: WerkstattMe; onCh
   return (
     <div className="wk-plan" data-tour="wk-plan">
       <div className="row" style={{ alignItems: 'baseline', gap: 8 }}>
-        <Badge tone={b.stage === 2 ? 'purple' : 'blue'}>{b.stage === 2 ? `Stufe 2 · ${NAMES.stage2}` : `Stufe 1 · ${NAMES.stage1}`}</Badge>
+        <Badge tone={b.stage === 2 ? 'purple' : 'blue'}>{b.stage === 2 ? tt('Stufe 2 · {stage2}', { stage2: NAMES.stage2 }) : tt('Stufe 1 · {stage1}', { stage1: NAMES.stage1 })}</Badge>
         <h3 style={{ margin: 0 }}>{plan.title ?? b.title}</h3>
       </div>
       <p>{plan.summary}</p>
       {plan.rationale && <p className="muted small">{plan.rationale}</p>}
-      <h4>Was gebaut wird</h4>
+      <h4>{tt('Was gebaut wird')}</h4>
       {b.stage === 2 && plan.manifest ? (
         <ManifestSummary m={plan.manifest} />
       ) : (
@@ -168,7 +172,7 @@ export function PlanView({ b, me, onChange }: { b: Build; me?: WerkstattMe; onCh
           {(plan.steps ?? []).map((s: any, i: number) => (
             <li key={i}>
               {s.title}
-              {s.area && <span className="muted small"> · Bereich {label(s.area)}</span>}
+              {s.area && <span className="muted small"> {tt('· Bereich {v1}', { v1: label(s.area) })}</span>}
             </li>
           ))}
         </ol>
@@ -180,47 +184,47 @@ export function PlanView({ b, me, onChange }: { b: Build; me?: WerkstattMe; onCh
           ))}
         </ul>
       )}
-      <h4>Berechtigungen</h4>
+      <h4>{tt('Berechtigungen')}</h4>
       {b.stage === 2 ? (
         <ScopeList scopes={plan.scopes ?? []} />
       ) : (
         <p className="small">
-          {(plan.areas ?? []).length ? <>Legt Dinge in diesen Bereichen deines Sub-Accounts an: {(plan.areas as string[]).map(label).join(', ')}.</> : 'Keine besonderen Bereiche.'} Es läuft mit deinen Rechten, nur in diesem Sub-Account.
+          {(plan.areas ?? []).length ? <>{tt('Legt Dinge in diesen Bereichen deines Sub-Accounts an:')} {(plan.areas as string[]).map(label).join(', ')}.</> : tt('Keine besonderen Bereiche.')} {tt('Es läuft mit deinen Rechten, nur in diesem Sub-Account.')}
         </p>
       )}
-      {(plan.missing_areas ?? []).length > 0 && <div className="card notice-card">Dir fehlt das Recht für: {(plan.missing_areas as string[]).map(label).join(', ')}. Ein Admin kann den Plan bestätigen.</div>}
+      {(plan.missing_areas ?? []).length > 0 && <div className="card notice-card">{tt('Dir fehlt das Recht für:')} {(plan.missing_areas as string[]).map(label).join(', ')}{tt('. Ein Admin kann den Plan bestätigen.')}</div>}
       {b.stage === 2 && plan.ai?.model && (
         <p className="wk-ai" data-tour="wk-plan-model">
-          Gebaut wird mit {plan.ai.model} · Denkstufe {plan.ai.effort?.label || 'nicht gesendet'}
+          {tt('Gebaut wird mit {model} · Denkstufe', { model: plan.ai.model })} {plan.ai.effort?.label || tt('nicht gesendet')}
           {plan.ai.effort?.note ? ` (${plan.ai.effort.note})` : ''}
         </p>
       )}
       {plan.model_gate && plan.model_gate.ok === false && me && <ModelGateNotice gate={{ ...me.model_gate, ok: false, message: plan.model_gate.message }} />}
-      <h4>Kosten</h4>
+      <h4>{tt('Kosten')}</h4>
       {b.stage === 2 ? (
         <p className="small">
-          Geschätzt etwa <strong>{usd(plan.estimate?.typical_usd ?? 0)}</strong> KI-Kosten (höchstens {usd(plan.estimate?.max_usd ?? 0)} mit Korrekturrunden)
-          {me ? <> · Monatsbudget des Sub-Accounts: {usd(me.budget.used_usd)} von {usd(me.budget.limit_usd)} verbraucht</> : null}.
-          {tooBig && <strong style={{ color: 'var(--red)' }}> Das Budget reicht dafür nicht.</strong>}
+          {tt('Geschätzt etwa')} <strong>{usd(plan.estimate?.typical_usd ?? 0)}</strong> {tt('KI-Kosten (höchstens {v1} mit Korrekturrunden)', { v1: usd(plan.estimate?.max_usd ?? 0) })}
+          {me ? <> {tt('· Monatsbudget des Sub-Accounts: {v1} von {v2} verbraucht', { v1: usd(me.budget.used_usd), v2: usd(me.budget.limit_usd) })}</> : null}.
+          {tooBig && <strong style={{ color: 'var(--red)' }}> {tt('Das Budget reicht dafür nicht.')}</strong>}
         </p>
       ) : (
-        <p className="small">Der Bau selbst kostet keine KI – bisher {usd(b.cost_usd)} für die Analyse.</p>
+        <p className="small">{tt('Der Bau selbst kostet keine KI – bisher {v1} für die Analyse.', { v1: usd(b.cost_usd) })}</p>
       )}
       {b.status === 'planned' && (
         <div className="wk-confirm">
-          <Check checked={ok} onChange={setOk} label="Ich habe gelesen, was gebaut wird und welche Berechtigungen es braucht." tour="wk-consent" />
-          {me?.needs_approval && <p className="muted small">Ein Admin muss den Bau danach noch freigeben.</p>}
+          <Check checked={ok} onChange={setOk} label={tt('Ich habe gelesen, was gebaut wird und welche Berechtigungen es braucht.')} tour="wk-consent" />
+          {me?.needs_approval && <p className="muted small">{tt('Ein Admin muss den Bau danach noch freigeben.')}</p>}
           <div className="actions">
             <button className="btn secondary" onClick={() => act(() => api.post(`/api/werkstatt/builds/${b.id}/cancel`)).then(onChange)}>
-              Verwerfen
+              {tt('Verwerfen')}
             </button>
             {plan.model_gate?.ok === false && (
-              <button className="btn secondary" disabled={busy} title="Plant den Wunsch noch einmal, z. B. nachdem ein Spitzenmodell eingestellt wurde" onClick={() => act(() => api.post<{ id: string }>(`/api/werkstatt/builds/${b.id}/replan`)).then((r) => r && (navigate(`werkstatt/${r.id}`), onChange()))}>
-                Plan neu erstellen
+              <button className="btn secondary" disabled={busy} title={tt('Plant den Wunsch noch einmal, z. B. nachdem ein Spitzenmodell eingestellt wurde')} onClick={() => act(() => api.post<{ id: string }>(`/api/werkstatt/builds/${b.id}/replan`)).then((r) => r && (navigate(`werkstatt/${r.id}`), onChange()))}>
+                {tt('Plan neu erstellen')}
               </button>
             )}
             <button className="btn" data-tour="wk-confirm" disabled={!ok || busy || !!tooBig || plan.model_gate?.ok === false} onClick={confirm}>
-              <Icon name="hammer" size={14} /> {me?.needs_approval ? 'Zur Freigabe senden' : 'Jetzt bauen'}
+              <Icon name="hammer" size={14} /> {me?.needs_approval ? tt('Zur Freigabe senden') : tt('Jetzt bauen')}
             </button>
           </div>
         </div>
@@ -231,31 +235,32 @@ export function PlanView({ b, me, onChange }: { b: Build; me?: WerkstattMe; onCh
 
 /** Progress and result of a build (log, created items, links). */
 export function ResultView({ b, onChange }: { b: Build; onChange: () => void }) {
+  const tt = useT('b7werk');
   const [busy, setBusy] = useState(false);
   return (
     <>
       <div className="row" style={{ gap: 8, alignItems: 'center' }}>
         <StatusBadge b={b} />
-        <span className="muted small">KI-Kosten bisher {usd(b.cost_usd)}</span>
+        <span className="muted small">{tt('KI-Kosten bisher {v1}', { v1: usd(b.cost_usd) })}</span>
       </div>
       <Progress b={b} />
       <AiLine ai={b.ai} />
       <DiffList d={b.plan?.diff as DiffData | undefined} />
       {b.error && b.status !== 'planning' && <div className="card notice-card" style={{ whiteSpace: 'pre-wrap' }}>{b.error}</div>}
-      {b.status === 'awaiting_approval' && <div className="card notice-card">Wartet auf die Freigabe eines Admins. Du bekommst Bescheid, sobald es losgeht.</div>}
+      {b.status === 'awaiting_approval' && <div className="card notice-card">{tt('Wartet auf die Freigabe eines Admins. Du bekommst Bescheid, sobald es losgeht.')}</div>}
       {(b.created ?? []).length > 0 && (
         <>
           <h4>Angelegt</h4>
           <ul className="wk-created">
             {b.created!.map((c, i) => (
               <li key={i} className={c.undone ? 'undone' : ''}>
-                {c.url && !c.undone ? <Link to={c.url}>{c.name}</Link> : c.name} <span className="muted small">· {BLOCK_LABEL[c.block] ?? c.block}{c.undone ? ' · rückgängig gemacht' : ''}</span>
+                {c.url && !c.undone ? <Link to={c.url}>{c.name}</Link> : c.name} <span className="muted small">· {tt(BLOCK_LABEL[c.block] ?? c.block)}{c.undone ? tt(' · rückgängig gemacht') : ''}</span>
               </li>
             ))}
           </ul>
           {b.undoable && (
-            <button className="btn secondary small" disabled={busy} onClick={async () => (setBusy(true), await act(() => api.post(`/api/werkstatt/builds/${b.id}/undo`), 'Rückgängig gemacht'), setBusy(false), onChange())}>
-              <Icon name="undo" size={14} /> Alles rückgängig machen
+            <button className="btn secondary small" disabled={busy} onClick={async () => (setBusy(true), await act(() => api.post(`/api/werkstatt/builds/${b.id}/undo`), tt('Rückgängig gemacht')), setBusy(false), onChange())}>
+              <Icon name="undo" size={14} /> {tt('Alles rückgängig machen')}
             </button>
           )}
         </>
@@ -263,11 +268,11 @@ export function ResultView({ b, onChange }: { b: Build; onChange: () => void }) 
       {b.plugin_id && b.status === 'done' && (
         <p>
           <Link to={`werkstatt/plugins/${b.plugin_id}`} className="btn">
-            <Icon name="puzzle" size={14} /> Plugin ansehen
+            <Icon name="puzzle" size={14} /> {tt('Plugin ansehen')}
           </Link>
         </p>
       )}
-      <h4>Protokoll</h4>
+      <h4>{tt('Protokoll')}</h4>
       <LogView log={b.log ?? []} />
     </>
   );
@@ -275,6 +280,7 @@ export function ResultView({ b, onChange }: { b: Build; onChange: () => void }) 
 
 /** One screen for a build, whatever state it is in. */
 export function BuildView({ b, me, onChange }: { b: Build; me?: WerkstattMe; onChange: () => void }) {
+  const tt = useT('b7werk');
   if (b.status === 'planning') {
     return (
       <>
@@ -282,10 +288,10 @@ export function BuildView({ b, me, onChange }: { b: Build; me?: WerkstattMe; onC
           <Progress b={b} />
         ) : (
           <div className="row" style={{ gap: 8 }}>
-            <Spinner /> <strong>Die KI analysiert deinen Wunsch …</strong>
+            <Spinner /> <strong>{tt('Die KI analysiert deinen Wunsch …')}</strong>
           </div>
         )}
-        <p className="muted small">Das dauert meist eine halbe Minute. Du kannst das Fenster schließen – der Auftrag steht danach in der {NAMES.werkstatt}.</p>
+        <p className="muted small">{tt('Das dauert meist eine halbe Minute. Du kannst das Fenster schließen – der Auftrag steht danach in der {werkstatt}.', { werkstatt: NAMES.werkstatt })}</p>
         <LogView log={b.log ?? []} />
       </>
     );
@@ -324,6 +330,7 @@ export function BuildLayer() {
 }
 
 function BuildModal({ init, onClose }: { init: { wishId?: string; title?: string; text?: string }; onClose: () => void }) {
+  const tt = useT('b7werk');
   const me = useWerkstattMe();
   const [text, setText] = useState(init.text ?? [init.title].filter(Boolean).join('\n'));
   const [id, setId] = useState<string>();
@@ -346,7 +353,7 @@ function BuildModal({ init, onClose }: { init: { wishId?: string; title?: string
         b ? (
           <>
             <button className="btn secondary" onClick={() => (onClose(), navigate(`werkstatt/${b.id}`))}>
-              In der {NAMES.werkstatt} öffnen
+              {tt('In der {werkstatt} öffnen', { werkstatt: NAMES.werkstatt })}
             </button>
             <button className="btn" onClick={onClose}>
               Schließen
@@ -354,16 +361,16 @@ function BuildModal({ init, onClose }: { init: { wishId?: string; title?: string
           </>
         ) : (
           <button className="btn" data-tour="wk-start" disabled={busy || !m?.can_build || !!m?.ai_problem || !!m?.budget_problem || (!init.wishId && text.trim().length < 8)} onClick={start}>
-            <Icon name="hammer" size={14} /> Plan erstellen
+            <Icon name="hammer" size={14} /> {tt('Plan erstellen')}
           </button>
         )
       }
     >
       {!b ? (
         <>
-          {init.wishId && <p className="muted small">Gebaut wird der Wunsch aus der Wunschliste – du kannst den Text unten ergänzen.</p>}
-          <Field label="Was soll gebaut werden?" hint="Ein bis zwei Sätze reichen: „Ich möchte …“. Die KI schlägt zuerst einen Plan vor – gebaut wird erst nach deiner Bestätigung.">
-            <Textarea value={text} onChange={setText} rows={5} placeholder="z. B. Ich möchte vor Geburtstagen meiner Kontakte erinnert werden." />
+          {init.wishId && <p className="muted small">{tt('Gebaut wird der Wunsch aus der Wunschliste – du kannst den Text unten ergänzen.')}</p>}
+          <Field label={tt('Was soll gebaut werden?')} hint={tt('Ein bis zwei Sätze reichen: „Ich möchte …“. Die KI schlägt zuerst einen Plan vor – gebaut wird erst nach deiner Bestätigung.')}>
+            <Textarea value={text} onChange={setText} rows={5} placeholder={tt('z. B. Ich möchte vor Geburtstagen meiner Kontakte erinnert werden.')} />
           </Field>
           {m && !m.can_build && <div className="card notice-card">{m.reason}</div>}
           {m?.can_build && m.ai_problem && (
@@ -373,9 +380,9 @@ function BuildModal({ init, onClose }: { init: { wishId?: string; title?: string
             </div>
           )}
           {m?.can_build && !m.ai_problem && m.budget_problem && <div className="card notice-card">{m.budget_problem}</div>}
-          {m?.can_build && !m.ai_problem && !m.budget_problem && <p className="muted small">KI: {m.ai.label} · {m.ai.model}{m.needs_approval ? ' · Ein Admin gibt den Bau nach deiner Bestätigung frei.' : ''}</p>}
+          {m?.can_build && !m.ai_problem && !m.budget_problem && <p className="muted small">{tt('KI: {label} · {model}', { label: m.ai.label, model: m.ai.model })}{m.needs_approval ? tt(' · Ein Admin gibt den Bau nach deiner Bestätigung frei.') : ''}</p>}
           <p className="muted small">
-            Alles gilt nur für diesen Sub-Account. Ein Wunsch wird zuerst ein privates Plugin, das nur du siehst – später kann es für den Sub-Account, die ganze Agentur oder den {NAMES.marktplatz} freigegeben werden.
+            {tt('Alles gilt nur für diesen Sub-Account. Ein Wunsch wird zuerst ein privates Plugin, das nur du siehst – später kann es für den Sub-Account, die ganze Agentur oder den {marktplatz} freigegeben werden.', { marktplatz: NAMES.marktplatz })}
           </p>
         </>
       ) : (
@@ -389,6 +396,7 @@ function BuildModal({ init, onClose }: { init: { wishId?: string; title?: string
 
 /** On a wish: the „Bauen lassen“ button and the builds made for this wish. */
 export function WishBuilds({ wishId }: { wishId: string }) {
+  const tt = useT('b7werk');
   const me = useWerkstattMe();
   const l = useLoad(() => api.get<Build[]>(`/api/werkstatt/wishes/${wishId}`).catch(() => [] as Build[]), [wishId]);
   const reload = l.reload;
@@ -405,7 +413,7 @@ export function WishBuilds({ wishId }: { wishId: string }) {
         <div className="grow">
           <h2 style={{ margin: 0 }}>{NAMES.build}</h2>
           <p className="muted small" style={{ margin: '4px 0 0' }}>
-            Die KI schlägt einen Plan vor und baut ihn nach deiner Bestätigung – zuerst nur für dich.
+            {tt('Die KI schlägt einen Plan vor und baut ihn nach deiner Bestätigung – zuerst nur für dich.')}
           </p>
         </div>
         {me.data.can_build && (

@@ -1,5 +1,6 @@
 import type { ListRow, NumberFormat, Tone, View } from '../../boards/types';
 import { PX_PER_M } from './geometry';
+import { tr, intlLocale } from '../../i18n';
 
 /**
  * Widgets as pictures: the simplified 2D-canvas renderer behind the floating panels.
@@ -93,7 +94,7 @@ export function wrapText(ctx: Ctx, text: string, maxW: number, maxLines: number)
   return lines.map((l) => ellipsize(ctx, l, maxW));
 }
 
-const nf = (max: number) => new Intl.NumberFormat('de-DE', { maximumFractionDigits: max });
+const nf = (max: number) => new Intl.NumberFormat(intlLocale(), { maximumFractionDigits: max });
 
 /** Numbers the way the app shows them (de-DE): 7.180 € · 12,5 % · 3 Tage. */
 export function formatValue(v: string | number | null | undefined, format?: NumberFormat): string {
@@ -101,7 +102,7 @@ export function formatValue(v: string | number | null | undefined, format?: Numb
   if (typeof v === 'string') return v;
   switch (format) {
     case 'money':
-      return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 }).format(v);
+      return new Intl.NumberFormat(intlLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 }).format(v);
     case 'percent':
       return `${nf(1).format(v)} %`;
     case 'days':
@@ -198,9 +199,10 @@ export function viewKind(view: View | undefined, loading: boolean): string {
 }
 
 export function drawView(ctx: Ctx, r: Rect, view: View | undefined, loading: boolean, t: XrTheme) {
+  const tt = tr('b7xr');
   const pad = 18;
   const inner: Rect = { x: r.x + pad, y: r.y + pad - 4, w: r.w - pad * 2, h: r.h - pad * 2 + 4 };
-  if (!view) return loading ? skeleton(ctx, inner, t) : quiet(ctx, inner, t, 'Keine Daten.');
+  if (!view) return loading ? skeleton(ctx, inner, t) : quiet(ctx, inner, t, tt('Keine Daten.'));
   switch (view.kind) {
     case 'number':
       return bigNumber(ctx, inner, t, view);
@@ -221,15 +223,15 @@ export function drawView(ctx: Ctx, r: Rect, view: View | undefined, loading: boo
     case 'message':
       return quiet(ctx, inner, t, view.text, toneColor(t, view.tone));
     case 'locked':
-      return quiet(ctx, inner, t, `Gesperrt – ${view.reason}`, t.muted);
+      return quiet(ctx, inner, t, tt('Gesperrt – {reason}', { reason: view.reason }), t.muted);
     case 'embed':
-      return quiet(ctx, inner, t, 'Eingebettete Seite: in XR nicht darstellbar. Im Browser öffnen.');
+      return quiet(ctx, inner, t, tt('Eingebettete Seite: in XR nicht darstellbar. Im Browser öffnen.'));
     case 'frame':
-      return quiet(ctx, inner, t, 'Plugin-Ansicht: in XR nicht darstellbar. Im Browser öffnen.');
+      return quiet(ctx, inner, t, tt('Plugin-Ansicht: in XR nicht darstellbar. Im Browser öffnen.'));
     case 'actions':
-      return quiet(ctx, inner, t, 'Schnellaktionen gibt es im Browser. In XR sprichst du mit dem Board.');
+      return quiet(ctx, inner, t, tt('Schnellaktionen gibt es im Browser. In XR sprichst du mit dem Board.'));
     default:
-      return quiet(ctx, inner, t, 'Dieses Widget lässt sich hier nicht darstellen.');
+      return quiet(ctx, inner, t, tt('Dieses Widget lässt sich hier nicht darstellen.'));
   }
 }
 
@@ -256,6 +258,7 @@ function quiet(ctx: Ctx, r: Rect, t: XrTheme, text: string, color = t.muted) {
 }
 
 function bigNumber(ctx: Ctx, r: Rect, t: XrTheme, v: Extract<View, { kind: 'number' }>) {
+  const tt = tr('b7xr');
   const value = formatValue(v.value, v.format);
   let size = Math.min(72, Math.max(30, r.h * 0.42));
   ctx.font = font(size, 750);
@@ -275,7 +278,7 @@ function bigNumber(ctx: Ctx, r: Rect, t: XrTheme, v: Extract<View, { kind: 'numb
   if (v.delta !== null && v.delta !== undefined) {
     ctx.font = font(18, 700);
     ctx.fillStyle = v.delta > 0 ? t.green : v.delta < 0 ? t.red : t.muted;
-    ctx.fillText(`${v.delta > 0 ? '▲' : v.delta < 0 ? '▼' : '='} ${nf(1).format(Math.abs(v.delta))} % zur Vorperiode`, r.x, y);
+    ctx.fillText(tt('{v1} {v2} % zur Vorperiode', { v1: v.delta > 0 ? '▲' : v.delta < 0 ? '▼' : '=', v2: nf(1).format(Math.abs(v.delta)) }), r.x, y);
     y += 26;
   }
   if (v.hint) {
@@ -331,7 +334,8 @@ function badge(ctx: Ctx, t: XrTheme, text: string, tone: Tone | undefined, xRigh
 }
 
 function list(ctx: Ctx, r: Rect, t: XrTheme, rows: ListRow[], total?: number, empty?: string) {
-  if (!rows.length) return quiet(ctx, r, t, empty ?? 'Nichts zu zeigen.');
+  const tt = tr('b7xr');
+  if (!rows.length) return quiet(ctx, r, t, empty ?? tt('Nichts zu zeigen.'));
   const rowH = 52;
   const fit = Math.max(1, Math.floor((r.h - (total && total > rows.length ? 24 : 0)) / rowH));
   const shown = rows.slice(0, fit);
@@ -380,12 +384,13 @@ function list(ctx: Ctx, r: Rect, t: XrTheme, rows: ListRow[], total?: number, em
     ctx.font = font(15, 600);
     ctx.fillStyle = t.brandText;
     ctx.textBaseline = 'alphabetic';
-    ctx.fillText(`+ ${more.toLocaleString('de-DE')} weitere im Browser`, r.x, r.y + r.h - 4);
+    ctx.fillText(tt('+ {v1} weitere im Browser', { v1: more.toLocaleString(intlLocale()) }), r.x, r.y + r.h - 4);
   }
 }
 
 function table(ctx: Ctx, r: Rect, t: XrTheme, v: Extract<View, { kind: 'table' }>) {
-  if (!v.rows.length) return quiet(ctx, r, t, v.empty ?? 'Nichts zu zeigen.');
+  const tt = tr('b7xr');
+  if (!v.rows.length) return quiet(ctx, r, t, v.empty ?? tt('Nichts zu zeigen.'));
   const cols = v.columns.slice(0, 6);
   const cw = r.w / cols.length;
   ctx.font = font(14, 700);
@@ -412,7 +417,8 @@ function table(ctx: Ctx, r: Rect, t: XrTheme, v: Extract<View, { kind: 'table' }
 }
 
 function kanban(ctx: Ctx, r: Rect, t: XrTheme, v: Extract<View, { kind: 'kanban' }>) {
-  if (!v.columns.length) return quiet(ctx, r, t, v.empty ?? 'Keine Phasen.');
+  const tt = tr('b7xr');
+  if (!v.columns.length) return quiet(ctx, r, t, v.empty ?? tt('Keine Phasen.'));
   const cols = v.columns.slice(0, 5);
   const gap = 10;
   const cw = (r.w - gap * (cols.length - 1)) / cols.length;
@@ -444,7 +450,8 @@ function kanban(ctx: Ctx, r: Rect, t: XrTheme, v: Extract<View, { kind: 'kanban'
 }
 
 function agenda(ctx: Ctx, r: Rect, t: XrTheme, v: Extract<View, { kind: 'agenda' }>) {
-  if (!v.days.length) return quiet(ctx, r, t, v.empty ?? 'Keine Termine.');
+  const tt = tr('b7xr');
+  if (!v.days.length) return quiet(ctx, r, t, v.empty ?? tt('Keine Termine.'));
   let y = r.y;
   ctx.textBaseline = 'alphabetic';
   ctx.textAlign = 'left';
@@ -469,8 +476,9 @@ function agenda(ctx: Ctx, r: Rect, t: XrTheme, v: Extract<View, { kind: 'agenda'
 }
 
 function notes(ctx: Ctx, r: Rect, t: XrTheme, text: string) {
+  const tt = tr('b7xr');
   const lines = plainLines(text);
-  if (!lines.length) return quiet(ctx, r, t, 'Die Notiz ist noch leer.');
+  if (!lines.length) return quiet(ctx, r, t, tt('Die Notiz ist noch leer.'));
   let y = r.y + 20;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
@@ -518,6 +526,7 @@ export function reportPoints(result: any, limit = 24): { points: Point[]; format
 }
 
 function report(ctx: Ctx, r: Rect, t: XrTheme, viz: string, result: any) {
+  const tt = tr('b7xr');
   if (viz === 'kpi' || viz === 'table') {
     const v = result?.totals?.v?.[0];
     if (viz === 'kpi') return bigNumber(ctx, r, t, { kind: 'number', value: typeof v === 'number' ? v : null, label: result?.measures?.[0]?.label, format: (result?.measures?.[0]?.format ?? 'number') as NumberFormat });
@@ -533,7 +542,7 @@ function report(ctx: Ctx, r: Rect, t: XrTheme, viz: string, result: any) {
   ctx.textBaseline = 'alphabetic';
   ctx.font = font(14, 500);
   ctx.fillStyle = t.muted;
-  ctx.fillText(ellipsize(ctx, `${measure} · höchster Wert ${formatValue(max, format)}`, r.w), r.x, r.y + 14);
+  ctx.fillText(ellipsize(ctx, tt('{measure} · höchster Wert {v2}', { measure, v2: formatValue(max, format) }), r.w), r.x, r.y + 14);
   ctx.fillStyle = t.line;
   ctx.fillRect(left, bottom, w, 2);
   const step = w / points.length;
@@ -610,6 +619,7 @@ const BUTTON_LABEL: Record<HudButton, string> = { mic: 'Sprechen', apply: 'Über
 
 /** Draws the control panel and returns where its buttons are (texture pixels), for pointing at them. */
 export function drawHud(ctx: Ctx, W: number, H: number, s: HudState, t: XrTheme): HudRegion[] {
+  const tt = tr('b7xr');
   ctx.save();
   ctx.clearRect(0, 0, W, H);
   ctx.scale(DESIGN_SCALE, DESIGN_SCALE);
@@ -643,7 +653,7 @@ export function drawHud(ctx: Ctx, W: number, H: number, s: HudState, t: XrTheme)
   } else {
     ctx.font = font(16, 400);
     ctx.fillStyle = t.muted;
-    const hint = s.readOnly ? 'Nur Ansicht: du darfst dieses Board nicht ändern.' : s.mic === 'off' && s.buttons.includes('mic') ? 'Sprachsteuerung: erst unter Einstellungen → Stimme einrichten.' : s.buttons.includes('mic') ? 'Halte „Sprechen“ und sag z. B. „Zeig mir die offenen Angebote“.' : 'Panel greifen und ziehen: verschieben.';
+    const hint = s.readOnly ? tt('Nur Ansicht: du darfst dieses Board nicht ändern.') : s.mic === 'off' && s.buttons.includes('mic') ? tt('Sprachsteuerung: erst unter Einstellungen → Stimme einrichten.') : s.buttons.includes('mic') ? tt('Halte „Sprechen“ und sag z. B. „Zeig mir die offenen Angebote“.') : tt('Panel greifen und ziehen: verschieben.');
     wrapText(ctx, hint, w - 40, 2).forEach((l, i) => ctx.fillText(l, 20, 66 + i * 23));
   }
   // buttons
@@ -675,7 +685,7 @@ export function drawHud(ctx: Ctx, W: number, H: number, s: HudState, t: XrTheme)
     ctx.fillStyle = recording || primary ? '#ffffff' : t.text;
     ctx.font = font(18, 700);
     ctx.textAlign = 'center';
-    const label = id === 'mic' ? (s.mic === 'recording' ? 'Ich höre zu …' : s.mic === 'working' ? 'Ich schreibe mit …' : '🎤 Sprechen') : BUTTON_LABEL[id];
+    const label = id === 'mic' ? (s.mic === 'recording' ? tt('Ich höre zu …') : s.mic === 'working' ? tt('Ich schreibe mit …') : '🎤 ' + tt('Sprechen')) : tt(BUTTON_LABEL[id]);
     ctx.fillText(ellipsize(ctx, label, bw - 14), x + bw / 2, y + bh / 2 + 6);
     regions.push({ id, x: x * DESIGN_SCALE, y: y * DESIGN_SCALE, w: bw * DESIGN_SCALE, h: bh * DESIGN_SCALE });
     x += bw + gap;
@@ -697,6 +707,7 @@ export const onGrip = (v: number, texH: number) => v * texH <= HEAD_H * DESIGN_S
 
 /** The canvas image on its plane: fitted, on white (a Canvas is white paper in the browser too). */
 export function drawImagePlane(ctx: Ctx, W: number, H: number, img: CanvasImageSource | null, iw: number, ih: number, t: XrTheme, message?: string) {
+  const tt = tr('b7xr');
   ctx.save();
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = '#ffffff';
@@ -707,7 +718,7 @@ export function drawImagePlane(ctx: Ctx, W: number, H: number, img: CanvasImageS
     ctx.font = `600 ${Math.round(H / 18)}px ${FONT}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(message ?? 'Canvas wird geladen …', W / 2, H / 2);
+    ctx.fillText(message ?? tt('Canvas wird geladen …'), W / 2, H / 2);
   }
   ctx.restore();
 }
