@@ -1,0 +1,467 @@
+import dns from 'node:dns';
+import net from 'node:net';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { startTestApp } from './helpers.js';
+import { DEMO_OUTSIDE_NOTE, DEMO_PAGE_NOTE, demoBlocks, demoResetHours, dueResetSlot, withDemoNote } from '../server/modules/demo.js';
+import { deliverEmail, deliverSms } from '../server/services/messaging.js';
+import { safeFetch } from '../server/services/net.js';
+import { blockedConnections, installOutboundGuard, isLoopbackHost, outboundGuardActive, uninstallOutboundGuard } from '../server/services/outbound-guard.js';
+import { seedDemo } from '../server/services/demo-seed.js';
+import { PRODUCT_ICON } from '../web/src/theme/brand-icon.js';
+
+/** 'EDEMOBLOCKED' when the guard refused the call somewhere down the error chain (clients re-wrap errors). */
+const errCode = (e: any): string | undefined => {
+  for (let x = e, i = 0; x && i < 5; x = x.cause, i++) if (x.code === 'EDEMOBLOCKED' || String(x.message ?? '').includes('Demo-Modus: Verbindung nach außen gesperrt')) return 'EDEMOBLOCKED';
+  return e?.code ?? e?.cause?.code;
+};
+
+describe('outbound guard', () => {
+  afterAll(() => uninstallOutboundGuard());
+
+  it('knows loopback hosts', () => {
+    for (const h of ['localhost', '127.0.0.1', '127.8.9.1', '::1', '[::1]', '::ffff:127.0.0.1', 'app.localhost']) expect(isLoopbackHost(h)).toBe(true);
+    for (const h of ['example.com', '10.0.0.1', '192.168.1.5', '8.8.8.8', 'localhost.example.com', '2a00:1450::1']) expect(isLoopbackHost(h)).toBe(false);
+  });
+
+  it('refuses every non-loopback connection (fetch, raw sockets, http.request) and keeps loopback working', async () => {
+    const t = await startTestApp();
+    try {
+      installOutboundGuard();
+      expect(outboundGuardActive()).toBe(true);
+      const e1 = await fetch('https://example.com/').catch((e) => e);
+      expect(errCode(e1)).toBe('EDEMOBLOCKED');
+      const e2 = await new Promise<any>((r) => net.connect(25, 'smtp.example.com').on('error', r).on('connect', () => r(null)));
+      expect(errCode(e2)).toBe('EDEMOBLOCKED');
+      const e3 = await safeFetch('https://hooks.example.org/x', { method: 'POST', body: '{}' }).catch((e) => e);
+      expect(errCode(e3)).toBe('EDEMOBLOCKED');
+      const e4 = await new Promise<any>((r) => dns.resolve4('mail.example.net', (err) => r(err)));
+      expect(errCode(e4)).toBe('EDEMOBLOCKED');
+      // node:dns/promises has its own Resolver class (the e-mail deliverability check uses it).
+      const e5 = await new dns.promises.Resolver().resolveTxt('kunde.example.net').catch((e) => e);
+      expect(errCode(e5)).toBe('EDEMOBLOCKED');
+      expect(blockedConnections().map((b) => b.host)).toEqual(expect.arrayContaining(['example.com', 'smtp.example.com', 'hooks.example.org', 'mail.example.net']));
+      // The app's own server and other loopback services still work.
+      expect((await t.api.get('/api/version')).status).toBe(200);
+    } finally {
+      uninstallOutboundGuard();
+      await t.close();
+    }
+    expect(outboundGuardActive()).toBe(false);
+  });
+});
+
+describe('demo mode write rules', () => {
+  it('blocks account takeover, real credentials and integrations – but not normal work', () => {
+    const w = (method: string, path: string, body: any = {}) => demoBlocks({ method, path, body });
+    expect(w('POST', '/api/me/password')).toBe(true);
+    expect(w('POST', '/api/me/2fa/setup')).toBe(true);
+    expect(w('POST', '/api/users')).toBe(true);
+    expect(w('PATCH', '/api/users/u1')).toBe(true);
+    expect(w('DELETE', '/api/locations/l1')).toBe(true);
+    expect(w('PUT', '/api/stripe')).toBe(true);
+    expect(w('PUT', '/api/settings/meta')).toBe(true);
+    expect(w('PUT', '/api/telephony/settings')).toBe(true);
+    expect(w('POST', '/api/webhooks')).toBe(true);
+    expect(w('POST', '/api/hooks')).toBe(true);
+    expect(w('PATCH', '/api/agency/oauth')).toBe(true);
+    expect(w('PATCH', '/api/location', { settings: { email: { provider: 'smtp', host: 'smtp.example.com' } } })).toBe(true);
+    expect(w('PATCH', '/api/location', { settings: { sms: { provider: 'twilio' } } })).toBe(true);
+    // Allowed: reading, normal CRM work, profile edits, the seed itself.
+    expect(w('GET', '/api/stripe')).toBe(false);
+    expect(w('POST', '/api/contacts')).toBe(false);
+    expect(w('POST', '/api/messages')).toBe(false);
+    expect(w('PATCH', '/api/location', { name: 'Neuer Name' })).toBe(false);
+    expect(demoBlocks({ method: 'PUT', path: '/api/stripe', body: {}, demoSeed: true })).toBe(false);
+  });
+
+  it('keeps own domains off – no certificate for a stranger\'s domain – but not the rest of those forms', () => {
+    const w = (method: string, path: string, body: any = {}) => demoBlocks({ method, path, body });
+    expect(w('PATCH', '/api/funnels/f1', { domain: 'phish.example.org' })).toBe(true);
+    expect(w('PATCH', '/api/agency/locations/l1/branding', { app_domain: 'crm.example.org' })).toBe(true);
+    expect(w('PUT', '/api/helpdesk/settings', { help_center: { domain: 'help.example.org' } })).toBe(true);
+    expect(w('PATCH', '/api/funnels/f1', { name: 'Neue Seite', domain: '' })).toBe(false);
+    expect(w('PATCH', '/api/agency/locations/l1/branding', { name: 'Kunde', color: '#ff0000' })).toBe(false);
+    expect(w('PUT', '/api/helpdesk/settings', { help_center: { enabled: true } })).toBe(false);
+    // A company's website domain is CRM data, not hosting.
+    expect(w('POST', '/api/companies', { name: 'Acme', domain: 'acme.example' })).toBe(false);
+  });
+
+  it('reads the reset hours and knows which reset is due', () => {
+    expect(demoResetHours({})).toEqual([3]);
+    expect(demoResetHours({ PGHL_DEMO_RESET_HOUR: '5' })).toEqual([5]);
+    expect(demoResetHours({ PGHL_DEMO_RESET_HOURS: '19, 3,11,3', PGHL_DEMO_RESET_HOUR: '5' })).toEqual([3, 11, 19]);
+    expect(demoResetHours({ PGHL_DEMO_RESET_HOURS: '24,x,-1' })).toEqual([3]);
+    // 2026-10-23 is summer time in Berlin (UTC+2).
+    const at = (utc: string) => new Date(utc);
+    expect(dueResetSlot(at('2026-10-23T00:30:00Z'), 'Europe/Berlin', [3, 11, 19])).toBeNull(); // 02:30
+    expect(dueResetSlot(at('2026-10-23T01:00:00Z'), 'Europe/Berlin', [3, 11, 19])).toBe('2026-10-23@3');
+    expect(dueResetSlot(at('2026-10-23T08:59:00Z'), 'Europe/Berlin', [3, 11, 19])).toBe('2026-10-23@3'); // 10:59
+    expect(dueResetSlot(at('2026-10-23T09:00:00Z'), 'Europe/Berlin', [3, 11, 19])).toBe('2026-10-23@11');
+    expect(dueResetSlot(at('2026-10-23T21:59:00Z'), 'Europe/Berlin', [3, 11, 19])).toBe('2026-10-23@19'); // 23:59
+  });
+
+  it('marks public pages as a demo, once', () => {
+    const out = withDemoNote('<html><body class="x"><h1>Hallo</h1></body></html>');
+    expect(out).toMatch(/^<html><body class="x"><div role="note" data-pghl-demo[^>]*>Demo-Instanz/);
+    expect(withDemoNote(out)).toBe(out);
+    expect(withDemoNote('<p>ohne body</p>')).toContain(DEMO_PAGE_NOTE);
+  });
+});
+
+describe('demo mode (PGHL_DEMO_MODE=1)', () => {
+  let t: Awaited<ReturnType<typeof startTestApp>>;
+  // Every connection the guard lets through reaches this spy – it must only ever see loopback.
+  const passed: string[] = [];
+  let realConnect: typeof net.Socket.prototype.connect;
+
+  beforeAll(async () => {
+    realConnect = net.Socket.prototype.connect;
+    net.Socket.prototype.connect = function (this: net.Socket, ...args: any[]) {
+      const a = Array.isArray(args[0]) ? args[0] : args;
+      const o = a[0];
+      passed.push(o && typeof o === 'object' ? String(o.path ?? o.host ?? 'localhost') : typeof o === 'string' && !/^\d+$/.test(o) ? o : String(a[1] ?? 'localhost'));
+      return (realConnect as any).apply(this, args);
+    } as any;
+    t = await startTestApp({ demoMode: true });
+    for (let i = 0; i < 1800 && !(await t.api.get('/api/version')).data.demo?.last_reset; i++) await new Promise((r) => setTimeout(r, 50));
+  }, 120_000);
+
+  afterAll(async () => {
+    await t.close();
+    uninstallOutboundGuard();
+    net.Socket.prototype.connect = realConnect;
+  });
+
+  it('seeds fictional data and shows the demo login', async () => {
+    const v = (await t.api.get('/api/version')).data;
+    expect(v).toMatchObject({ name: 'HyperLevel', demo: { enabled: true, login: { email: 'demo@example.com', password: 'demo1234' }, reset_hour: 3 } });
+    expect(v.version).toMatch(/^\d+\.\d+\.\d+/);
+    const n = (sql: string) => Number(t.app.db.get(sql)?.n ?? 0);
+    // The agency „Nordlicht Digital“ (white-label) and its five clients, each with a believable amount of data.
+    expect(t.app.db.all('SELECT name FROM locations ORDER BY name').map((r: any) => r.name)).toEqual(['Elektro Meyer', 'FitWerk Coaching', 'Nordlicht Digital', 'Praxis Sonnenweg', 'Rösterei Hafenbohne', 'Taktwerk Software']);
+    expect(n(`SELECT COUNT(*) n FROM locations WHERE json_extract(settings, '$.branding.name') = 'Nordlicht Digital'`)).toBe(5);
+    // The agency is the HyperLevel demo without a logo of its own: sidebar and login page show PRODUCT_ICON (web/src/theme/brand-icon.ts).
+    expect((await t.api.get('/api/branding')).data).toMatchObject({ name: 'HyperLevel Demo', logo_url: '', mark_url: '', logo_dark_url: '', mark_dark_url: '' });
+    expect(PRODUCT_ICON).toBe('/icon.svg');
+    expect(n('SELECT COUNT(*) n FROM contacts')).toBeGreaterThan(150);
+    expect(n('SELECT COUNT(*) n FROM opportunities')).toBeGreaterThan(40);
+    expect(n('SELECT COUNT(*) n FROM appointments')).toBeGreaterThan(200);
+    expect(n('SELECT COUNT(*) n FROM appointment_series')).toBe(6);
+    expect(n('SELECT COUNT(*) n FROM invoices')).toBeGreaterThan(60);
+    expect(n(`SELECT COUNT(*) n FROM invoices WHERE leitweg_id != ''`)).toBeGreaterThan(0);
+    expect(n('SELECT COUNT(*) n FROM tickets')).toBeGreaterThan(10);
+    expect(n(`SELECT COUNT(*) n FROM messages WHERE channel = 'whatsapp'`)).toBeGreaterThan(0);
+    expect(n('SELECT COUNT(*) n FROM store_orders')).toBeGreaterThan(5);
+    expect(n('SELECT COUNT(*) n FROM review_items')).toBeGreaterThan(10);
+    expect(n('SELECT COUNT(*) n FROM pm_time_entries')).toBeGreaterThan(0);
+    // Coloured tags, and phone numbers only from the test range.
+    expect(n(`SELECT COUNT(*) n FROM tags WHERE color != ''`)).toBeGreaterThan(20);
+    expect(n(`SELECT COUNT(*) n FROM contacts WHERE phone != '' AND phone NOT LIKE '+49301234%'`)).toBe(0);
+    // Fictional addresses only, and nothing was really sent.
+    expect(n(`SELECT COUNT(*) n FROM contacts WHERE email != '' AND email NOT LIKE '%@example.com' AND email NOT LIKE '%@example.org' AND email NOT LIKE '%@example.net' AND email NOT LIKE '%.example'`)).toBe(0);
+    expect(n(`SELECT COUNT(*) n FROM messages WHERE direction = 'out' AND status NOT IN ('logged', 'failed')`)).toBe(0);
+  });
+
+  it('signs in with one click and refuses dangerous writes', async () => {
+    expect((await t.api.post('/api/demo/login')).status).toBe(200);
+    const me = await t.api.get('/api/me');
+    expect(me.data.user.email).toBe('demo@example.com');
+    t.api.setLocation(me.data.locations[0].id);
+    for (const [method, path, body] of [
+      ['post', '/api/me/password', { current: 'demo1234', next: 'gekapert123' }],
+      ['post', '/api/users', { email: 'x@example.com', password: 'geheim123' }],
+      ['put', '/api/stripe', { secret_key: 'sk_' + 'test_x' }],
+      ['patch', '/api/location', { settings: { email: { provider: 'smtp', host: 'smtp.example.com', port: 587 } } }],
+      ['post', '/api/webhooks', { url: 'https://hooks.example.org/x' }],
+    ] as const) {
+      const r = await (t.api as any)[method](path, body);
+      expect(r.status, path).toBe(403);
+      expect(r.data.error).toContain('Demo-Modus');
+    }
+    // Normal work is allowed – and an e-mail to a contact is only stored.
+    const c = await t.api.post('/api/contacts', { first_name: 'Probe', email: 'probe@example.com' });
+    expect(c.status).toBe(200);
+    const m = await t.api.post('/api/messages', { contact_id: c.data.id, channel: 'email', subject: 'Hallo', body: 'Test' });
+    expect(m.status).toBe(200);
+    expect(m.data.status).toBe('logged');
+  });
+
+  it('opens straight from a link – /demo signs in and lands in the app, only app paths as next', async () => {
+    const r = await t.api.raw('/demo', { redirect: 'manual' });
+    expect(r.status).toBe(302);
+    expect(r.headers.get('location')).toBe('/app');
+    const cookie = (r.headers.get('set-cookie') ?? '').split(';')[0];
+    expect(cookie).toMatch(/=.{20,}/);
+    const me = await t.api.raw('/api/me', { headers: { cookie } });
+    expect(me.status).toBe(200);
+    expect((await me.json()).user.email).toBe('demo@example.com');
+    expect((await t.api.raw('/demo?next=/app/contacts', { redirect: 'manual' })).headers.get('location')).toBe('/app/contacts');
+    for (const next of ['https://evil.example/', '//evil.example/app', '/api/me', '/app/../api/me', '/app\\evil', '/apply']) {
+      expect((await t.api.raw(`/demo?next=${encodeURIComponent(next)}`, { redirect: 'manual' })).headers.get('location'), next).toBe('/app');
+    }
+  });
+
+  it('lets nothing leave the server, even with real providers configured behind its back', async () => {
+    const loc = t.app.location(t.app.db.get('SELECT id FROM locations LIMIT 1')!.id)!;
+    const smtp = { ...loc, settings: { ...loc.settings, email: { provider: 'smtp', host: 'smtp.example.com', port: 587, user: 'u', pass: 'p' } } };
+    const twilio = { ...loc, settings: { ...loc.settings, sms: { provider: 'twilio', accountSid: 'AC1', authToken: 't', from: '+4930231250' } } };
+    const gateway = { ...loc, settings: { ...loc.settings, sms: { provider: 'http', url: 'https://sms-gateway.example.net/send' } } };
+    expect(errCode(await deliverEmail(smtp, { to: 'a@example.com', subject: 'x', html: 'x', text: 'x' }).catch((e) => e))).toBe('EDEMOBLOCKED');
+    expect(errCode(await deliverSms(twilio, '+4930231251', 'x').catch((e) => e))).toBe('EDEMOBLOCKED');
+    expect(errCode(await deliverSms(gateway, '+4930231251', 'x').catch((e) => e))).toBe('EDEMOBLOCKED');
+    // WhatsApp/Meta, Stripe, Postiz, Anthropic … all use fetch.
+    for (const url of ['https://graph.facebook.com/v21.0/me', 'https://api.stripe.com/v1/checkout/sessions', 'https://postiz.example.com/public/v1/posts', 'https://api.anthropic.com/v1/messages']) {
+      expect(errCode(await fetch(url, { method: 'POST', body: '{}' }).catch((e) => e)), url).toBe('EDEMOBLOCKED');
+    }
+    const outbox = (await t.api.get('/api/demo/outbox')).data;
+    expect(outbox.guard).toBe(true);
+    expect(outbox.blocked.map((b: any) => b.host)).toEqual(expect.arrayContaining(['smtp.example.com', 'api.twilio.com', 'sms-gateway.example.net', 'graph.facebook.com', 'api.stripe.com', 'api.anthropic.com']));
+    // The spy behind the guard only ever saw loopback connections.
+    expect(passed.length).toBeGreaterThan(0);
+    expect(passed.filter((h) => !isLoopbackHost(h))).toEqual([]);
+  });
+
+  it('keeps sign-ups closed and puts a note and noindex on public pages', async () => {
+    // No self-service accounts: the SaaS sign-up is off and its settings are locked, new logins cannot be created.
+    expect((await t.api.raw('/signup', { redirect: 'manual' })).status).toBe(404);
+    expect((await t.api.put('/api/saas/settings', { signup_enabled: true })).status).toBe(403);
+    // A website page of the demo carries the note and stays out of search engines.
+    const site = (await t.api.get('/api/funnels')).data.find((f: any) => f.kind === 'website') ?? (await t.api.get('/api/funnels')).data[0];
+    const page = await t.api.raw(new URL(site.url).pathname, { headers: { cookie: t.api.cookie } });
+    expect(page.status).toBe(200);
+    expect(page.headers.get('x-robots-tag')).toBe('noindex, nofollow');
+    expect(await page.text()).toContain(DEMO_PAGE_NOTE);
+    // Outside the demo (no demo session) the same link shows only a neutral notice – no phishing pages on the demo.
+    for (const headers of [{}, { cookie: 'pghl_session=nicht-gueltig' }]) {
+      const outside = await t.api.raw(new URL(site.url).pathname, { headers });
+      expect(outside.status).toBe(403);
+      expect(outside.headers.get('x-robots-tag')).toBe('noindex, nofollow');
+      const html = await outside.text();
+      expect(html).toContain(DEMO_OUTSIDE_NOTE);
+      expect(html).not.toContain(DEMO_PAGE_NOTE);
+    }
+    // Connecting an own domain is refused.
+    const r = await t.api.patch(`/api/funnels/${site.id}`, { domain: 'phish.example.org' });
+    expect(r.status).toBe(403);
+    expect(t.app.db.get('SELECT domain FROM funnels WHERE id = ?', site.id)?.domain ?? null).toBeNull();
+  });
+
+  it('resets everything once a night', { timeout: 180_000 }, async () => {
+    const before = (await t.api.post('/api/contacts', { first_name: 'Wird', last_name: 'Gelöscht', email: 'weg@example.com' })).data.id;
+    expect(t.app.db.get('SELECT id FROM contacts WHERE id = ?', before)).toBeTruthy();
+    // Not yet due today: nothing happens.
+    await t.app.tick();
+    expect(t.app.db.get('SELECT id FROM contacts WHERE id = ?', before)).toBeTruthy();
+    // Pretend the last reset was yesterday and the reset hour has passed.
+    const prev = process.env.PGHL_DEMO_RESET_HOUR;
+    process.env.PGHL_DEMO_RESET_HOUR = '0';
+    try {
+      t.app.db.run(`UPDATE demo_state SET value = '2000-01-01' WHERE key = 'last_reset_day'`);
+      await t.app.tick();
+    } finally {
+      if (prev === undefined) delete process.env.PGHL_DEMO_RESET_HOUR;
+      else process.env.PGHL_DEMO_RESET_HOUR = prev;
+    }
+    expect(t.app.db.get('SELECT id FROM contacts WHERE id = ?', before)).toBeUndefined();
+    expect(t.app.db.get(`SELECT id FROM users WHERE email = 'demo@example.com'`)).toBeTruthy();
+    expect(Number(t.app.db.get('SELECT COUNT(*) n FROM locations')?.n)).toBe(6);
+    // The search indexes survive the wipe (their shadow tables are not emptied by hand).
+    const fts = t.app.db.all(`SELECT name FROM sqlite_master WHERE type = 'table' AND sql LIKE 'CREATE VIRTUAL TABLE%fts5%'`).map((r: any) => String(r.name));
+    expect(fts.length).toBeGreaterThan(0);
+    for (const v of fts) expect(() => t.app.db.run(`INSERT INTO "${v}"("${v}") VALUES('integrity-check')`)).not.toThrow();
+    // The old session is gone with the reset.
+    expect((await t.api.get('/api/me')).status).toBe(401);
+  });
+});
+
+describe('demo mode safety', () => {
+  it('never wipes a database with real users that demo mode did not seed', async () => {
+    const t = await startTestApp();
+    try {
+      await t.setup();
+      expect(await t.app.services.demo.reset('test')).toBeNull();
+      expect(t.app.db.get(`SELECT id FROM users WHERE email = 'chef@example.com'`)).toBeTruthy();
+      // Without PGHL_DEMO_MODE nothing is restricted and no demo info is published.
+      expect((await t.api.get('/api/version')).data.demo).toBeNull();
+      expect((await t.api.post('/api/demo/login')).status).toBe(404);
+      expect(outboundGuardActive()).toBe(false);
+    } finally {
+      await t.close();
+    }
+  });
+});
+
+describe('demo seed: a thriving company everywhere', () => {
+  let t: Awaited<ReturnType<typeof startTestApp>>;
+  let seed: Awaited<ReturnType<typeof seedDemo>>;
+  let ms = 0;
+  const n = (sql: string, ...p: any[]) => Number(t.app.db.get(sql, ...p)?.n ?? 0);
+  const loc = (name: string) => seed.locations.find((l) => l.name === name)!.id;
+
+  beforeAll(async () => {
+    t = await startTestApp();
+    const started = Date.now();
+    seed = await seedDemo(t.app, {});
+    ms = Date.now() - started;
+    console.info(`[demo seed] ${ms} ms, ${seed.ok} calls, ${seed.failed.length} failed`);
+    expect((await t.api.post('/api/auth/login', { email: seed.email, password: seed.password })).status).toBe(200);
+  }, 180_000);
+
+  afterAll(async () => {
+    await t.close();
+  });
+
+  it('is fast and free of route failures', () => {
+    expect(ms).toBeLessThan(60_000);
+    expect(seed.failed, seed.failed.join('\n')).toHaveLength(0);
+    expect(seed.ok).toBeGreaterThan(3000);
+  });
+
+  it('keeps the contacts under 400 (the health-score job scores 200 per tick; tests/scheduler-sweep.test.ts allows two ticks)', () => {
+    expect(n('SELECT COUNT(*) n FROM contacts')).toBeLessThanOrEqual(400);
+    expect(n('SELECT COUNT(*) n FROM contacts')).toBeGreaterThan(300);
+  });
+
+  it('runs twice without doubling anything (idempotent)', async () => {
+    const before = n('SELECT COUNT(*) n FROM invoices');
+    const again = await seedDemo(t.app, {});
+    expect(again.locations).toHaveLength(6);
+    expect(n('SELECT COUNT(*) n FROM invoices')).toBe(before);
+  });
+
+  it('shows a growing SaaS book in the CEO cockpit (MRR, ARR, subscriptions, trials, a little churn)', async () => {
+    const saas = loc('Taktwerk Software');
+    t.api.setLocation(saas);
+    const list = (await t.api.get('/api/reports/dashboards')).data.dashboards as any[];
+    const cockpit = list.find((d) => d.name === 'CEO-Cockpit (SaaS)');
+    expect(cockpit).toBeTruthy();
+    const full = (await t.api.get(`/api/reports/dashboards/${cockpit.id}`)).data;
+    const data = (await t.api.get(`/api/reports/dashboards/${cockpit.id}/data`)).data;
+    const value = (title: string) => {
+      const w = full.widgets.find((x: any) => x.title === title);
+      return data.widgets.find((x: any) => x.id === w.id).result.totals.v[0] as number;
+    };
+    expect(value('MRR')).toBeGreaterThan(4000);
+    expect(value('ARR')).toBeGreaterThan(48_000);
+    expect(value('ARR')).toBeCloseTo(value('MRR') * 12, 0);
+    expect(value('Aktive Abos')).toBeGreaterThanOrEqual(25);
+    expect(value('Laufende Testphasen')).toBeGreaterThanOrEqual(5);
+    expect(value('Kündigungen')).toBeGreaterThanOrEqual(1);
+    expect(value('Kündigungen')).toBeLessThan(8);
+    // the book grew over eleven months and a few subscriptions have ended
+    const subs = t.app.db.all(`SELECT created_at, json_extract(recurring, '$.active') a FROM invoices WHERE location_id = ? AND recurring IS NOT NULL ORDER BY created_at`, saas) as any[];
+    expect(subs.filter((s) => s.a === 0).length).toBeGreaterThanOrEqual(2);
+    expect(Date.parse(subs[0].created_at)).toBeLessThan(Date.now() - 250 * 864e5);
+    const half = Date.now() - 170 * 864e5;
+    expect(subs.filter((s) => Date.parse(s.created_at) > half).length).toBeGreaterThan(subs.filter((s) => Date.parse(s.created_at) <= half).length);
+    // every business has some recurring revenue, so the cockpit is never empty
+    for (const l of seed.locations) expect(n(`SELECT COUNT(*) n FROM invoices WHERE location_id = ? AND json_extract(recurring, '$.active') = 1`, l.id), l.name).toBeGreaterThanOrEqual(7);
+  });
+
+  it('has courses with modules, lessons, a quiz, members with progress and a learning path', async () => {
+    expect(n('SELECT COUNT(*) n FROM courses')).toBeGreaterThanOrEqual(8);
+    expect(n(`SELECT COUNT(*) n FROM courses WHERE status = 'published'`)).toBe(n('SELECT COUNT(*) n FROM courses'));
+    expect(n('SELECT COUNT(*) n FROM course_lessons')).toBeGreaterThanOrEqual(50);
+    expect(n('SELECT COUNT(*) n FROM quizzes')).toBeGreaterThanOrEqual(6);
+    expect(n('SELECT COUNT(*) n FROM course_progress')).toBeGreaterThan(300);
+    expect(n('SELECT COUNT(*) n FROM course_enrollments WHERE completed_at IS NOT NULL')).toBeGreaterThan(5);
+    expect(n('SELECT COUNT(*) n FROM course_reviews')).toBeGreaterThanOrEqual(8);
+    expect(n('SELECT COUNT(*) n FROM course_paths')).toBeGreaterThanOrEqual(1);
+    for (const l of seed.locations) expect(n('SELECT COUNT(*) n FROM courses WHERE location_id = ?', l.id), l.name).toBeGreaterThanOrEqual(1);
+    expect(n('SELECT COUNT(*) n FROM courses WHERE location_id = ?', loc('FitWerk Coaching'))).toBe(3);
+    // the Courses screen reads exactly this list
+    t.api.setLocation(loc('FitWerk Coaching'));
+    const list = (await t.api.get('/api/courses')).data as any[];
+    expect(list).toHaveLength(3);
+    const enrol = (await t.api.get(`/api/courses/${list[0].id}/enrollments`)).data as any[];
+    expect(enrol.length).toBeGreaterThanOrEqual(12);
+    expect(enrol.some((e) => e.progress.percent >= 100)).toBe(true);
+    expect(enrol.some((e) => e.progress.percent > 0 && e.progress.percent < 100)).toBe(true);
+  });
+
+  it('shows healthy dashboard numbers in every sub-account: revenue, pipeline, won deals, leads, reviews', async () => {
+    for (const l of seed.locations) {
+      t.api.setLocation(l.id);
+      const d30 = (await t.api.get('/api/dashboard?days=30')).data;
+      const d365 = (await t.api.get('/api/dashboard?days=365')).data;
+      expect(d30.revenue.paid / 100, l.name).toBeGreaterThan(3000);
+      expect(d365.revenue.paid / 100, l.name).toBeGreaterThan(25_000);
+      expect(d365.revenue.paid, l.name).toBeGreaterThan(d30.revenue.paid * 3);
+      expect(d30.opportunities.open, l.name).toBeGreaterThanOrEqual(8);
+      expect(d30.opportunities.openValue, l.name).toBeGreaterThan(20_000);
+      expect(d30.opportunities.won, l.name).toBeGreaterThanOrEqual(2);
+      expect(d365.opportunities.won, l.name).toBeGreaterThanOrEqual(15);
+      expect(d365.opportunities.lost, l.name).toBeGreaterThanOrEqual(5);
+      expect(d30.appointments.booked, l.name).toBeGreaterThan(20);
+      expect(d30.messages.sent, l.name).toBeGreaterThan(30);
+      expect(d30.messages.received, l.name).toBeGreaterThanOrEqual(5);
+      expect(d30.forms.submissions, l.name).toBeGreaterThanOrEqual(4);
+      expect(d30.contacts.new, l.name).toBeGreaterThanOrEqual(8);
+      expect(d365.contacts.total, l.name).toBeGreaterThanOrEqual(50);
+      expect(d30.reviews.average.a, l.name).toBeGreaterThanOrEqual(4.5);
+      expect(d30.reviews.average.n, l.name).toBeGreaterThanOrEqual(15);
+    }
+  });
+
+  it('spreads paid invoices over twelve months with growth, plus an overdue, an open and a quote', () => {
+    const now = new Date().toISOString();
+    for (const l of seed.locations) {
+      const perMonth = t.app.db.all(`SELECT substr(paid_at, 1, 7) m, COUNT(*) c FROM invoices WHERE location_id = ? AND status = 'paid' AND kind = 'invoice' AND paid_at IS NOT NULL GROUP BY m ORDER BY m`, l.id) as any[];
+      expect(perMonth.length, l.name).toBeGreaterThanOrEqual(11);
+      const half = Math.floor(perMonth.length / 2);
+      const sum = (rows: any[]) => rows.reduce((a, r) => a + Number(r.c), 0);
+      expect(sum(perMonth.slice(half)), l.name).toBeGreaterThan(sum(perMonth.slice(0, half)));
+      expect(n(`SELECT COUNT(*) n FROM invoices WHERE location_id = ? AND status = 'sent' AND due_at < ?`, l.id, now), l.name).toBeGreaterThanOrEqual(1);
+      expect(n(`SELECT COUNT(*) n FROM invoices WHERE location_id = ? AND status = 'sent' AND due_at >= ?`, l.id, now), l.name).toBeGreaterThanOrEqual(1);
+      expect(n(`SELECT COUNT(*) n FROM invoices WHERE location_id = ? AND kind = 'estimate'`, l.id), l.name).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it('keeps deals in several stages with won and lost deals in most months of the year', () => {
+    const soon = new Date(Date.now() + 36e5).toISOString();
+    for (const l of seed.locations) {
+      const months = (status: string) => (t.app.db.all(`SELECT substr(COALESCE(closed_at, updated_at), 1, 7) m FROM opportunities WHERE location_id = ? AND status = ? GROUP BY m`, l.id, status) as any[]).length;
+      expect(months('won'), l.name).toBeGreaterThanOrEqual(8);
+      expect(months('lost'), l.name).toBeGreaterThanOrEqual(5);
+      expect(n(`SELECT COUNT(DISTINCT stage_id) n FROM opportunities WHERE location_id = ? AND status = 'open'`, l.id), l.name).toBeGreaterThanOrEqual(3);
+      expect(n(`SELECT COUNT(*) n FROM opportunities WHERE location_id = ? AND status = 'lost' AND lost_reason = ''`, l.id), l.name).toBe(0);
+    }
+    // nothing is dated into the future
+    expect(n(`SELECT COUNT(*) n FROM opportunities WHERE created_at > ? OR COALESCE(closed_at, '') > ?`, soon, soon)).toBe(0);
+  });
+
+  it('has several websites and landing pages with visits and conversions per sub-account', () => {
+    for (const l of seed.locations) {
+      expect(n('SELECT COUNT(*) n FROM funnels WHERE location_id = ?', l.id), l.name).toBeGreaterThanOrEqual(5);
+      expect(n(`SELECT COUNT(*) n FROM funnels WHERE location_id = ? AND kind = 'website'`, l.id), l.name).toBeGreaterThanOrEqual(1);
+      expect(n('SELECT COUNT(*) n FROM funnel_pages WHERE location_id = ? AND views > 0', l.id), l.name).toBeGreaterThanOrEqual(8);
+      expect(n('SELECT COUNT(*) n FROM site_conversions WHERE location_id = ?', l.id), l.name).toBeGreaterThanOrEqual(30);
+    }
+    expect(n('SELECT COUNT(DISTINCT day) n FROM site_hits')).toBeGreaterThanOrEqual(55);
+  });
+
+  it('has campaigns with opens and clicks, active workflows with runs, ratings, a wiki, team chat and a community', async () => {
+    for (const l of seed.locations) {
+      expect(n(`SELECT COUNT(*) n FROM campaigns WHERE location_id = ? AND status = 'sent'`, l.id), l.name).toBeGreaterThanOrEqual(3);
+      expect(n(`SELECT COUNT(*) n FROM campaign_recipients r JOIN campaigns c ON c.id = r.campaign_id JOIN messages m ON m.id = r.message_id WHERE c.location_id = ? AND m.opened_at IS NOT NULL`, l.id), l.name).toBeGreaterThanOrEqual(10);
+      expect(n(`SELECT COUNT(*) n FROM campaign_recipients r JOIN campaigns c ON c.id = r.campaign_id JOIN messages m ON m.id = r.message_id WHERE c.location_id = ? AND m.clicked_at IS NOT NULL`, l.id), l.name).toBeGreaterThanOrEqual(1);
+      expect(n(`SELECT COUNT(*) n FROM workflows WHERE location_id = ? AND status = 'active'`, l.id), l.name).toBeGreaterThanOrEqual(4);
+      expect(n('SELECT COUNT(*) n FROM workflow_runs WHERE location_id = ?', l.id), l.name).toBeGreaterThanOrEqual(100);
+      expect(n('SELECT COUNT(*) n FROM tickets WHERE location_id = ? AND csat_score IS NOT NULL', l.id), l.name).toBeGreaterThanOrEqual(3);
+      expect(n('SELECT COUNT(*) n FROM wiki_pages WHERE location_id = ?', l.id), l.name).toBeGreaterThanOrEqual(5);
+      expect(n('SELECT COUNT(*) n FROM teamchat_messages m JOIN teamchat_channels c ON c.id = m.channel_id WHERE c.location_id = ?', l.id), l.name).toBeGreaterThanOrEqual(10);
+      expect(n('SELECT COUNT(*) n FROM webinars WHERE location_id = ?', l.id), l.name).toBeGreaterThanOrEqual(1);
+    }
+    t.api.setLocation(loc('Taktwerk Software'));
+    const csat = (await t.api.get('/api/surveys/csat?days=365')).data.summary;
+    expect(csat.count).toBeGreaterThanOrEqual(10);
+    expect(csat.avg).toBeGreaterThanOrEqual(4);
+    expect(n('SELECT COUNT(*) n FROM community_posts')).toBeGreaterThanOrEqual(15);
+  });
+
+  it('stays fictional: only example addresses and the test phone range, nothing sent', () => {
+    expect(n(`SELECT COUNT(*) n FROM contacts WHERE email != '' AND email NOT LIKE '%@example.com' AND email NOT LIKE '%@example.org' AND email NOT LIKE '%@example.net' AND email NOT LIKE '%.example'`)).toBe(0);
+    expect(n(`SELECT COUNT(*) n FROM contacts WHERE phone != '' AND phone NOT LIKE '+49301234%'`)).toBe(0);
+    expect(n(`SELECT COUNT(*) n FROM messages WHERE direction = 'out' AND status NOT IN ('logged', 'failed')`)).toBe(0);
+  });
+});
