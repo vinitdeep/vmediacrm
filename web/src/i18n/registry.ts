@@ -171,6 +171,16 @@ export const NAMESPACES = {
   // files in the customer portal: the share toggle on a contact's documents and the upload rules (docs/sales.md)
   portalfiles: { complete: true, files: ['pages/PortalFiles.tsx'] },
   gaps: { complete: true, files: ['pages/SiteSeo.tsx', 'pages/SocialExtras.tsx', 'pages/AgencyBanners.tsx', 'pages/RoleTemplates.tsx', 'pages/VideoTestimonials.tsx', 'pages/PromptLab.tsx', 'pages/GoogleLeads.tsx', 'pages/SystemMails.tsx', 'pages/WordPressPlugin.tsx', 'pages/ReviewBulk.tsx', 'pages/CourseAi.tsx'] },
+  b7theme: { complete: true, files: ['theme/Appearance.tsx', 'theme/BrandingLook.tsx', 'theme/depts.ts', 'theme/Profiles.tsx', 'theme/themes.ts'] },
+  b7undo: { complete: true, files: ['undo/shared.ts', 'undo/Undo.tsx#ConflictDialog,Changes,Row,HistoryPanel,UndoLayer'] },
+  b7team: { complete: true, files: ['pages/TeamCalendarEditor.tsx', 'pages/TeamCalendarKit.tsx', 'pages/TeamInboxSettings.tsx'] },
+  b7video: { complete: true, files: ['pages/VideoStudio.tsx', 'pages/VideoRecycle.tsx'] },
+  b7umzug: { complete: true, files: ['pages/umzug-format.ts', 'pages/UmzugAssistent.tsx', 'pages/UmzugConnect.tsx', 'pages/UmzugMapping.tsx', 'pages/UmzugPointer.tsx', 'pages/UmzugRun.tsx', 'pages/UmzugZustellung.tsx'] },
+  b7werk: { complete: true, files: ['werkstatt/Admin.tsx', 'werkstatt/badges.tsx', 'werkstatt/Build.tsx', 'werkstatt/ChatCards.tsx', 'werkstatt/Marktplatz.tsx', 'werkstatt/PluginFrame.tsx', 'werkstatt/Plugins.tsx', 'werkstatt/scopes.tsx', 'werkstatt/tour.ts', 'werkstatt/Werkstatt.tsx'] },
+  b7xr: { complete: true, files: ['xr/engine/board-scene.ts', 'xr/engine/canvas-scene.ts', 'xr/engine/runtime.ts', 'xr/engine/textures.ts', 'xr/install.ts', 'xr/SpatialCard.tsx', 'xr/SpatialSuggest.tsx', 'xr/Workspace.tsx', 'xr/XrButton.tsx', 'xr/XrViewer.tsx'] },
+  b7misc: { complete: true, files: ['pages/Stripe.tsx#stripeStatus,useStripe,EVENTS,SUB_EVENTS,CodeList,StripeSettings,useStripePayments,StripeInvoiceBox,useProductLinks,ProductBuyLink,ProductTriggerField', 'pages/SupabaseMirror.tsx', 'pages/Surveys.tsx', 'pages/SystemHealth.tsx', 'pages/TodoistSync.tsx', 'pages/Trash.tsx', 'pwa.tsx'] },
+  b7voice: { complete: true, files: ['pages/Voice.tsx', 'pages/VoiceAi.tsx'] },
+  b7webinar: { complete: true, files: ['pages/WebinarEditor.tsx', 'pages/WebinarRoomTab.tsx', 'pages/Webinars.tsx', 'pages/WebinarStats.tsx', 'pages/WebinarTabs.tsx', 'pages/Wishes.tsx'] },
 } as const satisfies Record<string, { complete: boolean; server?: boolean; files: readonly string[] }>;
 export type Namespace = keyof typeof NAMESPACES;
 
@@ -233,5 +243,15 @@ export const CATALOGS: { [L in Exclude<Locale, typeof SOURCE_LOCALE>]: Partial<R
     rentals: () => import('./en/rentals'),
     gaps: () => import('./en/gaps'),
     portalfiles: () => import('./en/portalfiles'),
+    b7theme: () => import('./en/b7theme'),
+    b7undo: () => import('./en/b7undo'),
+    b7team: () => import('./en/b7team'),
+    b7video: () => import('./en/b7video'),
+    b7umzug: () => import('./en/b7umzug'),
+    b7werk: () => import('./en/b7werk'),
+    b7xr: () => import('./en/b7xr'),
+    b7misc: () => import('./en/b7misc'),
+    b7voice: () => import('./en/b7voice'),
+    b7webinar: () => import('./en/b7webinar'),
   },
 };
