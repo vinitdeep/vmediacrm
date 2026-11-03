@@ -32,7 +32,7 @@ import '../companion/companion.css';
 /**
  * Fokus-Modus mit Companion (docs/living-boards.md#fokus-modus-mit-companion): no menus, just a question – to the companion ("Jarvis"
  * or another agent the person picked). Typed or spoken, a question about the data becomes a view made of the Living Boards' widgets
- * (POST /api/focus/ask, read only, rules without AI); asking for something to be done goes to the companion's HyperLevel Agent right
+ * (POST /api/focus/ask, read only, rules without AI); asking for something to be done goes to the companion's V Media CRM Agent right
  * here – its words, tool steps and confirmation card render in the result area, with the agent's rights, confirmations, audit log
  * and undo. "Was brennt?" and the proactive check-ins show the Brennpunkte and the next steps. One voice reads the answers (the
  * sentence of a view, the agent's final words). Voice never confirms. Esc (with an empty box and nothing open) or "Fokus beenden"
@@ -762,7 +762,7 @@ export function FocusPage() {
                 <div className="fx-action">
                   <Icon name="bot" size={18} />
                   <p>
-                    {t('Das ist eine Aufgabe – Fokus zeigt nur an und ändert nichts. Der HyperLevel Agent kann sie für dich erledigen.')}{' '}
+                    {t('Das ist eine Aufgabe – Fokus zeigt nur an und ändert nichts. Der V Media CRM Agent kann sie für dich erledigen.')}{' '}
                     {agentReady === false && <strong>{t('Dafür braucht der Agent ein KI-Modell (Einstellungen → KI-Anbieter).')}</strong>}
                   </p>
                   <button type="button" className="btn small" onClick={continueInAgent} data-tour="focus-agent">

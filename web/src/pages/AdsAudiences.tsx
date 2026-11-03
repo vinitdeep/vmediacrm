@@ -344,7 +344,7 @@ export function AdsLeads() {
             <details className="ads-more">
               <summary>Webhook bei Meta einrichten (einmal pro Meta-App)</summary>
               <p className="small">
-                Meta-App → Webhooks → Objekt <em>Page</em> → Callback-URL <code>{s.webhook_url}</code>, Verifizierungs-Token <code>{s.verify_token}</code>, Feld <code>leadgen</code> abonnieren. Ohne Webhook holt HyperLevel die Leads alle 10 Minuten ab. Details in docs/ads-manager.md.
+                Meta-App → Webhooks → Objekt <em>Page</em> → Callback-URL <code>{s.webhook_url}</code>, Verifizierungs-Token <code>{s.verify_token}</code>, Feld <code>leadgen</code> abonnieren. Ohne Webhook holt V Media CRM die Leads alle 10 Minuten ab. Details in docs/ads-manager.md.
               </p>
             </details>
           </>
@@ -359,7 +359,7 @@ export function AdsLeads() {
           </button>
         </div>
         {(forms.data ?? []).length === 0 ? (
-          <p className="muted">Noch keine Formulare von HyperLevel. Lege eines an und wähle es in der Kampagne.</p>
+          <p className="muted">Noch keine Formulare von V Media CRM. Lege eines an und wähle es in der Kampagne.</p>
         ) : (
           <div className="table-wrap" style={{ marginTop: 10 }}>
             <table className="t">

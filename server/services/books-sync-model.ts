@@ -6,10 +6,10 @@ import type { TaxGroup, TaxMode } from './invoice-model.js';
  * options, the payloads (contact, voucher / invoice / credit note), what the tools say about payments, retry timing and a rate
  * limiter. HTTP lives in books-sync-http.ts, the database side in modules/books-sync.ts. Docs: docs/integrations.md#lexware-office-and-sevdesk-live-sync.
  *
- * HyperLevel stays the issuer: its number, its frozen snapshot and its PDF are what the tool receives.
- *  - Lexware Office: a sales voucher (Beleg, `salesinvoice` / `salescreditnote`) with one item per tax rate, the HyperLevel number as
- *    voucher number and the HyperLevel PDF attached – Lexware books it, nothing is issued twice.
- *  - sevDesk: an invoice (Invoice/Factory/saveInvoice) with the HyperLevel number and the lines, marked as sent without sending it;
+ * V Media CRM stays the issuer: its number, its frozen snapshot and its PDF are what the tool receives.
+ *  - Lexware Office: a sales voucher (Beleg, `salesinvoice` / `salescreditnote`) with one item per tax rate, the V Media CRM number as
+ *    voucher number and the V Media CRM PDF attached – Lexware books it, nothing is issued twice.
+ *  - sevDesk: an invoice (Invoice/Factory/saveInvoice) with the V Media CRM number and the lines, marked as sent without sending it;
  *    a Storno cancels the linked sevDesk invoice, a partial credit note becomes a sevDesk credit note.
  */
 
@@ -31,7 +31,7 @@ export interface SyncOptions {
   customer_number_field: string;
   push_credit_notes: boolean;
   pull_payments: boolean;
-  /** Lexware: attach HyperLevel's PDF to the voucher. */
+  /** Lexware: attach V Media CRM's PDF to the voucher. */
   attach_pdf: boolean;
   /** Lexware: posting category of the voucher items. */
   category_id: string;
@@ -193,7 +193,7 @@ export interface LexVoucherInput {
   remark?: string;
 }
 
-/** A sales voucher with one item per tax rate (what Lexware books), dates in yyyy-mm-dd, the HyperLevel number as voucher number. */
+/** A sales voucher with one item per tax rate (what Lexware books), dates in yyyy-mm-dd, the V Media CRM number as voucher number. */
 export function lexVoucher(doc: DocSnapshot, o: LexVoucherInput): Record<string, any> {
   const groups = bookedGroups(doc);
   const credit = doc.kind === 'credit_note';
@@ -207,7 +207,7 @@ export function lexVoucher(doc: DocSnapshot, o: LexVoucherInput): Record<string,
     totalTaxAmount: amount(groups.reduce((n, g) => n + g.tax_cents, 0)),
     taxType: 'net',
     ...(o.contactId ? { contactId: o.contactId, useCollectiveContact: false } : { useCollectiveContact: true }),
-    remark: clip(o.remark ?? `Aus HyperLevel übertragen: ${doc.title || doc.number}`, 250),
+    remark: clip(o.remark ?? `Aus V Media CRM übertragen: ${doc.title || doc.number}`, 250),
     voucherItems: groups.map((g) => ({ amount: amount(g.net_cents), taxAmount: amount(g.tax_cents), taxRatePercent: g.rate, categoryId: o.categoryId })),
   };
 }
@@ -251,7 +251,7 @@ function sevPositions(doc: DocSnapshot, unityId: string, kind: 'InvoicePos' | 'C
   return pos;
 }
 
-/** Body of POST /Invoice/Factory/saveInvoice: a draft (status 100) with HyperLevel's number; "sendBy" marks it sent afterwards. */
+/** Body of POST /Invoice/Factory/saveInvoice: a draft (status 100) with V Media CRM's number; "sendBy" marks it sent afterwards. */
 export function sevInvoice(doc: DocSnapshot, o: SevDocInput): Record<string, any> {
   const days = doc.due_ymd && doc.issued_ymd ? Math.max(0, Math.round((Date.parse(`${doc.due_ymd}T00:00:00Z`) - Date.parse(`${doc.issued_ymd}T00:00:00Z`)) / 864e5)) : 14;
   const country = isoCountry(doc.buyer.country);

@@ -338,7 +338,7 @@ function ComposioKeyCard({ v, onChange }: { v: Json; onChange: () => void }) {
       {test && (
         <p className="small">
           <Badge tone="green">OK</Badge> {test.auth_configs} Auth-Konfiguration{test.auth_configs === 1 ? '' : 'en'} im Composio-Projekt
-          {test.webhook ? (test.webhook.exists ? (test.webhook.ours ? ' · Webhook zeigt auf HyperLevel' : ' · Webhook zeigt woandershin (App-Ereignisse kommen trotzdem an)') : ' · Webhook wird beim ersten App-Ereignis angelegt') : ''}
+          {test.webhook ? (test.webhook.exists ? (test.webhook.ours ? ' · Webhook zeigt auf V Media CRM' : ' · Webhook zeigt woandershin (App-Ereignisse kommen trotzdem an)') : ' · Webhook wird beim ersten App-Ereignis angelegt') : ''}
         </p>
       )}
       {open && (
@@ -623,7 +623,7 @@ function NewTrigger({ conns, onClose, onDone }: { conns: Conn[]; onClose: () => 
       <Field label="Tags für den Kontakt (optional)">
         <TagInput value={tags} onChange={setTags} />
       </Field>
-      <p className="muted small">Ohne Feldzuordnung sucht HyperLevel E-Mail, Telefon und Name selbst im Ereignis. Die Zuordnung lässt sich danach unter „Felder“ einstellen.</p>
+      <p className="muted small">Ohne Feldzuordnung sucht V Media CRM E-Mail, Telefon und Name selbst im Ereignis. Die Zuordnung lässt sich danach unter „Felder“ einstellen.</p>
     </Modal>
   );
 }
@@ -789,7 +789,7 @@ function ComposioAi() {
       <div className="card" data-tour="apps-ai-mcp">
         <h2>MCP: Claude & Codex in allen Apps</h2>
         <p className="muted small">
-          Der MCP-Server von HyperLevel (<code>{location.origin}/mcp</code>, Schlüssel unter Einstellungen → API & Webhooks oder Agentur → API & MCP) hat das Werkzeug <code>ghl_app_action</code>: <code>mode: "search"</code> findet freigegebene Aktionen samt Eingaben, <code>mode: "execute"</code> führt eine aus – immer im Sub-Account
+          Der MCP-Server von V Media CRM (<code>{location.origin}/mcp</code>, Schlüssel unter Einstellungen → API & Webhooks oder Agentur → API & MCP) hat das Werkzeug <code>ghl_app_action</code>: <code>mode: "search"</code> findet freigegebene Aktionen samt Eingaben, <code>mode: "execute"</code> führt eine aus – immer im Sub-Account
           des Schlüssels bzw. der übergebenen <code>location_id</code>.
         </p>
         <CodeBox text={`{"location_id": "${session.locationId}", "mode": "execute", "tool": "SLACK_SEND_MESSAGE", "arguments": {"channel": "#vertrieb", "text": "Neuer Lead!"}}`} />
@@ -960,11 +960,11 @@ export function ComposioAgencySetup() {
       </div>
       {test && (
         <p className="small">
-          <Badge tone="green">verbunden</Badge> {test.auth_configs} Auth-Konfigurationen{test.webhook ? (test.webhook.exists ? (test.webhook.ours ? ' · Webhook zeigt auf HyperLevel' : ' · Webhook zeigt auf eine andere Adresse') : ' · noch kein Webhook') : ''}
+          <Badge tone="green">verbunden</Badge> {test.auth_configs} Auth-Konfigurationen{test.webhook ? (test.webhook.exists ? (test.webhook.ours ? ' · Webhook zeigt auf V Media CRM' : ' · Webhook zeigt auf eine andere Adresse') : ' · noch kein Webhook') : ''}
         </p>
       )}
       <p className="muted small">
-        {v.connections} verbundene Apps in {v.locations} Sub-Accounts{v.overrides ? ` · ${v.overrides} Sub-Account(s) mit eigenem Schlüssel` : ''}. App-Ereignisse kommen an <code>{v.webhook_url}</code> – HyperLevel richtet den Webhook beim ersten Abo selbst ein.
+        {v.connections} verbundene Apps in {v.locations} Sub-Accounts{v.overrides ? ` · ${v.overrides} Sub-Account(s) mit eigenem Schlüssel` : ''}. App-Ereignisse kommen an <code>{v.webhook_url}</code> – V Media CRM richtet den Webhook beim ersten Abo selbst ein.
       </p>
     </div>
   );

@@ -160,7 +160,7 @@ registerReviewAdapter({
   id: 'trustpilot',
   label: 'Trustpilot',
   kind: 'api',
-  hint: 'Öffentliche Bewertungen über die Trustpilot Business API (API-Key). Mit API-Secret und dem Login eines Business-Users antwortet HyperLevel direkt.',
+  hint: 'Öffentliche Bewertungen über die Trustpilot Business API (API-Key). Mit API-Secret und dem Login eines Business-Users antwortet V Media CRM direkt.',
   fields: [
     { key: 'domain', label: 'Domain bei Trustpilot', placeholder: 'beispiel.de' },
     { key: 'business_unit_id', label: 'Business-Unit-ID (optional)', help: 'Wird sonst über die Domain gesucht' },
@@ -234,7 +234,7 @@ registerReviewAdapter({
   label: 'Yelp',
   kind: 'api',
   mirror: true,
-  hint: 'Yelp Fusion API (API-Key): Note, Anzahl und die neuesten Auszüge – nur lesen. Yelp erlaubt kein dauerhaftes Speichern: HyperLevel behält nur, was der letzte Abruf geliefert hat. Antworten auf biz.yelp.com.',
+  hint: 'Yelp Fusion API (API-Key): Note, Anzahl und die neuesten Auszüge – nur lesen. Yelp erlaubt kein dauerhaftes Speichern: V Media CRM behält nur, was der letzte Abruf geliefert hat. Antworten auf biz.yelp.com.',
   fields: [
     { key: 'business_id', label: 'Business-ID oder Alias', required: true, placeholder: 'malerei-muster-berlin' },
     { key: 'api_key', label: 'API-Key', secret: true, required: true },

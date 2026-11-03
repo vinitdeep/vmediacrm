@@ -53,7 +53,7 @@ export const AI_BLOCKS: Record<string, AiBlockSpec> = {
   faq: { label: 'FAQ', use: '2–10 Fragen mit Antworten', fields: { heading: T(110) }, items: { min: 2, max: 10, fields: { q: T(160, true), a: MD(700, true) } } },
   pricing: { label: 'Preise', use: '1–4 Pakete – nur Preise aus der Beschreibung, sonst „auf Anfrage“', fields: { heading: T(110), align: ALIGN }, items: { min: 1, max: 4, fields: { name: T(40, true), price: T(30, true), features: T(600, false, 'eine Leistung pro Zeile'), button_text: T(40), button_url: L() } } },
   cta: { label: 'Aufruf', use: 'Handlungsaufforderung mit Button(s)', fields: { heading: T(110, true), text: T(300), button_text: T(40), button_url: L(), button2_text: T(40), button2_url: L(), style: { kind: 'enum', options: ['', 'dark', 'light'] } } },
-  form: { label: 'Formular', use: 'das Formular des Sub-Accounts (Anfrage, Anmeldung)', fields: { heading: T(110), form_id: { kind: 'ref', ref: 'form', hint: 'leer = HyperLevel setzt das passende Formular ein' } } },
+  form: { label: 'Formular', use: 'das Formular des Sub-Accounts (Anfrage, Anmeldung)', fields: { heading: T(110), form_id: { kind: 'ref', ref: 'form', hint: 'leer = V Media CRM setzt das passende Formular ein' } } },
   calendar: { label: 'Kalender', use: 'Terminbuchung', fields: { calendar_slug: { kind: 'ref', ref: 'calendar', hint: 'leer = der erste Kalender' } } },
   product: { label: 'Produkt / Kasse', use: 'Produkt mit Preis und Button zur Kaufseite', fields: { product_id: { kind: 'ref', ref: 'product', hint: 'leer = später wählen' }, heading: T(110), text: T(400), button_text: T(40), badge: T(30) } },
   divider: { label: 'Trennlinie', use: 'Linie', fields: {} },

@@ -26,16 +26,16 @@ describe('health checks (pure)', () => {
 
   it('formats the webhook for ntfy, Slack, Discord, Telegram and plain JSON', () => {
     const a = { key: 'disk_low', severity: 'critical' as const, title: 'Speicherplatz fast voll', body: 'Nur noch 8 % frei' };
-    const ntfy = webhookRequest('https://ntfy.sh/mein-thema', a, 'HyperLevel');
+    const ntfy = webhookRequest('https://ntfy.sh/mein-thema', a, 'V Media CRM');
     expect(ntfy.init.headers.priority).toBe('5');
     expect(ntfy.init.headers.title).toMatch(/^=\?UTF-8\?B\?/);
     expect(ntfy.init.body).toBe('Nur noch 8 % frei');
-    expect(JSON.parse(webhookRequest('https://hooks.slack.com/services/T/B/x', a, 'HyperLevel').init.body).text).toContain('Speicherplatz fast voll');
-    expect(JSON.parse(webhookRequest('https://discord.com/api/webhooks/1/x', a, 'HyperLevel').init.body).content).toContain('8 % frei');
-    const tg = webhookRequest('https://api.telegram.org/bot123:abc/sendMessage?chat_id=-100', a, 'HyperLevel');
+    expect(JSON.parse(webhookRequest('https://hooks.slack.com/services/T/B/x', a, 'V Media CRM').init.body).text).toContain('Speicherplatz fast voll');
+    expect(JSON.parse(webhookRequest('https://discord.com/api/webhooks/1/x', a, 'V Media CRM').init.body).content).toContain('8 % frei');
+    const tg = webhookRequest('https://api.telegram.org/bot123:abc/sendMessage?chat_id=-100', a, 'V Media CRM');
     expect(tg.url).not.toContain('chat_id');
     expect(JSON.parse(tg.init.body)).toMatchObject({ chat_id: '-100', text: expect.stringContaining('Speicherplatz') });
-    expect(JSON.parse(webhookRequest('https://example.com/hook', { ...a, resolved: true }, 'HyperLevel').init.body)).toMatchObject({ key: 'disk_low', resolved: true, source: 'HyperLevel' });
+    expect(JSON.parse(webhookRequest('https://example.com/hook', { ...a, resolved: true }, 'V Media CRM').init.body)).toMatchObject({ key: 'disk_low', resolved: true, source: 'V Media CRM' });
   });
 });
 

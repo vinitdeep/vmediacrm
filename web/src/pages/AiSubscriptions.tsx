@@ -103,7 +103,7 @@ function ChatGptConnect({ onClose, onDone, again }: { onClose: () => void; onDon
         <>
           <div className="aisub-callout ok">
             <strong>Du nutzt jetzt dein ChatGPT-Abo.</strong>
-            Eligible Anfragen in HyperLevel laufen über deinen ChatGPT-Plan. Nutzung und Limits verwaltest du in ChatGPT unter{' '}
+            Eligible Anfragen in V Media CRM laufen über deinen ChatGPT-Plan. Nutzung und Limits verwaltest du in ChatGPT unter{' '}
             <a href={USAGE_URL} target="_blank" rel="noopener noreferrer">
               Einstellungen → Nutzung ↗
             </a>
@@ -117,7 +117,7 @@ function ChatGptConnect({ onClose, onDone, again }: { onClose: () => void; onDon
         <>
           <div className="aisub-callout">
             <strong>So funktioniert es</strong>
-            Du meldest dich direkt bei ChatGPT an und erlaubst HyperLevel, Modellanfragen über deinen Plan (Plus, Pro, Team) laufen zu lassen. HyperLevel bekommt dabei weder deine Unterhaltungen noch einen API-Schlüssel – und nie dein Passwort. Die Verbindung gehört dir allein: Andere Personen, Agentur-Admins, API-Schlüssel, Workflows und automatische Läufe können sie nicht nutzen.
+            Du meldest dich direkt bei ChatGPT an und erlaubst V Media CRM, Modellanfragen über deinen Plan (Plus, Pro, Team) laufen zu lassen. V Media CRM bekommt dabei weder deine Unterhaltungen noch einen API-Schlüssel – und nie dein Passwort. Die Verbindung gehört dir allein: Andere Personen, Agentur-Admins, API-Schlüssel, Workflows und automatische Läufe können sie nicht nutzen.
           </div>
           <ol className="aisub-steps">
             <li className={step === 'paste' ? 'done' : ''}>
@@ -167,7 +167,7 @@ function ChatGptConnect({ onClose, onDone, again }: { onClose: () => void; onDon
           </ol>
           {step === 'intro' && error && <p className="aisub-err" role="alert">{error}</p>}
           <p className="aisub-note" style={{ marginTop: 14 }}>
-            Der Code in der Adresse gilt nur einmal und nur zusammen mit einem geheimen Schlüssel, der auf dem HyperLevel-Server bleibt (PKCE). Grundlage: OpenAIs „Sign in with ChatGPT“ für Open-Source-Apps (
+            Der Code in der Adresse gilt nur einmal und nur zusammen mit einem geheimen Schlüssel, der auf dem V Media CRM-Server bleibt (PKCE). Grundlage: OpenAIs „Sign in with ChatGPT“ für Open-Source-Apps (
             <a href={OPENAI_POLICY_URL} target="_blank" rel="noopener noreferrer">
               Dokumentation ↗
             </a>
@@ -297,7 +297,7 @@ function ChatGptCard({ data, reload, onBridge, open, setOpen }: { data: any; rel
             <button
               className="btn ghost aisub-btn"
               onClick={async () => {
-                if (!confirmAsk('ChatGPT-Abo trennen? HyperLevel widerruft die Freigabe bei OpenAI und löscht die Zugangsdaten.')) return;
+                if (!confirmAsk('ChatGPT-Abo trennen? V Media CRM widerruft die Freigabe bei OpenAI und löscht die Zugangsdaten.')) return;
                 const r = await act(() => api.del('/api/ai-subscriptions/chatgpt'));
                 if (r) toast(r.revoked ? 'Getrennt – Freigabe bei OpenAI widerrufen' : r.note);
                 reload();
@@ -372,7 +372,7 @@ export function BridgeConnect({ cli, onClose }: { cli: 'claude' | 'codex'; onClo
       {cli === 'claude' ? (
         <div className="aisub-callout">
           <strong>Warum läuft das über deinen Rechner?</strong>
-          Anthropic erlaubt Drittanbietern keine „Mit Claude anmelden“-Funktion und keine Anfragen über Free-, Pro- oder Max-Zugänge. Deshalb meldest du dich in <strong>Claude Code auf deinem eigenen Rechner</strong> an – dein Abo-Login bleibt dort, HyperLevel sieht ihn nie. Die Bridge reicht nur deine Chat-Aufträge an Claude Code weiter (
+          Anthropic erlaubt Drittanbietern keine „Mit Claude anmelden“-Funktion und keine Anfragen über Free-, Pro- oder Max-Zugänge. Deshalb meldest du dich in <strong>Claude Code auf deinem eigenen Rechner</strong> an – dein Abo-Login bleibt dort, V Media CRM sieht ihn nie. Die Bridge reicht nur deine Chat-Aufträge an Claude Code weiter (
           <a href={POLICY_URL} target="_blank" rel="noopener noreferrer">
             Anthropics Regel ↗
           </a>
@@ -381,7 +381,7 @@ export function BridgeConnect({ cli, onClose }: { cli: 'claude' | 'codex'; onClo
       ) : (
         <div className="aisub-callout">
           <strong>Die Alternative zur direkten Anmeldung</strong>
-          Die offizielle Codex CLI läuft mit deinem ChatGPT-Abo auf deinem eigenen Rechner. HyperLevel gibt ihr die Aufträge – dein Login verlässt den Rechner nicht. Das hilft auch, wenn „Mit ChatGPT anmelden“ auf dieser Installation nicht verfügbar ist.
+          Die offizielle Codex CLI läuft mit deinem ChatGPT-Abo auf deinem eigenen Rechner. V Media CRM gibt ihr die Aufträge – dein Login verlässt den Rechner nicht. Das hilft auch, wenn „Mit ChatGPT anmelden“ auf dieser Installation nicht verfügbar ist.
         </div>
       )}
       <div className="aisub-callout warn">
@@ -445,7 +445,7 @@ export function BridgeConnect({ cli, onClose }: { cli: 'claude' | 'codex'; onClo
                 </div>
                 <Code text={cmd} label="Befehl kopieren" />
                 <p className="aisub-note">
-                  Der Befehl lädt die Bridge von deinem HyperLevel, koppelt und startet sie – danach das Terminal offen lassen. Der QR-Code enthält den Koppel-Befehl: mit dem Handy scannen und an deinen Rechner schicken. Nur Koppeln ohne Download: <code>{code.command}</code>
+                  Der Befehl lädt die Bridge von deinem V Media CRM, koppelt und startet sie – danach das Terminal offen lassen. Der QR-Code enthält den Koppel-Befehl: mit dem Handy scannen und an deinen Rechner schicken. Nur Koppeln ohne Download: <code>{code.command}</code>
                 </p>
               </>
             )}
@@ -503,7 +503,7 @@ export function BridgeConnect({ cli, onClose }: { cli: 'claude' | 'codex'; onClo
         </li>
       </ol>
       <p className="aisub-note" style={{ marginTop: 12 }}>
-        Die Bridge verbindet sich von selbst neu, nach Netzproblemen und nach einem Neustart von HyperLevel. Beim Anmelden des Rechners starten lassen: siehe Dokumentation „KI-Anbieter → Bridge“.
+        Die Bridge verbindet sich von selbst neu, nach Netzproblemen und nach einem Neustart von V Media CRM. Beim Anmelden des Rechners starten lassen: siehe Dokumentation „KI-Anbieter → Bridge“.
       </p>
     </Modal>
   );

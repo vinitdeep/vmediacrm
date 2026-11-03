@@ -65,7 +65,7 @@ export function PurgeDialog({ types, labels, url, onClose }: { types: string[]; 
           <li key={t}>{labels[t] ?? t}</li>
         ))}
       </ul>
-      <p className="muted small">„Jetzt löschen“ entfernt diese Daten dort endgültig (das jeweilige Dataset mit Wissensgraph und Vektoren). In HyperLevel bleibt alles unverändert. Bei „Später“ bleiben sie in Cognee, bis du sie über „Status“ löschst.</p>
+      <p className="muted small">„Jetzt löschen“ entfernt diese Daten dort endgültig (das jeweilige Dataset mit Wissensgraph und Vektoren). In V Media CRM bleibt alles unverändert. Bei „Später“ bleiben sie in Cognee, bis du sie über „Status“ löschst.</p>
     </Modal>
   );
 }

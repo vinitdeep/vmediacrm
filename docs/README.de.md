@@ -3,13 +3,13 @@
 # HyperLevel-Dokumentation
 
 Alles zum Betreiben, Nutzen und Erweitern von HyperLevel – dem Open-Source-Business-OS, auf dem deine KI-Agenten arbeiten.
-Neu hier? Starte mit [Auf den Server](../README.de.md#auf-den-server) oder probiere die [Live-Demo](https://demo.gohyperlevel.com/demo).
+Neu hier? Starte mit [Auf den Server](../README.md#quick-start) oder probiere die [Live-Demo](https://demo.gohyperlevel.com/demo).
 
 Seiten mit deutscher Fassung öffnen hier auf Deutsch, die übrigen auf Englisch; **(DE)** heißt: bisher nur auf Deutsch. Übersetzungen sind willkommen ([so machst du mit](../CONTRIBUTING.md)).
 
 ## Loslegen
 
-- [Auf den Server](../README.de.md#auf-den-server) – in fünf Minuten mit Docker · [Lokal starten](../README.de.md#lokal-starten)
+- [Auf den Server](../README.md#quick-start) – in fünf Minuten mit Docker · [Lokal starten](../README.md#quick-start)
 - [Installationswege](deploy/README.md) – Docker Compose, Hostinger, Coolify, Railway/Render, Node.js ohne Docker
 - [Selbst hosten – Referenz](self-hosting.de.md) – alle Einstellungen, Domains, Mail, Updates
 - [Demo-Modus](demo-mode.md) · [Gehostete Cloud](cloud.md) · [Landingpage](landing.md)

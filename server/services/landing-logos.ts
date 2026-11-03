@@ -2,7 +2,7 @@ import { escapeHtml as h } from '../core/template.js';
 import { contrast } from './site-style.js';
 
 /**
- * Landing page: "Integrates with your favorite tools" – an endless row of the integrations HyperLevel really has, right under the
+ * Landing page: "Integrates with your favorite tools" – an endless row of the integrations V Media CRM really has, right under the
  * hero. Every entry names where the integration lives (`via`: a key of the integrations catalogue, or a file and a word in it);
  * tests/landing.test.ts checks each one against the running app, so a logo can only be shown for something we connect to.
  * No vendor that the page compares against (competitors.json, replaces.json) and no logo of an AI lab: AI models are plain words.

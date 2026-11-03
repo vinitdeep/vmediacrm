@@ -43,9 +43,9 @@ describe('todoist helpers', () => {
     expect(normalizeDue('kaputt')).toBeNull();
   });
 
-  it('adds and strips the link back to HyperLevel', () => {
+  it('adds and strips the link back to V Media CRM', () => {
     const d = withFooter('Angebot schicken', 'https://gh.example.com/app/contacts/c1');
-    expect(d).toBe('Angebot schicken\n\n↗ HyperLevel: https://gh.example.com/app/contacts/c1');
+    expect(d).toBe('Angebot schicken\n\n↗ V Media CRM: https://gh.example.com/app/contacts/c1');
     expect(stripFooter(d)).toBe('Angebot schicken');
     expect(stripFooter(withFooter('', 'https://x/app/tasks'))).toBe('');
     // Footers written under the former product name are still recognised.
@@ -87,7 +87,7 @@ describe('todoist sync – one project per sub-account', () => {
     expect((await t.api.patch('/api/agency/todoist', { layout: 'projects' })).data.layout).toBe('projects');
     await t.api.put(`/api/agency/todoist/mapping/${otherLoc}`, { mode: 'off' });
     const v = await sync();
-    const parent = [...fake.projects.values()].find((p) => p.name === 'HyperLevel');
+    const parent = [...fake.projects.values()].find((p) => p.name === 'V Media CRM');
     const child = [...fake.projects.values()].find((p) => p.name === 'Testfirma');
     expect(parent?.parent_id).toBeNull();
     expect(child?.parent_id).toBe(parent.id);
@@ -109,11 +109,11 @@ describe('todoist sync – one project per sub-account', () => {
     const v = await sync();
     expect(v.state.counts.created).toBe(2);
     const item = fake.byContent('Angebot schicken');
-    expect(item.description).toBe(`mit Rabatt\n\n↗ HyperLevel: http://localhost/app/contacts/${contact.id}`);
+    expect(item.description).toBe(`mit Rabatt\n\n↗ V Media CRM: http://localhost/app/contacts/${contact.id}`);
     expect(item.due).toMatchObject({ date: '2026-10-06' });
     expect(item.labels).toEqual(['ghp']);
     expect(fake.byContent('Anrufen').due).toMatchObject({ date: '2026-10-06T13:30:00Z', timezone: 'Europe/Berlin' });
-    expect(fake.byContent('Anrufen').description).toBe('↗ HyperLevel: http://localhost/app/tasks');
+    expect(fake.byContent('Anrufen').description).toBe('↗ V Media CRM: http://localhost/app/tasks');
     expect(fake.byContent('Privat – bleibt hier')).toBeUndefined();
 
     // nothing changed → nothing sent
@@ -159,7 +159,7 @@ describe('todoist sync – one project per sub-account', () => {
     expect(imported).toMatchObject({ description: 'von unterwegs', contact_id: null, assigned_to: me.user.id, done: 0, due_at: '2026-10-09T07:00:00.000Z' });
     expect(tasks.some((x: any) => x.title === 'Schon erledigt' || x.title === 'Nicht zugeordnet')).toBe(false);
 
-    fake.edit(remote.id, { content: 'In Todoist umbenannt', description: 'neu\n\n↗ HyperLevel: http://localhost/app/tasks' });
+    fake.edit(remote.id, { content: 'In Todoist umbenannt', description: 'neu\n\n↗ V Media CRM: http://localhost/app/tasks' });
     await sync();
     expect(await task(imported.id)).toMatchObject({ title: 'In Todoist umbenannt', description: 'neu' });
     // our own write echoes back without a ping-pong
@@ -198,21 +198,21 @@ describe('todoist sync – one project per sub-account', () => {
     await sync();
     const ia = fake.byContent('Konflikt A');
     const ib = fake.byContent('Konflikt B');
-    // A: Todoist changed an hour ago, HyperLevel just now → HyperLevel wins
+    // A: Todoist changed an hour ago, V Media CRM just now → V Media CRM wins
     fake.edit(ia.id, { content: 'A aus Todoist', updated_at_override: new Date(Date.now() - 3600_000).toISOString() });
-    await t.api.patch(`/api/tasks/${a.id}`, { title: 'A aus HyperLevel' });
-    // B: HyperLevel changed, then Todoist a minute later → Todoist wins
-    await t.api.patch(`/api/tasks/${b.id}`, { title: 'B aus HyperLevel' });
+    await t.api.patch(`/api/tasks/${a.id}`, { title: 'A aus V Media CRM' });
+    // B: V Media CRM changed, then Todoist a minute later → Todoist wins
+    await t.api.patch(`/api/tasks/${b.id}`, { title: 'B aus V Media CRM' });
     fake.edit(ib.id, { content: 'B aus Todoist', updated_at_override: new Date(Date.now() + 60_000).toISOString() });
 
     const v = await sync();
     expect(v.state.counts.conflicts).toBe(2);
-    expect((await task(a.id)).title).toBe('A aus HyperLevel');
-    expect(fake.items.get(ia.id).content).toBe('A aus HyperLevel');
+    expect((await task(a.id)).title).toBe('A aus V Media CRM');
+    expect(fake.items.get(ia.id).content).toBe('A aus V Media CRM');
     expect((await task(b.id)).title).toBe('B aus Todoist');
     expect(fake.items.get(ib.id).content).toBe('B aus Todoist');
     const conflicts = v.log.filter((l: any) => l.level === 'conflict').map((l: any) => l.message);
-    expect(conflicts.some((m: string) => m.includes('HyperLevel ist neuer'))).toBe(true);
+    expect(conflicts.some((m: string) => m.includes('V Media CRM ist neuer'))).toBe(true);
     expect(conflicts.some((m: string) => m.includes('Todoist ist neuer'))).toBe(true);
   });
 
@@ -380,7 +380,7 @@ describe('todoist sync – one project with a section per sub-account', () => {
     expect(fake2.requests.map((x) => x.path)).toEqual(['/user']);
     expect((await t2.api.post('/api/agency/todoist/sync', {})).status).toBe(400);
     const s = await t2.api.patch('/api/agency/todoist', { layout: 'sections', enabled: true });
-    expect(s.data).toMatchObject({ layout: 'sections', enabled: true, home: { id: null, name: 'HyperLevel', picked: false } });
+    expect(s.data).toMatchObject({ layout: 'sections', enabled: true, home: { id: null, name: 'V Media CRM', picked: false } });
   });
 
   it('creates one project with a section per sub-account and sends tasks into the sections', async () => {
@@ -389,8 +389,8 @@ describe('todoist sync – one project with a section per sub-account', () => {
     await inLoc(locB, () => t2.api.post('/api/tasks', { title: 'Steuer abgeben' }));
     await inLoc(locC, () => t2.api.post('/api/tasks', { title: 'Intern bleibt hier' }));
     const v = await sync2();
-    expect([...fake2.projects.values()].map((p) => p.name)).toEqual(['HyperLevel']);
-    const home = fake2.projectByName('HyperLevel');
+    expect([...fake2.projects.values()].map((p) => p.name)).toEqual(['V Media CRM']);
+    const home = fake2.projectByName('V Media CRM');
     expect(home.parent_id).toBeNull();
     const secA = fake2.sectionByName('Testfirma');
     const secB = fake2.sectionByName('Privat');
@@ -399,9 +399,9 @@ describe('todoist sync – one project with a section per sub-account', () => {
     expect(fake2.byContent('Website-Relaunch')).toMatchObject({ project_id: home.id, section_id: secA.id, labels: ['ghp'] });
     expect(fake2.byContent('Steuer abgeben')).toMatchObject({ project_id: home.id, section_id: secB.id });
     expect(fake2.byContent('Intern bleibt hier')).toBeUndefined();
-    expect(v.home).toMatchObject({ id: home.id, name: 'HyperLevel' });
+    expect(v.home).toMatchObject({ id: home.id, name: 'V Media CRM' });
     expect(v.locations.find((l: any) => l.id === locA)).toMatchObject({ mode: 'auto', section_id: secA.id, section_name: 'Testfirma', ready: true });
-    expect(v.log.some((l: any) => l.message.includes('2 Abschnitte in „HyperLevel“ angelegt'))).toBe(true);
+    expect(v.log.some((l: any) => l.message.includes('2 Abschnitte in „V Media CRM“ angelegt'))).toBe(true);
 
     await sync2();
     expect(fake2.projects.size).toBe(1);
@@ -417,14 +417,14 @@ describe('todoist sync – one project with a section per sub-account', () => {
     await t2.api.patch('/api/agency/todoist', { parent_name: 'GHP Aufgaben' });
     await sync2();
     expect([...fake2.projects.values()].map((p) => p.name)).toEqual(['GHP Aufgaben']);
-    await t2.api.patch('/api/agency/todoist', { parent_name: 'HyperLevel' });
+    await t2.api.patch('/api/agency/todoist', { parent_name: 'V Media CRM' });
     await sync2();
-    expect(fake2.projectByName('HyperLevel')?.id).toBe(home.id);
+    expect(fake2.projectByName('V Media CRM')?.id).toBe(home.id);
     expect(fake2.byContent('Website-Relaunch').section_id).toBe(secA.id);
   });
 
   it('imports tasks from mapped sections only and completes them both ways', async () => {
-    const home = fake2.projectByName('HyperLevel');
+    const home = fake2.projectByName('V Media CRM');
     const secA = fake2.sectionByName('Testfirma');
     const inSection = fake2.addItem(home.id, 'Im Abschnitt angelegt', { section_id: secA.id });
     fake2.addItem(home.id, 'Ohne Abschnitt');
@@ -457,7 +457,7 @@ describe('todoist sync – one project with a section per sub-account', () => {
   });
 
   it('maps a sub-account to an existing section', async () => {
-    const home = fake2.projectByName('HyperLevel');
+    const home = fake2.projectByName('V Media CRM');
     const bestand = fake2.addSection(home.id, 'Bestand');
     fake2.addItem(home.id, 'Alte Aufgabe', { section_id: bestand.id });
     await sync2(); // not mapped yet
@@ -509,7 +509,7 @@ describe('todoist sync – one project with a section per sub-account', () => {
   });
 
   it('switches syncing off when the project is deleted in Todoist and leaves the tasks alone', async () => {
-    const home = fake2.projectByName('HyperLevel');
+    const home = fake2.projectByName('V Media CRM');
     const open = (await tasksOf(locA)).filter((x) => !x.done);
     expect(open.length).toBeGreaterThan(0);
     home.is_deleted = true;
@@ -517,7 +517,7 @@ describe('todoist sync – one project with a section per sub-account', () => {
     for (const it of fake2.items.values()) if (it.project_id === home.id) fake2.edit(it.id, { is_deleted: true });
     const v = await sync2();
     expect(v.enabled).toBe(false);
-    expect(v.log.some((l: any) => l.message.includes('„HyperLevel“ gibt es nicht mehr'))).toBe(true);
+    expect(v.log.some((l: any) => l.message.includes('„V Media CRM“ gibt es nicht mehr'))).toBe(true);
     expect((await tasksOf(locA)).filter((x) => !x.done).length).toBe(open.length);
     expect(v.locations.every((l: any) => !l.section_id)).toBe(true);
     expect((await t2.api.post('/api/agency/todoist/sync', {})).status).toBe(400);

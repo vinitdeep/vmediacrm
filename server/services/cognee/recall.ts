@@ -8,7 +8,7 @@ import { getItem, pendingDeletions, type ItemRow } from './store.js';
  * "Gedächtnis fragen": a search in the datasets of ONE sub-account (the types the asker may see), answered with short
  * snippets and their sources. Nothing from the answer is trusted:
  *  - only datasets of this sub-account are queried, and answers are accepted only from those dataset ids;
- *  - a passage counts only if it resolves to a record HyperLevel still has (an erased or deleted record whose removal is still
+ *  - a passage counts only if it resolves to a record V Media CRM still has (an erased or deleted record whose removal is still
  *    queued never shows up);
  *  - the result is cut to a fixed size so it cannot flood a model's context.
  */
@@ -81,7 +81,7 @@ const LEAD_LINE = /^[^:\n]{1,40}: .*$/;
  */
 export function snippetOf(text: unknown, max: number): string {
   const blocks = String(text ?? '')
-    .replace(/^(?:HyperLevel|GoHigh) · [^\n]*\n+/, '') // GoHigh: documents synced before the rename
+    .replace(/^(?:V Media CRM|HyperLevel|GoHigh) · [^\n]*\n+/, '') // GoHigh: documents synced before the rename
     .split(/\n\s*\n/)
     .map((b) => b.trim())
     .filter(Boolean);
@@ -134,7 +134,7 @@ export async function recall(app: App, client: LocationClient, o: { query: strin
       const item = itemOf(app, loc, ds, chunk);
       const kind = item ? kindOf(item.type, item.kind) : undefined;
       const info = item && kind ? kind.describe(app, loc, item.record_id, item.parent_id) : null;
-      // Not a record HyperLevel knows (erased, deleted, replaced): not shown.
+      // Not a record V Media CRM knows (erased, deleted, replaced): not shown.
       if (!item || !info) {
         unresolved++;
         continue;

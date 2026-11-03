@@ -599,7 +599,7 @@ export class Writer {
     }
     if (unknownTags.size) this.env.warn(`Vorlage „${clip(rec.name, 60)}“: Platzhalter ohne Entsprechung bleiben stehen: ${[...unknownTags].slice(0, 5).join(', ')}`);
     const isHtml = /<[a-z][\s\S]*>/i.test(html);
-    if (isHtml && !html.includes(UNSUB_TOKEN) && /<\/body>/i.test(html)) this.env.warn(`Vorlage „${clip(rec.name, 60)}“ enthält keinen Abmeldelink – HyperLevel fügt beim Versand eine Fußzeile hinzu`);
+    if (isHtml && !html.includes(UNSUB_TOKEN) && /<\/body>/i.test(html)) this.env.warn(`Vorlage „${clip(rec.name, 60)}“ enthält keinen Abmeldelink – V Media CRM fügt beim Versand eine Fußzeile hinzu`);
     const row = { name: clip(rec.name, 200) || 'Vorlage', channel: 'email', subject: clip(subject, 300), body: html || clip(rec.text, 200_000), is_html: isHtml ? 1 : 0, body_text: clip(rec.text || (isHtml ? stripHtml(html) : ''), 100_000), updated_at: now() };
     if (this.env.dry) {
       this.stat('templates', known ? 'updated' : 'created');
@@ -630,7 +630,7 @@ export class Writer {
       recurring: rec.recurring?.interval === 'year' ? 'year' : rec.recurring ? 'month' : null,
       active: rec.active === false ? 0 : 1,
     };
-    if (rec.recurring && rec.recurring.interval === 'week') this.env.warn(`Produkt „${clip(rec.name, 60)}“ wird wöchentlich abgerechnet – HyperLevel kennt monatlich und jährlich; bitte prüfen`);
+    if (rec.recurring && rec.recurring.interval === 'week') this.env.warn(`Produkt „${clip(rec.name, 60)}“ wird wöchentlich abgerechnet – V Media CRM kennt monatlich und jährlich; bitte prüfen`);
     if (known && this.db.get('SELECT 1 FROM products WHERE id = ? AND location_id = ?', known.local, this.loc)) {
       this.db.update('products', known.local, row, this.loc);
       return void this.stat('products', 'updated');

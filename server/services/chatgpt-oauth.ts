@@ -170,7 +170,7 @@ export function parseCallback(input: string, expectedState: string, savedClientI
   if (states.length !== 1 || !same(states[0], expectedState)) throw new OAuthError('Diese Adresse gehört nicht zu der gestarteten Anmeldung (Code „state“ passt nicht). Bitte die Anmeldung neu starten und die Adresse aus dem neuen Browser-Tab einfügen.', 'state_mismatch', 400);
   const err = p.get('error');
   if (err) {
-    throw err === 'access_denied' ? new OAuthError('Du hast die Freigabe in ChatGPT abgelehnt. Ohne Freigabe kann HyperLevel dein Abo nicht nutzen – du kannst die Anmeldung jederzeit neu starten.', 'access_denied', 400) : new OAuthError(`ChatGPT hat die Anmeldung abgebrochen (${err.slice(0, 80)}).`, 'oauth_error', 400);
+    throw err === 'access_denied' ? new OAuthError('Du hast die Freigabe in ChatGPT abgelehnt. Ohne Freigabe kann V Media CRM dein Abo nicht nutzen – du kannst die Anmeldung jederzeit neu starten.', 'access_denied', 400) : new OAuthError(`ChatGPT hat die Anmeldung abgebrochen (${err.slice(0, 80)}).`, 'oauth_error', 400);
   }
   const codes = p.getAll('code');
   if (codes.length !== 1 || !codes[0]) throw new OAuthError('In der Adresse fehlt der Code („code=…“). Bitte die komplette Adresse aus der Adresszeile kopieren.', 'no_code', 400);

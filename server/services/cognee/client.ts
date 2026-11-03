@@ -3,7 +3,7 @@ import { safeFetch, type SafeResponse } from '../net.js';
 import { datasetName, isUuid, ownedDataset, type CogneeType, type OwnedDataset } from './model.js';
 
 /**
- * Cognee over its REST API (server to server, no MCP): plain fetch, no SDK. Every HTTP call HyperLevel makes to a Cognee
+ * Cognee over its REST API (server to server, no MCP): plain fetch, no SDK. Every HTTP call V Media CRM makes to a Cognee
  * server lives in this file. Written against the Cognee 1.6.2 FastAPI routers (cognee/api/v1/**, see docs/cognee.md for
  * the endpoint list); the network is `safeFetch` unless a test sets `app.services.cogneeFetch`.
  *
@@ -18,7 +18,7 @@ export type CogneeFetch = (url: string, init: { method?: string; headers?: Recor
 export class CogneeError extends Error {
   constructor(
     message: string,
-    /** Status HyperLevel answers with. */
+    /** Status V Media CRM answers with. */
     public status = 502,
     /** Status Cognee answered with (0 = no answer). */
     public upstream = 0,
@@ -74,7 +74,7 @@ export function errorFor(status: number, body: any, what = ''): CogneeError {
 
 // --- multipart ----------------------------------------------------------------------------------------------------------
 
-/** multipart/form-data with text fields only (everything HyperLevel sends is text) – FastAPI's `Form(...)` fields. */
+/** multipart/form-data with text fields only (everything V Media CRM sends is text) – FastAPI's `Form(...)` fields. */
 export function multipart(fields: [string, string][]): { body: string; contentType: string } {
   const boundary = `----gohigh${randomBytes(12).toString('hex')}`;
   let body = '';

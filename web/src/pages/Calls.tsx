@@ -362,7 +362,7 @@ export function TelephonySettings() {
                       <button
                         className="btn small"
                         onClick={async () => {
-                          if (n.voice_url && !confirmAsk(`Diese Nummer zeigt bisher auf ${n.voice_url}. Auf HyperLevel umstellen?`)) return;
+                          if (n.voice_url && !confirmAsk(`Diese Nummer zeigt bisher auf ${n.voice_url}. Auf V Media CRM umstellen?`)) return;
                           const r = await act(() => api.post(`/api/telephony/numbers/${n.sid}/connect`), 'Webhooks eingetragen');
                           if (r) {
                             data.setData(r.settings);

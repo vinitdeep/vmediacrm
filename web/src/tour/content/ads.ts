@@ -1,11 +1,11 @@
 import type { Tour } from '../types';
 
-/** Anzeigen: Meta and Google campaigns created and managed from HyperLevel. */
+/** Anzeigen: Meta and Google campaigns created and managed from V Media CRM. */
 export const ADS_TOURS: Tour[] = [
   {
     id: 'ads',
     title: 'Anzeigen: Meta & Google',
-    summary: 'Kampagnen bei Facebook, Instagram und Google direkt in HyperLevel anlegen, prüfen, steuern – alles startet pausiert, Geld fließt erst nach deiner Bestätigung.',
+    summary: 'Kampagnen bei Facebook, Instagram und Google direkt in V Media CRM anlegen, prüfen, steuern – alles startet pausiert, Geld fließt erst nach deiner Bestätigung.',
     icon: 'ads',
     group: 'marketing',
     perm: 'campaigns',
@@ -16,7 +16,7 @@ export const ADS_TOURS: Tour[] = [
     docs: { label: 'Anzeigen-Manager', file: 'ads-manager' },
     steps: [
       { title: 'Anzeigen', route: 'ads', target: 'nav-ads', text: 'Hier legst du Kampagnen für **Meta** (Facebook & Instagram) und **Google Ads** an und steuerst sie. Die Zahlen kommen aus dem Werbebericht, Leads landen als Kontakte im CRM.' },
-      { title: 'Konten verbinden', route: 'ads/connections', target: 'ads-connect-meta', optional: true, missing: 'Die Verbindungen gehören zu den Einstellungen – dafür braucht dein Login dieses Recht.', text: 'Mit „Mit Meta verbinden“ meldest du dich bei Facebook an und wählst Werbekonto, Seite und Pixel. Das Passwort sieht HyperLevel nie; der Zugang wird vor dem Ablauf automatisch verlängert.' },
+      { title: 'Konten verbinden', route: 'ads/connections', target: 'ads-connect-meta', optional: true, missing: 'Die Verbindungen gehören zu den Einstellungen – dafür braucht dein Login dieses Recht.', text: 'Mit „Mit Meta verbinden“ meldest du dich bei Facebook an und wählst Werbekonto, Seite und Pixel. Das Passwort sieht V Media CRM nie; der Zugang wird vor dem Ablauf automatisch verlängert.' },
       { title: 'Google Ads', target: 'ads-connect-google', optional: true, text: 'Google läuft über die Google-App und den Developer-Token der Agentur. Du meldest dich an und wählst das Kundenkonto.' },
       { title: 'Tageslimit', target: 'ads-limit', optional: true, text: 'Kein Budget darf über dem Tageslimit liegen – schützt vor Tippfehlern und übereifrigen KI-Agenten. Passe es an dein Budget an.' },
       { title: 'Agentur-Zugänge', target: 'ads-agency', admin: true, optional: true, missing: 'Dieser Kasten ist nur für die Agentur sichtbar.', text: 'Einmal pro Installation: Meta-App (ID und Secret), Google-Ads-Developer-Token und optional das Verwaltungskonto. Danach verbindet jeder Sub-Account nur noch per Login.' },

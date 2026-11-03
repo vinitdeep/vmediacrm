@@ -21,7 +21,7 @@ const WAIT_MS = 7000;
 
 /**
  * The prompt bar of Fokus-Modus mit Companion: text, or push-to-talk (tap to start – it ends when you pause – or hold and let go) –
- * the sub-account's speech to text like the HyperLevel Agent and the boards, the browser's own recognition where none is set up.
+ * the sub-account's speech to text like the V Media CRM Agent and the boards, the browser's own recognition where none is set up.
  * The edge button and Alt+J start the same microphone; after the wake word the browser's recognizer already listens and its words
  * show here as they come. What was said becomes the question and is sent at once; speech never confirms anything – a confirmation
  * of the agent needs a click. Without a microphone the button is simply not there.

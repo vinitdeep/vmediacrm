@@ -321,8 +321,8 @@ async function describe(h: VendorHttp, parts: PartKey[], creds: Record<string, s
       }
       return { n, capped };
     });
-    if (tables.length > 50) warnings.push('HyperLevel legt höchstens 50 eigene Objekte an – die übrigen Tabellen werden übersprungen. Mit der Base-ID lässt sich die Auswahl eingrenzen.');
-    warnings.push('Airtable erlaubt fünf Anfragen pro Sekunde je Base und sperrt nach einer Überschreitung 30 Sekunden – HyperLevel bremst von selbst und wartet bei Bedarf.');
+    if (tables.length > 50) warnings.push('V Media CRM legt höchstens 50 eigene Objekte an – die übrigen Tabellen werden übersprungen. Mit der Base-ID lässt sich die Auswahl eingrenzen.');
+    warnings.push('Airtable erlaubt fünf Anfragen pro Sekunde je Base und sperrt nach einer Überschreitung 30 Sekunden – V Media CRM bremst von selbst und wartet bei Bedarf.');
   }
   return { counts, fields: [] as SourceField[], warnings };
 }
@@ -337,7 +337,7 @@ export const AIRTABLE: SourceDef = {
   ],
   howto: [
     'Bei Airtable unter airtable.com/create/tokens einen neuen persönlichen Token anlegen: Scopes „data.records:read“ und „schema.bases:read“, unter „Access“ die Bases wählen, die mitkommen sollen.',
-    'Den Token hier einfügen – HyperLevel liest nur und ändert bei Airtable nichts. Wer nur eine Base mitnehmen will, trägt zusätzlich deren Base-ID ein.',
+    'Den Token hier einfügen – V Media CRM liest nur und ändert bei Airtable nichts. Wer nur eine Base mitnehmen will, trägt zusätzlich deren Base-ID ein.',
     'Nach dem Umzug den Token bei Airtable löschen.',
   ],
   limits: [

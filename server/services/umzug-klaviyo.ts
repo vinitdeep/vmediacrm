@@ -257,7 +257,7 @@ const steps = (): StepDef[] => [
       const body = [
         '# Flows aus Klaviyo',
         '',
-        `Stand: ${new Date().toISOString().slice(0, 10)}. Diese Liste ist eine **Gedächtnisstütze**: die Schritte, Texte und Bedingungen eines Flows liefert die Klaviyo-API nicht in einer Form, aus der sich ein Workflow bauen ließe. Bau jeden aktiven Flow in HyperLevel als Workflow nach (Auslöser, E-Mails, Wartezeiten, Wenn/Sonst) und prüfe vor dem Kündigen, dass nichts fehlt.`,
+        `Stand: ${new Date().toISOString().slice(0, 10)}. Diese Liste ist eine **Gedächtnisstütze**: die Schritte, Texte und Bedingungen eines Flows liefert die Klaviyo-API nicht in einer Form, aus der sich ein Workflow bauen ließe. Bau jeden aktiven Flow in V Media CRM als Workflow nach (Auslöser, E-Mails, Wartezeiten, Wenn/Sonst) und prüfe vor dem Kündigen, dass nichts fehlt.`,
         '',
         ...(rows.length ? ['| Flow | Status | Auslöser | Umfang | Ablauf |', '| --- | --- | --- | --- | --- |', ...rows] : ['_Im Konto gibt es keine Flows._']),
       ].join('\n');
@@ -281,7 +281,7 @@ export const KLAVIYO: SourceDef = {
     'Flows – sie kommen als Referenzliste ins Wiki (Auslöser, Umfang, Ablauf), nachbauen musst du sie selbst',
     'Ereignisse und Metriken (Käufe, Klicks, Öffnungen), Vorhersagen und Kundenwert',
     'Formulare, Pop-ups, Kampagnen und ihre Statistiken, Berichte',
-    'Produktkatalog und Shop-Anbindungen (Shopify, WooCommerce …) – die verbindest du in HyperLevel neu',
+    'Produktkatalog und Shop-Anbindungen (Shopify, WooCommerce …) – die verbindest du in V Media CRM neu',
     'Segmente als Regel: sie werden zur festen Liste der aktuellen Mitglieder',
   ],
   parts: [

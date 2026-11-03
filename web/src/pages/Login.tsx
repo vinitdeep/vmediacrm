@@ -1,13 +1,12 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { DemoLogin } from '../demo';
 import { ShieldCheck } from 'lucide-react';
 import { api } from '../api';
 import type { Branding } from '../session';
 import { Field, Input } from '../ui';
 import { getPasskey, passkeyError, passkeysSupported } from '../webauthn';
-import { Later, lazyPages } from '../lazy';
+import { Later, lazyPages, preload } from '../lazy';
 import { ProviderIcon } from '../provider-icon';
-import { resolveDark, usePrefs } from '../theme/store';
 import { PRODUCT_ICON } from '../theme/brand-icon';
 import { serverText, useT } from '../i18n';
 import { LanguageLinks } from '../i18n/LanguageMenu';
@@ -53,34 +52,57 @@ const here = () => {
 
 const errText = (x: unknown) => serverText((x as Error).message);
 
+// The split layout with the brand panel and its stylesheet: a chunk of its own, loaded with the app (pages/LoginBrand.tsx).
+const { Split: SplitView } = lazyPages(() => import('./LoginBrand'), 'Split');
+if (typeof window !== 'undefined') preload(SplitView);
+
+/** The split layout every sign-in screen shares: brand panel left, the form card right (one column on phones). */
+function Split({ branding, wide, children }: { branding: Branding; wide?: boolean; children: ReactNode }) {
+  const t = useT('login');
+  const copy = {
+    eyebrow: t('Agentur-CRM'),
+    headline: t('Vom ersten Lead bis zum fertigen Film.'),
+    lede: t('Leads, Produktionen, Kunden und Automationen deiner Agentur – alles an einem Ort.'),
+    points: [
+      ['pipeline', t('Pipeline im Blick'), t('Jede Anfrage, jedes Angebot, jeder Deal – live an einem Ort.')],
+      ['production', t('Produktionen planen'), t('Drehs, Schnitt und Freigaben mit deinen Kunden abstimmen.')],
+      ['automation', t('Automatisch nachfassen'), t('KI-Workflows erledigen Follow-ups, Erinnerungen und Berichte.')],
+    ] as [string, string, string][],
+  };
+  return (
+    <Suspense
+      fallback={
+        <div className="login">
+          <div className="spinner" role="status" aria-label={t('Lädt')} />
+        </div>
+      }
+    >
+      {/* no wide logo: the uploaded square mark (dark variant first – the panel is dark), else the product icon as in the sidebar – never an initial */}
+      <SplitView branding={branding} mark={branding.mark_dark_url || branding.mark_url || PRODUCT_ICON} copy={copy} wide={wide}>
+        {children}
+      </SplitView>
+    </Suspense>
+  );
+}
+
 function Shell({ branding, title, text, children }: { branding: Branding; title: string; text?: ReactNode; children: ReactNode }) {
   const t = useT('login');
-  // The card is dark in dark mode: take the logo made for dark surfaces when there is one.
-  const dark = resolveDark(usePrefs().mode);
-  const logo = (dark ? branding.logo_dark_url : '') || branding.logo_url;
-  const mark = (dark ? branding.mark_dark_url : '') || branding.mark_url;
   return (
-    <div className="login">
-      <div className="card login-card">
-        <div className="login-head">
-          {/* no wide logo: the uploaded square mark, else the HyperLevel icon (as in the sidebar) – never an initial */}
-          {logo ? (
-            <img src={logo} alt={branding.name} className="login-logo" />
-          ) : (
-            <img src={mark || PRODUCT_ICON} alt={branding.name} className="login-icon" width={52} height={52} />
-          )}
-          <h1 style={{ marginBottom: 6 }}>{title}</h1>
-          {text && <p className="muted" style={{ marginTop: 0 }}>{text}</p>}
-        </div>
-        {children}
-        {branding.support_email && (
-          <p className="muted small" style={{ textAlign: 'center', marginBottom: 0 }}>
-            {t('Hilfe:')} <a href={`mailto:${branding.support_email}`}>{branding.support_email}</a>
-          </p>
-        )}
+    <Split branding={branding}>
+      <div className="login-head">
+        <h1>{title}</h1>
+        {text && <p className="muted">{text}</p>}
+      </div>
+      {children}
+      {branding.support_email && (
+        <p className="muted small login-help">
+          {t('Hilfe:')} <a href={`mailto:${branding.support_email}`}>{branding.support_email}</a>
+        </p>
+      )}
+      <div className="login-lang">
         <LanguageLinks />
       </div>
-    </div>
+    </Split>
   );
 }
 
@@ -448,34 +470,32 @@ export function LoginPage({ needsSetup, onDone, branding, hint }: { needsSetup: 
 export function SecurityGate({ branding, onDone, onLogout }: { branding: Branding; onDone: () => void; onLogout: () => void }) {
   const t = useT('login');
   return (
-    <div className="login">
-      <div className="card login-card" style={{ maxWidth: 520 }}>
-        <div className="login-head">
-          <span className="login-mark">
-            <ShieldCheck size={20} />
-          </span>
-          <h1 style={{ marginBottom: 6 }}>{t('Zwei-Faktor-Login einrichten')}</h1>
-          <p className="muted" style={{ marginTop: 0 }}>
-            {t('{name} verlangt für Admins einen zweiten Faktor. Richte einen Passkey oder eine Authenticator-App ein – danach geht es direkt weiter.', { name: branding.name })}
-          </p>
-        </div>
-        <Later fallback={<div className="spinner" aria-label={t('Lädt')} />}>
-          <PasskeyList onChange={onDone} compact />
-          <hr />
-          <TwoFactor onChange={onDone} />
-        </Later>
-        <p className="small" style={{ textAlign: 'center', marginBottom: 0 }}>
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onLogout();
-            }}
-          >
-            {t('Abmelden')}
-          </a>
+    <Split branding={branding} wide>
+      <div className="login-head">
+        <span className="login-mark">
+          <ShieldCheck size={20} />
+        </span>
+        <h1 style={{ marginBottom: 6 }}>{t('Zwei-Faktor-Login einrichten')}</h1>
+        <p className="muted" style={{ marginTop: 0 }}>
+          {t('{name} verlangt für Admins einen zweiten Faktor. Richte einen Passkey oder eine Authenticator-App ein – danach geht es direkt weiter.', { name: branding.name })}
         </p>
       </div>
-    </div>
+      <Later fallback={<div className="spinner" aria-label={t('Lädt')} />}>
+        <PasskeyList onChange={onDone} compact />
+        <hr />
+        <TwoFactor onChange={onDone} />
+      </Later>
+      <p className="small" style={{ textAlign: 'center', marginBottom: 0 }}>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onLogout();
+          }}
+        >
+          {t('Abmelden')}
+        </a>
+      </p>
+    </Split>
   );
 }

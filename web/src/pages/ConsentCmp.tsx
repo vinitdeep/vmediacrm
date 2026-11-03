@@ -152,7 +152,7 @@ export function CmpEditor() {
           <Preview settings={s} />
           <div className="card" data-tour="cmp-howto">
             <h3>Eigene Skripte steuern</h3>
-            <p className="muted small">Trage Skripte so in den Head-Code der Seite oder in HTML-Blöcke ein. Statistik- und Reichweiten-Cookies von HyperLevel selbst folgen automatisch der Auswahl.</p>
+            <p className="muted small">Trage Skripte so in den Head-Code der Seite oder in HTML-Blöcke ein. Statistik- und Reichweiten-Cookies von V Media CRM selbst folgen automatisch der Auswahl.</p>
             <CodeBox text={SNIPPET} />
           </div>
         </div>

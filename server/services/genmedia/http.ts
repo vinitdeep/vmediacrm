@@ -83,7 +83,7 @@ async function nodeRequest(u: URL, init: GmRequest, redirects: number): Promise<
       u,
       {
         method: init.method ?? 'GET',
-        headers: { 'user-agent': 'HyperLevel-KI-Studio/1.0', ...(body ? { 'content-length': String(body.length) } : {}), ...(init.headers ?? {}) },
+        headers: { 'user-agent': 'V Media CRM-KI-Studio/1.0', ...(body ? { 'content-length': String(body.length) } : {}), ...(init.headers ?? {}) },
         lookup: ((h: string, o: any, cb: any) => guardedLookup(h, o, cb, !!init.allowPrivate)) as any,
         timeout: init.timeoutMs ?? 60_000,
       },

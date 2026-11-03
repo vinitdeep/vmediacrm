@@ -132,7 +132,7 @@ export function resolve(app: App, who: Who): Resolved | null {
 function resolveUncached(app: App, who: Who): Resolved | null {
   const u = who.user;
   if (!u || u.role === 'admin' || !who.locationId) return null;
-  // Keys act for the sub-account, not for a person. Everything that acts for a member – the browser, the app, the HyperLevel Agent
+  // Keys act for the sub-account, not for a person. Everything that acts for a member – the browser, the app, the V Media CRM Agent
   // working for them, an AI app they connected – follows their rules.
   if (who.via === 'api_key' || who.via === 'agency_key') return null;
   const s = settingsOf(app, who.locationId);

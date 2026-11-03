@@ -70,7 +70,7 @@ describe('rules without AI: each intent → its widgets', () => {
     const mail = planRules('Schick eine Mail an Anna Müller');
     expect(mail.action).toBe('Schick eine Mail an Anna Müller');
     expect(mail.tiles).toEqual([]);
-    expect(mail.say).toContain('HyperLevel Agent');
+    expect(mail.say).toContain('V Media CRM Agent');
     expect(planRules('Erstelle eine Übersicht der Deals').action).toBeNull();
     expect(planRules('Zeig mir die offenen Deals').action).toBeNull();
     const combined = planRules('Schick allen überfälligen Rechnungen eine Erinnerung');
@@ -227,7 +227,7 @@ describe('POST /api/focus/ask without AI', () => {
     const before = count();
     const r = await ask({ text: 'Schick eine Mail an Anna Müller' });
     expect(r.data.action).toBe('Schick eine Mail an Anna Müller');
-    expect(r.data.say).toContain('HyperLevel Agent');
+    expect(r.data.say).toContain('V Media CRM Agent');
     await ask({ text: 'Was ist überfällig?' });
     await t.api.get(`/api/focus/ask?text=${encodeURIComponent('Offene Deals')}`);
     expect(count()).toBe(before);
@@ -307,7 +307,7 @@ describe('with AI (faked model)', () => {
 
   it('keeps an action from the model as an offer, never as something done', async () => {
     aiOn = true;
-    answers.push({ say: 'Fokus zeigt nur an – der HyperLevel Agent kann die Mail schreiben.', action: 'Eine Mail an Anna schreiben', tiles: [] });
+    answers.push({ say: 'Fokus zeigt nur an – der V Media CRM Agent kann die Mail schreiben.', action: 'Eine Mail an Anna schreiben', tiles: [] });
     const r = await ask({ text: 'Schreib Anna eine Mail wegen des Angebots' });
     expect(r.data).toMatchObject({ source: 'ai', action: 'Schreib Anna eine Mail wegen des Angebots', tiles: [] });
   });

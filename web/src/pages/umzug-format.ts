@@ -1,5 +1,5 @@
 /**
- * Umzug zu HyperLevel – small helpers of the wizard (web/src/pages/Umzug*.tsx): an API client bound to the chosen
+ * Umzug zu V Media CRM – small helpers of the wizard (web/src/pages/Umzug*.tsx): an API client bound to the chosen
  * target sub-account (the rest of the app talks to the sub-account selected in the menu), upload of export
  * files, and German labels.
  */

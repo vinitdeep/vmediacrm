@@ -5,7 +5,7 @@ import { api } from '../api';
  * Jarvis meldet sich (1.0.54): the open app asks GET /api/companion/live every ~15 seconds while the tab is visible (that is also how
  * the server knows the companion is open – an event is then spoken instead of pushed). New interrupts ("Neuer Lead: Lea …") and the
  * initiative's open suggestions land in this small store; the edge button and focus mode show them and offer the next step. A spoken
- * offer may be answered with "ja" – that only hands the step to the HyperLevel Agent, whose confirmation card still needs a click.
+ * offer may be answered with "ja" – that only hands the step to the V Media CRM Agent, whose confirmation card still needs a click.
  */
 
 export interface NextAction {

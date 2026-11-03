@@ -234,7 +234,7 @@ export const azureSpeechAdapter: Adapter = {
     const ep = azureEndpoints(ctx.conn.baseUrl ?? '');
     if (ctx.capability === 'audio_tts') {
       const voice = ctx.input.voice || 'de-DE-KatjaNeural';
-      const r = await ctx.fetch(ep.tts, { method: 'POST', headers: { ...headers, 'content-type': 'application/ssml+xml', 'x-microsoft-outputformat': 'audio-24khz-48kbitrate-mono-mp3', 'user-agent': 'HyperLevel' }, body: azureSsml(ctx.input.prompt, voice, ctx.input.speed, ctx.input.language), timeoutMs: 90_000, maxBytes: MB60 });
+      const r = await ctx.fetch(ep.tts, { method: 'POST', headers: { ...headers, 'content-type': 'application/ssml+xml', 'x-microsoft-outputformat': 'audio-24khz-48kbitrate-mono-mp3', 'user-agent': 'V Media CRM' }, body: azureSsml(ctx.input.prompt, voice, ctx.input.speed, ctx.input.language), timeoutMs: 90_000, maxBytes: MB60 });
       ensureOk(r, 'Azure Speech');
       return { status: 'done', outputs: [{ data: r.body, mime: 'audio/mpeg' }], cost: { amount: ctx.input.prompt.length, unit: 'Zeichen' } };
     }

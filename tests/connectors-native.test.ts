@@ -47,7 +47,7 @@ async function runWorkflow(steps: any[], contact: Record<string, unknown>) {
 describe('connector helpers (pure)', () => {
   it('builds Slack, Discord and Notion payloads', () => {
     expect(slackPayload('Hallo', 'Neuer Lead')).toEqual({ text: '*Neuer Lead*\nHallo' });
-    expect(discordPayload('@everyone hi', undefined, 'HyperLevel')).toEqual({ content: '@everyone hi', allowed_mentions: { parse: [] }, username: 'HyperLevel' });
+    expect(discordPayload('@everyone hi', undefined, 'V Media CRM')).toEqual({ content: '@everyone hi', allowed_mentions: { parse: [] }, username: 'V Media CRM' });
     expect(discordPayload('x'.repeat(3000)).content).toHaveLength(2000);
     expect(notionPageId(PAGE)).toBe('12345678-90ab-cdef-1234-567890abcdef');
     expect(notionPageId('12345678-90ab-cdef-1234-567890abcdef')).toBe('12345678-90ab-cdef-1234-567890abcdef');
@@ -116,9 +116,9 @@ describe('Notion', () => {
     expect((await t.api.put('/api/connectors/notion', { values: { token: 'falsch', page_id: PAGE } })).status).toBe(400);
     expect((await t.api.put('/api/connectors/notion', { values: { token: NOTION_TOKEN } })).data.error).toContain('Standard-Seite');
     await t.api.put('/api/connectors/notion', { values: { token: NOTION_TOKEN, page_id: PAGE } });
-    reply = (o) => (o.url.endsWith('/users/me') ? { status: 200, body: { object: 'user', name: 'HyperLevel Bot' } } : { status: 200, body: { object: 'page' } });
+    reply = (o) => (o.url.endsWith('/users/me') ? { status: 200, body: { object: 'user', name: 'V Media CRM Bot' } } : { status: 200, body: { object: 'page' } });
     const test = await t.api.post('/api/connectors/notion/test');
-    expect(test.data.detail).toBe('Verbunden als HyperLevel Bot · Seite erreichbar');
+    expect(test.data.detail).toBe('Verbunden als V Media CRM Bot · Seite erreichbar');
     expect(out[0].headers).toMatchObject({ authorization: `Bearer ${NOTION_TOKEN}`, 'notion-version': '2022-06-28' });
     expect(out[1].url).toBe('https://api.notion.com/v1/pages/12345678-90ab-cdef-1234-567890abcdef');
     out = [];

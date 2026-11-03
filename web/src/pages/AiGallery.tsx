@@ -211,7 +211,7 @@ export function ModelsModal({ conn, preset, onClose, onChanged }: { conn: any; p
           </div>
           <p className="aisub-note" style={{ marginTop: 8 }}>
             {r.total > rows.length ? `${rows.length} von ${r.total} Modellen – oben suchen, um die Liste einzugrenzen. ` : `${rows.length} Modelle. `}
-            Preise in US-Dollar je eine Million Tokens, wie der Anbieter sie nennt; die Kostenschätzung in HyperLevel nutzt sie, solange du keine eigenen einträgst.
+            Preise in US-Dollar je eine Million Tokens, wie der Anbieter sie nennt; die Kostenschätzung in V Media CRM nutzt sie, solange du keine eigenen einträgst.
           </p>
         </>
       )}

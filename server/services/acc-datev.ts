@@ -113,7 +113,7 @@ export function headerRow(o: ExtfOptions): string {
   f[4] = '13';
   f[5] = created;
   f[7] = q('GH');
-  f[8] = textField('HyperLevel', 25);
+  f[8] = textField('V Media CRM', 25);
   f[10] = o.berater;
   f[11] = o.mandant;
   f[12] = compact(o.fyStart);

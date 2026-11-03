@@ -7,7 +7,7 @@ import { openSecret } from '../core/secrets.js';
 import { verifySignature } from './meta.js';
 
 /**
- * Meta Lead Ads → HyperLevel: a lead (instant form answer) becomes a contact – tagged, with its answers as a note and
+ * Meta Lead Ads → V Media CRM: a lead (instant form answer) becomes a contact – tagged, with its answers as a note and
  * custom fields, attributed to its campaign/ad – and starts workflows (trigger "Neuer Lead aus Anzeige", plus the
  * usual "Kontakt angelegt" / "Tag hinzugefügt"). Leads arrive by webhook (`leadgen`, signed with X-Hub-Signature-256);
  * the webhook only names the lead – its data is always fetched from the Graph API with the Page's token – and a

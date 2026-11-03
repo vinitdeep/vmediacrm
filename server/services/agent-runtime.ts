@@ -17,7 +17,7 @@ import { describeTarget, linksFor, makeCaller, simplifySchema, type AgentTool, t
  */
 
 export interface AgentConfig {
-  /** null = the built-in "HyperLevel Agent". */
+  /** null = the built-in "V Media CRM Agent". */
   id: string | null;
   name: string;
   emoji: string;
@@ -400,7 +400,7 @@ export async function runLoop(env: RunEnv, history: Msg[], state: LoopState): Pr
           effort: env.effort,
           signal: env.signal,
           onText: (delta) => env.emit({ type: 'text', delta }),
-          app: { baseUrl: env.app.baseUrl(), name: 'HyperLevel' },
+          app: { baseUrl: env.app.baseUrl(), name: 'V Media CRM' },
         },
         [primary, ...(env.fallbacks ?? [])],
         (r) => (r === primary ? env.fetch : (env.fetchFor?.(r) ?? env.fetch)),

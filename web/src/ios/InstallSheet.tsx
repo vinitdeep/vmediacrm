@@ -117,7 +117,7 @@ export function InstallSheet({ userId }: { userId: string }) {
     >
       <div data-tour="ios-install">
         <p className="ios-lead">
-          So startet HyperLevel wie eine App: eigenes Fenster ohne Browserleisten, Mitteilungen bei neuen Nachrichten und eine Zahl auf dem Symbol.
+          So startet V Media CRM wie eine App: eigenes Fenster ohne Browserleisten, Mitteilungen bei neuen Nachrichten und eine Zahl auf dem Symbol.
         </p>
         <InstallIllustration ipad={ipad} />
         <ol className="ios-steps">

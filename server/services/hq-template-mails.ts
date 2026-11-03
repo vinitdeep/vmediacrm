@@ -18,32 +18,32 @@ export const HQ_MAILS = {
     subject: 'Du bist auf der Warteliste 🎉',
     body: `Hallo {{contact.first_name|}},
 
-danke, dass du deine Anmeldung bestätigt hast – du stehst jetzt auf der Warteliste für HyperLevel Cloud.
+danke, dass du deine Anmeldung bestätigt hast – du stehst jetzt auf der Warteliste für V Media CRM Cloud.
 
 Kurz, was dich erwartet:
 - Wir laden in Wellen ein, damit der Support für alle gut bleibt.
 - Du bekommst von uns ungefähr eine Mail pro Woche, nicht mehr.
-- HyperLevel ist Open Source (AGPL). Du kannst es jederzeit auch selbst hosten – kostenlos.
+- V Media CRM ist Open Source (AGPL). Du kannst es jederzeit auch selbst hosten – kostenlos.
 
 Eine Bitte: Antworte kurz auf diese Mail und erzähl mir, welches Tool du heute nutzt und was dich daran am meisten nervt. Ich lese jede Antwort selbst.${sign}`,
   },
   waitlistWhy: {
     name: 'Warteliste 2 – Warum wir das bauen',
-    subject: 'Warum wir HyperLevel bauen',
+    subject: 'Warum wir V Media CRM bauen',
     body: `Hallo {{contact.first_name|}},
 
 viele kleine Firmen zahlen für CRM, Newsletter, Termine, Rechnungen und Helpdesk fünf verschiedene Abos – und keins davon kennt die Daten der anderen.
 
-HyperLevel bringt das in eine Oberfläche, gehostet in Deutschland oder auf deinem eigenen Server. Wir nutzen es selbst, um unsere Firma zu führen – jede Mail, die du von uns bekommst, kommt aus HyperLevel.
+V Media CRM bringt das in eine Oberfläche, gehostet in Deutschland oder auf deinem eigenen Server. Wir nutzen es selbst, um unsere Firma zu führen – jede Mail, die du von uns bekommst, kommt aus V Media CRM.
 
 Was wir (noch) nicht können, sagen wir dir ehrlich. Die Roadmap ist öffentlich, und Wünsche aus der Warteliste kommen bei uns zuerst auf den Tisch.${sign}`,
   },
   waitlistInvite: {
     name: 'Warteliste 3 – Einladung',
-    subject: 'Dein Zugang zu HyperLevel Cloud ist frei',
+    subject: 'Dein Zugang zu V Media CRM Cloud ist frei',
     body: `Hallo {{contact.first_name|}},
 
-es ist so weit: Du kannst HyperLevel Cloud jetzt 14 Tage kostenlos testen. Keine Kreditkarte, kein automatischer Vertrag – nach der Testphase entscheidest du.
+es ist so weit: Du kannst V Media CRM Cloud jetzt 14 Tage kostenlos testen. Keine Kreditkarte, kein automatischer Vertrag – nach der Testphase entscheidest du.
 
 Die Tarife (pro Monat):
 - Solo: 49,99 €
@@ -58,7 +58,7 @@ Wenn du Fragen hast, antworte einfach auf diese Mail.${sign}`,
     subject: 'Willkommen – so startest du in 10 Minuten',
     body: `Hallo {{contact.first_name|}},
 
-schön, dass du HyperLevel testest! Drei Dinge reichen für den Anfang:
+schön, dass du V Media CRM testest! Drei Dinge reichen für den Anfang:
 1. Firmendaten und Logo eintragen (Einstellungen → Firma).
 2. Deine Kontakte importieren – als CSV oder direkt aus HighLevel/HubSpot (Umzug).
 3. Eine Pipeline anlegen oder unsere Vorlage nehmen.
@@ -70,7 +70,7 @@ In der Akademie zeigt dir eine geführte Tour jeden Schritt direkt in der App.${
     subject: 'Deine erste Automation (dauert 5 Minuten)',
     body: `Hallo {{contact.first_name|}},
 
-heute ein kleiner Schritt mit großer Wirkung: Lass HyperLevel neue Anfragen automatisch begrüßen.
+heute ein kleiner Schritt mit großer Wirkung: Lass V Media CRM neue Anfragen automatisch begrüßen.
 
 Automationen → Neuer Workflow → Auslöser „Formular abgeschickt“ → Aktion „E-Mail senden“. Fertig.
 
@@ -90,7 +90,7 @@ Wenn etwas nicht passt, schreib uns. Wir helfen dir beim Umzug, auch per Bildsch
     subject: 'Halbzeit: Wie läuft es bei dir?',
     body: `Hallo {{contact.first_name|}},
 
-eine Woche ist um. Ganz ehrlich: Passt HyperLevel zu deiner Firma – oder fehlt etwas?
+eine Woche ist um. Ganz ehrlich: Passt V Media CRM zu deiner Firma – oder fehlt etwas?
 
 Antworte mit einem Satz, gern auch kritisch. Wenn du magst, machen wir einen 15-Minuten-Call und richten gemeinsam ein, was noch hakt.${sign}`,
   },
@@ -113,14 +113,14 @@ Fragen? Antworte einfach.${sign}`,
 
 in drei Tagen endet deine Testphase. Wenn du jetzt in einen Cloud-Tarif wechselst, richten wir dir in einem gemeinsamen Termin (30 Minuten) deine Pipeline und die erste Automation ein – ohne Aufpreis.
 
-Kein Druck: Wenn HyperLevel nicht passt, sag es uns gern – das hilft uns mehr als jede Bewertung.${sign}`,
+Kein Druck: Wenn V Media CRM nicht passt, sag es uns gern – das hilft uns mehr als jede Bewertung.${sign}`,
   },
   churnSorry: {
     name: 'Kündigung – Danke und eine Frage',
     subject: 'Schade, dass du gehst – eine kurze Frage',
     body: `Hallo {{contact.first_name|}},
 
-deine Kündigung ist angekommen. Danke, dass du HyperLevel ausprobiert hast.
+deine Kündigung ist angekommen. Danke, dass du V Media CRM ausprobiert hast.
 
 Darf ich fragen, woran es lag? Eine Zeile reicht – wir lesen jede Antwort und ändern wirklich Dinge daran.
 
@@ -131,7 +131,7 @@ Deine Daten kannst du bis zum Vertragsende unter Einstellungen exportieren. Und 
     subject: 'Was sich seit deinem Abschied geändert hat',
     body: `Hallo {{contact.first_name|}},
 
-vor ein paar Wochen hast du HyperLevel verlassen. Seitdem haben wir einiges verbessert – auch dank Rückmeldungen wie deiner.
+vor ein paar Wochen hast du V Media CRM verlassen. Seitdem haben wir einiges verbessert – auch dank Rückmeldungen wie deiner.
 
 Wenn du noch einmal reinschauen willst: Antworte auf diese Mail, dann schalten wir dir 14 Tage kostenlos frei. Wenn nicht, ist das völlig okay – dann melden wir uns nicht mehr.${sign}`,
   },

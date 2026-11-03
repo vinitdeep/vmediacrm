@@ -7,7 +7,7 @@ import { HQ_MAILS, type HqMailKey } from './hq-template-mails.js';
  * helpdesk settings). modules/hq-template.ts loads it into a sub-account in one click; docs/company-playbook.md explains
  * how to work with it. Ids here are template-local – applySnapshot gives everything new ids and rewires the references.
  *
- * The company it describes sells HyperLevel Cloud (Solo 49,99 €, Team & Company 99,99 €, Agency 199 € per month;
+ * The company it describes sells V Media CRM Cloud (Solo 49,99 €, Team & Company 99,99 €, Agency 199 € per month;
  * self-hosting is free). Everything is a starting point: workflows arrive as drafts, help articles as drafts.
  */
 
@@ -254,15 +254,15 @@ const workflows: SnapshotData['workflows'] = [
 const templates: SnapshotData['templates'] = Object.values(HQ_MAILS).map((m) => ({ name: m.name, channel: 'email', subject: m.subject, body: m.body, is_html: 0 }));
 
 const products: SnapshotData['products'] = [
-  { id: 'pr-solo', name: 'HyperLevel Cloud – Solo', description: 'Für Selbstständige: ein Login, alle Bereiche.', price_cents: 4999, currency: 'EUR', tax_rate: 19, recurring: 'month' },
-  { id: 'pr-team', name: 'HyperLevel Cloud – Team & Company', description: 'Für Teams und kleine Firmen.', price_cents: 9999, currency: 'EUR', tax_rate: 19, recurring: 'month' },
-  { id: 'pr-agency', name: 'HyperLevel Cloud – Agency', description: 'Für Agenturen mit Kunden-Sub-Accounts.', price_cents: 19900, currency: 'EUR', tax_rate: 19, recurring: 'month' },
+  { id: 'pr-solo', name: 'V Media CRM Cloud – Solo', description: 'Für Selbstständige: ein Login, alle Bereiche.', price_cents: 4999, currency: 'EUR', tax_rate: 19, recurring: 'month' },
+  { id: 'pr-team', name: 'V Media CRM Cloud – Team & Company', description: 'Für Teams und kleine Firmen.', price_cents: 9999, currency: 'EUR', tax_rate: 19, recurring: 'month' },
+  { id: 'pr-agency', name: 'V Media CRM Cloud – Agency', description: 'Für Agenturen mit Kunden-Sub-Accounts.', price_cents: 19900, currency: 'EUR', tax_rate: 19, recurring: 'month' },
 ];
 
 const community_groups = [
   {
     id: 'cg-hq',
-    name: 'HyperLevel Community',
+    name: 'V Media CRM Community',
     slug: 'community',
     description: 'Austausch für Kundinnen, Self-Hoster und Agentur-Partner: Fragen, Tipps, Vorlagen und Wünsche.',
     status: 'active',
@@ -293,8 +293,8 @@ const kb: TemplateExtras['kb'] = [
     articles: [
       article(
         'Cloud oder Self-Hosting – was passt zu mir?',
-        'HyperLevel gibt es gehostet (Cloud) oder zum Selbstbetrieb. Funktionen sind gleich, der Aufwand nicht.',
-        `## Kurz gesagt\n\n- **Cloud:** Wir betreiben Server, Updates, Backups und Zustellbarkeit. Du zahlst monatlich.\n- **Self-Hosting:** Du betreibst HyperLevel auf deinem eigenen Server (Docker). Die Software ist Open Source (AGPL) und kostenlos – Server, Wartung und Backups liegen bei dir.\n\n## Wann Cloud?\n\nWenn du dich um dein Geschäft kümmern willst und nicht um Server.\n\n## Wann selbst hosten?\n\nWenn du Erfahrung mit Servern hast oder deine Daten zwingend im eigenen Haus liegen müssen.\n\n## Wechseln\n\nDu kannst jederzeit wechseln – der Datenexport nimmt alles mit.`,
+        'V Media CRM gibt es gehostet (Cloud) oder zum Selbstbetrieb. Funktionen sind gleich, der Aufwand nicht.',
+        `## Kurz gesagt\n\n- **Cloud:** Wir betreiben Server, Updates, Backups und Zustellbarkeit. Du zahlst monatlich.\n- **Self-Hosting:** Du betreibst V Media CRM auf deinem eigenen Server (Docker). Die Software ist Open Source (AGPL) und kostenlos – Server, Wartung und Backups liegen bei dir.\n\n## Wann Cloud?\n\nWenn du dich um dein Geschäft kümmern willst und nicht um Server.\n\n## Wann selbst hosten?\n\nWenn du Erfahrung mit Servern hast oder deine Daten zwingend im eigenen Haus liegen müssen.\n\n## Wechseln\n\nDu kannst jederzeit wechseln – der Datenexport nimmt alles mit.`,
         ['cloud', 'self-hosting'],
       ),
     ],
@@ -304,7 +304,7 @@ const kb: TemplateExtras['kb'] = [
     description: 'Tarife, Testphase, Kündigung.',
     articles: [
       article(
-        'Was kostet HyperLevel?',
+        'Was kostet V Media CRM?',
         'Solo 49,99 €, Team & Company 99,99 €, Agency 199 € pro Monat. Selbst hosten ist kostenlos.',
         `| Tarif | Preis pro Monat | Für wen |\n| --- | --- | --- |\n| Solo | 49,99 € | Selbstständige |\n| Team & Company | 99,99 € | Teams und kleine Firmen |\n| Agency | 199 € | Agenturen mit Kunden-Sub-Accounts |\n| Self-hosted | 0 € | Wer selbst betreibt |\n\nBitte vor dem Veröffentlichen prüfen: Netto oder brutto, Jahresrabatt, Kündigungsfrist – so, wie es auf deiner Preisseite steht.\n\n## Testphase\n\n14 Tage kostenlos, ohne Kreditkarte. Danach entscheidest du.`,
         ['preise'],
@@ -318,7 +318,7 @@ const kb: TemplateExtras['kb'] = [
       article(
         'Umzug von HighLevel',
         'Kontakte, Pipelines, Termine und mehr mit Vorschau übernehmen – und was du danach prüfen solltest.',
-        `## So geht's\n\n1. In HyperLevel **Umzug** öffnen und HighLevel wählen.\n2. API-Schlüssel des HighLevel-Sub-Accounts eintragen.\n3. Vorschau ansehen, Zuordnung prüfen, Umzug starten. Ein Umzug lässt sich rückgängig machen.\n\n## Danach prüfen\n\n- Workflows: Sie kommen als Entwurf und werden erst nach dem Testen aktiviert.\n- Domains und E-Mail-Versand neu verbinden.\n- Einwilligungen: Was in HighLevel nicht nachweisbar war, ist auch hier nicht nachweisbar.\n\nHilfe beim Umzug? Schreib uns über das Support-Formular.`,
+        `## So geht's\n\n1. In V Media CRM **Umzug** öffnen und HighLevel wählen.\n2. API-Schlüssel des HighLevel-Sub-Accounts eintragen.\n3. Vorschau ansehen, Zuordnung prüfen, Umzug starten. Ein Umzug lässt sich rückgängig machen.\n\n## Danach prüfen\n\n- Workflows: Sie kommen als Entwurf und werden erst nach dem Testen aktiviert.\n- Domains und E-Mail-Versand neu verbinden.\n- Einwilligungen: Was in HighLevel nicht nachweisbar war, ist auch hier nicht nachweisbar.\n\nHilfe beim Umzug? Schreib uns über das Support-Formular.`,
         ['umzug', 'highlevel'],
       ),
     ],
@@ -329,7 +329,7 @@ const kb: TemplateExtras['kb'] = [
     articles: [
       article(
         'DSGVO & Auftragsverarbeitung (AVV)',
-        'Wo die Daten liegen, wie du einen AVV bekommst und was HyperLevel für dich protokolliert.',
+        'Wo die Daten liegen, wie du einen AVV bekommst und was V Media CRM für dich protokolliert.',
         `## Wo liegen meine Daten?\n\nCloud: auf Servern in der EU (bitte den konkreten Anbieter und Standort hier eintragen). Self-Hosting: dort, wo du betreibst.\n\n## AVV\n\nFür die Cloud schließen wir mit dir einen Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO. Du bekommst ihn bei Abschluss bzw. auf Anfrage über das Support-Formular.\n\n## Was die App für dich mitbringt\n\nDouble-Opt-in mit Nachweis, Einwilligungs-Protokoll, Datenexport und Löschung je Kontakt, Aufbewahrungsfristen, Protokoll aller Änderungen.\n\n*Hinweis: Dieser Artikel ersetzt keine Rechtsberatung.*`,
         ['dsgvo', 'avv'],
       ),

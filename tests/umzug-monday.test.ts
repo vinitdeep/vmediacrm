@@ -15,7 +15,7 @@ beforeAll(async () => {
   h = await umzugHarness();
   h.t.app.services.umzugFetch = fake.fetch;
   await h.fresh('monday');
-  // The team member Anna of the board exists in HyperLevel too (matched by e-mail).
+  // The team member Anna of the board exists in V Media CRM too (matched by e-mail).
   const me = h.raw<{ email: string }>('SELECT email FROM users ORDER BY created_at LIMIT 1')!;
   fake.users[0].email = me.email;
 });

@@ -95,7 +95,7 @@ export const MARKETING_TOURS: Tour[] = [
     practice: true,
     keywords: 'workflow automation automatisierung auslöser trigger aktion warten wenn sonst vorlage',
     learned: ['Einen Workflow leer oder aus einer Vorlage anlegen', 'Den Auslöser wählen und Schritte hinzufügen', 'Speichern und aktivieren', 'Den Verlauf je Kontakt prüfen'],
-    docs: { label: 'Funktionen: Workflows', file: 'README', anchor: 'funktionen' },
+    docs: { label: 'Funktionen: Workflows', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Automationen', route: 'workflows', target: 'page-head', text: 'Ein Workflow startet bei einem Auslöser (z. B. Formular abgeschickt, Tag gesetzt, Termin gebucht, Anruf verpasst) und arbeitet dann Schritt für Schritt ab.' },
       { title: 'Deine Workflows', target: 'workflows-list', optional: true, text: 'Name, Auslöser, Status und wie viele Kontakte gerade drin sind. Nur **aktive** Workflows laufen.', missing: 'Noch keine Automationen – gleich baust du eine.' },

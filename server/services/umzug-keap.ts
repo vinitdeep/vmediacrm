@@ -234,7 +234,7 @@ export const KEAP: SourceDef = {
   label: 'Keap',
   tagline: 'Kontakte mit Tags und Feldern, Firmen, Opportunities, Notizen, Aufgaben, Produkte',
   credentials: [{ key: 'api_key', label: 'Service Account Key (oder OAuth-Token)', secret: true, hint: 'Keap → Einstellungen → API → „Service Account Key“ erstellen' }],
-  howto: ['In Keap: Einstellungen → „Keap Developer“ bzw. „API“ → „Service Account Key“ erstellen (Lesezugriff genügt).', 'Den Schlüssel hier einfügen. Ein OAuth-Access-Token (Anfang „Bearer …“) geht auch.', 'Kampagnen („Campaign Builder“) lassen sich über die REST-API nicht auslesen – sie musst du in HyperLevel als Workflow neu bauen.'],
+  howto: ['In Keap: Einstellungen → „Keap Developer“ bzw. „API“ → „Service Account Key“ erstellen (Lesezugriff genügt).', 'Den Schlüssel hier einfügen. Ein OAuth-Access-Token (Anfang „Bearer …“) geht auch.', 'Kampagnen („Campaign Builder“) lassen sich über die REST-API nicht auslesen – sie musst du in V Media CRM als Workflow neu bauen.'],
   limits: ['Campaign Builder (Kampagnen) – nicht per REST-API lesbar','Rechnungen, Bestellungen und Abos','Formulare und Landing Pages','Pipeline-Stufen kommen aus der Konfiguration bzw. den vorhandenen Opportunities'],
   parts: [
     { key: 'contacts', label: 'Kontakte, Tags und Felder', on: true, note: 'E-Mail-Status „Unsubscribed/NonMarketable/Bounced“ → „Nicht stören“ plus Tag.' },

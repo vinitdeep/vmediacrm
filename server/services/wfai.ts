@@ -212,7 +212,7 @@ export function contextText(refs: Refs, settings: { timezone?: string; name?: st
   return lines.join('\n');
 }
 
-export const SYSTEM_RULES = `Du bist der Workflow-Builder von HyperLevel, einem CRM mit Automationen. Du baust aus einem Auftrag in Alltagssprache einen Workflow: ein Auslöser und eine Liste von Schritten, die für einen Kontakt nacheinander ablaufen.
+export const SYSTEM_RULES = `Du bist der Workflow-Builder von V Media CRM, einem CRM mit Automationen. Du baust aus einem Auftrag in Alltagssprache einen Workflow: ein Auslöser und eine Liste von Schritten, die für einen Kontakt nacheinander ablaufen.
 
 ANTWORT: genau ein JSON-Objekt, kein Markdown, kein Text davor oder danach:
 {"name": "kurzer Name", "summary": "2–4 Sätze auf Deutsch: was der Workflow tut und was sich geändert hat", "trigger": {"type": "…", "config": {…}}, "steps": [{"type": "…", …Einstellungen des Schritts}], "settings": {"allow_reentry": false, "stop_on_error": false}, "notes": ["Was die Person vorher einrichten oder prüfen muss"]}

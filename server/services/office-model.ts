@@ -115,7 +115,7 @@ export function cleanCommands(raw: unknown, kind: OfficeKind): OfficeCommand[] {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) throw new Error(`${at}: erwartet {command, params}`);
     const id = String((obj as any).command ?? (obj as any).tool ?? '').trim();
     if (!COMMAND_ID.test(id)) throw new Error(`${at}: ungültiger Befehlsname`);
-    if (kind === 'pdf' ? !PDF_TOOLS.test(id) : BLOCKED_PREFIX.test(id)) throw new Error(`${at}: „${id}“ ist hier nicht erlaubt – Öffnen, Speichern und Export übernimmt HyperLevel`);
+    if (kind === 'pdf' ? !PDF_TOOLS.test(id) : BLOCKED_PREFIX.test(id)) throw new Error(`${at}: „${id}“ ist hier nicht erlaubt – Öffnen, Speichern und Export übernimmt V Media CRM`);
     const params = (obj as any).params ?? (obj as any).args ?? {};
     if (!params || typeof params !== 'object' || Array.isArray(params)) throw new Error(`${at}: params muss ein Objekt sein`);
     checkParams(params, at);

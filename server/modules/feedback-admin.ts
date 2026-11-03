@@ -202,7 +202,7 @@ const TOOLS: Tool[] = [
   {
     name: 'ghl_list_bug_reports',
     title: 'Fehlermeldungen auflisten',
-    description: `Fehlermeldungen, Fragen und automatisch erfasste Fehler (Browser/Server) aller HyperLevel-Nutzer. kind: reports (Standard: bug+question+auto)|bug|question|auto|all; state: open (Standard)|done|all; status: neu|bestaetigt|in_arbeit|behoben|ausgeliefert|abgelehnt; sort: updated|new|priority|occurrences; q sucht in Titel/Text/#Nummer. ${LOC_NOTE}`,
+    description: `Fehlermeldungen, Fragen und automatisch erfasste Fehler (Browser/Server) aller V Media CRM-Nutzer. kind: reports (Standard: bug+question+auto)|bug|question|auto|all; state: open (Standard)|done|all; status: neu|bestaetigt|in_arbeit|behoben|ausgeliefert|abgelehnt; sort: updated|new|priority|occurrences; q sucht in Titel/Text/#Nummer. ${LOC_NOTE}`,
     inputSchema: obj({ kind: { type: 'string' }, state: { type: 'string' }, status: { type: 'string' }, sort: { type: 'string' }, q: { type: 'string' }, limit: { type: 'integer' } }),
     annotations: { readOnlyHint: true, openWorldHint: false },
     agencyOnly: true,
@@ -236,7 +236,7 @@ const TOOLS: Tool[] = [
   {
     name: 'ghl_list_wishes',
     title: 'Feature-Wünsche (nach Stimmen)',
-    description: `Die Wunschliste aller HyperLevel-Nutzer, sortiert nach Stimmen – Grundlage für die Planung. state: open (Standard)|done|all; status: idea|planned|in_progress|done|declined; area: ${AREAS.join(', ')}; q sucht in Titel/Text.`,
+    description: `Die Wunschliste aller V Media CRM-Nutzer, sortiert nach Stimmen – Grundlage für die Planung. state: open (Standard)|done|all; status: idea|planned|in_progress|done|declined; area: ${AREAS.join(', ')}; q sucht in Titel/Text.`,
     inputSchema: obj({ state: { type: 'string' }, status: { type: 'string' }, area: { type: 'string' }, q: { type: 'string' }, limit: { type: 'integer' } }),
     annotations: { readOnlyHint: true, openWorldHint: false },
     agencyOnly: true,

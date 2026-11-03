@@ -6,7 +6,7 @@
  * what to say and where it goes. No database, no app – unit-tested in tests/companion-live.test.ts.
  *
  * Words for people may name a contact (they are spoken to the person who may see that record); a next action's prompt for the
- * HyperLevel Agent never carries third-party text – the record travels as the agent's selected entity, like the briefing's steps.
+ * V Media CRM Agent never carries third-party text – the record travels as the agent's selected entity, like the briefing's steps.
  */
 
 export type TriggerPriority = 'interrupt' | 'digest';
@@ -88,7 +88,7 @@ export function isDuplicate(trigger: string, key: string, seen: Map<string, numb
 export interface NextAction {
   /** the button and what the companion offers */
   label: string;
-  /** for the HyperLevel Agent – never third-party text */
+  /** for the V Media CRM Agent – never third-party text */
   prompt?: string;
   /** or a page */
   url?: string;

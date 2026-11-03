@@ -5,7 +5,7 @@ import { CogneeClient, LocationClient, type CogneeFetch } from './client.js';
 
 /**
  * Where the Cognee server and its login are kept. The agency enters the address and ONE login (e-mail + password, or an
- * API key) for HyperLevel's own Cognee user; a sub-account may get a login of its own (override), so Cognee itself keeps
+ * API key) for V Media CRM's own Cognee user; a sub-account may get a login of its own (override), so Cognee itself keeps
  * its data apart from the others. Secrets are sealed at rest (core/secrets.ts) and never leave the server.
  */
 

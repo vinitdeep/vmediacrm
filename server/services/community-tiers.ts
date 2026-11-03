@@ -368,7 +368,7 @@ export function memberCount(app: App, groupId: string): number {
 
 export function brandOf(loc: LocationRow) {
   const b = loc.settings?.branding ?? {};
-  return { name: String(b.name || loc.name), color: /^#[0-9a-f]{6}$/i.test(String(b.color ?? '')) ? String(b.color) : '#2563eb' };
+  return { name: String(b.name || loc.name), color: /^#[0-9a-f]{6}$/i.test(String(b.color ?? '')) ? String(b.color) : '#c8191f' };
 }
 
 /** A short transactional mail in the brand colour; `communityMailer` replaces the sender in tests. */

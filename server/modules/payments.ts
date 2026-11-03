@@ -284,7 +284,7 @@ export function createInvoice(app: App, locationId: string, input: Record<string
   const mode: TaxMode = isTaxMode(input.tax_mode) ? input.tax_mode : s.tax_mode;
   const items = cleanItems(input.items, s.tax_rate, mode);
   if (input.contact_id && !getContact(app, locationId, input.contact_id)) throw bad('Kontakt nicht gefunden');
-  if (kind === 'invoice' && str(input.number, 'Nummer')) throw bad('Rechnungsnummern vergibt HyperLevel beim Festschreiben – fortlaufend und ohne Lücken');
+  if (kind === 'invoice' && str(input.number, 'Nummer')) throw bad('Rechnungsnummern vergibt V Media CRM beim Festschreiben – fortlaufend und ohne Lücken');
   const legal = cleanLegalFields({ ...input, tax_mode: mode }, { tax_mode: mode, tax_note: '' });
   if (legal.tax_note === undefined) legal.tax_note = mode === 'standard' ? '' : TAX_MODES[mode].note;
   if (legal.inv_type && legal.inv_type !== 'standard' && kind !== 'invoice') throw bad('Abschlags- und Schlussrechnungen gibt es nur bei Rechnungen');

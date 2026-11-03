@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { SafeResponse } from '../server/services/net.js';
 
 /**
- * A fake Cognee 1.6.2 server for the tests: the routes HyperLevel uses (auth, datasets, add, cognify, status, data, delete, search)
+ * A fake Cognee 1.6.2 server for the tests: the routes V Media CRM uses (auth, datasets, add, cognify, status, data, delete, search)
  * with the behaviour that matters – login with a JWT that expires, API keys, datasets owned by their user (403 for foreign ones),
  * identical content deduplicated per dataset, multipart parsing of /add, search over the stored text. Every request is recorded
  * (never the secrets). Plugged in as `app.services.cogneeFetch`.

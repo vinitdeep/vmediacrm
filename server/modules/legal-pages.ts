@@ -278,7 +278,7 @@ export const legalPagesModule: Module = {
       const ext = profile.external;
       if (ext.enabled && (kind === 'impressum' || kind === 'datenschutz')) {
         const provider = Object.hasOwn(providers, ext.provider) ? providers[ext.provider] : undefined;
-        if (!provider) external = { used: false, reason: 'Schnittstelle ist nur ein Platzhalter – es wurde nichts abgerufen, die Vorlage von HyperLevel wird verwendet' };
+        if (!provider) external = { used: false, reason: 'Schnittstelle ist nur ein Platzhalter – es wurde nichts abgerufen, die Vorlage von V Media CRM wird verwendet' };
         else {
           try {
             const r = await provider(kind, { ...profile });

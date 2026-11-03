@@ -46,7 +46,7 @@ describe('local bridge', () => {
     expect(normalizeLine('codex', JSON.stringify({ msg: { type: 'agent_message', message: 'Alt' } }))).toEqual([{ kind: 'text', text: 'Alt' }]);
     expect(normalizeLine('codex', JSON.stringify({ type: 'turn.failed', error: { message: 'Limit' } }))).toEqual([{ kind: 'error', text: 'Limit' }]);
     expect(normalizeLine('codex', 'kein json')).toEqual([]);
-    // Codex gets HyperLevel's MCP via -c overrides and the token via an env var, read-only sandbox; prompt on stdin
+    // Codex gets V Media CRM's MCP via -c overrides and the token via an env var, read-only sandbox; prompt on stdin
     const cmd = commandFor('codex', { mcp_url: 'https://crm.example.com/api/agent/bridge/mcp', mcp_token: 'ghbj_x' }, '/tmp/x');
     expect(cmd.args).toEqual(expect.arrayContaining(['exec', '--json', '--sandbox', 'read-only', 'mcp_servers.gohigh.url="https://crm.example.com/api/agent/bridge/mcp"', '-']));
     expect(cmd.env).toEqual({ GOHIGH_MCP_TOKEN: 'ghbj_x' });
@@ -71,7 +71,7 @@ describe('local bridge', () => {
     // the script itself is downloadable
     const script = await t.api.raw('/api/agent/bridge/script');
     expect(script.status).toBe(200);
-    expect(await script.text()).toContain('HyperLevel Bridge');
+    expect(await script.text()).toContain('V Media CRM Bridge');
   });
 
   it('relays a chat to the local CLI, runs its MCP tool calls as the user and streams the answer back', async () => {

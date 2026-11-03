@@ -14,7 +14,7 @@ import { markdownToText } from '../services/wiki-markdown.js';
  * Slash commands of the Team-Chat:
  *   /aufgabe <Titel> [@Person] [heute|morgen|übermorgen|Mo–So|TT.MM.|JJJJ-MM-TT]  → creates a task (the CRM's tasks)
  *   /kontakt <Suche>                                                            → shares a contact as a live card
- *   /agent <Frage>                                                              → asks the HyperLevel Agent in the channel
+ *   /agent <Frage>                                                              → asks the V Media CRM Agent in the channel
  * Commands run with the asker's own rights (the same routes and guards as everywhere). The agent's answer is posted
  * into the channel where everybody sees it; anything it wants to *change* waits for a click of the person who
  * asked – nobody else can confirm it (single-use token, bound to that person and to exactly those arguments).
@@ -175,7 +175,7 @@ export const teamchatCommandsModule: Module = {
 
     const agentOf = () => {
       const a = app.services.agent;
-      if (!a) throw new HttpError(409, 'Der HyperLevel Agent ist auf diesem Server nicht verfügbar');
+      if (!a) throw new HttpError(409, 'Der V Media CRM Agent ist auf diesem Server nicht verfügbar');
       return a;
     };
 
@@ -188,7 +188,7 @@ export const teamchatCommandsModule: Module = {
       if (!ag.locSettings(ctx.locationId).enabled) throw new HttpError(409, 'Der KI-Agent ist für diesen Sub-Account ausgeschaltet (Einstellungen → KI-Agent).');
       if (!ag.resolveTarget(ctx.locationId, null)) throw new HttpError(409, 'Kein Text-Modell verbunden. Bitte unter Einstellungen → KI-Anbieter (BYOK) eine Verbindung anlegen.');
       const ask = postMessage(app, ctx, ch, { body: `/agent ${question.trim()}`, threadId, quiet: true, meta: { command: 'agent' } });
-      const { row, out } = postMessage(app, ctx, ch, { body: '✨ Der Agent denkt nach …', threadId, quiet: true, raw: true, kind: 'agent', as: { id: null, name: 'HyperLevel Agent' }, meta: { agent: { status: 'running', asker_id: u.id, asker_name: u.name, pending: [] } } });
+      const { row, out } = postMessage(app, ctx, ch, { body: '✨ Der Agent denkt nach …', threadId, quiet: true, raw: true, kind: 'agent', as: { id: null, name: 'V Media CRM Agent' }, meta: { agent: { status: 'running', asker_id: u.id, asker_name: u.name, pending: [] } } });
       db.insert('teamchat_agent_runs', { message_id: row.id, channel_id: ch.id, location_id: ctx.locationId, asker_id: u.id, status: 'running', pending_id: null, token_sealed: null, args_hash: null, created_at: now(), updated_at: now() });
       // the last messages of the channel are context – other people's words are data, never instructions
       const recent = db

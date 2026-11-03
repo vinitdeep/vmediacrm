@@ -10,7 +10,7 @@ import { SortableGrid } from '../sortable/Sortable';
  * Einstellungen → Stimme: the voice layer on top of KI-Anbieter (BYOK). Which provider speaks and listens, the voice
  * (listed by the provider, free text allowed), "Stimme testen" and a microphone test, the phone agent's engine
  * (Twilio's voices or the own provider, live stream or recorded turns) with the latency of recent calls, the defaults of
- * the HyperLevel Agent's push-to-talk, and voicemail transcription.
+ * the V Media CRM Agent's push-to-talk, and voicemail transcription.
  */
 
 const LANGS: [string, string][] = [
@@ -392,7 +392,7 @@ export function VoiceSettingsPage() {
 
       <div className="card" data-tour="voice-agent">
         <h2>
-          <Icon name="bot" size={18} /> HyperLevel Agent
+          <Icon name="bot" size={18} /> V Media CRM Agent
         </h2>
         <p className="muted small">Mikrofon-Taste im Agent-Fenster: aufnehmen, erkennen, Text prüfen und senden. Jede und jeder kann das für sich anders einstellen. Änderungen am CRM bestätigst du immer selbst – gesprochene Befehle bestätigen nichts.</p>
         <div className="row" style={{ gap: 18, flexWrap: 'wrap' }}>
@@ -417,7 +417,7 @@ export function VoiceSettingsPage() {
         <p className="small">
           {d.usage.tts_chars.toLocaleString('de-DE')} Zeichen gesprochen ({d.usage.tts_calls} Aufrufe) · {d.usage.stt_calls} Aufnahmen erkannt · {d.usage.phone_calls} Telefonate mit eigener Stimme ({Math.round(d.usage.phone_seconds / 60)} Min.)
         </p>
-        <p className="muted small">Abgerechnet wird beim Anbieter; hier siehst du nur, wie viel HyperLevel angefragt hat.</p>
+        <p className="muted small">Abgerechnet wird beim Anbieter; hier siehst du nur, wie viel V Media CRM angefragt hat.</p>
       </div>
 
       <div className="row voice-save">

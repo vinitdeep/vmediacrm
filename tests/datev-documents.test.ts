@@ -53,7 +53,7 @@ describe('DATEV document.xml (v06.0) and Beleglink', () => {
       ],
     });
     expect(xml.startsWith('<?xml version="1.0" encoding="utf-8"?>\n<archive xmlns="http://xml.datev.de/bedi/tps/document/v06.0"')).toBe(true);
-    expect(xml).toContain(`xsi:schemaLocation="${DATEV_DOCUMENT_NS} Document_v060.xsd" version="6.0" generatingSystem="HyperLevel"`);
+    expect(xml).toContain(`xsi:schemaLocation="${DATEV_DOCUMENT_NS} Document_v060.xsd" version="6.0" generatingSystem="V Media CRM"`);
     const root = parseXml(xml);
     expect(root.name).toBe('archive');
     const header = root.children[0];

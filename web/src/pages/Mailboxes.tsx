@@ -271,13 +271,13 @@ function MailboxEditor({ mb, locations, push, onClose, onChanged }: { mb: any; l
         </Field>
       </div>
       <Check checked={f.enabled} onChange={(v) => setF({ ...f, enabled: v })} label="Postfach aktiv (Abgleich und Senden)" />
-      <Field label="Signatur" hint="Wird unter E-Mails gesetzt, die du aus HyperLevel über dieses Postfach sendest.">
+      <Field label="Signatur" hint="Wird unter E-Mails gesetzt, die du aus V Media CRM über dieses Postfach sendest.">
         <Textarea value={f.signature} onChange={(v) => setF({ ...f, signature: v })} rows={3} />
       </Field>
       <MoreFields id="mailbox-editor" values={[f.track_engagement, f.contact_policy !== 'all' && f.contact_policy, f.skip_promotions, f.trigger_workflows, picked, mb.folders]}>
       <div data-tour="mailbox-tracking">
         <Check checked={f.track_engagement} onChange={(v) => setF({ ...f, track_engagement: v })} label="Öffnungen und Klicks verfolgen" />
-        <p className="muted small">Standard: aus. Eingeschaltet bekommen Mails aus HyperLevel ein Zählpixel und umgeleitete Links – das kann eine Einwilligung der Empfänger erfordern (Datenschutzerklärung).</p>
+        <p className="muted small">Standard: aus. Eingeschaltet bekommen Mails aus V Media CRM ein Zählpixel und umgeleitete Links – das kann eine Einwilligung der Empfänger erfordern (Datenschutzerklärung).</p>
       </div>
 
       {mb.can_read && (
@@ -337,7 +337,7 @@ function MailboxEditor({ mb, locations, push, onClose, onChanged }: { mb: any; l
         <>
           <h3>Push</h3>
           <p className="muted small">
-            {mb.push.active ? `Push ist aktiv (${mb.push.kind === 'gmail_watch' ? 'Gmail → Pub/Sub' : 'Microsoft-Benachrichtigungen'}) – neue Mails erscheinen in Sekunden.` : `Kein Push: HyperLevel fragt alle 3 Minuten nach. ${mb.push.error ?? ''}`}
+            {mb.push.active ? `Push ist aktiv (${mb.push.kind === 'gmail_watch' ? 'Gmail → Pub/Sub' : 'Microsoft-Benachrichtigungen'}) – neue Mails erscheinen in Sekunden.` : `Kein Push: V Media CRM fragt alle 3 Minuten nach. ${mb.push.error ?? ''}`}
             {mb.provider === 'google' && !push?.gmail && ' Für Gmail-Push trägt die Agentur ein Pub/Sub-Thema ein (Agentur → Integrationen).'}
             {mb.provider === 'microsoft' && !push?.graph && ' Microsoft-Push braucht eine öffentliche https-Adresse.'}
           </p>
@@ -392,7 +392,7 @@ export function MailboxAgencyCard() {
         <Icon name="email" size={18} /> Postfach-Sync: Push (Gmail & Outlook)
       </h2>
       <p className="muted small">
-        Ohne diese Einstellungen funktioniert der Postfach-Sync trotzdem: HyperLevel fragt dann alle 3 Minuten nach neuen Mails. Mit Push erscheinen sie in Sekunden. Postfächer verbindet jedes Team unter <em>Einstellungen → E-Mail & SMS</em> mit der Google-/Microsoft-App von oben (zusätzliche Berechtigungen: Gmail <code>gmail.modify</code>, <code>gmail.send</code> bzw. Graph <code>Mail.ReadWrite</code>, <code>Mail.Send</code>; dieselben Weiterleitungs-URIs). Anleitung: <code>docs/mailbox-sync.md</code>.
+        Ohne diese Einstellungen funktioniert der Postfach-Sync trotzdem: V Media CRM fragt dann alle 3 Minuten nach neuen Mails. Mit Push erscheinen sie in Sekunden. Postfächer verbindet jedes Team unter <em>Einstellungen → E-Mail & SMS</em> mit der Google-/Microsoft-App von oben (zusätzliche Berechtigungen: Gmail <code>gmail.modify</code>, <code>gmail.send</code> bzw. Graph <code>Mail.ReadWrite</code>, <code>Mail.Send</code>; dieselben Weiterleitungs-URIs). Anleitung: <code>docs/mailbox-sync.md</code>.
       </p>
       <div className="grid2">
         <div>

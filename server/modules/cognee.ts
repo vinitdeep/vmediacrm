@@ -35,7 +35,7 @@ const MIGRATION = `
     attempts INTEGER NOT NULL DEFAULT 0, next_attempt_at TEXT, skipped INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL,
     PRIMARY KEY (location_id, type)
   );
-  -- HyperLevel record -> Cognee data item. Rows with a contact are removed by the GDPR erase (after their data items were queued for deletion).
+  -- V Media CRM record -> Cognee data item. Rows with a contact are removed by the GDPR erase (after their data items were queued for deletion).
   CREATE TABLE cognee_items (
     id TEXT PRIMARY KEY, location_id TEXT NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
     type TEXT NOT NULL, kind TEXT NOT NULL, record_id TEXT NOT NULL, parent_id TEXT, contact_id TEXT,
@@ -268,7 +268,7 @@ export async function testConnection(app: App, c: Pick<AgencyConn, 'base_url' | 
       try {
         const list = await client.listDatasets();
         datasets = { total: list.length, gohigh: list.filter((d) => d.name.startsWith('gh_')).length };
-        steps.push({ key: 'datasets', label: 'Datasets lesen', ok: true, detail: `${list.length} Dataset(s) sichtbar, davon ${datasets.gohigh} von HyperLevel.` });
+        steps.push({ key: 'datasets', label: 'Datasets lesen', ok: true, detail: `${list.length} Dataset(s) sichtbar, davon ${datasets.gohigh} von V Media CRM.` });
       } catch (e) {
         fail('datasets', 'Datasets lesen', e);
       }
@@ -363,7 +363,7 @@ export const cogneeModule: Module = {
       const saved = readConn(app);
       // A test of the saved connection is remembered (and its access-control finding is what the status panels show).
       if (!given && saved) writeConn(app, { ...saved, posture: r.posture ?? saved.posture, last_test: { at: now(), ok: r.ok, summary: r.steps.map((s) => `${s.label}: ${s.ok ? 'ok' : 'Fehler'}`).join(', '), version: r.version || undefined } });
-      app.services.audit?.({ ctx, action: 'cognee.test', summary: `Verbindungstest: ${r.ok ? 'ok' : 'fehlgeschlagen'}${r.datasets ? `, ${r.datasets.gohigh} HyperLevel-Datasets` : ''}` });
+      app.services.audit?.({ ctx, action: 'cognee.test', summary: `Verbindungstest: ${r.ok ? 'ok' : 'fehlgeschlagen'}${r.datasets ? `, ${r.datasets.gohigh} V Media CRM-Datasets` : ''}` });
       return r;
     });
 

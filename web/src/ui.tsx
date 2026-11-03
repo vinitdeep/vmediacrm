@@ -1,6 +1,8 @@
 import { Children, Fragment, createContext, isValidElement, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactElement, type ReactNode } from 'react';
 import { serverText, useT } from './i18n';
 import { LearnLink } from './tour/learn';
+// The studio layer (design tokens, shell refinements): imported here so it lands after styles.css and theme.css, before ios.css.
+import './theme/studio.css';
 
 // --- router --------------------------------------------------------------------
 export const BASE = '/app';

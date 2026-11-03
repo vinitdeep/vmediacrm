@@ -10,7 +10,7 @@ import { PLATFORM_LABEL, activity, audit, canManage, connected, fetcherOf, googl
 import { findContacts } from '../services/contacts.js';
 
 /**
- * Audiences from HyperLevel smart lists: customer lists for Meta (Custom Audience) and Google (Customer Match), uploaded
+ * Audiences from V Media CRM smart lists: customer lists for Meta (Custom Audience) and Google (Customer Match), uploaded
  * as SHA-256 hashes normalised per the platforms' rules (services/ads-hash.ts), and lookalikes of them on Meta.
  * Contacts who opted out ("Nicht stören", e-mail unsubscribe) are never uploaded, and the person has to confirm that
  * the contacts agreed to ads based on their data. Also the targeting search (interests, places) for the wizard.
@@ -135,11 +135,11 @@ export const adsAudiencesModule: Module = {
         if (platform === 'meta') {
           const c = metaCreds(conn);
           const api = metaApi(fetcherOf(app), c.version, c.token);
-          platformId = await relay(() => createCustomAudience(api, c.adAccountId, name, `HyperLevel Smart List „${name}“`));
+          platformId = await relay(() => createCustomAudience(api, c.adAccountId, name, `V Media CRM Smart List „${name}“`));
           sent = (await relay(() => addUsers(api, platformId, rows.meta))).received;
         } else {
           const api = googleApi(fetcherOf(app), await googleAuth(app, conn));
-          const r = await relay(() => uploadCustomerMatch(api, { name, description: `HyperLevel Smart List „${name}“`, members: rows.google }));
+          const r = await relay(() => uploadCustomerMatch(api, { name, description: `V Media CRM Smart List „${name}“`, members: rows.google }));
           platformId = r.userList;
           sent = r.sent;
         }

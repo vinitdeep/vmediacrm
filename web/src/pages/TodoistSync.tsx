@@ -94,7 +94,7 @@ export function TodoistSync() {
   };
   const counts = st.counts ? COUNT_LABELS.filter(([k]) => st.counts[k]).map(([k, l]) => `${st.counts[k]} ${l}`) : [];
   const homeOptions: [string, string][] = [
-    ['', `Automatisch: „${v.parent_name || 'HyperLevel'}“`],
+    ['', `Automatisch: „${v.parent_name || 'V Media CRM'}“`],
     ...(projects ?? (v.home.picked ? [{ id: v.home.id, name: v.home.name }] : [])).map((p: Pick) => [p.id, p.inbox ? `${p.name} (Eingang)` : p.name] as [string, string]),
     ...(projects ? [] : [[LOAD, 'Vorhandenes Projekt wählen …'] as [string, string]]),
   ];
@@ -109,7 +109,7 @@ export function TodoistSync() {
     <div className="card todoist-card" data-tour="todoist">
       <h2>Todoist <SignupLink id="todoist" /></h2>
       <p className="muted small">
-        Aufgaben in beide Richtungen mit deinem Todoist abgleichen: Titel, Beschreibung (mit Link zurück), Fälligkeit, Erledigt und Löschen. Standard: ein Projekt „HyperLevel“ mit einem Abschnitt je Sub-Account. Alle 3 Minuten Änderungen, einmal am Tag alles; was du hier änderst, geht nach wenigen Sekunden raus.
+        Aufgaben in beide Richtungen mit deinem Todoist abgleichen: Titel, Beschreibung (mit Link zurück), Fälligkeit, Erledigt und Löschen. Standard: ein Projekt „V Media CRM“ mit einem Abschnitt je Sub-Account. Alle 3 Minuten Änderungen, einmal am Tag alles; was du hier änderst, geht nach wenigen Sekunden raus.
       </p>
       <div className="grid2">
         <Field label="Persönlicher API-Token" hint="Todoist → Einstellungen → Integrationen → Entwickler → API-Token kopieren (bleibt verschlüsselt hier)">
@@ -170,12 +170,12 @@ export function TodoistSync() {
               </Field>
             ) : (
               <Field label="Übergeordnetes Projekt" hint="Automatische Projekte landen darunter; leer = oberste Ebene">
-                <Input value={parent ?? v.parent_name} onChange={setParent} onBlur={async () => parent !== null && parent !== v.parent_name && (await save({ parent_name: parent })) && setParent(null)} placeholder="HyperLevel" />
+                <Input value={parent ?? v.parent_name} onChange={setParent} onBlur={async () => parent !== null && parent !== v.parent_name && (await save({ parent_name: parent })) && setParent(null)} placeholder="V Media CRM" />
               </Field>
             )}
             {bySections && !v.home.picked && (
               <Field label="Projektname" hint={v.home.id ? 'Ein neuer Name benennt das Projekt in Todoist um' : undefined}>
-                <Input value={parent ?? v.parent_name} onChange={setParent} onBlur={async () => parent !== null && parent !== v.parent_name && (await save({ parent_name: parent || 'HyperLevel' })) && setParent(null)} placeholder="HyperLevel" />
+                <Input value={parent ?? v.parent_name} onChange={setParent} onBlur={async () => parent !== null && parent !== v.parent_name && (await save({ parent_name: parent || 'V Media CRM' })) && setParent(null)} placeholder="V Media CRM" />
               </Field>
             )}
             {bySections && (
@@ -184,7 +184,7 @@ export function TodoistSync() {
               </Field>
             )}
             <Field label="Richtung">
-              <Select value={v.direction} onChange={(direction) => save({ direction })} options={[['both', 'Beide Richtungen'], ['push', 'Nur HyperLevel → Todoist']]} />
+              <Select value={v.direction} onChange={(direction) => save({ direction })} options={[['both', 'Beide Richtungen'], ['push', 'Nur V Media CRM → Todoist']]} />
             </Field>
             <Field label="Welche Aufgaben" hint="Bereits verknüpfte Aufgaben bleiben verknüpft">
               <Select value={v.scope} onChange={(scope) => save({ scope })} options={[['all', 'Alle Aufgaben'], ['mine', 'Nur mir zugewiesene']]} />

@@ -18,8 +18,8 @@ import type { Tool } from './mcp.js';
 
 /**
  * Video-Studio: long video → AI-picked 9:16 shorts (OpenShorts) → review → Social Planner.
- * OpenShorts runs as its own service (self-hosted next to HyperLevel, or the hosted API); this module
- * only talks to its REST API: jobs per sub-account from a link or an upload (chunked into HyperLevel,
+ * OpenShorts runs as its own service (self-hosted next to V Media CRM, or the hosted API); this module
+ * only talks to its REST API: jobs per sub-account from a link or an upload (chunked into V Media CRM,
  * then streamed to OpenShorts' upload slot), a signed webhook per job plus polling in onTick, clips
  * proxied from OpenShorts (nothing big lands in the database), follow-up steps (captions style,
  * dubbing, framing), scheduling through the social module, workflow trigger/action, MCP tools and
@@ -75,7 +75,7 @@ interface Stored {
 const hint = (s: string) => `…${s.slice(-4)}`;
 const ext = (name: string) => extname(String(name || '')).toLowerCase().replace(/[^.a-z0-9]/g, '');
 
-/** Whether OpenShorts (and Postiz) can reach HyperLevel: https on a public host name. */
+/** Whether OpenShorts (and Postiz) can reach V Media CRM: https on a public host name. */
 export function isPublicBase(url: string): boolean {
   try {
     const u = new URL(url);
@@ -334,7 +334,7 @@ export const videoStudioModule: Module = {
       setJob(job.id, { os_job_id: osId, status: 'queued', progress: 2, stage: 'In der Warteschlange', error: null, polled_at: now() });
     };
 
-    /** Upload → OpenShorts: its upload slot (streamed from disk), or a signed HyperLevel link for old versions. */
+    /** Upload → OpenShorts: its upload slot (streamed from disk), or a signed V Media CRM link for old versions. */
     const transfer = async (jobId: string) => {
       const job = getJob(jobId);
       if (!job || job.status !== 'uploading') return;
@@ -361,7 +361,7 @@ export const videoStudioModule: Module = {
           rmSync(path, { force: true });
           db.run(`UPDATE video_uploads SET status = 'sent', updated_at = ? WHERE id = ?`, now(), up.id);
         } else {
-          if (!isPublicBase(app.baseUrl())) throw bad('Diese OpenShorts-Version nimmt keine Dateien an und HyperLevel ist nicht öffentlich per https erreichbar – bitte einen Link verwenden');
+          if (!isPublicBase(app.baseUrl())) throw bad('Diese OpenShorts-Version nimmt keine Dateien an und V Media CRM ist nicht öffentlich per https erreichbar – bitte einen Link verwenden');
           await submit(getJob(jobId), { url: sourceUrl(up) });
         }
       } catch (e) {
@@ -955,7 +955,7 @@ export const videoStudioModule: Module = {
       const c = db.get(`SELECT * FROM video_clips WHERE id = ? AND location_id = ? AND status = 'ready'`, clipId, loc);
       if (!c) throw notFound('Clip nicht gefunden');
       if (!app.services.socialPost) throw new HttpError(409, 'Der Social Planner ist nicht installiert');
-      if (!isPublicBase(app.baseUrl())) throw bad('HyperLevel muss öffentlich per https erreichbar sein, damit Postiz den Clip abholen kann');
+      if (!isPublicBase(app.baseUrl())) throw bad('V Media CRM muss öffentlich per https erreichbar sein, damit Postiz den Clip abholen kann');
       if (c.ops !== '[]') throw new HttpError(409, 'Der Clip wird gerade nachbearbeitet – bitte kurz warten');
       const ids = Array.isArray(input.integration_ids) ? input.integration_ids.map(String) : [];
       const type = ['now', 'schedule', 'draft'].includes(String(input.type)) ? String(input.type) : 'schedule';
@@ -984,7 +984,7 @@ export const videoStudioModule: Module = {
     router.post('/api/video-studio/clips/:id/doc', 'location', (ctx) => {
       const c = clipOf(ctx);
       if (!app.services.saveDocs) throw new HttpError(409, 'Das Dokumente-Modul ist nicht installiert');
-      if (!app.baseUrl().startsWith('https://')) throw bad('Dokumente brauchen eine https-Adresse von HyperLevel (PGHL_BASE_URL)');
+      if (!app.baseUrl().startsWith('https://')) throw bad('Dokumente brauchen eine https-Adresse von V Media CRM (PGHL_BASE_URL)');
       const tags: string[] = JSON.parse(c.hashtags || '[]');
       const summary = [c.description, tags.join(' '), c.score !== null ? `Viralität: ${c.score}/100${c.reason ? ` – ${c.reason}` : ''}` : '', c.duration ? `Länge: ${Math.round(c.duration)} s` : ''].filter(Boolean).join('\n').slice(0, 2000);
       const url = `${app.baseUrl()}/app/video-studio/${c.job_id}?clip=${c.id}`;
@@ -1071,7 +1071,7 @@ export const videoStudioModule: Module = {
         credentials: 'Adresse der eigenen OpenShorts-Instanz (z. B. http://openshorts:8000) oder https://api.openshorts.app mit API-Schlüssel (osk_…) unter Agentur → Integrationen → Einrichtung. Gemini bzw. LLM_BASE_URL stehen in der OpenShorts-Umgebung; ElevenLabs/fal.ai optional hier.',
         docs: 'docs/video-studio.md',
         guide: [
-          'OpenShorts neben HyperLevel starten: deploy/openshorts/docker-compose.yml (CPU, 1 Job gleichzeitig, Speicher begrenzt) – oder ein Konto auf openshorts.app anlegen.',
+          'OpenShorts neben V Media CRM starten: deploy/openshorts/docker-compose.yml (CPU, 1 Job gleichzeitig, Speicher begrenzt) – oder ein Konto auf openshorts.app anlegen.',
           'In der OpenShorts-Umgebung GEMINI_API_KEY setzen (kostenlos bei Google AI Studio) oder LLM_BASE_URL auf einen OpenAI-kompatiblen Server.',
           'Agentur → Integrationen → Einrichtung → OpenShorts: Adresse (selbst gehostet z. B. http://openshorts:8000) und ggf. API-Schlüssel eintragen, „Verbindung testen“.',
           'Im Sub-Account Marketing → Video-Studio: Link einfügen oder Video hochladen, Clips prüfen und im Social Planner einplanen.',

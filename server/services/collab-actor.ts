@@ -4,7 +4,7 @@ import { sha256 } from '../core/util.js';
 import { hiddenUser } from '../core/permissions.js';
 
 /**
- * Who is acting, for Wiki and Team-Chat: a person, the HyperLevel Agent on behalf of a person, an AI app
+ * Who is acting, for Wiki and Team-Chat: a person, the V Media CRM Agent on behalf of a person, an AI app
  * connected through OAuth, or an API key / MCP connection of the sub-account (a "bot": it has no
  * identity of its own, so it never gets into private channels and signs with the key's name).
  */

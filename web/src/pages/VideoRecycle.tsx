@@ -151,7 +151,7 @@ export function Recycling({ job }: { job: any }) {
           </button>
           {generating && <span className="muted small">läuft – die Liste aktualisiert sich selbst</span>}
         </div>
-        {!d.public_base && <p className="muted small vr-note">Clips in Blog, Newsletter und Lektion verlinken auf HyperLevel – damit Leser sie sehen, muss HyperLevel öffentlich per https erreichbar sein.</p>}
+        {!d.public_base && <p className="muted small vr-note">Clips in Blog, Newsletter und Lektion verlinken auf V Media CRM – damit Leser sie sehen, muss V Media CRM öffentlich per https erreichbar sein.</p>}
       </div>
       {d.items.length ? (
         <div className="vr-items" data-tour="vr-items">
@@ -306,7 +306,7 @@ function Apply({ item, data, onDone }: { item: Item; data: RecycleData; onDone: 
               );
             })}
           </div>
-          {item.kind === 'instagram' && !data.public_base && <p className="muted small">Instagram bekommt den besten Clip als Reel – dafür muss HyperLevel per https erreichbar sein.</p>}
+          {item.kind === 'instagram' && !data.public_base && <p className="muted small">Instagram bekommt den besten Clip als Reel – dafür muss V Media CRM per https erreichbar sein.</p>}
           {btn('Als Entwurf in den Social Planner', () => go({ integration_ids: sel }), !sel.length || (item.kind === 'instagram' && !data.public_base))}
         </div>
       ) : (
@@ -718,7 +718,7 @@ export function Autopilot({ publicBase, layouts, subtitles }: { publicBase: bool
             <p className="muted small">{social.data?.configured ? 'Noch keine Kanäle im Social Planner.' : 'Der Social Planner ist nicht verbunden – Clips bleiben dann im Video-Studio.'}</p>
           )}
         </Field>
-        {!publicBase && <p className="vs-warn">Postiz holt die Clips bei HyperLevel ab – dafür muss HyperLevel öffentlich per https erreichbar sein.</p>}
+        {!publicBase && <p className="vs-warn">Postiz holt die Clips bei V Media CRM ab – dafür muss V Media CRM öffentlich per https erreichbar sein.</p>}
 
         <h3>Recycling</h3>
         <div className="vr-kinds">

@@ -151,7 +151,7 @@ export async function serveStatic(req: IncomingMessage, res: ServerResponse, o: 
   }
   if (!st || !st.isFile()) {
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-cache' });
-    return void res.end(head ? undefined : '<h1>HyperLevel</h1><p>Die Oberfläche ist noch nicht gebaut: <code>npm run build</code>.</p>');
+    return void res.end(head ? undefined : '<h1>V Media CRM</h1><p>Die Oberfläche ist noch nicht gebaut: <code>npm run build</code>.</p>');
   }
 
   const e = entryFor(file, st);

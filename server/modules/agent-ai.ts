@@ -29,7 +29,7 @@ const TOOLS: Tool[] = [
     name: 'ghl_agent_generate',
     title: 'KI-Agent mit KI entwerfen',
     description:
-      'Entwirft aus einer Beschreibung einen eigenen KI-Agenten: Name, Anweisungen, Werkzeuge aus dem echten Werkzeug-Katalog, Wissensquellen, Sicherheitsmodus, Schrittlimit und optional einen Zeitplan – geprüft gegen das Agenten-Schema (bis zu drei Versuche). Mit apply=true wird er als ENTWURF gespeichert (privat, Zeitplan aus), sonst nur Vorschau. Braucht eine angemeldete Person (Agenten gehören einer Person); der HyperLevel-Agent selbst entwirft nur – speichern muss die Person. Kostet KI-Tokens (Monatslimit des KI-Assistenten).',
+      'Entwirft aus einer Beschreibung einen eigenen KI-Agenten: Name, Anweisungen, Werkzeuge aus dem echten Werkzeug-Katalog, Wissensquellen, Sicherheitsmodus, Schrittlimit und optional einen Zeitplan – geprüft gegen das Agenten-Schema (bis zu drei Versuche). Mit apply=true wird er als ENTWURF gespeichert (privat, Zeitplan aus), sonst nur Vorschau. Braucht eine angemeldete Person (Agenten gehören einer Person); der V Media CRM-Agent selbst entwirft nur – speichern muss die Person. Kostet KI-Tokens (Monatslimit des KI-Assistenten).',
     inputSchema: { type: 'object', properties: { location_id: { type: 'string', description: 'Sub-Account/Projekt-ID' }, prompt: { type: 'string', description: 'Was der Agent tun soll' }, apply: { type: 'boolean', description: 'true: als Entwurf speichern' } }, required: ['location_id', 'prompt'], additionalProperties: false },
     annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: true },
     klassFor: () => 'write',

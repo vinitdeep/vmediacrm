@@ -27,7 +27,7 @@ const OURS = { solo: PLAN_INFO.solo.price_month_cents, team: PLAN_INFO.team.pric
 const FIXTURE = {
   as_of: '2026-10-09',
   vendors: [
-    { id: 'ghl0', name: 'HyperLevel', url: 'https://gohyperlevel.com', pricing: [{ plan: 'Self-hosted', price_month: 0, currency: 'EUR' }], source: 'https://gohyperlevel.com' },
+    { id: 'ghl0', name: 'V Media CRM', url: 'https://gohyperlevel.com', pricing: [{ plan: 'Self-hosted', price_month: 0, currency: 'EUR' }], source: 'https://gohyperlevel.com' },
     { id: 'highlevel', name: 'HighLevel', url: 'https://www.gohighlevel.com', pricing: [{ plan: 'Starter', price_month: 97, currency: 'USD' }, { plan: 'Unlimited', price_month: 297, currency: 'USD' }], source: 'https://www.gohighlevel.com/pricing' },
     { id: 'hubspot', name: 'HubSpot', url: 'https://www.hubspot.com', pricing: [{ plan: 'Free', price_month: 0, currency: 'USD' }, { plan: 'Starter Customer Platform', price_month: 20, currency: 'USD', notes: 'per seat' }, { plan: 'Professional', price_month: 890, currency: 'USD' }], source: 'https://www.hubspot.com/pricing' },
     { id: 'kajabi', name: 'Kajabi', url: 'https://kajabi.com', pricing: [{ plan: 'Kickstarter', price_month: 89, currency: 'USD' }], source: 'https://kajabi.com/pricing' },
@@ -69,10 +69,10 @@ describe('landing: replaces your stack', () => {
     expect(st.converted).toBeUndefined();
     expect(sumsText(st, 'de-DE').replace(/\u00a0/g, ' ')).toBe('313 $ + 19 €');
     expect(st.rows[2].tools[0].source).toBe('');
-    const out = stackHtml(st, COPY.de, 'de', 'HyperLevel').replace(/\u00a0/g, ' ');
+    const out = stackHtml(st, COPY.de, 'de', 'V Media CRM').replace(/\u00a0/g, ' ');
     expect(out).toContain('<ul class="tchips"><li title="Starter · 20 $">HubSpot</li><li title="Lite · 14 $">Pipedrive</li></ul>');
     expect(out).toContain('title="Voice AI: nur eingehende Anrufe">◐ Teilweise');
-    expect(out).toContain('★ Selbst hostbar nur bei HyperLevel');
+    expect(out).toContain('★ Selbst hostbar nur bei V Media CRM');
     expect(out).toContain('Bland&lt;b&gt;');
     expect(out).toContain('<b>0 € <small>(selbst gehostet)</small></b><em>Cloud ab 49,99 €/Monat</em>');
     expect(out).not.toMatch(/<img/);
@@ -157,7 +157,7 @@ describe('landing: the comparison research', () => {
 
   it('renders the matrix accessibly: escaped, sticky header, a footnote per note, sources, disclaimer', () => {
     const c = COPY.de;
-    const out = matrixHtml(parseMatrix(FIXTURE), c, 'de', 'HyperLevel');
+    const out = matrixHtml(parseMatrix(FIXTURE), c, 'de', 'V Media CRM');
     expect(out).not.toContain('<script>');
     expect(out).toContain('&lt;script&gt;');
     expect(out).toContain('<thead>');
@@ -165,7 +165,7 @@ describe('landing: the comparison research', () => {
     expect(out).toContain('nicht in den App-Stores');
     // A competitor "no" without a note is "nicht ausgewiesen", ours stays an honest ✗.
     expect(out).toContain('<td class="v-unlisted"');
-    const full = matrixHtml(parseMatrix(FIXTURE), c, 'de', 'HyperLevel', { full: true });
+    const full = matrixHtml(parseMatrix(FIXTURE), c, 'de', 'V Media CRM', { full: true });
     expect(full).toContain('<small class="cn"><a href="https://www.hubspot.com/pricing" rel="noopener nofollow">Nur eine Pipeline im Starter</a></small>');
     expect(out).toContain('nicht mit HighLevel Inc. oder den anderen genannten Anbietern verbunden');
     expect(checkFragment({ html: out }).filter((i) => i.level !== 'info')).toEqual([]);
@@ -436,7 +436,7 @@ describe('landing page (PGHL_LANDING=1)', () => {
     for (const s of ['49,99 €', '99,99 €', '199 €', 'zzgl. gesetzlicher USt.', 'Gehostet in Deutschland (Frankfurt am Main)']) expect(de.replace(/ /g, ' '), s).toContain(s);
     // The matrix from the research file, with the category chips' CSS in the head.
     expect(home).toContain('.cmpw:has(#cmp-c-crm:checked)');
-    expect(home).toContain('<th scope="col" class="ours">HyperLevel</th>');
+    expect(home).toContain('<th scope="col" class="ours">V Media CRM</th>');
     // Replaces your stack, with the sources and the disclaimer under it.
     expect(home).toContain('Replaces your stack');
     expect(home).toContain('<a href="https://www.pipedrive.com/pricing" rel="noopener nofollow">Pipedrive</a>');
@@ -458,7 +458,7 @@ describe('landing page (PGHL_LANDING=1)', () => {
   it('puts the result of a shared calculator link into the page and its social title – the live script computes the same', async () => {
     const body = await (await get('/?m=hl&p=pro&n=5&app=1&h=self')).text();
     const save = Math.round((994 * 12) / EUR_USD).toLocaleString('en-GB');
-    expect(body).toContain(`<meta property="og:title" content="I save €${save} a year with HyperLevel instead of HighLevel`);
+    expect(body).toContain(`<meta property="og:title" content="I save €${save} a year with V Media CRM instead of HighLevel`);
     expect(body).toContain(`You save €${save} a year.`);
     expect(body).toContain('https://x.com/intent/post?text=');
     // The script, fed the page's own data, writes the same number.
@@ -515,7 +515,7 @@ describe('landing page (PGHL_LANDING=1)', () => {
       expect(body).toContain('label%3A%22good+first+issue%22');
       expect(body).toContain(`· ${a.builtWith}</span>`);
       // live numbers: themes and icon packs from the appearance model, workflow counts like the catalogue
-      expect(body).toContain(lang === 'de' ? '19 Themes' : '19 themes');
+      expect(body).toContain(lang === 'de' ? '20 Themes' : '20 themes');
       expect(body).toContain(lang === 'de' ? '6 Icon-Pakete' : '6 icon packs');
     }
     const cat = (await t.api.get('/api/workflow-catalog')).data;
@@ -540,11 +540,11 @@ describe('landing page (PGHL_LANDING=1)', () => {
     const body = await (await get('/')).text();
     // Jarvis leads the hero's crossfade
     expect(body).toMatch(/<div class="stage"><img src="\/landing\/shot-jarvis\.webp" width="1440" height="900" alt="Focus mode with the Jarvis companion" fetchpriority="high"/);
-    expect(body).toContain('<img src="/landing/shot-xr.webp" width="1600" height="1000" alt="HyperLevel in the spatial mode for XR headsets" loading="lazy" decoding="async" data-hide>');
+    expect(body).toContain('<img src="/landing/shot-xr.webp" width="1600" height="1000" alt="V Media CRM in the spatial mode for XR headsets" loading="lazy" decoding="async" data-hide>');
     expect(body).toContain('id="xr" aria-labelledby="xr-h"><div class="wrap"><div class="spot">');
   });
 
-  it('offers the Android app under its HyperLevel name once an APK is uploaded', async () => {
+  it('offers the Android app under its V Media CRM name once an APK is uploaded', async () => {
     const prev = t.app.services.mobileAppInfo;
     t.app.services.mobileAppInfo = () => ({ version_name: '1.0.3', size: 5 * 1024 * 1024, sha256: 'ab'.repeat(32) });
     try {

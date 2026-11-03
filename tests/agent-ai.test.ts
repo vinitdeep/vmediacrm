@@ -79,7 +79,7 @@ describe('generate → review → draft agent', () => {
     expect((await t.api.get('/api/ai/usage')).data.purposes.agent_builder).toBe('KI-Agent mit KI erstellen');
   });
 
-  it('the HyperLevel Agent drafts through ghl_agent_generate, but saving an agent stays with the person', async () => {
+  it('the V Media CRM Agent drafts through ghl_agent_generate, but saving an agent stays with the person', async () => {
     const me = (await t.api.get('/api/me')).data.user;
     queue = [JSON.stringify({ ...AGENT, name: 'Lead-Prüfer', schedule: null, mode: 'ask', tools: ['ghl_search_contacts', 'ghl_create_task'] })];
     const tool = t.app.services.mcpTools.find((x: any) => x.name === 'ghl_agent_generate');

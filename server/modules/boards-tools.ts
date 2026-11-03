@@ -9,7 +9,7 @@ import type { Tool } from './mcp.js';
 /**
  * Living Boards for agents and the phone: four MCP tools (list, get, apply a patch, the widget catalogue) plus one to
  * create a board – thin relays onto the REST routes (modules/boards.ts), so the key's sub-account, member rights, the
- * audit log and the versions apply – and the read-only mobile endpoints /api/mobile/boards*. The HyperLevel Agent gets
+ * audit log and the versions apply – and the read-only mobile endpoints /api/mobile/boards*. The V Media CRM Agent gets
  * the tools automatically (app.services.mcpTools) and a short hint on how to use them.
  */
 
@@ -131,7 +131,7 @@ export const boardsToolsModule: Module = {
     const { router } = app;
     app.services.mcpTools = [...(app.services.mcpTools ?? []), ...BOARD_TOOLS];
 
-    // The HyperLevel Agent knows what boards are and how to change them.
+    // The V Media CRM Agent knows what boards are and how to change them.
     app.services.agentPromptExtras = [
       ...(app.services.agentPromptExtras ?? []),
       (i: { user: any; locationId: string; automatic: boolean }) =>

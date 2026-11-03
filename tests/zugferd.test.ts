@@ -13,7 +13,7 @@ import { startTestApp } from './helpers.js';
 
 vi.setConfig({ hookTimeout: 60_000 });
 
-const META = { title: 'Rechnung RE-2026-0001', author: 'Muster Beratung GmbH', subject: 'Rechnung RE-2026-0001 an Kunde & Söhne GmbH', creator: 'HyperLevel Rechnungen', producer: 'HyperLevel', date: '2026-10-05T10:00:00.000Z' };
+const META = { title: 'Rechnung RE-2026-0001', author: 'Muster Beratung GmbH', subject: 'Rechnung RE-2026-0001 an Kunde & Söhne GmbH', creator: 'V Media CRM Rechnungen', producer: 'V Media CRM', date: '2026-10-05T10:00:00.000Z' };
 const hybrid = (profile: 'en16931' | 'xrechnung' = 'en16931', d = doc()) => {
   const { xml } = zugferdXml(d, profile);
   return { xml, pdf: makeHybridPdf(invoicePdf(d), { xml, profile, meta: META }) };
@@ -54,7 +54,7 @@ describe('hybrid PDF (ZUGFeRD 2.3 / Factur-X 1.07)', () => {
     expect(ef).toContain(`/Size ${Buffer.byteLength(xml)}`);
     expect(ef).toContain(`/CheckSum <${createHash('md5').update(xml).digest('hex').toUpperCase()}>`);
     expect(ef).toMatch(/\/ModDate \(D:20261005100000\+00'00'\)/);
-    // the receipts inbox of another HyperLevel reads it back as well
+    // the receipts inbox of another V Media CRM reads it back as well
     expect(findEmbeddedInvoice(pdf)).toBe(xml);
   });
 
@@ -81,7 +81,7 @@ describe('hybrid PDF (ZUGFeRD 2.3 / Factur-X 1.07)', () => {
     expect(pdfText(META.subject)).toMatch(/^<FEFF[0-9A-F]+>$/);
     expect(Buffer.from(pdfText(META.subject).slice(5, -1), 'hex').swap16().toString('utf16le')).toBe(META.subject);
     expect(info).toContain("/CreationDate (D:20261005100000+00'00')");
-    expect(info).toContain('/Producer (HyperLevel)');
+    expect(info).toContain('/Producer (V Media CRM)');
   });
 
   it('is one clean revision: PDF 1.7 header, every xref offset points at its object, document ID, deterministic', () => {

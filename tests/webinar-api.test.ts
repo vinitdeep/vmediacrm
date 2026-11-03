@@ -486,7 +486,7 @@ describe('MCP tools', () => {
       expect(tool.description).toMatch(/nie „live“|Automatisiert/);
       expect(tool.annotations.readOnlyHint === true).toBe(tool.name !== 'ghl_webinar_register');
     }
-    // the HyperLevel Agent asks before it registers somebody (a write that sends mail)
+    // the V Media CRM Agent asks before it registers somebody (a write that sends mail)
     expect(classify(WEBINAR_TOOLS.find((x) => x.name === 'ghl_webinar_register')!)).toBe('write');
     for (const n of ['ghl_webinar_list', 'ghl_webinar_get', 'ghl_webinar_stats']) expect(classify(WEBINAR_TOOLS.find((x) => x.name === n)!), n).toBe('read');
   });

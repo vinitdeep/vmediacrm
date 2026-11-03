@@ -85,7 +85,7 @@ function MollieCard({ p, methods, onSaved }: { p: any; methods: { id: string; la
           ))}
         </div>
       </Field>
-      <p className="muted small">{t('Mollie meldet Zahlungen an {url} – die Adresse schickt HyperLevel bei jeder Zahlung mit, du musst sie nicht eintragen.', { url: p.webhook_url })}</p>
+      <p className="muted small">{t('Mollie meldet Zahlungen an {url} – die Adresse schickt V Media CRM bei jeder Zahlung mit, du musst sie nicht eintragen.', { url: p.webhook_url })}</p>
       </MoreFields>
       <div className="row shop-actions">
         <button className="btn" onClick={save} disabled={!key}>

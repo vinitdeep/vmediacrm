@@ -8,7 +8,7 @@ import { slimPayload } from '../server/modules/composio-triggers.js';
 
 /**
  * Composio over mocked HTTP: no request ever leaves the process. The fake below answers the
- * Composio v3.1 endpoints HyperLevel uses and records every call (method, path, query, body, key).
+ * Composio v3.1 endpoints V Media CRM uses and records every call (method, path, query, body, key).
  */
 
 type Req = { method: string; path: string; query: URLSearchParams; body: any; key: string };

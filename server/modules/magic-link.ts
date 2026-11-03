@@ -60,7 +60,7 @@ export const magicLinkModule: Module = {
       if (!loc) return 'skipped';
       const htmlBody = `<!doctype html><html><body style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#1f2937">${escapeHtml(text)
         .replace(/\n/g, '<br>')
-        .replace(escapeHtml(link), `<a href="${escapeHtml(link)}" style="display:inline-block;background:#2563eb;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">Anmelden</a>`)}</body></html>`;
+        .replace(escapeHtml(link), `<a href="${escapeHtml(link)}" style="display:inline-block;background:#c8191f;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">Anmelden</a>`)}</body></html>`;
       try {
         return (await mailer(loc, { to, subject, text, html: htmlBody })).status;
       } catch (e) {

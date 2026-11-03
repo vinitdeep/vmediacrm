@@ -543,8 +543,8 @@ function SettingsTab() {
       <div className="cr-panels two">
         <Panel title="Abo- und Raten-Zahlungen" sub="Was passiert, wenn eine Zahlung nicht durchgeht." tour="dunning-settings-sub" actions={<button className="btn small secondary" onClick={() => reset('sub')}>Standard</button>}>
           <Check checked={sub.enabled} onChange={(v) => setSub({ enabled: v })} label="Mahnwesen für Abo-Zahlungen aktiv" />
-          <Field label="Wiederholte Einzugsversuche" hint={sub.retry_mode === 'stripe' ? 'Stripe wiederholt selbst (Smart Retries). Stelle Anzahl und Zeitraum im Stripe-Dashboard unter Einstellungen → Abos und E-Mails → Fehlgeschlagene Zahlungen ein.' : 'HyperLevel zieht die offene Rechnung an den angegebenen Tagen selbst erneut ein. Schalte dann die Stripe-Wiederholungen aus.'}>
-            <Select value={sub.retry_mode} onChange={(v) => setSub({ retry_mode: v })} options={[['stripe', 'Stripe (Smart Retries)'], ['own', 'HyperLevel (eigene Tage)']]} />
+          <Field label="Wiederholte Einzugsversuche" hint={sub.retry_mode === 'stripe' ? 'Stripe wiederholt selbst (Smart Retries). Stelle Anzahl und Zeitraum im Stripe-Dashboard unter Einstellungen → Abos und E-Mails → Fehlgeschlagene Zahlungen ein.' : 'V Media CRM zieht die offene Rechnung an den angegebenen Tagen selbst erneut ein. Schalte dann die Stripe-Wiederholungen aus.'}>
+            <Select value={sub.retry_mode} onChange={(v) => setSub({ retry_mode: v })} options={[['stripe', 'Stripe (Smart Retries)'], ['own', 'V Media CRM (eigene Tage)']]} />
           </Field>
           {sub.retry_mode === 'own' && (
             <Field label="Versuche an Tag … nach dem Fehlschlag" hint="Zahlen mit Komma, z. B. 1, 3, 5, 7">
@@ -566,7 +566,7 @@ function SettingsTab() {
           <Check checked={sub.cancel_on_final} onChange={(v) => setSub({ cancel_on_final: v })} label="Abo dann auch bei Stripe kündigen" />
           <div className="cr-form-row">
             <Field label="Karte aktualisieren über">
-              <Select value={sub.billing_method} onChange={(v) => setSub({ billing_method: v })} options={[['setup', 'HyperLevel-Seite + Stripe Checkout'], ['portal', 'Stripe-Kundenportal']]} />
+              <Select value={sub.billing_method} onChange={(v) => setSub({ billing_method: v })} options={[['setup', 'V Media CRM-Seite + Stripe Checkout'], ['portal', 'Stripe-Kundenportal']]} />
             </Field>
             <Field label="Link gültig (Tage)">
               <Input type="number" min={1} max={90} value={sub.link_days} onChange={(v) => setSub({ link_days: Math.max(1, Number(v) || 30) })} />

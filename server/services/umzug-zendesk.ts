@@ -89,7 +89,7 @@ async function describe(h: VendorHttp, parts: PartKey[]) {
   if (parts.includes('companies')) await count('companies', 'organizations', 'Organisationen', () => countOf(h, '/organizations/count.json'));
   if (parts.includes('tickets')) {
     await count('tickets', 'tickets', 'Tickets (mit allen Kommentaren)', () => countOf(h, '/tickets/count.json'));
-    warnings.push('Zu jedem Ticket liest HyperLevel die Kommentare einzeln – das braucht bei vielen Tickets Zeit (Zendesk erlaubt je nach Tarif 200 bis 700 Anfragen pro Minute). Der Probelauf liest nur die ersten Tickets.');
+    warnings.push('Zu jedem Ticket liest V Media CRM die Kommentare einzeln – das braucht bei vielen Tickets Zeit (Zendesk erlaubt je nach Tarif 200 bis 700 Anfragen pro Minute). Der Probelauf liest nur die ersten Tickets.');
   }
   if (parts.includes('articles')) await count('articles', 'articles', 'Hilfe-Artikel', async () => Number((await h.get('/help_center/articles.json', { per_page: 1 }))?.count ?? 0));
   return { counts, fields, warnings };
@@ -224,12 +224,12 @@ export const ZENDESK: SourceDef = {
   howto: [
     'Im Zendesk Admin-Center: Apps und Integrationen → APIs → „Zendesk-API“. Dort „Token-Zugriff aktivieren“ einschalten und „API-Token hinzufügen“.',
     'Subdomain (der Teil vor .zendesk.com), die E-Mail des Admins und den Token hier eintragen. Der Token sieht, was dieser Admin sieht.',
-    'Nach dem Umzug den Token in Zendesk wieder deaktivieren. Gelesen wird nur – in Zendesk ändert HyperLevel nichts.',
+    'Nach dem Umzug den Token in Zendesk wieder deaktivieren. Gelesen wird nur – in Zendesk ändert V Media CRM nichts.',
   ],
   limits: [
     'Anhänge und Bilder (die Dateien bleiben bei Zendesk – Namen stehen im Ticket, Artikel verlinken noch dorthin)',
-    'Makros, Trigger, Automationen, Ansichten, SLA-Richtlinien und Berichte – baue sie in HyperLevel als Textbausteine, Workflows und SLAs neu',
-    'Agenten und Gruppen (Teammitglieder legst du in HyperLevel selbst an – der Bearbeiter steht als Notiz im Ticket)',
+    'Makros, Trigger, Automationen, Ansichten, SLA-Richtlinien und Berichte – baue sie in V Media CRM als Textbausteine, Workflows und SLAs neu',
+    'Agenten und Gruppen (Teammitglieder legst du in V Media CRM selbst an – der Bearbeiter steht als Notiz im Ticket)',
     'Zufriedenheitsbewertungen, Talk-Anrufe und Chat-Protokolle außerhalb von Tickets',
     'Mehrsprachige Artikel-Übersetzungen (es kommen die Artikel, die die Hilfe-Center-Schnittstelle liefert) – alle Artikel landen als Entwurf',
   ],

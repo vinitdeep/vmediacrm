@@ -182,7 +182,7 @@ describe('MCP servers: add, test, tools', () => {
     expect(calls.find((c: any) => c.tool === 'fails')).toMatchObject({ ok: false, error: 'Kaputt', source: 'ui' });
   });
 
-  it('a wrong token is reported without logging the HyperLevel user out (409, not 401)', async () => {
+  it('a wrong token is reported without logging the V Media CRM user out (409, not 401)', async () => {
     await t.api.patch(`/api/mcp-servers/${sid}`, { secret: 'wrong' });
     const r = await t.api.post('/api/mcp-servers/call', { server_id: sid, tool: 'echo', arguments: { text: 'x' } });
     expect(r.status).toBe(409);
@@ -247,7 +247,7 @@ describe('MCP servers: add, test, tools', () => {
     await t.api.patch(`/api/mcp-servers/${sid}`, { expose_agent: true });
   });
 
-  it('re-exposes enabled tools on HyperLevel’s /mcp only when switched on, scoped to the key’s sub-account', async () => {
+  it('re-exposes enabled tools on V Media CRM’s /mcp only when switched on, scoped to the key’s sub-account', async () => {
     const keyA = (await t.api.post('/api/api-keys', { name: 'MCP A' })).data.key;
     t.api.setLocation(locB);
     const keyB = (await t.api.post('/api/api-keys', { name: 'MCP B' })).data.key;
@@ -356,7 +356,7 @@ describe('OAuth 2.1 client', () => {
   });
 
   it('refreshes tokens shortly before they expire and after a 401 (rotating refresh tokens)', async () => {
-    // the server hands out 30 s tokens → HyperLevel refreshes before using one
+    // the server hands out 30 s tokens → V Media CRM refreshes before using one
     const test = await t.api.post(`/api/mcp-servers/${oid}/test`);
     expect(test.status).toBe(200);
     expect(oauth.state.tokenCalls.filter((c) => c.grant_type === 'refresh_token')).toHaveLength(1);
@@ -395,7 +395,7 @@ describe('OAuth 2.1 client', () => {
   });
 });
 
-describe('HyperLevel Agent uses external tools', () => {
+describe('V Media CRM Agent uses external tools', () => {
   const model = fakeModel();
   const tool = (id: string, name: string, input: Record<string, unknown>) => ({ type: 'tool_use' as const, id, name, input });
   let sid = '';

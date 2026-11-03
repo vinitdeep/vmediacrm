@@ -199,7 +199,7 @@ function Generator({ cap, meta, prefill, onStarted }: { cap: Capability; meta: G
           <Field label="Endpunkt" hint="z. B. /api/v1/veo/generate oder /api/v1/jobs/createTask">
             <Input value={f.kie_endpoint} onChange={(v) => set({ kie_endpoint: v })} placeholder="/api/v1/jobs/createTask" />
           </Field>
-          <Field label="JSON-Body" hint="callBackUrl setzt HyperLevel selbst">
+          <Field label="JSON-Body" hint="callBackUrl setzt V Media CRM selbst">
             <Textarea className="mono" rows={5} value={f.kie_body} onChange={(v) => set({ kie_body: v })} placeholder={'{\n  "model": "google/nano-banana",\n  "input": { "prompt": "…" }\n}'} />
           </Field>
           <Field label="Abfrage-Pfad (optional)" hint="Standard: /api/v1/jobs/recordInfo bzw. …/record-info">
@@ -495,7 +495,7 @@ function Templates({ meta, onChange }: { meta: GenMeta | undefined; onChange: ()
       <div className="card">
         <h2>Jeder andere Anbieter – ohne Code</h2>
         <p className="muted" style={{ marginTop: 0 }}>
-          Eine HTTP-Vorlage beschreibt, wie HyperLevel einen Dienst aufruft: Adresse, Kopfzeilen und ein JSON-Body mit Platzhaltern wie <code>{'{{prompt}}'}</code>, <code>{'{{aspect_ratio}}'}</code>, <code>{'{{image_url}}'}</code> oder <code>{'{{params.x}}'}</code>, wo die Datei-URL in der Antwort steht und – bei asynchronen Diensten – wie der Status abgefragt wird. Den Schlüssel trägst du als Verbindung „Eigener Anbieter (HTTP)“ unter Einstellungen → KI-Anbieter (BYOK) ein.
+          Eine HTTP-Vorlage beschreibt, wie V Media CRM einen Dienst aufruft: Adresse, Kopfzeilen und ein JSON-Body mit Platzhaltern wie <code>{'{{prompt}}'}</code>, <code>{'{{aspect_ratio}}'}</code>, <code>{'{{image_url}}'}</code> oder <code>{'{{params.x}}'}</code>, wo die Datei-URL in der Antwort steht und – bei asynchronen Diensten – wie der Status abgefragt wird. Den Schlüssel trägst du als Verbindung „Eigener Anbieter (HTTP)“ unter Einstellungen → KI-Anbieter (BYOK) ein.
         </p>
         {!custom.length && <p className="muted small">Noch keine Verbindung vom Typ „Eigener Anbieter“ – Vorlagen kannst du trotzdem schon anlegen.</p>}
         <div className="actions">

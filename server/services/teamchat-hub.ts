@@ -2,7 +2,7 @@
  * Realtime for the Team-Chat: one Server-Sent-Events stream per open browser tab (the client posts
  * messages, typing and "I'm here" signals with ordinary requests – SSE + POST), presence (who has a tab
  * open), typing indicators and the "is somebody looking right now" signal that keeps push notifications
- * from buzzing someone who is reading. In memory – one HyperLevel process serves the chat; clients catch up
+ * from buzzing someone who is reading. In memory – one V Media CRM process serves the chat; clients catch up
  * after a reconnect by loading the channel again.
  */
 

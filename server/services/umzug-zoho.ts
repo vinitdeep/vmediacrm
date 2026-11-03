@@ -307,12 +307,12 @@ export const ZOHO: SourceDef = {
     { key: 'data_center', label: 'Region', placeholder: 'com, eu, in, com.au, jp, ca, sa oder cn', optional: true, hint: 'So endet die Adresse deines Zoho-Logins (zoho.eu → eu); leer = com' },
     { key: 'client_id', label: 'Client-ID', hint: 'Zoho API-Konsole → „Self Client“ → Client-ID' },
     { key: 'client_secret', label: 'Client-Secret', secret: true, hint: 'Dort ebenfalls unter „Client Secret“' },
-    { key: 'code', label: 'Code (Grant Token)', secret: true, hint: 'Im Self Client: Reiter „Generate Code“ – Scope ZohoCRM.modules.READ,ZohoCRM.settings.READ, Dauer 10 Minuten. HyperLevel tauscht ihn sofort gegen einen Refresh-Token' },
+    { key: 'code', label: 'Code (Grant Token)', secret: true, hint: 'Im Self Client: Reiter „Generate Code“ – Scope ZohoCRM.modules.READ,ZohoCRM.settings.READ, Dauer 10 Minuten. V Media CRM tauscht ihn sofort gegen einen Refresh-Token' },
   ],
   howto: [
     'Öffne die Zoho-API-Konsole deiner Region (z. B. api-console.zoho.eu) → „Self Client“. Dort stehen Client-ID und Client-Secret.',
     'Im Reiter „Generate Code“ als Scope „ZohoCRM.modules.READ,ZohoCRM.settings.READ“ eintragen, eine Dauer von 10 Minuten wählen und einen Code erzeugen.',
-    'Region, Client-ID, Client-Secret und den Code hier eintragen – innerhalb der zehn Minuten. HyperLevel tauscht den Code sofort gegen einen Refresh-Token (verschlüsselt gespeichert) und liest nur. Nach dem Umzug widerrufst du die Zugriffe im Zoho-Konto unter „Verbundene Apps“.',
+    'Region, Client-ID, Client-Secret und den Code hier eintragen – innerhalb der zehn Minuten. V Media CRM tauscht den Code sofort gegen einen Refresh-Token (verschlüsselt gespeichert) und liest nur. Nach dem Umzug widerrufst du die Zugriffe im Zoho-Konto unter „Verbundene Apps“.',
   ],
   limits: [
     'Berichte, Dashboards, Workflow-Regeln, Blueprints und Makros',

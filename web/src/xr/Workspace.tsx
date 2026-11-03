@@ -71,7 +71,7 @@ function useWidth(ref: { current: HTMLElement | null }): number {
   return w;
 }
 
-/** The HyperLevel Agent inside a panel: the same chat as the drawer, without the drawer. */
+/** The V Media CRM Agent inside a panel: the same chat as the drawer, without the drawer. */
 function EmbeddedAgent() {
   const [ready] = useState(() => {
     // The drawer opens from this saved flag; remember the person's own state and give it back when the panel goes.

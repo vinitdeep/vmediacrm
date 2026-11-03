@@ -5,7 +5,7 @@ import { Empty, Modal, Spinner, confirmAsk, toastError, useLoad } from '../ui';
 import { Mini, cellsOfSpec } from './Mini';
 import type { BoardFull, BoardState, Catalogue, VersionItem } from './types';
 
-const VIA: Record<string, string> = { session: 'Editor', agent: 'HyperLevel Agent', mcp: 'MCP', api_key: 'API-Schlüssel', voice: 'Sprache' };
+const VIA: Record<string, string> = { session: 'Editor', agent: 'V Media CRM Agent', mcp: 'MCP', api_key: 'API-Schlüssel', voice: 'Sprache' };
 const KIND: Record<string, string> = { create: 'Angelegt', template: 'Aus Vorlage', edit: 'Bearbeitet', agent: 'Per Wunsch', undo: 'Rückgängig', redo: 'Wiederhergestellt', restore: 'Zurückgeholt' };
 
 function Preview({ boardId, n, catalogue }: { boardId: string; n: number; catalogue: Catalogue | null }) {

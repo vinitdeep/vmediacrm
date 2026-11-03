@@ -3,7 +3,7 @@ import { TYPES } from '../services/cognee/model.js';
 import type { Tool } from './mcp.js';
 
 /**
- * MCP tools of the Wissensgedächtnis – also the tools of the in-app HyperLevel Agent (it uses every MCP tool in-process).
+ * MCP tools of the Wissensgedächtnis – also the tools of the in-app V Media CRM Agent (it uses every MCP tool in-process).
  * Both relay onto the REST routes (/api/cognee/…), so the sub-account, the member's areas, the opt-ins and the audit log
  * apply. `ghl_memory_recall` asks for the compact form: a few short snippets with their sources, at most 4 KB in total, so
  * it cannot flood the model's context. Its output is third-party text (notes, tickets, messages): marked untrusted.
@@ -38,7 +38,7 @@ const TOOLS: Tool[] = [
     name: 'ghl_memory_remember',
     title: 'Etwas im Gedächtnis merken',
     description:
-      'Legt einen kurzen Hinweis im Wissensgedächtnis des Sub-Accounts ab (z. B. eine Entscheidung, eine Regel, ein Ergebnis), damit er später mit ghl_memory_recall gefunden wird. Nur wenn der Sub-Account „Gemerkte Hinweise“ freigegeben hat; der Hinweis liegt auch in HyperLevel und lässt sich dort löschen. Keine Passwörter oder Zugangsdaten merken.',
+      'Legt einen kurzen Hinweis im Wissensgedächtnis des Sub-Accounts ab (z. B. eine Entscheidung, eine Regel, ein Ergebnis), damit er später mit ghl_memory_recall gefunden wird. Nur wenn der Sub-Account „Gemerkte Hinweise“ freigegeben hat; der Hinweis liegt auch in V Media CRM und lässt sich dort löschen. Keine Passwörter oder Zugangsdaten merken.',
     inputSchema: obj({ ...LOC, text: { type: 'string', description: 'Der Hinweis in ein bis drei Sätzen (höchstens 4000 Zeichen)' } }, ['location_id', 'text']),
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     run: (call, a) => call.api('POST', '/api/cognee/remember', { location: a.location_id, body: { text: a.text } }),

@@ -724,7 +724,7 @@ describe('permissions, isolation and retention', () => {
   });
 });
 
-describe('MCP tools (HyperLevel Agent, Claude, Codex)', () => {
+describe('MCP tools (V Media CRM Agent, Claude, Codex)', () => {
   let key = '';
   const rpc = async (name: string, args: Record<string, unknown> = {}) => {
     const r = await t.api.raw('/mcp', { method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name, arguments: args } }) });

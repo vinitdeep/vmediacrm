@@ -77,7 +77,7 @@ export const SETTINGS_TOURS: Tour[] = [
     routes: ['settings/company', 'settings/messaging', 'settings/billing', 'settings/fields', 'settings/api', 'settings/import'],
     keywords: 'einstellungen firma smtp email versand sms rechnung iban felder tags api webhook import',
     learned: ['Firmendaten pflegen (Impressum, Rechnungen, E-Mail-Fuß)', 'E-Mail per SMTP und SMS einrichten – sonst wird nur gespeichert', 'Rechnungsnummern, USt und Bankdaten', 'Eigene Felder, Tags, API-Schlüssel und Webhooks'],
-    docs: { label: 'Kostenlos E-Mails & SMS senden', file: 'README', anchor: 'kostenlos-e-mails--sms-senden' },
+    docs: { label: 'Kostenlos E-Mails & SMS senden', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Firma', route: 'settings/company', target: 'settings-company', text: 'Name, Zeitzone, E-Mail für Team-Benachrichtigungen, Telefon, Website, Logo und Adresse – erscheinen auf Rechnungen, im Impressum und im E-Mail-Fuß.' },
       { title: 'E-Mail-Versand', route: 'settings/messaging', target: 'settings-email', text: 'Wichtig: Steht hier „Nur speichern“, geht **keine** E-Mail raus. Mit SMTP verschickst du über dein eigenes Postfach (z. B. Hostinger, Gmail mit App-Passwort).' },
@@ -211,7 +211,7 @@ export const SETTINGS_TOURS: Tour[] = [
     routes: ['settings/team', 'settings/locations'],
     keywords: 'team benutzer mitarbeiter zugang rechte rolle admin login kunde',
     learned: ['Wer Admin ist und wer Mitarbeiter', 'Neue Zugänge mit Sub-Accounts und Bereichen anlegen', '2FA eines Mitarbeiters zurücksetzen', 'Sub-Accounts anlegen und löschen'],
-    docs: { label: 'Als Agentur', file: 'README', anchor: 'als-agentur' },
+    docs: { label: 'Als Agentur', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Das Team', route: 'settings/team', target: 'team-list', text: 'Alle Zugänge mit Rolle, 2FA-Status und Sub-Accounts. **Admins** sehen alles – vergib das sparsam.' },
       { title: 'Neuer Zugang', target: 'team-new', kind: 'click', text: 'Ein Zugang für Mitarbeiter oder Kunden – jeder bekommt seinen eigenen.', do: 'Klicke auf **+ Benutzer**.' },

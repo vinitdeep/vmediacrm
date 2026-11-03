@@ -6,13 +6,13 @@ import { stripControl } from './agent-tool-sources.js';
 import { isPrivateIp, safeFetch, safeLookup, type SafeResponse } from './net.js';
 
 /**
- * MCP client: HyperLevel talks to remote MCP servers (Model Context Protocol) as a client – Streamable HTTP
+ * MCP client: V Media CRM talks to remote MCP servers (Model Context Protocol) as a client – Streamable HTTP
  * (2025-06-18 / 2025-03-26) with a fallback to the older HTTP+SSE transport (2024-11-05), plus the
  * OAuth 2.1 client side of the MCP authorization spec (protected-resource metadata RFC 9728,
  * authorization-server metadata RFC 8414, dynamic client registration RFC 7591, PKCE S256, resource
  * indicators RFC 8707, refresh). All buffered HTTP goes through `safeFetch` (no internal targets unless
  * an agency admin allowed them for that server); the long-lived SSE stream uses the same DNS guard.
- * Tool definitions and results are sanitised here – they come from a system HyperLevel does not control.
+ * Tool definitions and results are sanitised here – they come from a system V Media CRM does not control.
  */
 
 export const CLIENT_PROTOCOL = '2025-06-18';
@@ -36,7 +36,7 @@ export class McpError extends Error {
   constructor(
     message: string,
     public code: McpErrorCode,
-    /** Status HyperLevel answers with. */
+    /** Status V Media CRM answers with. */
     public status = 502,
     public detail: { httpStatus?: number; wwwAuthenticate?: string; rpcCode?: number } = {},
   ) {
@@ -147,7 +147,7 @@ const rpcResult = (msgs: any[], id: number, method: string) => {
   return m.result;
 };
 
-const initParams = () => ({ protocolVersion: CLIENT_PROTOCOL, capabilities: {}, clientInfo: { name: 'gohigh', title: 'HyperLevel', version: APP_VERSION } });
+const initParams = () => ({ protocolVersion: CLIENT_PROTOCOL, capabilities: {}, clientInfo: { name: 'gohigh', title: 'V Media CRM', version: APP_VERSION } });
 
 const sessionInfo = (r: any) => ({
   protocolVersion: PROTOCOLS.includes(String(r?.protocolVersion)) ? String(r.protocolVersion) : CLIENT_PROTOCOL,
@@ -253,7 +253,7 @@ function openStream(url: string, headers: Record<string, string>, o: { allowPriv
   };
   const req = (u.protocol === 'https:' ? httpsRequest : httpRequest)(
     u,
-    { method: 'GET', headers: { 'user-agent': `HyperLevel/${APP_VERSION}`, accept: 'text/event-stream', 'cache-control': 'no-cache', ...headers }, lookup: safeLookup(o.allowPrivate) as any, timeout: o.timeoutMs },
+    { method: 'GET', headers: { 'user-agent': `V Media CRM/${APP_VERSION}`, accept: 'text/event-stream', 'cache-control': 'no-cache', ...headers }, lookup: safeLookup(o.allowPrivate) as any, timeout: o.timeoutMs },
     (res) => {
       onOpen(res);
       res.setEncoding('utf8');
@@ -418,7 +418,7 @@ export interface ToolDef {
 
 export const TOOL_NAME_RE = /^[A-Za-z0-9_.\-/]{1,128}$/;
 
-/** tools/list entries → definitions HyperLevel stores; odd names, huge schemas and control characters are dropped. */
+/** tools/list entries → definitions V Media CRM stores; odd names, huge schemas and control characters are dropped. */
 export function cleanToolDefs(raw: unknown): ToolDef[] {
   const out: ToolDef[] = [];
   const seen = new Set<string>();

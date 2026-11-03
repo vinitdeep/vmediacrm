@@ -276,7 +276,7 @@ export const SALESFORCE: SourceDef = {
   howto: [
     'Am robustesten: In Salesforce unter Einrichtung → App-Manager → „Neue External Client App“ (oder verbundene App) anlegen, „Client Credentials Flow“ aktivieren, einen Ausführungs-Benutzer mit Leserechten wählen (Objekte Account, Contact, Lead, Opportunity, Task und die Metadaten) und Consumer Key und Secret hier eintragen.',
     'Schneller, aber nur für ein paar Stunden: einen Zugriffs-Token eintragen (z. B. mit der Salesforce-CLI: „sf org display“). Läuft er während des Umzugs ab, trägst du einen neuen ein und setzt mit „Fortsetzen“ fort.',
-    'Dazu die Adresse deiner Org (My Domain, endet auf .my.salesforce.com). Gelesen wird nur – in Salesforce ändert HyperLevel nichts. Nach dem Umzug die App bzw. den Token widerrufen.',
+    'Dazu die Adresse deiner Org (My Domain, endet auf .my.salesforce.com). Gelesen wird nur – in Salesforce ändert V Media CRM nichts. Nach dem Umzug die App bzw. den Token widerrufen.',
   ],
   limits: [
     'Berichte, Dashboards, Flows und Apex-Automationen, Genehmigungsprozesse',

@@ -8,7 +8,7 @@ import { callRoute } from './route-call.js';
  * Brennpunkte und nächste Schritte – the companion's briefing (Fokus-Modus mit Companion, docs/living-boards.md#fokus-modus-mit-companion).
  * Rules only, so it works without AI: every signal is read through the viewer's own API routes (same guards, rights and SaaS
  * plan as their pages – a route they may not open simply adds nothing), ranked by urgency × impact, the top five kept. Each
- * hotspot carries a widget for the focus view and, where it makes sense, one concrete next step: a prompt for the HyperLevel
+ * hotspot carries a widget for the focus view and, where it makes sense, one concrete next step: a prompt for the V Media CRM
  * Agent (which still asks before anything goes out) or a page to open. A prompt never carries third-party text (contact names,
  * subjects, titles – they could hold instructions): it names the record as the agent's selected record (`entity`, read through
  * its ui_context as data), only the label people see names it. Never writes anything.

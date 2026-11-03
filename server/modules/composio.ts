@@ -615,7 +615,7 @@ export const composioModule: Module = {
         guide: [
           'Bei composio.dev ein Konto anlegen (es gibt einen kostenlosen Einstieg) und unter Settings → API Keys einen Projekt-Schlüssel erzeugen.',
           'Schlüssel unter Agentur → Integrationen → Einrichtung → Composio eintragen und „Verbindung testen“.',
-          'Im Sub-Account Apps → Composio: App suchen, „Verbinden“ – die Anmeldung läuft bei Composio, danach geht es zurück zu HyperLevel.',
+          'Im Sub-Account Apps → Composio: App suchen, „Verbinden“ – die Anmeldung läuft bei Composio, danach geht es zurück zu V Media CRM.',
           'In Workflows die Aktion „App-Aktion ausführen (Composio)“ oder den Auslöser „App-Ereignis (Composio)“ nutzen.',
         ],
       },

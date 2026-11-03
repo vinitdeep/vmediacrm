@@ -17,7 +17,7 @@ const { AgentAiCreate } = lazyPages(() => import('./AgentAiCreate'), 'AgentAiCre
 
 /**
  * „KI-Agenten“: your own AI co-workers (like Custom GPTs) with a template gallery, approvals from
- * automations, how to use HyperLevel from ChatGPT/Claude with your subscription (connector, Custom GPT
+ * automations, how to use V Media CRM from ChatGPT/Claude with your subscription (connector, Custom GPT
  * actions, local bridge), models (KI-Anbieter) and usage.
  */
 
@@ -268,7 +268,7 @@ function Approvals() {
 }
 
 const LEGAL =
-  'ChatGPT- und Claude-Abos (Plus, Pro, Max) sind für die persönliche Nutzung in den Apps der Anbieter gedacht. HyperLevel nutzt sie nur auf den offiziellen Wegen: als Werkzeug in ChatGPT/Claude (Konnektor, Custom GPT) oder über die offiziellen CLIs auf deinem eigenen Rechner. HyperLevel speichert keine Abo-Zugangsdaten. Für Automationen, Teams und Kunden bitte API-Schlüssel (KI-Anbieter) nutzen.';
+  'ChatGPT- und Claude-Abos (Plus, Pro, Max) sind für die persönliche Nutzung in den Apps der Anbieter gedacht. V Media CRM nutzt sie nur auf den offiziellen Wegen: als Werkzeug in ChatGPT/Claude (Konnektor, Custom GPT) oder über die offiziellen CLIs auf deinem eigenen Rechner. V Media CRM speichert keine Abo-Zugangsdaten. Für Automationen, Teams und Kunden bitte API-Schlüssel (KI-Anbieter) nutzen.';
 
 function ConnectInfo() {
   const session = useSession();
@@ -278,7 +278,7 @@ function ConnectInfo() {
   const [creating, setCreating] = useState(false);
   const [sel, setSel] = useState<string[] | null>(null);
   const [allowWrite, setAllowWrite] = useState(false);
-  const [name, setName] = useState('Mein HyperLevel-GPT');
+  const [name, setName] = useState('Mein V Media CRM-GPT');
   const [fresh, setFresh] = useState<any>(null);
   if (!info.data) return <Spinner />;
   const i = info.data;
@@ -286,9 +286,9 @@ function ConnectInfo() {
   return (
     <>
       <div className="card" data-tour="agent-connector">
-        <h2>1. HyperLevel als Werkzeug in ChatGPT oder Claude (empfohlen)</h2>
+        <h2>1. V Media CRM als Werkzeug in ChatGPT oder Claude (empfohlen)</h2>
         <p>
-          Du chattest in <strong>ChatGPT</strong> oder <strong>Claude.ai</strong> mit deinem eigenen Abo – HyperLevel ist dort ein Konnektor (MCP, Anmeldung per OAuth). Die Einrichtung steht auf der Seite{' '}
+          Du chattest in <strong>ChatGPT</strong> oder <strong>Claude.ai</strong> mit deinem eigenen Abo – V Media CRM ist dort ein Konnektor (MCP, Anmeldung per OAuth). Die Einrichtung steht auf der Seite{' '}
           <a href={`/app/${i.ai_tools_page}`} onClick={(e) => (e.preventDefault(), navigate(i.ai_tools_page))}>
             KI-Werkzeuge
           </a>
@@ -300,12 +300,12 @@ function ConnectInfo() {
         <ol className="agent-steps small">
           <li>ChatGPT: Einstellungen → Apps & Konnektoren → Entwicklermodus → „Erstellen“ → URL einfügen, Authentifizierung OAuth.</li>
           <li>Claude.ai: Einstellungen → Konnektoren → „Benutzerdefinierten Konnektor hinzufügen“ → URL einfügen.</li>
-          <li>Bei HyperLevel anmelden, Sub-Account wählen, „Zulassen“ – fertig. Die KI kann dann Kontakte suchen, Deals pflegen, Aufgaben anlegen … mit deinen Rechten.</li>
+          <li>Bei V Media CRM anmelden, Sub-Account wählen, „Zulassen“ – fertig. Die KI kann dann Kontakte suchen, Deals pflegen, Aufgaben anlegen … mit deinen Rechten.</li>
         </ol>
         {!i.oauth && <p className="muted small">Hinweis: Auf diesem Server ist OAuth für MCP nicht aktiv – dann mit einem Schlüssel (KI-Werkzeuge) verbinden.</p>}
       </div>
       <div className="card" data-tour="agent-gpt-actions">
-        <h2>2. Eigener Custom GPT mit HyperLevel-Aktionen</h2>
+        <h2>2. Eigener Custom GPT mit V Media CRM-Aktionen</h2>
         <p className="small">In ChatGPT unter „GPTs erstellen“ → Konfigurieren → „Aktion erstellen“: das Schema per URL importieren, Authentifizierung „API-Schlüssel“ → Typ „Bearer“ und den Schlüssel von hier eintragen. ChatGPT fragt vor jeder Aktion, die etwas ändert.</p>
         {!i.gpt_actions.enabled && <p className="muted">Custom-GPT-Aktionen sind für diese Agentur ausgeschaltet.</p>}
         {fresh && (
@@ -438,7 +438,7 @@ function Bridge() {
           <Badge tone="yellow">Experimentell</Badge> <strong>Läuft auf deinem Rechner mit deinem eigenen Abo – nur für dich selbst.</strong>
         </p>
         <p className="small">
-          Die Bridge ist ein kleines Node-Skript ohne Abhängigkeiten. Sie hält eine ausgehende Verbindung zu HyperLevel (keine offenen Ports), nimmt deine Chat-Aufträge an und startet die offizielle CLI, bei der du schon angemeldet bist: <strong>Codex CLI</strong> („Sign in with ChatGPT“, Plus/Pro) oder <strong>Claude Code</strong> (Claude Pro/Max). Die CLI arbeitet nur mit den HyperLevel-Werkzeugen – mit deinen Rechten und Bestätigungen hier im Chat. Deine Abo-Anmeldung verlässt deinen Rechner nie.
+          Die Bridge ist ein kleines Node-Skript ohne Abhängigkeiten. Sie hält eine ausgehende Verbindung zu V Media CRM (keine offenen Ports), nimmt deine Chat-Aufträge an und startet die offizielle CLI, bei der du schon angemeldet bist: <strong>Codex CLI</strong> („Sign in with ChatGPT“, Plus/Pro) oder <strong>Claude Code</strong> (Claude Pro/Max). Die CLI arbeitet nur mit den V Media CRM-Werkzeugen – mit deinen Rechten und Bestätigungen hier im Chat. Deine Abo-Anmeldung verlässt deinen Rechner nie.
         </p>
         {!st.data.enabled ? (
           <p className="muted">{session.user.role === 'admin' ? 'Erst unter „In ChatGPT & Claude“ → „Lokale Bridge erlauben“ einschalten.' : 'Die Bridge ist für diese Agentur nicht freigeschaltet – frag deinen Agentur-Admin.'}</p>
@@ -547,10 +547,10 @@ function Usage() {
         <div className="card">
           <h3>Einstellungen für diesen Sub-Account</h3>
           <Check checked={s.data.enabled !== false} onChange={(v) => void saveSettings({ enabled: v })} label="KI-Agent im Sub-Account einschalten" />
-          <Field label="Modus des eingebauten HyperLevel Agent">
+          <Field label="Modus des eingebauten V Media CRM Agent">
             <Select value={s.data.default_mode} onChange={(v) => void saveSettings({ default_mode: v })} options={Object.entries(MODE_LABEL)} />
           </Field>
-          <Check checked={!!s.data.web_fetch} onChange={(v) => void saveSettings({ web_fetch: v })} label="HyperLevel Agent darf öffentliche Webseiten lesen" />
+          <Check checked={!!s.data.web_fetch} onChange={(v) => void saveSettings({ web_fetch: v })} label="V Media CRM Agent darf öffentliche Webseiten lesen" />
         </div>
       )}
       <div className="card">

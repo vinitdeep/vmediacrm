@@ -91,15 +91,15 @@ describe('PII redaction', () => {
 describe('what is sent', () => {
   it('starts with a header line, so a text can never be read as a path or address, and names the record', () => {
     const t = documentText('wiki', 'page', 'abc123', { title: 'x', body: '/etc/passwd\nhttps://evil.example/' });
-    expect(t.startsWith('HyperLevel · Wiki & Dokumente · page:abc123\n\n')).toBe(true);
+    expect(t.startsWith('V Media CRM · Wiki & Dokumente · page:abc123\n\n')).toBe(true);
     expect(t).not.toMatch(/^(\/|file:|https?:)/);
   });
 
   it('cuts a passage to a short single paragraph without the header and the descriptive lead', () => {
-    expect(snippetOf('HyperLevel · Wiki & Dokumente · page:1\n\nErste Zeile\n\nzweite   Zeile', 100)).toBe('Erste Zeile zweite Zeile');
-    expect(snippetOf('HyperLevel · Wiki & Dokumente · page:1\n\nWiki-Seite: Preise\nBereich: Team\n\nDas Paket kostet 49 Euro.', 100)).toBe('Das Paket kostet 49 Euro.');
+    expect(snippetOf('V Media CRM · Wiki & Dokumente · page:1\n\nErste Zeile\n\nzweite   Zeile', 100)).toBe('Erste Zeile zweite Zeile');
+    expect(snippetOf('V Media CRM · Wiki & Dokumente · page:1\n\nWiki-Seite: Preise\nBereich: Team\n\nDas Paket kostet 49 Euro.', 100)).toBe('Das Paket kostet 49 Euro.');
     // Nothing but label lines (a contact): kept.
-    expect(snippetOf('HyperLevel · Kontakte · contact:1\n\nKontakt: Erika\nFirma: Muster GmbH', 100)).toBe('Kontakt: Erika Firma: Muster GmbH');
+    expect(snippetOf('V Media CRM · Kontakte · contact:1\n\nKontakt: Erika\nFirma: Muster GmbH', 100)).toBe('Kontakt: Erika Firma: Muster GmbH');
     // documents synced before the rename still carry the old header
     expect(snippetOf('GoHigh · Wiki & Dokumente · page:1\n\nAlter Kopf', 100)).toBe('Alter Kopf');
     expect(snippetOf('x'.repeat(50), 10)).toHaveLength(10);
@@ -190,9 +190,9 @@ describe('Cognee client', () => {
   it('sends the text as multipart form fields FastAPI understands', async () => {
     const lc = new LocationClient('locAAAAAA1', make());
     const ds = (await lc.dataset('wiki', true))!;
-    const dataId = await lc.add(ds, 'HyperLevel · Wiki\n\nHallo Welt äöü', 'wiki:page:p1');
+    const dataId = await lc.add(ds, 'V Media CRM · Wiki\n\nHallo Welt äöü', 'wiki:page:p1');
     const add = fake.calls.find((x) => x.path === '/api/v1/add')!;
-    expect(Object.fromEntries(add.body)).toMatchObject({ raw_data: 'HyperLevel · Wiki\n\nHallo Welt äöü', datasetId: ds.id, labels: '["wiki"]', external_metadata: '[{"gh_ref":"wiki:page:p1"}]', run_in_background: 'false' });
+    expect(Object.fromEntries(add.body)).toMatchObject({ raw_data: 'V Media CRM · Wiki\n\nHallo Welt äöü', datasetId: ds.id, labels: '["wiki"]', external_metadata: '[{"gh_ref":"wiki:page:p1"}]', run_in_background: 'false' });
     expect(fake.items('gh_locAAAAAA1_wiki')[0].id).toBe(dataId);
     expect(multipart([['a', 'x']]).contentType).toMatch(/^multipart\/form-data; boundary=/);
   });
@@ -203,7 +203,7 @@ describe('Cognee client', () => {
     const ds = (await lc.dataset('notes', true))!;
     expect(ds.name).toBe('gh_locAAAAAA1_notes');
     expect((await new LocationClient('locAAAAAA1', make()).dataset('notes'))!.id).toBe(ds.id);
-    const id = await lc.add(ds, 'HyperLevel · Notizen\n\nx', 'notes:note:n1');
+    const id = await lc.add(ds, 'V Media CRM · Notizen\n\nx', 'notes:note:n1');
     expect(await lc.count(ds)).toBe(1);
     await lc.deleteData(ds, id);
     expect(await lc.count(ds)).toBe(0);
@@ -216,7 +216,7 @@ describe('Cognee client', () => {
     const a = new LocationClient('locAAAAAA1', make());
     const b = new LocationClient('locBBBBBB2', make());
     const dsB = (await b.dataset('wiki', true))!;
-    await b.add(dsB, 'HyperLevel · Wiki\n\ngeheim B', 'wiki:page:b1');
+    await b.add(dsB, 'V Media CRM · Wiki\n\ngeheim B', 'wiki:page:b1');
     fake.reset();
     for (const call of [() => a.add(dsB, 'x', 'r'), () => a.cognify(dsB), () => a.status(dsB), () => a.deleteData(dsB, 'f47ac10b-58cc-4372-a567-0e02b2c3d479'), () => a.deleteDataset(dsB), () => a.count(dsB), () => a.search([dsB], 'geheim', 'CHUNKS', 5)]) {
       await expect(call()).rejects.toThrow(/gehört nicht zu diesem Sub-Account/);
@@ -245,7 +245,7 @@ describe('Cognee client', () => {
     const a = new LocationClient('locAAAAAA1', make({ email: 'a@example.com', secret: 'pa', fetch: fake.fetch as any }));
     const b = new LocationClient('locBBBBBB2', make({ email: 'b@example.com', secret: 'pb', fetch: fake.fetch as any }));
     const dsA = (await a.dataset('wiki', true))!;
-    await a.add(dsA, 'HyperLevel · Wiki\n\nnur für A', 'wiki:page:a1');
+    await a.add(dsA, 'V Media CRM · Wiki\n\nnur für A', 'wiki:page:a1');
     expect(await b.dataset('wiki', false)).toBeNull();
     expect(await b.confirm('wiki', dsA.id)).toBeNull();
   });
@@ -274,7 +274,7 @@ describe('Cognee client over real HTTP (safeFetch)', () => {
   it('logs in, creates a dataset, adds umlauts and searches – with the internal network allowed', async () => {
     const lc = new LocationClient('locAAAAAA1', new CogneeClient({ baseUrl: url, allowPrivate: true, mode: 'password', email: 'gohigh@example.com', secret: 'pw-gohigh', minGapMs: 0 }));
     const ds = (await lc.dataset('wiki', true))!;
-    await lc.add(ds, 'HyperLevel · Wiki\n\nGrüße aus München: Onboarding-Call', 'wiki:page:p1');
+    await lc.add(ds, 'V Media CRM · Wiki\n\nGrüße aus München: Onboarding-Call', 'wiki:page:p1');
     const raw = await lc.search([ds], 'Onboarding', 'CHUNKS', 5);
     expect(raw[0].search_result[0].text).toContain('Grüße aus München');
   });

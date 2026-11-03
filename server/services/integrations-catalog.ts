@@ -49,7 +49,7 @@ export const CATALOG: CatalogEntry[] = [
     description: 'Fertige Zapier-App im Repo (integrations/zapier): Sofort-Auslöser per REST-Hook, Aktionen und Suchen.',
     credentials: 'API-Schlüssel (pghl_…) unter Einstellungen → API & Webhooks; beim Verbinden in Zapier Adresse + Schlüssel eingeben.',
     docs: 'docs/integrations.md#zapier',
-    guide: ['Einmalig (Agentur): im Repo-Ordner integrations/zapier „npm install“, dann „zapier login“ und „zapier push“ – die App bleibt privat in deinem Zapier-Konto.', 'Mitglieder einladen: „zapier users:add <email>“ oder Einladungslink aus dem Zapier-Developer-Portal.', 'Im Zap die App „HyperLevel“ wählen, Adresse (https://<deine-domain>) und API-Schlüssel eintragen.', 'Auslöser wie „Neuer Kontakt“ oder „Deal gewonnen“ abonnieren sich selbst (REST-Hook) – sie erscheinen unten im Zustell-Protokoll.'],
+    guide: ['Einmalig (Agentur): im Repo-Ordner integrations/zapier „npm install“, dann „zapier login“ und „zapier push“ – die App bleibt privat in deinem Zapier-Konto.', 'Mitglieder einladen: „zapier users:add <email>“ oder Einladungslink aus dem Zapier-Developer-Portal.', 'Im Zap die App „V Media CRM“ wählen, Adresse (https://<deine-domain>) und API-Schlüssel eintragen.', 'Auslöser wie „Neuer Kontakt“ oder „Deal gewonnen“ abonnieren sich selbst (REST-Hook) – sie erscheinen unten im Zustell-Protokoll.'],
   },
   {
     key: 'make',
@@ -61,7 +61,7 @@ export const CATALOG: CatalogEntry[] = [
     description: 'Eigene Make-App als JSON im Repo (integrations/make): Verbindung, Sofort-Auslöser, Aktionen, Suchen.',
     credentials: 'API-Schlüssel (pghl_…) unter Einstellungen → API & Webhooks; in Make beim Anlegen der Verbindung eintragen.',
     docs: 'docs/integrations.md#make',
-    guide: ['In Make: Custom Apps → „Create a new app“, Name „HyperLevel“.', 'Base, Connection, Webhooks, Modules und RPCs aus integrations/make/ in die gleichnamigen Reiter kopieren (README im Ordner).', 'Im Szenario das Modul „Neues Ereignis (sofort)“ wählen – Make registriert den Webhook selbst.'],
+    guide: ['In Make: Custom Apps → „Create a new app“, Name „V Media CRM“.', 'Base, Connection, Webhooks, Modules und RPCs aus integrations/make/ in die gleichnamigen Reiter kopieren (README im Ordner).', 'Im Szenario das Modul „Neues Ereignis (sofort)“ wählen – Make registriert den Webhook selbst.'],
   },
   {
     key: 'n8n',

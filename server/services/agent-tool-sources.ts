@@ -28,7 +28,7 @@ export interface AgentTool {
   title?: string;
   description: string;
   /**
-   * MCP tool annotations as the source reports them. The HyperLevel Agent treats a tool as read-only only with
+   * MCP tool annotations as the source reports them. The V Media CRM Agent treats a tool as read-only only with
    * `readOnlyHint: true` (and no `destructiveHint`); everything else counts as "may write / goes outbound"
    * and follows the confirmation rules of sensitive actions.
    */

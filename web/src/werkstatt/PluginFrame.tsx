@@ -18,7 +18,7 @@ function currentTheme(): { theme: 'light' | 'dark'; brand: string } {
   const attr = document.documentElement.getAttribute('data-theme');
   const dark = attr ? attr === 'dark' : window.matchMedia?.('(prefers-color-scheme: dark)').matches;
   const brand = getComputedStyle(document.documentElement).getPropertyValue('--brand').trim();
-  return { theme: dark ? 'dark' : 'light', brand: /^#[0-9a-f]{6}$/i.test(brand) ? brand : '#2563eb' };
+  return { theme: dark ? 'dark' : 'light', brand: /^#[0-9a-f]{6}$/i.test(brand) ? brand : '#c8191f' };
 }
 
 export function PluginFrame({ pluginId, entry, entity, height, demo, title, fill }: { pluginId: string; entry: string; entity?: { type: 'contact' | 'deal'; id: string }; height?: number; demo?: boolean; title: string; fill?: boolean }) {

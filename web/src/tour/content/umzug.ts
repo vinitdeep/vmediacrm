@@ -13,7 +13,7 @@ export const UMZUG_TOURS: Tour[] = [
     routes: ['umzug', 'settings/umzug'],
     keywords: 'umzug import migration wechsel mailchimp activecampaign kit convertkit kajabi teachable keap pipedrive systeme klaviyo brevo klicktipp manychat zendesk intercom salesforce zoho monday clickup notion airtable typeform calendly lexoffice lexware sevdesk csv export kontakte tags listen deals kurse tickets projekte wiki tabellen formulare termine belege einwilligung zuordnung probelauf rückgängig',
     learned: ['Ein Tool per Schlüssel verbinden oder eine Export-Datei hochladen', 'In der Vorschau sehen, was mitkommt, und Felder zuordnen – auch neue anlegen', 'Mit dem Probelauf prüfen, ohne etwas zu schreiben', 'Den Umzug pausieren, fortsetzen und bei Bedarf komplett rückgängig machen'],
-    docs: { label: 'Umzug zu HyperLevel', file: 'umzug' },
+    docs: { label: 'Umzug zu V Media CRM', file: 'umzug' },
     steps: [
       { title: 'Umzugsassistent', route: 'umzug', target: 'page-head', text: 'Hier holst du deine Daten aus dem bisherigen Tool nach {brand}: Kontakte mit Tags und Feldern, Listen, Deals, Vorlagen oder Kurse – je nachdem, was die Quelle hergibt. Nichts wird übernommen, bevor du es bestätigst.' },
       { title: 'Ziel-Sub-Account', target: 'um-target', optional: true, text: 'Jeder Umzug landet in genau einem Sub-Account. Mit mehreren Kunden wählst du hier, wohin die Daten sollen – Verbindungen und Umzüge sind je Sub-Account getrennt.', missing: 'Das Ziel siehst du nur, wenn es mehrere Sub-Accounts gibt – sonst geht alles in deinen einen.' },

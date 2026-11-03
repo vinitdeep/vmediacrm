@@ -31,25 +31,28 @@ export interface Branding {
 }
 
 const DEFAULT_BRANDING: Branding = {
-  name: 'HyperLevel',
+  name: 'V Media CRM',
   logo_url: '',
   logo_dark_url: '',
   mark_url: '',
   mark_dark_url: '',
   favicon_url: '',
   show_name: '',
-  color: '#2563eb',
+  color: '#c8191f',
   login_title: '',
   login_text: '',
   support_email: '',
   app_domain: '',
 };
 
+/** Default product names of earlier versions (and of the upstream project) – a saved one means "never renamed". */
+const LEGACY_DEFAULT_NAMES = new Set(['GoHigh', 'HyperLevel', 'GoHyperLevel']);
+
 export function getBranding(app: App): Branding {
   const row = app.db.get('SELECT value FROM agency_settings WHERE key = ?', 'branding');
   const b: Branding = { ...DEFAULT_BRANDING, ...(row ? JSON.parse(row.value) : {}) };
   // Saved before the rename with the old default name: show the new one.
-  if (b.name === 'GoHigh' || b.name === 'HyperLevel') b.name = DEFAULT_BRANDING.name;
+  if (LEGACY_DEFAULT_NAMES.has(b.name)) b.name = DEFAULT_BRANDING.name;
   return b;
 }
 
@@ -214,7 +217,7 @@ export const agencyModule: Module = {
     router.post('/api/agency/clients', 'admin', (ctx) => {
       const b = ctx.body ?? {};
       const name = str(b.name, 'Firmenname', { required: true, max: 120 });
-      const tz = str(b.timezone, 'Zeitzone') || 'Europe/Berlin';
+      const tz = str(b.timezone, 'Zeitzone') || 'Asia/Kolkata';
       if (!isValidTz(tz)) throw bad('Unbekannte Zeitzone');
       const snap = b.snapshot_id ? db.get('SELECT * FROM snapshots WHERE id = ?', b.snapshot_id) : undefined;
       if (b.snapshot_id && !snap) throw bad('Snapshot nicht gefunden');

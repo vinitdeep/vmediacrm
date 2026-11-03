@@ -4,7 +4,7 @@ import { id, now, slugify } from '../core/util.js';
 import { getContact, upsertContact } from './contacts.js';
 
 /**
- * HubSpot → HyperLevel import: owners (→ users by email), contact properties (→ custom fields),
+ * HubSpot → V Media CRM import: owners (→ users by email), contact properties (→ custom fields),
  * companies, contacts, lists (→ tags), deal pipelines and deals, notes, tasks, calls/e-mails/
  * meetings (→ activity history) and tickets (when a helpdesk module offers ticketsImport).
  * Idempotent through the hubspot_ids table, resumable through a saved cursor per step, and

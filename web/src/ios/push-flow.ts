@@ -53,7 +53,7 @@ export function pushCopy(step: PushStep, ios: boolean): PushCopy {
     case 'ready':
       return { title: 'Mitteilungen aktivieren', text: 'Neue Nachrichten, Aufgaben und Zahlungen melden sich auf diesem Gerät – auch bei geschlossener App. Auf dem App-Symbol zeigt eine Zahl, was ungelesen ist.', button: 'Mitteilungen aktivieren' };
     case 'reconnect':
-      return { title: 'Gerät neu verbinden', text: 'Mitteilungen sind erlaubt, aber dieses Gerät ist bei HyperLevel nicht (mehr) angemeldet – das passiert nach einem Update von iOS oder wenn du dich mit einem anderen Konto angemeldet hast.', button: 'Gerät verbinden' };
+      return { title: 'Gerät neu verbinden', text: 'Mitteilungen sind erlaubt, aber dieses Gerät ist bei V Media CRM nicht (mehr) angemeldet – das passiert nach einem Update von iOS oder wenn du dich mit einem anderen Konto angemeldet hast.', button: 'Gerät verbinden' };
     case 'on':
       return { title: 'Mitteilungen sind an', text: 'Dieses Gerät bekommt Mitteilungen. Mit „Test senden“ siehst du, wie sie aussehen.', button: '' };
   }

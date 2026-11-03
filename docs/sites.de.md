@@ -2,7 +2,7 @@
 
 # Website-Baukasten: Editor, Vorlagen, Inhalte, Barrierefreiheit & Statistik
 
-Funnels und Websites (*Funnels & Websites* im Menü) bestehen aus Seiten, die aus **Abschnitten, Spalten und Blöcken** zusammengesetzt werden. Dieses Kapitel beschreibt den Editor, die Design-Einstellungen, die 23 Vorlagen, Sammlungen (CMS), Weiterleitungen, Suche und Sprachen, Bildoptimierung, die Barrierefreiheitsprüfung (BFSG) und die Statistik je Funnel-Schritt. Domains, Blog, A/B-Tests, Order-Bumps und Kauf-Links stehen in der [README](../README.de.md#ab-tests-order-bumps--upsells) und in [docs/stripe.de.md](stripe.de.md); die Rechtstexte in [docs/consent.md](consent.md).
+Funnels und Websites (*Funnels & Websites* im Menü) bestehen aus Seiten, die aus **Abschnitten, Spalten und Blöcken** zusammengesetzt werden. Dieses Kapitel beschreibt den Editor, die Design-Einstellungen, die 23 Vorlagen, Sammlungen (CMS), Weiterleitungen, Suche und Sprachen, Bildoptimierung, die Barrierefreiheitsprüfung (BFSG) und die Statistik je Funnel-Schritt. Domains, Blog, A/B-Tests, Order-Bumps und Kauf-Links stehen in der [README](../README.md#at-a-glance) und in [docs/stripe.de.md](stripe.de.md); die Rechtstexte in [docs/consent.md](consent.md).
 
 Alles hier gehört zum Bereich *Funnels & Websites*; ein Login darf nur die Seiten seiner Sub-Accounts bearbeiten, Schlüssel mit Leserechten dürfen nichts ändern.
 

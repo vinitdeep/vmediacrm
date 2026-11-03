@@ -814,7 +814,7 @@ export const communityPagesModule: Module = {
           const prices = views.flatMap((v) => (v.prices.free ? [{ c: 0, t: 'Kostenlos' }] : (['month', 'year', 'once'] as const).filter((x) => v.prices[x]).map((x) => ({ c: v.prices[x]!.gross_cents / (x === 'year' ? 12 : 1), t: priceText(v.prices[x]!) }))));
           const min = prices.sort((a, b) => a.c - b.c)[0];
           const loc = app.location(r.loc);
-          return { slug: r.slug, name: r.g_name, tagline: r.tagline || '', cover: r.cover_image || r.g_cover || '', color: loc ? publicBrand(loc).color : '#2563eb', members: r.show_member_count ? memberCount(app, r.group_id) : 0, from: min ? (views.length > 1 && min.c > 0 ? `ab ${min.t}` : min.t) : 'Kostenlos', category: r.category || '', brand: loc ? publicBrand(loc).name : '' };
+          return { slug: r.slug, name: r.g_name, tagline: r.tagline || '', cover: r.cover_image || r.g_cover || '', color: loc ? publicBrand(loc).color : '#c8191f', members: r.show_member_count ? memberCount(app, r.group_id) : 0, from: min ? (views.length > 1 && min.c > 0 ? `ab ${min.t}` : min.t) : 'Kostenlos', category: r.category || '', brand: loc ? publicBrand(loc).name : '' };
         })
         .sort((a, b) => b.members - a.members || a.name.localeCompare(b.name));
       return discoverHtml(app, { items, q, category, categories, title: 'Communities' });

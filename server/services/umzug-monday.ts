@@ -535,7 +535,7 @@ async function describe(h: VendorHttp, parts: PartKey[]) {
       return { n, capped };
     });
     await count('projects', 'items', 'Items (Aufgaben, ohne Subitems)', async () => items);
-    warnings.push('Zu jedem Item liest HyperLevel Spalten, Subitems und Updates in einem Aufruf (50 Items pro Seite). monday.com begrenzt die Komplexität pro Minute – bei großen Boards wartet der Umzug automatisch und macht weiter.');
+    warnings.push('Zu jedem Item liest V Media CRM Spalten, Subitems und Updates in einem Aufruf (50 Items pro Seite). monday.com begrenzt die Komplexität pro Minute – bei großen Boards wartet der Umzug automatisch und macht weiter.');
   }
   if (parts.includes('docs')) {
     await count('docs', 'docs', 'Docs', async () => {
@@ -558,14 +558,14 @@ export const MONDAY: SourceDef = {
   credentials: [{ key: 'token', label: 'API-Token', secret: true, placeholder: 'eyJhbGciOi…', hint: 'monday.com → Profilbild → Developers → „My access tokens“ → „Show“ und kopieren' }],
   howto: [
     'Bei monday.com oben rechts auf dein Profilbild klicken → „Developers“ → „My access tokens“ → den Token anzeigen und kopieren (Admins finden ihn auch unter Verwaltung → Verbindungen → API).',
-    'Den Token hier einfügen. Er sieht alle Boards, die du sehen darfst – HyperLevel liest nur und ändert bei monday.com nichts.',
+    'Den Token hier einfügen. Er sieht alle Boards, die du sehen darfst – V Media CRM liest nur und ändert bei monday.com nichts.',
     'Nach dem Umzug den Token bei monday.com neu erzeugen (das macht den alten ungültig).',
   ],
   limits: [
     'Dateien und Bilder (Datei-Spalten, Bilder in Docs): die Dateien bleiben bei monday.com – Bilder in Docs verweisen noch dorthin',
-    'Automationen, Integrationen und Rezepte, Dashboards, Widgets und Ansichten (Gantt, Kalender, Kanban-Einstellungen) – in HyperLevel neu als Aufgabenregeln und Workflows bauen',
+    'Automationen, Integrationen und Rezepte, Dashboards, Widgets und Ansichten (Gantt, Kalender, Kanban-Einstellungen) – in V Media CRM neu als Aufgabenregeln und Workflows bauen',
     'Spalten ohne Gegenstück: Dateien, Zeiterfassung, Abstimmung, Fortschritt, Abhängigkeiten (Board-Beziehungen und Formeln kommen als Text mit dem aktuellen Wert)',
-    'Zuständige: nur Personen, deren E-Mail in HyperLevel ein Teammitglied hat, werden zugewiesen – alle anderen stehen mit Namen in der Beschreibung',
+    'Zuständige: nur Personen, deren E-Mail in V Media CRM ein Teammitglied hat, werden zugewiesen – alle anderen stehen mit Namen in der Beschreibung',
     'Archivierte Boards, gelöschte Items, Aktivitätsprotokoll und Formulare',
   ],
   parts: [

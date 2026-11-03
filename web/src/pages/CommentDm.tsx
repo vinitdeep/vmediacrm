@@ -6,7 +6,7 @@ import { Callout, Fold, Item, Panel, StatusBadge } from './CreatorKit';
 import { SortableGrid } from '../sortable/Sortable';
 
 /**
- * Kommentar-zu-DM: someone comments a keyword under a post or reel (Instagram, Facebook) or answers a story with one – HyperLevel
+ * Kommentar-zu-DM: someone comments a keyword under a post or reel (Instagram, Facebook) or answers a story with one – V Media CRM
  * answers publicly (rotating texts), sends a private message with a link and buttons, creates the contact, tags it and starts a
  * workflow. Docs: docs/comment-to-dm.md (Meta app permissions, review, limits).
  */

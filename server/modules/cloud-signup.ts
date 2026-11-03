@@ -154,7 +154,7 @@ export const cloudSignupModule: Module = {
         const slug = tenantSlug(signup.company, (x) => !!db.get('SELECT 1 AS x FROM cloud_tenants WHERE slug = ?', x));
         const settings: Record<string, any> = { email: { provider: 'log' }, sms: { provider: 'log' } };
         if (s.cloud_domain) settings.branding = { app_domain: `${slug}.${s.cloud_domain}` };
-        const loc = createLocation(db, signup.company, 'Europe/Berlin', { email: signup.email, settings });
+        const loc = createLocation(db, signup.company, 'Asia/Kolkata', { email: signup.email, settings });
         const snap = s.default_snapshot_id ? db.get('SELECT * FROM snapshots WHERE id = ?', s.default_snapshot_id) : undefined;
         let snapped = false;
         if (snap) {

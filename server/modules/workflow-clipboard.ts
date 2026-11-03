@@ -66,7 +66,7 @@ export const workflowClipboardModule: Module = {
         }
       }
       if (!data || typeof data !== 'object' || data.format !== STEPS_FORMAT) throw bad(`Das sind keine kopierten Workflow-Schritte (Format „${STEPS_FORMAT}“)`);
-      if (Number(data.version) > 1) throw bad('Diese Schritte stammen aus einer neueren HyperLevel-Version');
+      if (Number(data.version) > 1) throw bad('Diese Schritte stammen aus einer neueren V Media CRM-Version');
       const steps = kit().reId(checked(data.steps), new Map());
       // Jumps to a step outside the pasted ones only stay when that step is in the workflow being edited.
       const fresh = new Set(walk(steps).map((f) => f.step.id));

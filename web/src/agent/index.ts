@@ -1,4 +1,4 @@
-/** HyperLevel Agent in the web app: panel on every page, the „KI-Agenten“ page and the workflow step. */
+/** V Media CRM Agent in the web app: panel on every page, the „KI-Agenten“ page and the workflow step. */
 export { AgentButton, AgentPanel } from './Panel';
 export { AgentsPage } from './AgentsPage';
 export { AgentStep } from './WorkflowStep';

@@ -55,7 +55,7 @@ export const quoteApprovalsModule: Module = {
     };
     const decider = (ctx: Ctx): Actor => {
       const p = person(ctx);
-      if (!p || (ctx.via !== 'session' && ctx.via !== 'app')) throw new HttpError(403, 'Genehmigen und Ablehnen geht nur angemeldet in HyperLevel (Web oder App) – nicht über API-Schlüssel oder KI-Werkzeuge');
+      if (!p || (ctx.via !== 'session' && ctx.via !== 'app')) throw new HttpError(403, 'Genehmigen und Ablehnen geht nur angemeldet in V Media CRM (Web oder App) – nicht über API-Schlüssel oder KI-Werkzeuge');
       return p;
     };
     const isManager = (ctx: Ctx) => !ctx.user || ctx.user.role === 'admin' || !ctx.user.permissions || ctx.user.permissions.includes('settings');
@@ -68,7 +68,7 @@ export const quoteApprovalsModule: Module = {
     });
     router.put('/api/quote-approvals/settings', 'location', (ctx) => {
       // Keys and AI tools could otherwise switch the rule off and send: only a signed-in person with the settings area changes it.
-      if (!person(ctx) || (ctx.via !== 'session' && ctx.via !== 'app') || !canConfigure(app, ctx)) throw new HttpError(403, 'Die Genehmigungsregel ändern nur Admins und die Leitung (Einstellungen), angemeldet in HyperLevel');
+      if (!person(ctx) || (ctx.via !== 'session' && ctx.via !== 'app') || !canConfigure(app, ctx)) throw new HttpError(403, 'Die Genehmigungsregel ändern nur Admins und die Leitung (Einstellungen), angemeldet in V Media CRM');
       const before = ruleOf(app, ctx.locationId);
       const rule = saveRule(app, ctx.locationId, ctx.body ?? {});
       app.services.audit?.({ ctx, action: 'quote.approval.rule', entityId: ctx.locationId, summary: `Genehmigungsregel ${rule.enabled ? 'an' : 'aus'} (vorher ${before.enabled ? 'an' : 'aus'}): Betrag ${rule.min_net_cents ?? '–'} ct, Rabatt ${rule.max_discount_percent ?? '–'} %, Rolle ${rule.approver_role}` });

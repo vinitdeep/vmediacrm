@@ -531,7 +531,7 @@ export const MODULES: Module[] = [
   privacyModule,
   // "Konto anlegen" links for every provider (optional partner links, /go/ redirect, Agentur → Partner-Links).
   referralsModule,
-  // KI-Anbieter (BYOK registry for every text/media provider) and the HyperLevel Agent.
+  // KI-Anbieter (BYOK registry for every text/media provider) and the V Media CRM Agent.
   aiConnectionsModule,
   // Denkstufe (reasoning effort) per capability, default xhigh.
   aiEffortModule,
@@ -553,7 +553,7 @@ export const MODULES: Module[] = [
   marktplatzModule,
   werkstattCoreModule,
   werkstattToolsModule,
-  // Stimme (voice layer): speech providers of the BYOK registry, push-to-talk for the HyperLevel Agent, the KI-Telefonagent with its own voice (Media Streams).
+  // Stimme (voice layer): speech providers of the BYOK registry, push-to-talk for the V Media CRM Agent, the KI-Telefonagent with its own voice (Media Streams).
   voiceModule,
   voicePhoneModule,
   // Ads manager: create and manage Meta / Google campaigns (connections, audiences, Lead Ads, campaigns, rules, MCP tools).

@@ -12,7 +12,7 @@ export const START_TOURS: Tour[] = [
     routes: ['dashboard', 'agency'],
     keywords: 'oberfläche menü navigation strg k suche hilfe anfang einstieg',
     learned: ['Wo Menü, Projekt-Wechsler und Suche sind', 'Mit **Strg+K** überall hinspringen', 'Über das **?** oben rechts die passende Tour starten', 'Wo die Akademie und dein Konto sind'],
-    docs: { label: 'Überblick über alle Funktionen', file: 'README', anchor: 'funktionen' },
+    docs: { label: 'Überblick über alle Funktionen', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Willkommen!', text: 'Ich zeige dir in fünf Minuten, wie {brand} aufgebaut ist. Mit ✕ oder Esc kannst du jederzeit pausieren – dein Fortschritt bleibt gespeichert.' },
       { title: 'Das Menü', target: 'nav-dashboard', placement: 'right', text: 'Links findest du alle Bereiche: oben das Tagesgeschäft, darunter Marketing, Seiten und Umsatz. Bereiche, die du nicht nutzen darfst, sind ausgeblendet.', perm: 'dashboard' },

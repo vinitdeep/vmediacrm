@@ -5,7 +5,7 @@ import { counter, nameParts, seg, stubCtx } from './umzug-lib.js';
 import { clip, toIso } from './umzug-text.js';
 
 /**
- * Typeform (REST API, https://api.typeform.com or api.eu.typeform.com, a personal access token): forms → forms in HyperLevel (saved as drafts
+ * Typeform (REST API, https://api.typeform.com or api.eu.typeform.com, a personal access token): forms → forms in V Media CRM (saved as drafts
  * "bitte prüfen"), every completed response → an answer sheet with the form's submissions, the people who answered → contacts when they
  * left an e-mail address (optional; Typeform knows no advertising consent, so the consent ledger says "no advertising consent").
  * Typeform allows two requests a second per account. Logic jumps, themes and welcome / thank-you screens do not move.
@@ -286,7 +286,7 @@ export const TYPEFORM: SourceDef = {
   ],
   howto: [
     'In Typeform oben rechts auf dein Profilbild → „Konto“ → „Persönliche Tokens“ → „Token erzeugen“. Rechte: „Forms: Read“ und „Responses: Read“ reichen.',
-    'Den Token hier einfügen (bei einem Konto im EU-Rechenzentrum zusätzlich „eu“ eintragen). HyperLevel liest nur und ändert bei Typeform nichts.',
+    'Den Token hier einfügen (bei einem Konto im EU-Rechenzentrum zusätzlich „eu“ eintragen). V Media CRM liest nur und ändert bei Typeform nichts.',
     'Nach dem Umzug den Token bei Typeform löschen.',
   ],
   limits: [

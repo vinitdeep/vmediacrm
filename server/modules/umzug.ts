@@ -13,7 +13,7 @@ import { UmzugError } from '../services/umzug-http.js';
 import { SOURCES, sourceList } from '../services/umzug-sources.js';
 
 /**
- * Umzug zu HyperLevel: the wizard behind Einstellungen → Umzug (API connections, export files, preview with field
+ * Umzug zu V Media CRM: the wizard behind Einstellungen → Umzug (API connections, export files, preview with field
  * mapping, dry run, resumable import as a background job, report, undo). The sources live in
  * services/umzug-*.ts; this module owns the tables, the credentials (sealed, never returned), the uploaded files
  * and the routes. Test hooks: app.services.umzugFetch / umzugSleep / umzugPauseMs (all vendor HTTP).

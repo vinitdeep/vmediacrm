@@ -3,7 +3,7 @@ import { chatEndpoint, presetById, type FetchLike, type Resolved } from './ai-pr
 import { DEFAULT_EFFORT, effortFields, effortKind, isEffortRejection, planEffort, type Effort, type EffortPlan } from './ai-effort.js';
 
 /**
- * Provider-agnostic chat with tool use for the HyperLevel Agent: one neutral message format, two wire
+ * Provider-agnostic chat with tool use for the V Media CRM Agent: one neutral message format, two wire
  * adapters (Anthropic Messages API and OpenAI-compatible Chat Completions), streaming over SSE with
  * a small parser, usage in one shape and German errors. No SDKs – plain fetch (test hook:
  * `app.services.agentFetch`).

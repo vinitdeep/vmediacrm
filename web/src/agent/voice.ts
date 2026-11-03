@@ -2,7 +2,7 @@ import { currentLocation } from '../api';
 
 /**
  * Voice in the browser, Android WebView and PWA: recording with MediaRecorder (→ the server's speech to text, see
- * modules/voice.ts), playing spoken replies and cleaning text for speech. Used by the HyperLevel Agent panel
+ * modules/voice.ts), playing spoken replies and cleaning text for speech. Used by the V Media CRM Agent panel
  * (push-to-talk, read aloud) and by Einstellungen → Stimme (microphone test). No dependencies; every function
  * degrades quietly where the browser has no microphone or no MediaRecorder.
  */

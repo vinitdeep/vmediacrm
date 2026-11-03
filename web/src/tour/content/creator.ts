@@ -52,7 +52,7 @@ export const CREATOR_TOURS: Tour[] = [
       { title: 'Abo-Verwaltung', target: 'tab-billing', kind: 'click', do: 'Klicke auf **Abo-Verwaltung**.', text: 'Was Kunden auf ihrer Abo-Seite tun dürfen.' },
       { title: 'Was dürfen Kunden?', target: 'billing-products', optional: true, missing: 'Noch kein Abo-Produkt: Lege unter „Produkte“ eines mit monatlicher oder jährlicher Zahlung an.', text: 'Pro Abo legst du fest, ob gekündigt oder pausiert werden darf, ob die Kündigung sofort oder zum Ende der bezahlten Zeit wirkt und zu welchen Tarifen gewechselt werden kann.' },
       { title: 'Einstellungen', target: 'tab-settings', kind: 'click', do: 'Klicke auf **Einstellungen**.', text: 'Fristen, Gebühren, Zinsen und Texte.' },
-      { title: 'Abo- und Raten-Zahlungen', target: 'dunning-settings-sub', text: 'Wann erinnert wird, wann der Zugang pausiert und wer wiederholt: Stripe selbst (Smart Retries, im Stripe-Dashboard einzustellen) oder HyperLevel an festen Tagen.' },
+      { title: 'Abo- und Raten-Zahlungen', target: 'dunning-settings-sub', text: 'Wann erinnert wird, wann der Zugang pausiert und wer wiederholt: Stripe selbst (Smart Retries, im Stripe-Dashboard einzustellen) oder V Media CRM an festen Tagen.' },
       { title: 'Mahnstufen für Rechnungen', target: 'dunning-settings-inv', text: 'Erinnerung, 1. und 2. Mahnung mit Mahngebühr, Frist und Text. Verzugszinsen rechnen mit dem Basiszinssatz der Bundesbank – **halte ihn im Januar und Juli aktuell**. Das ist keine Rechtsberatung.' },
       { title: 'Speichern', target: 'dunning-save', text: 'Erst mit „Einstellungen speichern“ gelten die Änderungen.' },
     ],
@@ -95,7 +95,7 @@ export const CREATOR_TOURS: Tour[] = [
     learned: ['Eine Regel mit Stichwort, Antworten und Direktnachricht anlegen', 'Eine Regel nur für einen Beitrag oder für alle Beiträge gelten lassen', 'Die Regeln von Meta kennen: eine private Antwort je Kommentar und Stundenlimits', 'Eine Regel testen, ohne etwas zu senden', 'Treffer und Fehler nachvollziehen'],
     docs: { label: 'Kommentar-zu-DM', file: 'comment-to-dm' },
     steps: [
-      { title: 'Kommentar-zu-DM', route: 'comment-dm', target: 'nav-comment-dm', text: 'Jemand kommentiert „Guide“ unter deinem Beitrag – HyperLevel antwortet öffentlich, schickt **privat den Link**, legt den Kontakt an und startet auf Wunsch einen Workflow.' },
+      { title: 'Kommentar-zu-DM', route: 'comment-dm', target: 'nav-comment-dm', text: 'Jemand kommentiert „Guide“ unter deinem Beitrag – V Media CRM antwortet öffentlich, schickt **privat den Link**, legt den Kontakt an und startet auf Wunsch einen Workflow.' },
       { title: 'Verbindung', target: 'igc-connect', optional: true, missing: 'Instagram oder Facebook ist bei dir schon verbunden – gut.', text: 'Dafür brauchst du Instagram oder eine Facebook-Seite unter Einstellungen → Kanäle. Ohne Verbindung bleiben Regel und Test gesperrt.' },
       { title: 'Die Zahlen der Woche', target: 'igc-stats', text: 'Treffer, gesendete Direktnachrichten, Fehler und wie oft das Limit gebremst hat.' },
       { title: 'Neue Regel', target: 'igc-new', optional: true, text: 'Lege Stichwörter fest, optional einen bestimmten Beitrag, mehrere öffentliche Antworten, die sich abwechseln, und die Direktnachricht mit Link und bis zu drei Buttons.' },
@@ -119,7 +119,7 @@ export const CREATOR_TOURS: Tour[] = [
     learned: ['Einen Workflow in Alltagssprache beschreiben', 'Den Vorschlag mit Änderungsliste prüfen', 'Wissen, dass die KI nur als Entwurf speichert und nie veröffentlicht', 'Einen bestehenden Workflow mit KI ändern', 'Einen eigenen KI-Anbieter für „Workflows“ wählen'],
     docs: { label: 'KI-Workflow-Builder', file: 'workflow-ai' },
     steps: [
-      { title: 'Automationen', route: 'workflows', target: 'nav-workflows', text: 'Neben dem Baukasten gibt es die **KI**: Du beschreibst, was passieren soll – sie baut den Ablauf aus den echten Bausteinen von HyperLevel.' },
+      { title: 'Automationen', route: 'workflows', target: 'nav-workflows', text: 'Neben dem Baukasten gibt es die **KI**: Du beschreibst, was passieren soll – sie baut den Ablauf aus den echten Bausteinen von V Media CRM.' },
       { title: 'Mit KI erstellen', target: 'wfai-open', kind: 'click', do: 'Klicke auf **Mit KI erstellen**.', text: 'Öffnet das Fenster für deinen Auftrag.' },
       { title: 'Dein Auftrag', target: 'wfai-prompt', text: 'Schreib ein bis zwei Sätze: wann es startet und was dann geschehen soll. Je genauer, desto besser – zum Beispiel mit Wartezeiten und Bedingungen.' },
       { title: 'Beispiele', target: 'wfai-examples', optional: true, text: 'Ein Klick auf ein Beispiel füllt das Feld. Du kannst es danach beliebig umschreiben.' },

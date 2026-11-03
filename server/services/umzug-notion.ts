@@ -791,7 +791,7 @@ async function describe(h: VendorHttp, parts: PartKey[]) {
   const s = stubCtx(h, parts);
   if (parts.includes('projects') || parts.includes('objects')) {
     const dbs = await databases(h, s);
-    if (!dbs.length) warnings.push('Notion zeigt HyperLevel keine Datenbank: Öffne in Notion die Seite oder Datenbank → „…“ → „Verbindungen“ → deine Integration hinzufügen. Nur was du freigibst, kann übernommen werden.');
+    if (!dbs.length) warnings.push('Notion zeigt V Media CRM keine Datenbank: Öffne in Notion die Seite oder Datenbank → „…“ → „Verbindungen“ → deine Integration hinzufügen. Nur was du freigibst, kann übernommen werden.');
     const rows = async (db: Json) => {
       let n = 0;
       let pages = 0;
@@ -828,7 +828,7 @@ async function describe(h: VendorHttp, parts: PartKey[]) {
         }
         return { n, capped };
       });
-      if (list.length > 50) warnings.push('HyperLevel legt höchstens 50 eigene Objekte an – die übrigen Datenbanken werden übersprungen.');
+      if (list.length > 50) warnings.push('V Media CRM legt höchstens 50 eigene Objekte an – die übrigen Datenbanken werden übersprungen.');
     }
   }
   if (parts.includes('docs')) {
@@ -841,7 +841,7 @@ async function describe(h: VendorHttp, parts: PartKey[]) {
       }
       return { n, capped: false };
     });
-    warnings.push('Zu jeder Seite liest HyperLevel die Blöcke einzeln (Notion erlaubt im Schnitt drei Anfragen pro Sekunde) – bei vielen Seiten dauert das. Der Umzug lässt sich jederzeit pausieren und fortsetzen.');
+    warnings.push('Zu jeder Seite liest V Media CRM die Blöcke einzeln (Notion erlaubt im Schnitt drei Anfragen pro Sekunde) – bei vielen Seiten dauert das. Der Umzug lässt sich jederzeit pausieren und fortsetzen.');
   }
   return { counts, fields: [] as SourceField[], warnings };
 }
@@ -861,7 +861,7 @@ export const NOTION: SourceDef = {
     'Dateien, Bilder und Anhänge (die Adressen laufen bei Notion nach einer Stunde ab): Namen und Verweise stehen im Text, die Dateien bleiben bei Notion',
     'Ansichten, Filter und Sortierungen, Formeln und Rollups (es kommt der aktuelle Wert), Vorlagen, Automationen und verknüpfte Datenbank-Ansichten',
     'Uhrzeiten und Enddaten in Datumsfeldern von eigenen Objekten (es kommt das Anfangsdatum); Relationen zu mehr als 25 Zeilen',
-    'Zuständige: nur Personen, deren E-Mail in HyperLevel ein Teammitglied hat, werden zugewiesen – alle anderen stehen mit Namen in der Beschreibung',
+    'Zuständige: nur Personen, deren E-Mail in V Media CRM ein Teammitglied hat, werden zugewiesen – alle anderen stehen mit Namen in der Beschreibung',
     'Datenbanken mit mehreren Datenquellen und der Papierkorb',
   ],
   parts: [

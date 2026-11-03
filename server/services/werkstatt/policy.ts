@@ -37,7 +37,7 @@ export interface Policy {
   core: { repo: string; agent: 'codex' | 'claude'; location_id: string };
   /** "Mindest-Modell für die Werkstatt": only top models write code and review it (services/werkstatt/modelgate.ts). */
   model_gate: ModelGate;
-  /** Public keys (Ed25519) of publishers whose signed plugin bundles count as „signiert“ (besides the built-in HyperLevel keys). */
+  /** Public keys (Ed25519) of publishers whose signed plugin bundles count as „signiert“ (besides the built-in V Media CRM keys). */
   trusted_keys: { id: string; label: string; public_key: string }[];
   /** Before publishing: the second opinion of another top model is required (Pro; only when a second model is connected). */
   second_opinion: boolean;

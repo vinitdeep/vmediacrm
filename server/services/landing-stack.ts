@@ -2,7 +2,7 @@ import { escapeHtml as h } from '../core/template.js';
 import type { Copy, Lang } from './landing-copy.js';
 
 /**
- * Launch landing page: "Replaces your stack" – which tools one HyperLevel replaces, what the cheapest of each costs, and
+ * Launch landing page: "Replaces your stack" – which tools one V Media CRM replaces, what the cheapest of each costs, and
  * the total (web/public/landing/replaces.json, every price with a source and the research date). Pure: parsing and HTML.
  * Tool names are plain text chips – no logos (third-party logos need permission). Prices stay in their own currency; a
  * converted total is only shown when the file brings one with its exchange-rate source.

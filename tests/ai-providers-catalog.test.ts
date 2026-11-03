@@ -134,14 +134,14 @@ describe('preset shapes', () => {
 });
 
 describe('OpenRouter attribution and pricing display', () => {
-  const headers = (provider: string, app = { baseUrl: 'https://crm.example.com', name: 'HyperLevel' }) => chatEndpoint({ provider, baseUrl: presetById(provider)!.baseUrl, model: 'm', headers: {}, options: {}, wire: 'openai' }, app).headers;
+  const headers = (provider: string, app = { baseUrl: 'https://crm.example.com', name: 'V Media CRM' }) => chatEndpoint({ provider, baseUrl: presetById(provider)!.baseUrl, model: 'm', headers: {}, options: {}, wire: 'openai' }, app).headers;
   it('sends HTTP-Referer and the app title (current and legacy spelling)', () => {
-    expect(headers('openrouter')).toMatchObject({ 'http-referer': 'https://crm.example.com', 'x-title': 'HyperLevel', 'x-openrouter-title': 'HyperLevel' });
-    expect(headers('requesty')).toMatchObject({ 'http-referer': 'https://crm.example.com', 'x-title': 'HyperLevel' });
+    expect(headers('openrouter')).toMatchObject({ 'http-referer': 'https://crm.example.com', 'x-title': 'V Media CRM', 'x-openrouter-title': 'V Media CRM' });
+    expect(headers('requesty')).toMatchObject({ 'http-referer': 'https://crm.example.com', 'x-title': 'V Media CRM' });
     expect(headers('requesty')).not.toHaveProperty('x-openrouter-title');
     expect(headers('groq')).not.toHaveProperty('http-referer');
     // a person's own header wins
-    const own = chatEndpoint({ provider: 'openrouter', baseUrl: presetById('openrouter')!.baseUrl, model: 'm', headers: { 'http-referer': 'https://mine.example' }, options: {}, wire: 'openai' }, { baseUrl: 'https://crm.example.com', name: 'HyperLevel' });
+    const own = chatEndpoint({ provider: 'openrouter', baseUrl: presetById('openrouter')!.baseUrl, model: 'm', headers: { 'http-referer': 'https://mine.example' }, options: {}, wire: 'openai' }, { baseUrl: 'https://crm.example.com', name: 'V Media CRM' });
     expect(own.headers['http-referer']).toBe('https://mine.example');
   });
 });

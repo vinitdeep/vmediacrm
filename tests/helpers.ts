@@ -85,7 +85,7 @@ export async function startTestApp(overrides: Partial<Config> = {}) {
   };
 
   async function setup() {
-    const r = await api.post('/api/auth/setup', { email: 'chef@example.com', password: 'geheim123', name: 'Chef', locationName: 'Testfirma' });
+    const r = await api.post('/api/auth/setup', { email: 'chef@example.com', password: 'geheim123', name: 'Chef', locationName: 'Testfirma', timezone: 'Europe/Berlin' });
     if (r.status !== 200) throw new Error(JSON.stringify(r.data));
     const me = await api.get('/api/me');
     api.setLocation(me.data.locations[0].id);

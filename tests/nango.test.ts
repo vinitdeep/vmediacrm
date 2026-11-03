@@ -24,7 +24,7 @@ function fakeNango() {
     if (p === '/connect/sessions' && init.method === 'POST') return res(201, { data: { token: 'nango_connect_session_abc', connect_link: 'https://connect.nango.dev/?session_token=nango_connect_session_abc', expires_at: new Date(Date.now() + 1800_000).toISOString() } });
     if (p === '/connections' && (init.method ?? 'GET') === 'GET') {
       const uid = u.searchParams.get('endUserId');
-      // Like an old server that ignores the filter: HyperLevel must check the end user itself.
+      // Like an old server that ignores the filter: V Media CRM must check the end user itself.
       return res(200, { connections: connections.map((c) => ({ ...c, tags: { end_user_id: c.end_user } })) .filter(() => !!uid) });
     }
     const del = p.match(/^\/connections\/(.+)$/);
@@ -156,7 +156,7 @@ describe('Nango: connect, sync, proxy', () => {
     expect(r.status).toBe(200);
     expect(r.data.mode).toBe('oauth');
     expect(r.data.url).toBe('https://api.nango.dev/oauth/connect/github?connect_session_token=nango_connect_session_abc');
-    expect(nango.last('/connect/sessions')!.body).toEqual({ end_user: { id: `gohigh:${locA}`, display_name: 'Testfirma' }, organization: { id: 'gohigh', display_name: 'HyperLevel' }, allowed_integrations: ['github'] });
+    expect(nango.last('/connect/sessions')!.body).toEqual({ end_user: { id: `gohigh:${locA}`, display_name: 'Testfirma' }, organization: { id: 'gohigh', display_name: 'V Media CRM' }, allowed_integrations: ['github'] });
     const z = await t.api.post('/api/nango/connect', { integration: 'zendesk' });
     expect(z.data).toMatchObject({ mode: 'connect_ui', url: 'https://connect.nango.dev/?session_token=nango_connect_session_abc' });
     expect((await t.api.post('/api/nango/connect', { integration: 'slack' })).status).toBe(400);

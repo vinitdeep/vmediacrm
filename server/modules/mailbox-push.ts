@@ -96,7 +96,7 @@ export const mailboxPushModule: Module = {
           endpoint_url: gmailUrl(),
           ready: !!c.gmail_topic,
         },
-        graph: { ready: graphReady(), notification_url: `${app.baseUrl()}/hooks/mailbox/graph`, lifecycle_url: `${app.baseUrl()}/hooks/mailbox/graph/lifecycle`, reason: graphReady() ? '' : 'HyperLevel braucht eine öffentliche https-Adresse (PGHL_BASE_URL), damit Microsoft Benachrichtigungen schicken kann.' },
+        graph: { ready: graphReady(), notification_url: `${app.baseUrl()}/hooks/mailbox/graph`, lifecycle_url: `${app.baseUrl()}/hooks/mailbox/graph/lifecycle`, reason: graphReady() ? '' : 'V Media CRM braucht eine öffentliche https-Adresse (PGHL_BASE_URL), damit Microsoft Benachrichtigungen schicken kann.' },
         active: {
           gmail: Number(db.get(`SELECT COUNT(*) AS n FROM mailboxes WHERE json_extract(push, '$.kind') = 'gmail_watch' AND json_extract(push, '$.id') IS NOT NULL`)?.n ?? 0),
           graph: Number(db.get(`SELECT COUNT(*) AS n FROM mailboxes WHERE json_extract(push, '$.kind') = 'graph_subscription' AND json_extract(push, '$.id') IS NOT NULL`)?.n ?? 0),

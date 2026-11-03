@@ -44,11 +44,11 @@ export const LIMITS = { dm: 1000, reply: 300, button: 20, keywords: 20, replies:
 /** Meta's rules for private replies, shown next to the settings (docs/comment-to-dm.md has the long version). */
 export const POLICY_NOTES = [
   'Eine private Antwort (Private Reply) pro Kommentar – ein zweiter Versuch zum selben Kommentar wird abgelehnt.',
-  'Sie muss innerhalb von 7 Tagen nach dem Kommentar gesendet werden; HyperLevel antwortet sofort.',
+  'Sie muss innerhalb von 7 Tagen nach dem Kommentar gesendet werden; V Media CRM antwortet sofort.',
   'Danach öffnet erst die Antwort der Person das 24-Stunden-Fenster für weitere Nachrichten.',
   'Nur auf Kommentare zu Beiträgen und Reels deines eigenen Kontos.',
   'Öffentliche Antworten nur mit echtem Mehrwert – wiederholte, gleiche Texte können als Spam gelten. Rotierende Texte helfen.',
-  'Instagram: höchstens ca. 750 private Antworten pro Stunde und Konto; HyperLevel bremst früher (Grenze je Regel einstellbar).',
+  'Instagram: höchstens ca. 750 private Antworten pro Stunde und Konto; V Media CRM bremst früher (Grenze je Regel einstellbar).',
 ];
 
 const HTTPS = /^https:\/\/[^\s<>"']+$/i;

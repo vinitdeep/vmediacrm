@@ -9,7 +9,7 @@ import { toIso } from './umzug-text.js';
  * sevDesk (REST API v1, https://my.sevdesk.de/api/v1, the account's API token): customers and prospects → contacts (an organisation
  * becomes a company and a contact of its own, its persons become contacts linked to it), invoices, credit notes, quotations, order
  * confirmations and delivery notes → read-only entries in the contact's history: number, date, amount, status. They are NOT invoices of
- * HyperLevel: they take no number of the invoice ranges, are not frozen or sent, and change no bookkeeping – the originals stay at sevDesk.
+ * V Media CRM: they take no number of the invoice ranges, are not frozen or sent, and change no bookkeeping – the originals stay at sevDesk.
  * Pages by `limit` and `offset` (read until an empty page).
  */
 
@@ -225,7 +225,7 @@ async function describe(h: VendorHttp, parts: PartKey[]) {
     await count('documents', 'invoices', 'Rechnungen (mit Entwürfen)', () => totalOf('/Invoice'));
     await count('documents', 'credit_notes', 'Gutschriften (mit Entwürfen)', () => totalOf('/CreditNote'));
     await count('documents', 'orders', 'Angebote, Auftragsbestätigungen und Lieferscheine (mit Entwürfen)', () => totalOf('/Order'));
-    warnings.push('Die Belege kommen nur als Eintrag im Verlauf des Kontakts (Nummer, Datum, Betrag, Status) – nicht als Rechnungen in HyperLevel: Sie vergeben keine Rechnungsnummer, werden nicht festgeschrieben und ändern die Buchhaltung nicht. Die Originale mit PDF bleiben bei sevDesk – vor dem Kündigen alles exportieren (Aufbewahrungspflicht: 8 bzw. 10 Jahre). Entwürfe werden nicht übernommen.');
+    warnings.push('Die Belege kommen nur als Eintrag im Verlauf des Kontakts (Nummer, Datum, Betrag, Status) – nicht als Rechnungen in V Media CRM: Sie vergeben keine Rechnungsnummer, werden nicht festgeschrieben und ändern die Buchhaltung nicht. Die Originale mit PDF bleiben bei sevDesk – vor dem Kündigen alles exportieren (Aufbewahrungspflicht: 8 bzw. 10 Jahre). Entwürfe werden nicht übernommen.');
   }
   return { counts, fields: parts.includes('contacts') ? FIELDS : [], warnings };
 }
@@ -237,11 +237,11 @@ export const SEVDESK: SourceDef = {
   credentials: [{ key: 'token', label: 'API-Token', secret: true, placeholder: '32 Zeichen', hint: 'sevDesk → Einstellungen → Benutzer → dein Benutzer → „API-Token“ (nur Administratoren sehen ihn)' }],
   howto: [
     'In sevDesk unter Einstellungen → Benutzer deinen Benutzer öffnen: dort steht der API-Token (32 Zeichen, nur für Administratoren sichtbar).',
-    'Den Token hier einfügen. HyperLevel liest nur und ändert bei sevDesk nichts.',
+    'Den Token hier einfügen. V Media CRM liest nur und ändert bei sevDesk nichts.',
     'Nach dem Umzug den Token bei sevDesk neu erzeugen. Wichtig: Rechnungen und Belege müssen gesetzlich 8 bzw. 10 Jahre aufbewahrt werden – exportiere sie (PDFs, DATEV-Export) und behalte den Zugang zur Buchhaltung, bevor du kündigst.',
   ],
   limits: [
-    'Rechnungen, Gutschriften und alle anderen Belege kommen NICHT als Rechnungen in HyperLevel, sondern nur als Verlaufseintrag am Kontakt (Nummer, Datum, Betrag, Status) – ohne PDF, ohne Positionen, ohne Rechnungsnummer im Nummernkreis von HyperLevel',
+    'Rechnungen, Gutschriften und alle anderen Belege kommen NICHT als Rechnungen in V Media CRM, sondern nur als Verlaufseintrag am Kontakt (Nummer, Datum, Betrag, Status) – ohne PDF, ohne Positionen, ohne Rechnungsnummer im Nummernkreis von V Media CRM',
     'Die Buchhaltung selbst: Belege der Lieferanten, Buchungen, Bankkonten und Transaktionen, Umsatzsteuer, Kassenbuch und Mahnwesen',
     'Produkte und Artikel, Vorlagen, wiederkehrende Rechnungen, Tags und eigene Kategorien; Entwürfe von Belegen',
     'Lieferanten (nur Kunden und Interessenten werden übernommen)',

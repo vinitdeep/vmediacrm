@@ -1,8 +1,8 @@
 import { createPrivateKey, createPublicKey, generateKeyPairSync, sign as edSign, verify as edVerify, type KeyObject } from 'node:crypto';
 
 /**
- * Signed plugin bundles (Ed25519). HyperLevel signs the plugins of its catalogue; this installation checks the
- * signature against the public keys it trusts before it says "von HyperLevel signiert". A bundle without a valid
+ * Signed plugin bundles (Ed25519). V Media CRM signs the plugins of its catalogue; this installation checks the
+ * signature against the public keys it trusts before it says "von V Media CRM signiert". A bundle without a valid
  * signature from a trusted key is installed only with a plain warning: **„ungeprüft“**. A bundle whose signature
  * does not match its content (edited after signing) is refused.
  *
@@ -17,7 +17,7 @@ export interface PublicKey {
   label: string;
   /** base64 of the SPKI DER, or a PEM block. */
   public_key: string;
-  /** Marks the keys of the HyperLevel publisher itself (the built-in list). */
+  /** Marks the keys of the V Media CRM publisher itself (the built-in list). */
   gohigh?: boolean;
 }
 
@@ -76,7 +76,7 @@ export function signBundle<T extends SignableBundle>(bundle: T, privateKeyPem: s
   return { ...bundle, signature: { alg: 'ed25519', key_id: keyId, sig } };
 }
 
-const UNSIGNED: SignatureCheck = { state: 'unsigned', key_id: '', label: '', gohigh: false, warning: 'Ungeprüft: Dieses Paket ist nicht signiert – es stammt nicht nachweislich von HyperLevel. Prüfe, woher es kommt, und lies die angefragten Berechtigungen genau.' };
+const UNSIGNED: SignatureCheck = { state: 'unsigned', key_id: '', label: '', gohigh: false, warning: 'Ungeprüft: Dieses Paket ist nicht signiert – es stammt nicht nachweislich von V Media CRM. Prüfe, woher es kommt, und lies die angefragten Berechtigungen genau.' };
 
 /** Checks the signature of a (parsed) bundle against the keys this installation trusts. Never throws. */
 export function checkSignature(bundle: SignableBundle, trusted: PublicKey[]): SignatureCheck {
@@ -100,6 +100,6 @@ export function checkSignature(bundle: SignableBundle, trusted: PublicKey[]): Si
     if (ok) return { state: 'signed', key_id: k.id, label: k.label, gohigh: !!k.gohigh, warning: '' };
   }
   // A signature by a key we do not know cannot be checked – "ungeprüft", not "gefälscht".
-  if (!known.length) return { state: 'untrusted', key_id, label: '', gohigh: false, warning: `Ungeprüft: Das Paket ist mit dem Schlüssel „${key_id}“ signiert, dem diese Installation nicht vertraut. Es stammt nicht nachweislich von HyperLevel.` };
+  if (!known.length) return { state: 'untrusted', key_id, label: '', gohigh: false, warning: `Ungeprüft: Das Paket ist mit dem Schlüssel „${key_id}“ signiert, dem diese Installation nicht vertraut. Es stammt nicht nachweislich von V Media CRM.` };
   return bad('Die Signatur stimmt nicht mit dem Inhalt überein – das Paket wurde nach dem Signieren verändert oder ist gefälscht. Es wird nicht installiert.');
 }

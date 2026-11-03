@@ -115,7 +115,7 @@ export const videoRecycleModule: Module = {
     const thumbUrl = (clipId: string) => (existsSync(thumbFile(clipId)) ? `${app.baseUrl()}/hooks/openshorts/thumb/${clipId}.${sig('thumb', clipId)}.jpg` : null);
     app.services.videoClipThumb = thumbUrl;
 
-    /** A clip that is linked publicly (blog, newsletter, lesson) is copied once to HyperLevel's disk – OpenShorts deletes jobs after its retention. */
+    /** A clip that is linked publicly (blog, newsletter, lesson) is copied once to V Media CRM's disk – OpenShorts deletes jobs after its retention. */
     const publicClip = async (clip: any): Promise<string> => {
       const ext = (extname(clip.video_path).toLowerCase().match(/^\.(mp4|webm|mov|m4v)$/)?.[0] ?? '.mp4');
       const file = join(publicDir, `${clip.id}${ext}`);
@@ -402,7 +402,7 @@ export const videoRecycleModule: Module = {
           if (kind === 'x_thread') Object.assign(input, { content: c.tweets[0], thread: c.tweets.slice(1) });
           else if (kind === 'instagram') {
             if (!best) throw bad('Instagram braucht ein Video – der Job hat keinen Clip');
-            if (!vs().isPublicBase()) throw bad('HyperLevel muss öffentlich per https erreichbar sein, damit Postiz den Clip abholen kann');
+            if (!vs().isPublicBase()) throw bad('V Media CRM muss öffentlich per https erreichbar sein, damit Postiz den Clip abholen kann');
             Object.assign(input, { content: rc.asText(kind, c), mediaUrls: [vs().mediaUrl(best.id)], video: true, title: best.title });
           } else input.content = c.text;
           const post = await app.services.socialPost(loc, input);
@@ -416,7 +416,7 @@ export const videoRecycleModule: Module = {
         }
         case 'shownotes': {
           if (!app.services.saveDocs) throw new HttpError(409, 'Das Dokumente-Modul ist nicht installiert');
-          if (!app.baseUrl().startsWith('https://')) throw bad('Dokumente brauchen eine https-Adresse von HyperLevel – Text bitte kopieren');
+          if (!app.baseUrl().startsWith('https://')) throw bad('Dokumente brauchen eine https-Adresse von V Media CRM – Text bitte kopieren');
           const url = `${app.baseUrl()}/app/video-studio/${job.id}?tab=recycling&item=${item.id}`;
           app.services.saveDocs([{ url, title: `Shownotes: ${c.title || job.title}`.slice(0, 300), kind: 'doc', source: 'Video-Recycling', summary: rc.asText(kind, c).slice(0, 2000), location_id: loc }], { force: true });
           return { ref: null, url: 'project', label: 'Als Dokument im Projekt' };

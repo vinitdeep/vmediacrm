@@ -61,7 +61,7 @@ describe('the connection (agency)', () => {
     expect(ok.version).toBe('1.6.2');
     expect(ok.steps.map((s: any) => [s.key, s.ok])).toEqual([['health', true], ['access', true], ['login', true], ['datasets', true]]);
     expect((await c.admin('GET', '/api/agency/cognee')).data.last_test).toMatchObject({ ok: true, version: '1.6.2' });
-    expect(audit('cognee.test')[0].summary).toBe('Verbindungstest: ok, 0 HyperLevel-Datasets');
+    expect(audit('cognee.test')[0].summary).toBe('Verbindungstest: ok, 0 V Media CRM-Datasets');
 
     // Unsaved values can be tested without replacing the saved ones.
     const bad = (await c.admin('POST', '/api/agency/cognee/test', { base_url: 'http://cognee:8000', password: 'falsch', allow_private: true })).data;
@@ -158,7 +158,7 @@ describe('asking the memory', () => {
     expect(r.results).toHaveLength(1);
     expect(r.results[0]).toMatchObject({ type: 'wiki', type_label: 'Wiki & Dokumente', title: 'Onboarding-Ablauf', link: `/app/wiki/${page.id}` });
     expect(r.results[0].snippet).toContain('besprechen wir zuerst die Ziele');
-    expect(r.results[0].snippet).not.toContain('HyperLevel ·');
+    expect(r.results[0].snippet).not.toContain('V Media CRM ·');
     expect(r.mode).toBe('snippets');
     // With an answer: the server's own composition on top of the passages.
     const a = (await c.at(c.A)('GET', '/api/cognee/recall?q=Onboarding&mode=answer')).data;

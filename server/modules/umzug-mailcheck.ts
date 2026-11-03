@@ -176,7 +176,7 @@ export const mailcheckModule: Module = {
         rules: [
           { label: 'SPF und DKIM sind eingerichtet (am besten beides)', key: 'auth' },
           { label: 'DMARC-Eintrag vorhanden (ab etwa 5.000 Mails am Tag Pflicht bei Gmail und Yahoo)', key: 'dmarc' },
-          { label: 'One-Click-Abmeldung im Mail-Kopf – HyperLevel setzt sie bei Kampagnen und Automationen automatisch', key: 'unsub' },
+          { label: 'One-Click-Abmeldung im Mail-Kopf – V Media CRM setzt sie bei Kampagnen und Automationen automatisch', key: 'unsub' },
           { label: 'Spam-Beschwerden unter 0,3 %: nur an Leute senden, die zugestimmt haben', key: 'spam' },
         ],
       };

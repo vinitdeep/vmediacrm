@@ -35,7 +35,7 @@ const slug = (s: string) =>
     .replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '') || 'szenario';
-const SHORT: Record<string, string> = { 'gohigh-staffel': 'HyperLevel Staffel', 'gohigh-standort': 'HyperLevel Standort-Modell', 'saas-pro-nutzer': 'SaaS pro Nutzer', 'agentur-retainer': 'Agentur-Retainer', 'kurs-community': 'Kurs/Community', handwerk: 'Handwerk' };
+const SHORT: Record<string, string> = { 'gohigh-staffel': 'V Media CRM Staffel', 'gohigh-standort': 'V Media CRM Standort-Modell', 'saas-pro-nutzer': 'SaaS pro Nutzer', 'agentur-retainer': 'Agentur-Retainer', 'kurs-community': 'Kurs/Community', handwerk: 'Handwerk' };
 
 const draftKey = () => `pghl.calc.draft.${currentLocation()}`;
 const readDraft = (): CalcInput | null => {
@@ -268,12 +268,12 @@ export function Calc({ id }: { id?: string }) {
               <Spinner />
             )}
             <section className="card calc-agent" data-tour="calc-agent">
-              <h3>Mit dem HyperLevel Agent rechnen</h3>
+              <h3>Mit dem V Media CRM Agent rechnen</h3>
               <p className="muted small">Der Agent und externe KI-Clients (Claude, ChatGPT, Codex über MCP) benutzen genau diesen Rechner: Fragen stellen, Szenarien speichern, vergleichen. Ein Klick legt die Frage in den Agenten.</p>
               <div className="calc-agent-chips">
                 {[
-                  'Was bleibt bei 300 Kunden im HyperLevel Standort-Modell nach allen Kosten und Steuern übrig?',
-                  'Ab wie vielen Kunden bin ich mit der HyperLevel Staffel im Plus?',
+                  'Was bleibt bei 300 Kunden im V Media CRM Standort-Modell nach allen Kosten und Steuern übrig?',
+                  'Ab wie vielen Kunden bin ich mit der V Media CRM Staffel im Plus?',
                   'Welcher Grundpreis bringt bei 200 Kunden 5.000 € Nettogewinn im Monat?',
                   'Vergleiche meine gespeicherten Szenarien im Gewinnrechner.',
                 ].map((q) => (

@@ -87,7 +87,7 @@ export const REVENUE_TOURS: Tour[] = [
     routes: ['contracts'],
     keywords: 'vertrag unterschrift signatur vorlage platzhalter pdf',
     learned: ['Vertragsvorlagen mit Platzhaltern', 'Einen Vertrag aus einer Vorlage erstellen und versenden', 'Wie Unterschrift, Prüfsumme und Protokoll funktionieren'],
-    docs: { label: 'Funktionen: Verträge', file: 'README', anchor: 'funktionen' },
+    docs: { label: 'Funktionen: Verträge', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Verträge', route: 'contracts', target: 'page-head', text: 'Kunden unterschreiben online mit Maus oder Finger. Der Text wird beim Versand eingefroren und mit einer SHA-256-Prüfsumme gesichert.' },
       { title: 'Vorlagen', target: 'tab-template', text: 'Vorlagen enthalten Platzhalter wie {{contact.first_name}} – einmal gut formuliert, immer wieder benutzt.' },

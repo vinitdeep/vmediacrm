@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { SafeResponse } from './net.js';
 
 /**
- * Nango (nango.dev) over its REST API – plain fetch, no SDK. Every Nango HTTP call HyperLevel makes lives
+ * Nango (nango.dev) over its REST API – plain fetch, no SDK. Every Nango HTTP call V Media CRM makes lives
  * in this file, plus the pure helpers (webhook signature, allow-list, proxy paths). The network is
  * `safeFetch` unless a test sets `app.services.nangoFetch`.
  *
@@ -10,7 +10,7 @@ import type { SafeResponse } from './net.js';
  * sources; points that could only be checked against the spec, not a live instance, are marked
  * ASSUMPTION – see docs/nango.md#what-to-verify-with-real-keys.
  *
- * Licence note: Nango is source-available under the Elastic License 2.0 (not OSI open source). HyperLevel
+ * Licence note: Nango is source-available under the Elastic License 2.0 (not OSI open source). V Media CRM
  * ships no Nango code; it talks to Nango Cloud or a Nango instance the operator runs.
  */
 
@@ -98,10 +98,10 @@ export interface ClientOptions {
 
 const OAUTH_MODES = new Set(['OAUTH1', 'OAUTH2', 'MCP_OAUTH2', 'MCP_OAUTH2_GENERIC']);
 
-/** Integration ids HyperLevel accepts (Nango allows a few more legacy characters, e.g. spaces – not supported here). */
+/** Integration ids V Media CRM accepts (Nango allows a few more legacy characters, e.g. spaces – not supported here). */
 export const INTEGRATION_RE = /^[A-Za-z0-9~.@_-]{1,100}$/;
 
-/** A thin client: one method per Nango endpoint HyperLevel uses. */
+/** A thin client: one method per Nango endpoint V Media CRM uses. */
 export function nangoClient(o: ClientOptions) {
   const base = o.baseUrl.replace(/\/+$/, '');
 

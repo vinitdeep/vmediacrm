@@ -7,7 +7,7 @@ import { callRoute } from '../services/route-call.js';
 import { applySnapshot, snapshotSummary, validateSnapshot } from '../services/snapshots.js';
 
 /**
- * Built-in templates („Vorlagen von HyperLevel“): ready-made snapshots that ship with the app and load into a sub-account in
+ * Built-in templates („Vorlagen von V Media CRM“): ready-made snapshots that ship with the app and load into a sub-account in
  * one click – the first one is „Software- & SaaS-Firma (HQ)“ (services/hq-template.ts, docs/company-playbook.md).
  *
  * The snapshot part goes through applySnapshot (one transaction, new ids, workflows as drafts unless asked otherwise); the

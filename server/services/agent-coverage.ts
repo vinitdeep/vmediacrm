@@ -6,7 +6,7 @@ import { agentForbidden } from './agent-safety.js';
 /**
  * Which app areas agents can reach (docs/agent.md#abdeckung; tests/agent-coverage.test.ts keeps it honest). Every module with
  * routes behind a login is checked: covered by a specific tool (a tool the module registers, or one whose calls hit the module's
- * routes), reachable through the generic `ghl_api` (writes then always ask first in the HyperLevel Agent), or – only when neither
+ * routes), reachable through the generic `ghl_api` (writes then always ask first in the V Media CRM Agent), or – only when neither
  * – listed in AGENT_EXEMPT with the reason. A new module whose write routes no agent can reach fails the test until it gets a
  * tool, its routes leave the deny lists, or it is exempted here on purpose.
  */
@@ -48,7 +48,7 @@ export interface CoverageRow {
   readTools: string[];
   /** Specific tools that change this module's data. */
   tools: string[];
-  /** Write routes ghl_api can call (in the HyperLevel Agent always after a confirmation). */
+  /** Write routes ghl_api can call (in the V Media CRM Agent always after a confirmation). */
   generic: number;
   /** Read routes ghl_api can call. */
   genericReads: number;

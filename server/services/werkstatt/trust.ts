@@ -34,7 +34,7 @@ export function trustedKeys(app: App): PublicKey[] {
   const own = ownSigner();
   const seen = new Set<string>();
   const out: PublicKey[] = [];
-  // The built-in HyperLevel keys come first and win on the same id: nobody can impersonate them through the settings.
+  // The built-in V Media CRM keys come first and win on the same id: nobody can impersonate them through the settings.
   for (const k of [...GOHIGH_PUBLIC_KEYS, ...envKeys(), ...loadPolicy(app).trusted_keys.map((k) => ({ ...k, gohigh: false })), ...(own ? [own.publicKey] : [])]) {
     if (seen.has(k.id)) continue;
     seen.add(k.id);

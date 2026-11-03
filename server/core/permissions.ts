@@ -235,7 +235,7 @@ const ROUTES: [prefix: string, perm: Permission, readableByAll?: boolean][] = [
   ['/api/webhooks', 'settings'],
   ['/api/settings', 'settings'],
   ['/api/import', 'settings'],
-  // Umzug zu HyperLevel: connections, uploaded exports, previews and import jobs of the switch-over wizard.
+  // Umzug zu V Media CRM: connections, uploaded exports, previews and import jobs of the switch-over wizard.
   ['/api/umzug', 'settings'],
   // E-Mail-Zustellung prüfen: the campaign send dialog reads the verdict for the sender's domain (campaigns); the wizard is a setting.
   ['/api/mail-domains/status', 'campaigns'],

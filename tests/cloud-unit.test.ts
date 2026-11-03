@@ -124,7 +124,7 @@ describe('cloud: slugs', () => {
 
 describe('cloud: texts', () => {
   it('fills the legal placeholders and keeps the unknown ones visible', () => {
-    const vars = { operator: { name: 'Beispiel UG', street: 'Weg 1', zip_city: '12345 Stadt', country: 'Deutschland', email: '', phone: '', vat_id: '', register: '', representative: '' }, service: 'HyperLevel', company: 'Kunde GmbH', trial_days: 14, grace_days: 7, retention_days: 30, deletion_notice_days: 14, version: 3, date: '05.10.2026' };
+    const vars = { operator: { name: 'Beispiel UG', street: 'Weg 1', zip_city: '12345 Stadt', country: 'Deutschland', email: '', phone: '', vat_id: '', register: '', representative: '' }, service: 'V Media CRM', company: 'Kunde GmbH', trial_days: 14, grace_days: 7, retention_days: 30, deletion_notice_days: 14, version: 3, date: '05.10.2026' };
     const out = fillLegal(DEFAULT_LEGAL.avv, vars);
     expect(out).toContain('Kunde GmbH');
     expect(out).toContain('Beispiel UG**, Weg 1, 12345 Stadt, Deutschland');
@@ -135,7 +135,7 @@ describe('cloud: texts', () => {
   });
 
   it('composes mails with the action as a link and no markup from names', () => {
-    const m = composeMail('verify', { brand: 'HyperLevel', name: '<b>Mia</b>', company: 'A & B', link: 'https://x.example/start/verify/abc' });
+    const m = composeMail('verify', { brand: 'V Media CRM', name: '<b>Mia</b>', company: 'A & B', link: 'https://x.example/start/verify/abc' });
     expect(m.subject).toContain('bestätige');
     expect(m.text).toContain('https://x.example/start/verify/abc');
     expect(m.html).not.toContain('<b>Mia</b>');

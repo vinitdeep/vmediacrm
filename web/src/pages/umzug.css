@@ -1,4 +1,4 @@
-/* Umzug zu HyperLevel + E-Mail-Zustellung (web/src/pages/Umzug*.tsx). Own file, loaded with the lazy page; colours are the theme tokens, so light, dark and every theme work. */
+/* Umzug zu V Media CRM + E-Mail-Zustellung (web/src/pages/Umzug*.tsx). Own file, loaded with the lazy page; colours are the theme tokens, so light, dark and every theme work. */
 
 .um-page { max-width: 1040px; }
 .um-intro { margin: 0 0 14px; max-width: 70ch; }

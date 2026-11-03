@@ -342,7 +342,7 @@ export function Composer({ ch, threadId, people, groupMention, onPosted, onFocus
   const slash: SlashItem[] = [
     ...(can(session, 'contacts') ? [{ key: 'aufgabe', label: '/aufgabe', sub: t('Aufgabe anlegen – „… morgen @Person“'), insert: '/aufgabe ' }] : []),
     ...(can(session, 'contacts') ? [{ key: 'kontakt', label: '/kontakt', sub: t('Kontakt als Karte teilen'), insert: '/kontakt ' }] : []),
-    { key: 'agent', label: '/agent', sub: t('HyperLevel Agent fragen'), insert: '/agent ' },
+    { key: 'agent', label: '/agent', sub: t('V Media CRM Agent fragen'), insert: '/agent ' },
   ];
 
   const canPost = ch.can.post;

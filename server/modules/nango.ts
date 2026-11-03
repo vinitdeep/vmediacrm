@@ -36,7 +36,7 @@ import type { Tool } from './mcp.js';
  * Nango as a second connector backend next to Composio (docs/nango.md). The agency enters the Nango
  * base URL (Cloud or self-hosted) and the secret key once and registers its own OAuth app per provider
  * in Nango; every sub-account is one Nango end user (`gohigh:<locationId>`) and connects with
- * „Verbinden“ (plain redirect to Nango, no popup from HyperLevel). Requests go through Nango's Proxy –
+ * „Verbinden“ (plain redirect to Nango, no popup from V Media CRM). Requests go through Nango's Proxy –
  * Auth + Proxy are the two features of the free self-hosted edition – as workflow action
  * „API-Aufruf über Nango“, MCP tool `ghl_nango_request` and agent tool, the last two only within the
  * sub-account's allow-list.
@@ -365,7 +365,7 @@ export const nangoModule: Module = {
       const integ = (await integrations(cfg)).find((i) => i.key === integration);
       if (!integ) throw bad('Diese Integration ist in Nango nicht eingerichtet (die Agentur legt sie im Nango-Dashboard an).');
       const loc = app.location(ctx.locationId)!;
-      const session = await call(() => c.createConnectSession({ endUserId: endUserFor(loc.id), displayName: loc.name, organizationId: 'gohigh', organizationName: app.services.brandName?.() ?? 'HyperLevel', integration }));
+      const session = await call(() => c.createConnectSession({ endUserId: endUserFor(loc.id), displayName: loc.name, organizationId: 'gohigh', organizationName: app.services.brandName?.() ?? 'V Media CRM', integration }));
       // OAuth apps without extra fields: straight to the provider (plain redirects, no window). Everything
       // else (API keys, subdomains …) through Nango's hosted Connect UI.
       let mode: 'oauth' | 'connect_ui' = 'connect_ui';
@@ -415,7 +415,7 @@ export const nangoModule: Module = {
     });
     router.put('/api/nango/allow', 'location', (ctx) => {
       // An API key or MCP client must not widen its own allow-list.
-      if (ctx.via !== 'session') throw new HttpError(403, 'Freigaben ändern geht nur angemeldet in HyperLevel.');
+      if (ctx.via !== 'session') throw new HttpError(403, 'Freigaben ändern geht nur angemeldet in V Media CRM.');
       let allow: AllowEntry[];
       try {
         allow = cleanNangoAllow(ctx.body.allow);
@@ -558,7 +558,7 @@ export const nangoModule: Module = {
         guide: [
           'Konto bei Nango Cloud anlegen oder Nango selbst hosten (docker compose --profile nango).',
           'Im Nango-Dashboard je Anbieter eine Integration mit eigener OAuth-App (Client-ID/Secret) anlegen.',
-          'In HyperLevel unter Agentur → Integrationen → Einrichtung → Nango Adresse und Secret-Key eintragen, „Verbindung testen“.',
+          'In V Media CRM unter Agentur → Integrationen → Einrichtung → Nango Adresse und Secret-Key eintragen, „Verbindung testen“.',
           'Im Sub-Account Apps → Nango: Integration wählen, „Verbinden“. Danach Workflow-Schritt „API-Aufruf über Nango“ nutzen.',
         ],
       },

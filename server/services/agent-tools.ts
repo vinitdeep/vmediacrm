@@ -10,7 +10,7 @@ import { requiredPermission } from '../core/permissions.js';
 import { RECORD_KINDS } from './agent-context.js';
 
 /**
- * The HyperLevel Agent's tools: every MCP tool (core + `app.services.mcpTools` from other modules, so
+ * The V Media CRM Agent's tools: every MCP tool (core + `app.services.mcpTools` from other modules, so
  * new ones appear automatically) executed in-process with the calling user's identity, plus a few
  * agent-only tools – open a page, read what the user is looking at, search everything, keep notes,
  * search knowledge, answer with a report, fetch a web page (off by default), import a CSV.
@@ -513,7 +513,7 @@ export function toolCatalog(app: App, user: User, opts: { webFetch: boolean }): 
 
 /**
  * Tools of `app.services.agentToolSources` (external MCP servers, Nango) for this sub-account and user. They
- * call third-party systems directly (not through HyperLevel routes), so: only for people who may run automations
+ * call third-party systems directly (not through V Media CRM routes), so: only for people who may run automations
  * (the area of POST /api/mcp-servers/call), output always untrusted, and read-only only when the source says
  * `readOnlyHint` – everything else is "may write / outbound" (class sensitive → confirmation rules).
  */

@@ -134,7 +134,7 @@ describe('appearance API', () => {
     await login('kundin@example.com');
     const mine = await t.api.get('/api/appearance');
     expect(mine.data.prefs).toEqual({});
-    expect(mine.data.effective.theme).toBe('gohigh');
+    expect(mine.data.effective.theme).toBe('vmedia');
     await t.api.patch('/api/appearance', { theme: 'sand' });
     await login('chef@example.com');
     expect((await t.api.get('/api/appearance')).data.effective.theme).toBe('wald');

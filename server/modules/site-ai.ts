@@ -54,7 +54,7 @@ import { siteAiDraftsModule } from './site-ai-drafts.js';
  * the public web until "Veröffentlichen"), a page or section change lands in the editor as unsaved changes after a restore
  * point was taken. It reuses the gallery's design tokens, the form/calendar/product wiring and the legal page generator.
  * BYOK use "Funnel & Website AI" (`sites`), cost estimate before every request, the KI-Assistent's monthly limit applies.
- * MCP `ghl_site_generate`; the HyperLevel Agent gets it like every MCP tool plus a hint. Docs: docs/site-ai.md.
+ * MCP `ghl_site_generate`; the V Media CRM Agent gets it like every MCP tool plus a hint. Docs: docs/site-ai.md.
  */
 
 const PURPOSE = 'site_builder';
@@ -332,7 +332,7 @@ export const siteAiModule: Module = {
       if (used.has('form') && !refs.form.length) out.push('Ein Formular (Name, E-Mail, Einwilligung) wird beim Anlegen erstellt – Felder unter „Formulare“ anpassen.');
       if (used.has('calendar') && !refs.calendar.length) out.push('Es gibt noch keinen Kalender: unter „Kalender“ anlegen und im Block „Kalender“ wählen.');
       if (used.has('product')) out.push(refs.product.length ? 'Prüfe im Block „Produkt“, ob das richtige Produkt gewählt ist (Stripe muss verbunden sein).' : 'Lege unter „Rechnungen → Produkte“ das Produkt an und wähle es im Block „Produkt“.');
-      if (brief.language === 'en') out.push('Rechtstexte erzeugt HyperLevel auf Deutsch – für eine englische Seite bitte prüfen.');
+      if (brief.language === 'en') out.push('Rechtstexte erzeugt V Media CRM auf Deutsch – für eine englische Seite bitte prüfen.');
       out.push('Texte in [eckigen Klammern] sind Platzhalter: durch echte Angaben ersetzen, keine erfundenen Kundenstimmen veröffentlichen.');
       return out;
     }
@@ -584,7 +584,7 @@ export const siteAiModule: Module = {
       return { ok: true, mode: r.mode, page_id: page.id, blocks, restore_point_id: point?.id ?? null, diff: diffPage(current, blocks), message: 'Im Editor übernommen – noch nicht gespeichert. „Speichern“ macht die Änderung live, der Wiederherstellungspunkt holt den alten Stand zurück.' };
     }
 
-    // --- the HyperLevel Agent ---------------------------------------------------------------------------------------------------
+    // --- the V Media CRM Agent ---------------------------------------------------------------------------------------------------
     app.services.agentPromptExtras = [
       ...(app.services.agentPromptExtras ?? []),
       (i: { automatic: boolean }) =>

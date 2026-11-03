@@ -8,6 +8,7 @@
  */
 
 export const THEME_IDS = [
+  'vmedia',
   'gohigh',
   'nordlicht',
   'graphit',
@@ -256,7 +257,7 @@ export interface Prefs {
 }
 
 export const PREF_DEFAULTS: Prefs = {
-  theme: 'gohigh',
+  theme: 'vmedia',
   mode: 'system',
   accent: '',
   dept: 'subtle',

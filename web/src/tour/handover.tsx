@@ -206,7 +206,7 @@ const CHECKS: Check[] = [
     load: async () => {
       const b = await api.get('/api/agency/branding');
       const dom = b.app_domain ? `${b.app_domain}${b.app_domain_status?.status === 'active' ? '' : ' (noch nicht aktiv)'}` : 'keine eigene Domain';
-      return b.name && b.name !== 'HyperLevel' ? ok(`${b.name} · ${dom}`) : missing('Name und Logo der Agentur fehlen');
+      return b.name && b.name !== 'V Media CRM' ? ok(`${b.name} · ${dom}`) : missing('Name und Logo der Agentur fehlen');
     },
   },
   {

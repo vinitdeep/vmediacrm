@@ -797,7 +797,7 @@ export function reviewFacts(r: GrowthReview, lang: Lang): string {
 export const BIZDEV_AREAS = ['Umsatz und Pipeline', 'Lead-Fluss und Conversion', 'Kundenbindung, Upsell und Cross-Sell', 'Marketing-Performance', 'Engpässe im Tagesgeschäft', 'Ziele und Angebote'] as const;
 
 /**
- * The role prompt for the HyperLevel Agent when it speaks as the companion with the role "Business Developer": think about the whole
+ * The role prompt for the V Media CRM Agent when it speaks as the companion with the role "Business Developer": think about the whole
  * business, answer with numbers from tools, prioritise by € impact, end with 1–3 next actions it can prepare – never send without the
  * confirmation card – and do not repeat what it suggested lately. Pure.
  */

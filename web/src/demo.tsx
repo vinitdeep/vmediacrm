@@ -124,7 +124,7 @@ export function DemoLogin({ onDone, onFill }: { onDone: () => void; onFill: (ema
   );
 }
 
-/** "HyperLevel 0.0.18" – sidebar footer. */
+/** "V Media CRM 0.0.18" – sidebar footer. */
 export function VersionTag() {
   const t = useT('shell');
   const info = useAppInfo();

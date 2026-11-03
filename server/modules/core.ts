@@ -78,7 +78,7 @@ function accountLocked(email: string): boolean {
   return list.length >= 10;
 }
 
-export function createLocation(db: any, name: string, timezone = 'Europe/Berlin', extra: Record<string, any> = {}) {
+export function createLocation(db: any, name: string, timezone = 'Asia/Kolkata', extra: Record<string, any> = {}) {
   const loc = {
     id: id(),
     name,
@@ -154,7 +154,7 @@ export const coreModule: Module = {
       const password = checkPassword(ctx.body.password, 'Passwort');
       const user = { id: id(), email, name: str(ctx.body.name, 'Name') || email, password_hash: hashPassword(password), role: 'admin', locations: [], created_at: now() };
       db.insert('users', user);
-      createLocation(db, str(ctx.body.locationName, 'Firma') || 'Meine Firma', str(ctx.body.timezone, 'Zeitzone') || 'Europe/Berlin');
+      createLocation(db, str(ctx.body.locationName, 'Firma') || 'Meine Firma', str(ctx.body.timezone, 'Zeitzone') || 'Asia/Kolkata');
       startSession(ctx, app, user.id);
       return { user: userOut({ ...user, locations: '[]' }) };
     });
@@ -289,7 +289,7 @@ export const coreModule: Module = {
     // --- locations (sub-accounts) -------------------------------------------
     router.get('/api/locations', 'admin', (ctx) => visibleLocations(app, ctx.user, parseRows(db.all('SELECT * FROM locations ORDER BY name'), ['settings'])).map((l) => ({ ...l, settings: maskSettings(l.settings) })));
     router.post('/api/locations', 'admin', (ctx) => {
-      const tz = str(ctx.body.timezone, 'Zeitzone') || 'Europe/Berlin';
+      const tz = str(ctx.body.timezone, 'Zeitzone') || 'Asia/Kolkata';
       if (!isValidTz(tz)) throw bad('Unbekannte Zeitzone');
       return createLocation(db, str(ctx.body.name, 'Name', { required: true, max: 120 }), tz, ctx.body);
     });

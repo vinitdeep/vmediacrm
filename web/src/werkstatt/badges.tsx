@@ -64,7 +64,7 @@ export const ProMark = () => (
   </span>
 );
 
-/** static ✓ · Tests ✓ · Prüfung bestanden · Zweitmeinung … · von HyperLevel signiert · Modell · Denkstufe */
+/** static ✓ · Tests ✓ · Prüfung bestanden · Zweitmeinung … · von V Media CRM signiert · Modell · Denkstufe */
 export function VersionBadges({ b }: { b?: VersionBadgesData }) {
   if (!b) return null;
   return (
@@ -85,7 +85,7 @@ export function VersionBadges({ b }: { b?: VersionBadgesData }) {
       )}
       {b.signature && (
         <Chip kind={b.signature.state === 'signed' ? 'ok' : b.signature.state === 'invalid' ? 'bad' : 'warn'} title={b.signature.label || undefined}>
-          {b.signature.state === 'signed' ? (b.signature.gohigh ? '✓ von HyperLevel signiert' : `✓ signiert (${b.signature.label || 'bekannter Schlüssel'})`) : 'ungeprüft'}
+          {b.signature.state === 'signed' ? (b.signature.gohigh ? '✓ von V Media CRM signiert' : `✓ signiert (${b.signature.label || 'bekannter Schlüssel'})`) : 'ungeprüft'}
         </Chip>
       )}
       {b.model && (
@@ -156,7 +156,7 @@ export function SignatureNotice({ sig, proRequired }: { sig?: SignatureData; pro
     <div className={`wk-sig ${good ? 'good' : sig.state === 'invalid' ? 'bad' : 'warn'}`} role={good ? 'status' : 'alert'} data-tour="wk-signature">
       {good ? (
         <>
-          <strong>{sig.gohigh ? '✓ Von HyperLevel signiert' : `✓ Signiert von ${sig.label || sig.key_id}`}</strong>
+          <strong>{sig.gohigh ? '✓ Von V Media CRM signiert' : `✓ Signiert von ${sig.label || sig.key_id}`}</strong>
           <div className="muted small">Die Signatur stimmt mit dem Inhalt überein.{sig.gohigh ? ' Installieren signierter Plugins ist eine Pro-Funktion.' : ''}{proRequired ? ' – Dafür ist eine Pro-Lizenz nötig, sie fehlt hier.' : ''}</div>
         </>
       ) : (

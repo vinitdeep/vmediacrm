@@ -11,7 +11,11 @@
     var mode = p ? p.mode : legacy === 'dark' || legacy === 'light' ? legacy : 'system';
     var dark = mode === 'dark' || (mode !== 'light' && !!window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
     if (!p) {
+      // No saved look yet (first visit, signed out): the CSS fallbacks are the default theme, V Media Studio;
+      // the browser bar takes its ink sidebar colour.
       if (mode !== 'system') r.setAttribute('data-theme', mode);
+      var m0 = document.querySelector('meta[name="theme-color"]');
+      if (m0) m0.setAttribute('content', '#0c0b0b');
       return;
     }
     r.setAttribute('data-theme', dark ? 'dark' : 'light');

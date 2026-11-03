@@ -107,7 +107,7 @@ var fmt=new Intl.DateTimeFormat('de-DE',{weekday:'long',day:'numeric',month:'lon
 if($('tzn')&&tz)$('tzn').textContent='Die Zeiten siehst du in deiner Zeitzone ('+tz.replace('_',' ')+').';
 var f=$('wf');if(!f)return;
 var ph=$('ph'),sr=$('smsrow');if(ph&&sr)ph.addEventListener('input',function(){sr.hidden=!ph.value.trim()});
-function ics(d,min){var z=function(x){return x.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'')},e=function(s){return s.replace(/([,;\\])/g,'\\$1')};return['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//HyperLevel//Webinar//DE','BEGIN:VEVENT','UID:'+z(d)+'-'+C.slug+'@webinar','DTSTAMP:'+z(new Date()),'DTSTART:'+z(d),'DTEND:'+z(new Date(d.getTime()+min*60000)),'SUMMARY:'+e(C.title),'DESCRIPTION:'+e('Automatisiertes Webinar. Deinen persönlichen Link bekommst du per E-Mail. '+C.page),'URL:'+C.page,'END:VEVENT','END:VCALENDAR'].join('\r\n')}
+function ics(d,min){var z=function(x){return x.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'')},e=function(s){return s.replace(/([,;\\])/g,'\\$1')};return['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//V Media CRM//Webinar//DE','BEGIN:VEVENT','UID:'+z(d)+'-'+C.slug+'@webinar','DTSTAMP:'+z(new Date()),'DTSTART:'+z(d),'DTEND:'+z(new Date(d.getTime()+min*60000)),'SUMMARY:'+e(C.title),'DESCRIPTION:'+e('Automatisiertes Webinar. Deinen persönlichen Link bekommst du per E-Mail. '+C.page),'URL:'+C.page,'END:VEVENT','END:VCALENDAR'].join('\r\n')}
 f.addEventListener('submit',function(ev){ev.preventDefault();var er=$('er');er.textContent='';
 var s=f.querySelector('input[name=session]:checked');if(!s){er.textContent='Bitte einen Termin wählen.';return}
 if(!f.checkValidity()){f.reportValidity();return}

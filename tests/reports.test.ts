@@ -557,7 +557,7 @@ describe('reports API', () => {
     expect((await t.api.del(`/api/reports/schedules/${s.data.id}`)).status).toBe(200);
     delete t.app.services.reportMailer;
 
-    const html = renderReportEmail({ title: 'Test <b>', rangeLabel: 'Letzte 7 Tage', link: 'https://x.de/app/reports', brand: 'HyperLevel', widgets: [{ title: 'Fehler', viz: 'table', error: 'kaputt' }] }).html;
+    const html = renderReportEmail({ title: 'Test <b>', rangeLabel: 'Letzte 7 Tage', link: 'https://x.de/app/reports', brand: 'V Media CRM', widgets: [{ title: 'Fehler', viz: 'table', error: 'kaputt' }] }).html;
     expect(html).toContain('Test &lt;b&gt;');
     expect(html).toContain('kaputt');
   });

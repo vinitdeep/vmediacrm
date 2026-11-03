@@ -248,7 +248,7 @@ export function CloudSettingsForm() {
           Stripe {der.stripe_connected ? <span className="cloud-ok">verbunden</span> : <span className="cloud-todo">nicht verbunden</span>}
         </h3>
         <p className="muted small">
-          Den geheimen Schlüssel und das Webhook-Secret trägst du unter Agentur → SaaS → Einstellungen ein oder setzt sie als Umgebungsvariablen (<code>PGHL_CLOUD_STRIPE_SECRET_KEY</code>, <code>PGHL_CLOUD_STRIPE_WEBHOOK_SECRET</code>). Preise legt HyperLevel bei Stripe selbst an – du musst keine Produkte vorbereiten.
+          Den geheimen Schlüssel und das Webhook-Secret trägst du unter Agentur → SaaS → Einstellungen ein oder setzt sie als Umgebungsvariablen (<code>PGHL_CLOUD_STRIPE_SECRET_KEY</code>, <code>PGHL_CLOUD_STRIPE_WEBHOOK_SECRET</code>). Preise legt V Media CRM bei Stripe selbst an – du musst keine Produkte vorbereiten.
         </p>
         <Field label="Webhook-Adresse in Stripe">
           <div className="row" style={{ flexWrap: 'nowrap' }}>

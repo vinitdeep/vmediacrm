@@ -10,9 +10,9 @@ import { KINDS, OFFICE_KINDS, isKind, type OfficeKind } from './office-model.js'
 /**
  * The browser editors (optional, docs/office.md): unmodified upstream WebAssembly builds unpacked under `PGHL_OFFICE_DIR/<kind>/`
  * (docx, xlsx, pptx, pdf) and served at `/office/app/<kind>/`. The editor's page gets a strict Content-Security-Policy (own files
- * only, WebAssembly allowed, no third-party requests, framing by HyperLevel only), a nonce on its scripts and the load/save bridge
+ * only, WebAssembly allowed, no third-party requests, framing by V Media CRM only), a nonce on its scripts and the load/save bridge
  * (office-bridge-js.ts) in front of them. The page runs in a sandboxed iframe without `allow-same-origin` by default
- * (`PGHL_OFFICE_SANDBOX=strict`): the editor's code gets an opaque origin and cannot reach HyperLevel's API or cookies – which is why its
+ * (`PGHL_OFFICE_SANDBOX=strict`): the editor's code gets an opaque origin and cannot reach V Media CRM's API or cookies – which is why its
  * files are served with `Access-Control-Allow-Origin: *` (they are public open-source files) and the PDF editor reads its file
  * through a short-lived signed link.
  */

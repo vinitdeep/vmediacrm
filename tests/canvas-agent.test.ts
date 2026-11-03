@@ -4,7 +4,7 @@ import { anthropicSse, events, fakeModel, sse } from './agent-fakes.js';
 import { retry } from '../server/services/agent-llm.js';
 import { toolCatalog } from '../server/services/agent-tools.js';
 
-/** The HyperLevel Agent works on the Canvas through the ghl_canvas_* MCP tools (picked up from app.services.mcpTools). */
+/** The V Media CRM Agent works on the Canvas through the ghl_canvas_* MCP tools (picked up from app.services.mcpTools). */
 
 const AKEY = 'sk-ant-api03-canvasagent-abcdefghijklmnopqrstuvwxyz';
 const model = fakeModel();
@@ -32,7 +32,7 @@ beforeAll(async () => {
 }, 60_000);
 afterAll(() => t.close());
 
-describe('HyperLevel Agent on the canvas', () => {
+describe('V Media CRM Agent on the canvas', () => {
   it('offers the canvas tools in their own group', () => {
     const user = { id: 'u', email: 'a@b.c', name: 'Chef', role: 'admin' as const, locations: [loc], permissions: null };
     const catalog = toolCatalog(t.app, user, { webFetch: false });

@@ -140,7 +140,7 @@ export function composeMail(kind: MailKind, vars: MailVars): { subject: string; 
   const sign = `Viele Grüße\n${vars.brand}`;
   const text = [...spec.lines, spec.button && vars.link ? `${spec.button}: ${vars.link}` : '', vars.support && kind !== 'welcome' ? `Fragen? ${vars.support}` : '', sign].filter(Boolean).join('\n\n');
   const body = spec.lines.map((l) => `<p style="margin:0 0 14px">${escapeHtml(l).replace(/\n/g, '<br>')}</p>`).join('');
-  const button = spec.button && vars.link ? `<p style="margin:22px 0"><a href="${escapeHtml(vars.link)}" style="background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:9px;font-weight:600;display:inline-block">${escapeHtml(spec.button)}</a></p><p style="margin:0 0 14px;color:#6b7280;font-size:13px">Falls der Knopf nicht geht: ${escapeHtml(vars.link)}</p>` : '';
+  const button = spec.button && vars.link ? `<p style="margin:22px 0"><a href="${escapeHtml(vars.link)}" style="background:#c8191f;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:9px;font-weight:600;display:inline-block">${escapeHtml(spec.button)}</a></p><p style="margin:0 0 14px;color:#6b7280;font-size:13px">Falls der Knopf nicht geht: ${escapeHtml(vars.link)}</p>` : '';
   const foot = `<p style="margin:22px 0 0;color:#6b7280;font-size:13px">${vars.support && kind !== 'welcome' ? `Fragen? ${escapeHtml(v(vars.support))}<br>` : ''}Viele Grüße<br>${escapeHtml(vars.brand)}</p>`;
   const html = `<!doctype html><html><body style="font-family:Arial,sans-serif;font-size:15px;line-height:1.55;color:#1f2937;max-width:560px;margin:0 auto;padding:24px">${body}${button}${foot}</body></html>`;
   return { subject: spec.subject, text, html };

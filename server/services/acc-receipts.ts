@@ -240,7 +240,7 @@ export async function extractWithAi(app: App, locationId: string, file: { mime: 
         schema: AI_SCHEMA,
         // Denkstufe of the everyday texts (Einstellungen → KI-Anbieter → Denkstufe); a model that cannot take it is retried without.
         effort: (app.services.aiEffort?.forPurpose(locationId, 'receipt') as { effort?: Effort } | undefined)?.effort,
-        app: { baseUrl: app.baseUrl(), name: 'HyperLevel' },
+        app: { baseUrl: app.baseUrl(), name: 'V Media CRM' },
       },
       svc.fetchFor(conn),
     );

@@ -58,12 +58,12 @@ export default {
   'Eigene Anfragen': 'Own requests',
   'Bewertungen/Empfehlungen der Seite über die Graph-API mit dem Seiten-Token aus Einstellungen → Kanäle (Berechtigung pages_read_user_content, zum Antworten pages_manage_engagement).':
     'The page’s ratings/recommendations through the Graph API with the page token from Settings → Channels (permission pages_read_user_content, pages_manage_engagement to reply).',
-  'Öffentliche Bewertungen über die Trustpilot Business API (API-Key). Mit API-Secret und dem Login eines Business-Users antwortet HyperLevel direkt.':
-    'Public reviews through the Trustpilot Business API (API key). With the API secret and a business user’s login HyperLevel replies directly.',
+  'Öffentliche Bewertungen über die Trustpilot Business API (API-Key). Mit API-Secret und dem Login eines Business-Users antwortet V Media CRM direkt.':
+    'Public reviews through the Trustpilot Business API (API key). With the API secret and a business user’s login V Media CRM replies directly.',
   'Die ProvenExpert-API liefert Gesamtnote und Anzahl (Widget, Statistik). Einzelne Bewertungen kommen über den Import (CSV-Export von ProvenExpert); geantwortet wird auf ProvenExpert.':
     'The ProvenExpert API delivers the overall rating and count (widget, statistics). Single reviews come through the import (ProvenExpert’s CSV export); replies are written on ProvenExpert.',
-  'Yelp Fusion API (API-Key): Note, Anzahl und die neuesten Auszüge – nur lesen. Yelp erlaubt kein dauerhaftes Speichern: HyperLevel behält nur, was der letzte Abruf geliefert hat. Antworten auf biz.yelp.com.':
-    'Yelp Fusion API (API key): rating, count and the newest excerpts – read only. Yelp does not allow keeping them: HyperLevel only keeps what the latest fetch returned. Reply on biz.yelp.com.',
+  'Yelp Fusion API (API-Key): Note, Anzahl und die neuesten Auszüge – nur lesen. Yelp erlaubt kein dauerhaftes Speichern: V Media CRM behält nur, was der letzte Abruf geliefert hat. Antworten auf biz.yelp.com.':
+    'Yelp Fusion API (API key): rating, count and the newest excerpts – read only. Yelp does not allow keeping them: V Media CRM only keeps what the latest fetch returned. Reply on biz.yelp.com.',
   'Tripadvisor Content API (API-Key, Domain in der Freigabeliste): Note, Anzahl und die fünf neuesten Bewertungen – nur lesen. Antworten im Tripadvisor Management Center.':
     'Tripadvisor Content API (API key, domain on the allow-list): rating, count and the five newest reviews – read only. Reply in the Tripadvisor Management Center.',
   'Für Plattformen ohne offizielle API (Jameda, Kununu, Golocal, …): CSV hochladen, einen RSS-/Atom-Feed abonnieren oder Bewertungen per Web-Hook schicken (z. B. aus Zapier/Make). Geantwortet wird auf der Plattform.':

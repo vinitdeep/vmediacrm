@@ -65,7 +65,7 @@ export const openaiAdapter: Adapter = {
       const model = ctx.model || 'gpt-image-1';
       const body: Record<string, any> = { model, prompt: ctx.input.prompt, size: imageSize(ctx.input.aspect_ratio), n: 1 };
       if (ctx.input.image) {
-        // Our own files go inline (a data URL), so it also works when HyperLevel is not reachable from outside.
+        // Our own files go inline (a data URL), so it also works when V Media CRM is not reachable from outside.
         const ref = ctx.input.image;
         const url = ref.local ? await ctx.bytes(ref, 20 * 1024 * 1024).then((f) => `data:${f.mime};base64,${f.data.toString('base64')}`) : ref.url;
         body.images = [{ image_url: url }];

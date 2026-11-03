@@ -6,7 +6,7 @@ import { METRIC_KEYS } from '../services/calc-summary.js';
 import type { Tool } from './mcp.js';
 
 /**
- * MCP tools of the Gewinnrechner (HyperLevel Agent, Claude, ChatGPT, Codex) and the native app's endpoints. Tools are thin
+ * MCP tools of the Gewinnrechner (V Media CRM Agent, Claude, ChatGPT, Codex) and the native app's endpoints. Tools are thin
  * relays onto the REST routes (modules/calc.ts), so the key's sub-account, member rights and the audit log apply.
  * Calculating changes nothing (read-only tools, no audit entry); saving a scenario is a write.
  */

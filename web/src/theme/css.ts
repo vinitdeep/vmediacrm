@@ -22,11 +22,16 @@ export interface LookInput {
   spatial?: boolean;
 }
 
+/** The themes that take the agency's brand colour as their accent: the default (V Media Studio) and the classic standard. */
+export const STANDARD_THEMES: readonly ThemeId[] = ['vmedia', 'gohigh'];
+/** Brand colours that mean "not chosen" (the built-in defaults) and so keep the theme's own accent. */
+const UNSET_BRAND = [THEMES.vmedia.light.accent, THEMES.gohigh.light.accent];
+
 /** The accent that applies: the person's pick, else the agency's colour on the standard theme, else the theme's own. */
 export function resolveAccent(look: LookInput, dark: boolean): string {
   if (isHex(look.accent)) return look.accent.toLowerCase();
   const t = themeById(look.theme);
-  if (look.theme === 'gohigh' && isHex(look.brandColor) && look.brandColor.toLowerCase() !== THEMES.gohigh.light.accent) return look.brandColor.toLowerCase();
+  if (STANDARD_THEMES.includes(look.theme) && isHex(look.brandColor) && !UNSET_BRAND.includes(look.brandColor.toLowerCase())) return look.brandColor.toLowerCase();
   return (dark ? t.dark : t.light).accent;
 }
 

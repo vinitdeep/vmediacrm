@@ -112,8 +112,8 @@ describe('tour definitions', () => {
 
   it('docs links point at existing files and headings', () => {
     for (const t of TOURS) {
-      // The academy shows the German README (README.de.md) – the UI is German.
-      const file = t.docs!.file === 'README' ? join(ROOT, 'README.de.md') : join(ROOT, 'docs', `${t.docs!.file}.md`);
+      // README.de.md is gone (V Media CRM): the academy shows README.md.
+      const file = t.docs!.file === 'README' ? join(ROOT, 'README.md') : join(ROOT, 'docs', `${t.docs!.file}.md`);
       expect(existsSync(file), `${t.id}: ${file}`).toBe(true);
       if (t.docs!.anchor) {
         const anchors = [...readFileSync(file, 'utf8').matchAll(/^#{1,4}\s+(.+)$/gm)].map((m) => slug(m[1]));

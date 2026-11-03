@@ -57,7 +57,7 @@ export const adsCampaignsModule: Module = {
     const { db, router } = app;
 
     // --- helpers --------------------------------------------------------------------------------------------------
-    /** `:id` is a HyperLevel campaign id, or `meta:<id>` / `google:<id>` for a campaign that only exists at the platform. */
+    /** `:id` is a V Media CRM campaign id, or `meta:<id>` / `google:<id>` for a campaign that only exists at the platform. */
     const target = (locationId: string, param: string): { platform: Platform; remoteId: string; local?: CampaignRow; name: string } => {
       const m = /^(meta|google):(\d{3,25})$/.exec(param);
       if (m) {
@@ -206,7 +206,7 @@ export const adsCampaignsModule: Module = {
 
     const metricsOf = (r: any) => ({ spend_cents: r.spend_cents, impressions: r.impressions, clicks: r.clicks, ctr: r.ctr, platform_leads: r.platform_leads, crm_leads: r.crm_leads, cpl_cents: r.cpl_cents, revenue_cents: r.revenue_cents, roas: r.roas, currency: r.currency });
 
-    /** HyperLevel's campaigns, the ad account's other campaigns and the numbers of the ad reporting in one list. */
+    /** V Media CRM's campaigns, the ad account's other campaigns and the numbers of the ad reporting in one list. */
     const listAll = (locationId: string, from: string, to: string, model: 'first' | 'last') => {
       const report = app.services.adsReport?.(locationId, from, to, model) ?? { rows: [], totals: null, attribution: false };
       const metrics = new Map<string, any>((report.rows as any[]).map((r) => [`${r.platform}:${r.campaign_id}`, r]));

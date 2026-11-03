@@ -4,7 +4,7 @@ import type { FetchFn, VendorHttp } from './umzug-http.js';
 /**
  * Umzug (switch-over importers): the shared vocabulary. Every source – an API client or an uploaded
  * export file – turns what it reads into small, normalised records (`Rec`); one writer applies them to
- * HyperLevel (umzug-write.ts) and one engine runs the steps as a resumable job (umzug-engine.ts). A source
+ * V Media CRM (umzug-write.ts) and one engine runs the steps as a resumable job (umzug-engine.ts). A source
  * therefore only fetches and maps; dedupe, ids, undo, dry run and the report are the same for all.
  */
 
@@ -144,7 +144,7 @@ export interface RDeal {
   kind: 'deal';
   ext: string;
   name: string;
-  /** Whole euros (HyperLevel stores opportunity values in euros). */
+  /** Whole euros (V Media CRM stores opportunity values in euros). */
   value: number;
   pipeline: string;
   stage: string;

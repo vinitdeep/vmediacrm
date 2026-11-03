@@ -380,7 +380,7 @@ async function describe(h: VendorHttp, parts: PartKey[], creds: Record<string, s
       return n;
     });
     await count('projects', 'tasks', 'Aufgaben (laut Listen, ohne Unteraufgaben)', async () => tasks);
-    warnings.push('ClickUp erlaubt je nach Tarif 100 Anfragen pro Minute. HyperLevel bremst von selbst und wartet bei Bedarf – bei vielen Aufgaben (und besonders mit Kommentaren, eine Anfrage je Aufgabe) dauert der Umzug entsprechend. Er lässt sich jederzeit pausieren und fortsetzen.');
+    warnings.push('ClickUp erlaubt je nach Tarif 100 Anfragen pro Minute. V Media CRM bremst von selbst und wartet bei Bedarf – bei vielen Aufgaben (und besonders mit Kommentaren, eine Anfrage je Aufgabe) dauert der Umzug entsprechend. Er lässt sich jederzeit pausieren und fortsetzen.');
   }
   if (parts.includes('docs')) {
     await count('docs', 'docs', 'Docs', async () => {
@@ -410,14 +410,14 @@ export const CLICKUP: SourceDef = {
   ],
   howto: [
     'In ClickUp unten links auf deinen Avatar → „Einstellungen“ → „Apps“ → unter „API-Token“ auf „Generieren“ klicken und den Token (beginnt mit pk_) kopieren.',
-    'Den Token hier einfügen. Er sieht alles, was du in ClickUp siehst – HyperLevel liest nur und ändert dort nichts.',
+    'Den Token hier einfügen. Er sieht alles, was du in ClickUp siehst – V Media CRM liest nur und ändert dort nichts.',
     'Nach dem Umzug den Token in ClickUp neu generieren (damit wird der alte ungültig).',
   ],
   limits: [
     'Dateien und Anhänge an Aufgaben und Kommentaren (bleiben bei ClickUp), Bilder in Docs verweisen noch dorthin',
     'Automationen, Ansichten (Board, Gantt, Kalender), Dashboards, Ziele, Formulare und Zeiterfassungs-Einträge',
     'Abhängigkeiten und verknüpfte Aufgaben, Aufgabentypen und Meilensteine, Sprints und Story Points',
-    'Zuständige: nur Personen, deren E-Mail in HyperLevel ein Teammitglied hat, werden zugewiesen – alle anderen stehen mit Namen in der Beschreibung',
+    'Zuständige: nur Personen, deren E-Mail in V Media CRM ein Teammitglied hat, werden zugewiesen – alle anderen stehen mit Namen in der Beschreibung',
     'Archivierte Spaces, Ordner, Listen und Docs sowie der Papierkorb',
   ],
   parts: [

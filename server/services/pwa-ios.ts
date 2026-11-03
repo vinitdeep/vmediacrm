@@ -18,9 +18,10 @@ import { DEFAULT_NAME, SPLASH_BG, type Scheme } from './pwa-devices.js';
 export { DEFAULT_NAME, SCHEMES, SPLASH_BG, IOS_DEVICES, IOS_HEAD_MARKER, SPLASH_SIZES, TOUCH_SIZES, iosHead, parseSplashFile, splashFile, splashMedia, splashSpecs } from './pwa-devices.js';
 export type { IosDevice, Orientation, Scheme, SplashSpec } from './pwa-devices.js';
 
-export const DEFAULT_COLOR = '#2563eb';
+export const DEFAULT_COLOR = '#c8191f';
 /** Colours that mean "not customised": the stock icons are used. */
-const STOCK_COLORS = new Set(['', DEFAULT_COLOR, '#1d4ed8']);
+// the old defaults (#2563eb, #1d4ed8) count as stock too: saved before the V Media rebrand, never chosen
+const STOCK_COLORS = new Set(['', DEFAULT_COLOR, '#2563eb', '#1d4ed8']);
 const HEX = /^#[0-9a-f]{6}$/i;
 
 // --- white label ---------------------------------------------------------------------------------------------------------------
@@ -94,8 +95,8 @@ export function appManifest(brand: PwaBrand, key = '') {
     id: '/app',
     name: brand.name,
     short_name: shortName(brand.name),
-    description: 'CRM, Konversationen, Kalender, Aufgaben und Rechnungen',
-    lang: 'de',
+    description: 'CRM, conversations, calendars, tasks and invoices',
+    lang: 'en',
     dir: 'ltr',
     start_url: '/app',
     scope: '/app',
@@ -112,10 +113,10 @@ export function appManifest(brand: PwaBrand, key = '') {
     theme_color: brand.color,
     icons: manifestIcons(brand, key),
     shortcuts: [
-      { name: 'Konversationen', url: '/app/conversations', icons: icon(shortcutIcon) },
-      { name: 'Kontakte', url: '/app/contacts', icons: icon(shortcutIcon) },
-      { name: 'Aufgaben', url: '/app/tasks', icons: icon(shortcutIcon) },
-      { name: 'Arbeitsfläche', url: '/app/workspace', icons: icon(shortcutIcon) },
+      { name: 'Conversations', url: '/app/conversations', icons: icon(shortcutIcon) },
+      { name: 'Contacts', url: '/app/contacts', icons: icon(shortcutIcon) },
+      { name: 'Tasks', url: '/app/tasks', icons: icon(shortcutIcon) },
+      { name: 'Workspace', url: '/app/workspace', icons: icon(shortcutIcon) },
     ],
   };
 }
@@ -163,7 +164,7 @@ export function iconBitmap(brand: PwaBrand, kind: IconKind, src: IconSources = {
   if (!brand.custom && src.stock) {
     images.set('stock', src.stock);
     if (shape === 'maskable') {
-      prims.push({ t: 'path', d: roundedSquare(s, 0), fill: '#1d4ed8' });
+      prims.push({ t: 'path', d: roundedSquare(s, 0), fill: '#c8191f' });
       const pad = s * 0.1;
       prims.push({ t: 'image', x: pad, y: pad, w: s - pad * 2, h: s - pad * 2, src: 'stock', fit: 'contain' });
     } else prims.push({ t: 'image', x: 0, y: 0, w: s, h: s, src: 'stock', fit: 'cover', radius: shape === 'round' ? s * 0.22 : 0 });

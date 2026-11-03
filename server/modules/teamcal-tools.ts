@@ -3,7 +3,7 @@ import { HttpError } from '../core/http.js';
 import type { Tool } from './mcp.js';
 
 /**
- * MCP tools of the Team-Kalender (HyperLevel Agent, Claude, ChatGPT, Codex): the booking calendars with their type, team, questions,
+ * MCP tools of the Team-Kalender (V Media CRM Agent, Claude, ChatGPT, Codex): the booking calendars with their type, team, questions,
  * price and video setting, and booking a slot – with round robin, collective hosts, capacity and payment handled by the same rules as
  * the public booking page. Thin relays onto the REST routes of modules/teamcal.ts (key, member areas and audit log apply).
  */

@@ -7,6 +7,7 @@ import { ClaudeButton, CodexButton, refreshProjects } from '../nav';
 import { ProjectDocs } from './Docs';
 import { Slot } from '../slots';
 import { SortableGrid } from '../sortable/Sortable';
+import './projects.css';
 
 export const STATUS: Record<string, [string, any]> = {
   idee: ['Idee', 'gray'],
@@ -199,7 +200,7 @@ export function ProjectsOverview() {
                 <b>{l.stats.open_opportunities}</b>
                 <span>offene Deals</span>
               </div>
-              <div>
+              <div className={l.stats.overdue_tasks ? 'is-late' : undefined}>
                 <b>{l.stats.open_tasks}</b>
                 <span>Aufgaben{l.stats.overdue_tasks ? ` (${l.stats.overdue_tasks} überf.)` : ''}</span>
               </div>
@@ -208,7 +209,7 @@ export function ProjectsOverview() {
                 <span>Post & Entwürfe</span>
               </div>
             </div>
-            <div className="muted small">{l.stats.contacts} Kontakte · {l.stats.last_activity ? `aktiv ${ago(l.stats.last_activity)}` : 'noch keine Aktivität'}</div>
+            <div className="muted small proj-foot">{l.stats.contacts} Kontakte · {l.stats.last_activity ? `aktiv ${ago(l.stats.last_activity)}` : 'noch keine Aktivität'}</div>
           </div>
         ))}
       </SortableGrid>

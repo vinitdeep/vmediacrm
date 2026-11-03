@@ -182,7 +182,7 @@ export function buildPdf(pages: PdfPage[], opts: { images?: Map<string, PdfImage
   const add = (o: string | Uint8Array[]) => (objs.push(o), objs.length);
   add('');
   add('');
-  add(`<< /Producer (HyperLevel Canvas) /Title (${winAnsi(opts.title ?? 'Canvas')}) >>`);
+  add(`<< /Producer (V Media CRM Canvas) /Title (${winAnsi(opts.title ?? 'Canvas')}) >>`);
   const fontObj = new Map<number, number>();
   for (const fi of res.fonts) fontObj.set(fi, add(`<< /Type /Font /Subtype /Type1 /BaseFont /${FONT_NAMES[fi]} /Encoding /WinAnsiEncoding >>`));
   const gsObj = new Map<string, number>();

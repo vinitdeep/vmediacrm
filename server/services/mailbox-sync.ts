@@ -37,7 +37,7 @@ export interface MailboxRow {
   contact_policy: 'all' | 'known';
   skip_promotions: number;
   trigger_workflows: number;
-  /** 1 = mail sent from HyperLevel through this mailbox carries the open pixel and tracked links (opt-in). */
+  /** 1 = mail sent from V Media CRM through this mailbox carries the open pixel and tracked links (opt-in). */
   track_engagement: number;
   signature: string;
   state: Record<string, any>;

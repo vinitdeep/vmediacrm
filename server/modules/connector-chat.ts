@@ -14,7 +14,7 @@ const LABEL: Record<Service, string> = { slack: 'Slack', discord: 'Discord' };
 async function post(app: App, service: Service, url: string, text: string, title?: string): Promise<string> {
   const ok = service === 'slack' ? SLACK_WEBHOOK.test(url) : DISCORD_WEBHOOK.test(url);
   if (!ok) throw new Error(`${LABEL[service]}-Webhook-URL ungültig`);
-  const body = JSON.stringify(service === 'slack' ? slackPayload(text, title) : discordPayload(text, title, 'HyperLevel'));
+  const body = JSON.stringify(service === 'slack' ? slackPayload(text, title) : discordPayload(text, title, 'V Media CRM'));
   const r = await connectorFetch(app)(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body, timeoutMs: 15_000, maxBytes: 64 * 1024 });
   if (!r.ok) {
     const detail = (await r.text()).slice(0, 120);
@@ -50,7 +50,7 @@ export const connectorChatModule: Module = {
         credentials: `${LABEL[service]}-Incoming-Webhook-URL unter Apps → Direkt-Verbindungen (wird verschlüsselt gespeichert).`,
         fields: fields(service),
         steps: ['Benachrichtigung an Slack/Discord'],
-        test: (a, cfg) => post(a, service, cfg.webhook_url, '✅ HyperLevel ist verbunden – Benachrichtigungen aus Workflows kommen hier an.'),
+        test: (a, cfg) => post(a, service, cfg.webhook_url, '✅ V Media CRM ist verbunden – Benachrichtigungen aus Workflows kommen hier an.'),
         guide:
           service === 'slack'
             ? ['In Slack: api.slack.com/apps → App erstellen → „Incoming Webhooks“ aktivieren → „Add New Webhook to Workspace“ → Kanal wählen.', 'Die Webhook-URL unter Apps → Direkt-Verbindungen → Slack eintragen und testen.', 'Im Workflow den Schritt „Benachrichtigung an Slack/Discord“ einfügen.']

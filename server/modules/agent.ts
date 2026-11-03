@@ -16,7 +16,7 @@ import { resolveRecord, routeRecord } from '../services/agent-context.js';
 import { PURPOSES } from './ai-assistant.js';
 
 /**
- * HyperLevel Agent (core): model connections per agency with per-sub-account override, the chat with
+ * V Media CRM Agent (core): model connections per agency with per-sub-account override, the chat with
  * streaming (SSE), confirmations, conversation history per user, uploads, the agent's notes, usage
  * against the KI-Assistent's monthly limit, and `app.services.agent` – the one entry point the other
  * agent modules use (custom agents, automations, MCP, mobile, GPT actions, bridge).
@@ -82,7 +82,7 @@ const DEFAULT_AGENCY: AgencySettings = { web_fetch_allowed: true, bridge_enabled
 
 export const DEFAULT_AGENT: Omit<AgentConfig, 'mode'> = {
   id: null,
-  name: 'HyperLevel Agent',
+  name: 'V Media CRM Agent',
   emoji: '✨',
   description: 'Allround-Assistent für das ganze CRM: findet, fasst zusammen, legt an und erledigt Aufgaben im Auftrag des Nutzers.',
   instructions: '',
@@ -221,7 +221,7 @@ export const agentModule: Module = {
       return s;
     };
     const tzOf = (locId: string) => app.location(locId)?.timezone || 'Europe/Berlin';
-    const brand = () => (app.services.brandName?.() as string | undefined) ?? 'HyperLevel';
+    const brand = () => (app.services.brandName?.() as string | undefined) ?? 'V Media CRM';
 
     // --- model (BYOK registry, modules/ai-connections.ts) ----------------------------------------------------
     /** The text connection for a run: the agent's own → routing "agent" → … (see aiConnections.resolve). */

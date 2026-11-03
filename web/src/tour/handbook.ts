@@ -129,7 +129,7 @@ export function placeLabel(route: string): string {
 }
 
 const plain = (s: string, brand: string) => s.replace(/\{brand\}/g, brand).replace(/\s+/g, ' ').trim();
-const docLink = (t: Tour) => (t.docs ? `[${t.docs.label}](${t.docs.file === 'README' ? '../README.de.md' : `${t.docs.file}.md`}${t.docs.anchor ? `#${t.docs.anchor}` : ''})` : '');
+const docLink = (t: Tour) => (t.docs ? `[${t.docs.label}](${t.docs.file === 'README' ? '../README.md' : `${t.docs.file}.md`}${t.docs.anchor ? `#${t.docs.anchor}` : ''})` : '');
 
 function chapter(t: Tour, brand: string): string {
   const out: string[] = [];
@@ -149,7 +149,7 @@ function chapter(t: Tour, brand: string): string {
   return out.join('\n');
 }
 
-export function handbookMarkdown(brand = 'HyperLevel'): string {
+export function handbookMarkdown(brand = 'V Media CRM'): string {
   const minutes = JOURNEY.reduce((s, t) => s + t.minutes, 0);
   const out: string[] = [
     `# Handbuch: Die Firma mit ${brand} übernehmen`,

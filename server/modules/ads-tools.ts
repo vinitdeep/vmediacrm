@@ -6,7 +6,7 @@ import { CTA_LABEL, GOALS, KINDS } from '../services/ads-manager.js';
 import type { Caller } from './mcp.js';
 
 /**
- * MCP tools of the ads manager (HyperLevel Agent, Claude, ChatGPT, Codex), the AI copy suggestions of the wizard and the
+ * MCP tools of the ads manager (V Media CRM Agent, Claude, ChatGPT, Codex), the AI copy suggestions of the wizard and the
  * native app's endpoints. Tools are thin relays onto the REST routes, so rights, limits and the audit log apply.
  * Safety: creating is always paused; pausing is free; switching on and budget changes never run from here – they
  * leave an approval that a person decides on in the app (services/ads-ops.ts `spend`).
@@ -140,7 +140,7 @@ const TOOLS = [
     title: 'Kampagne pausieren / aktivieren',
     description:
       'Pausiert eine Kampagne (sofort, spart Geld) oder beantragt das Aktivieren. Aktivieren gibt Geld aus und läuft NIE direkt: es entsteht eine Freigabe, die eine Person in der Oberfläche (Anzeigen → Freigaben) bestätigen muss. campaign_id = ID aus ghl_ads_insights (id oder campaign_ref).',
-    inputSchema: obj({ ...LOC, campaign_id: { type: 'string', description: 'HyperLevel-ID oder campaign_ref wie "meta:12345"' }, status: { type: 'string', enum: ['paused', 'active'] } }, ['location_id', 'campaign_id', 'status']),
+    inputSchema: obj({ ...LOC, campaign_id: { type: 'string', description: 'V Media CRM-ID oder campaign_ref wie "meta:12345"' }, status: { type: 'string', enum: ['paused', 'active'] } }, ['location_id', 'campaign_id', 'status']),
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true },
     run: (call: Caller, a: any) => call.api('POST', `/api/ads/campaigns/${encodeURIComponent(a.campaign_id)}/status`, { location: a.location_id, body: { status: a.status } }),
   },

@@ -655,7 +655,7 @@ export const affiliatesModule: Module = {
     const brandOf = (p: any) => {
       const loc = app.location(p.location_id)!;
       const b = loc.settings?.branding ?? {};
-      return { loc, name: b.name || loc.name, color: [b.color].find((c) => HEX.test(c ?? '')) ?? '#2563eb', logo: b.logo_url || loc.logo_url || '', support: b.support_email || loc.email || '' };
+      return { loc, name: b.name || loc.name, color: [b.color].find((c) => HEX.test(c ?? '')) ?? '#c8191f', logo: b.logo_url || loc.logo_url || '', support: b.support_email || loc.email || '' };
     };
     // Browsers send Origin on form posts (or at least Sec-Fetch-Site); a foreign origin is refused.
     const sameOrigin = (ctx: Ctx) => {

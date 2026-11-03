@@ -87,7 +87,7 @@ function docRouteProblems(methods: string[], path: string): string[] {
 
 describe('the documentation names only routes that exist', () => {
   it('every `METHOD /api/…` in docs/ and the READMEs is a route with that method', () => {
-    const files = [...markdownFiles().filter((f: string) => /^docs\/[^/]+\.md$/.test(f)), 'README.md', 'README.de.md'];
+    const files = [...markdownFiles().filter((f: string) => /^docs\/[^/]+\.md$/.test(f)), 'README.md'];
     const families = new Set(routes.map((r) => segs(r.pattern)[1]));
     const found: string[] = [];
     let n = 0;

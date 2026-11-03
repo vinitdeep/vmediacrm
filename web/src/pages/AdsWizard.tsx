@@ -427,7 +427,7 @@ function StepCreative({ spec, set, setCre, ov }: { spec: Spec; set: (p: Partial<
       <div className="card">
         <h3>Ziel-Link</h3>
         <div className="grid2">
-          <Field label="Funnel / Website von HyperLevel">
+          <Field label="Funnel / Website von V Media CRM">
             <Select value={c.link?.funnel_id ?? ''} onChange={(v) => setCre({ link: { funnel_id: v || undefined, url: v ? undefined : c.link?.url } })} placeholder="– keiner (eigene Adresse) –" options={(funnels.data ?? []).map((f) => [f.id, f.name] as [string, string])} />
           </Field>
           {c.link?.funnel_id ? (
@@ -441,7 +441,7 @@ function StepCreative({ spec, set, setCre, ov }: { spec: Spec; set: (p: Partial<
           )}
         </div>
         <MoreFields id="ads-link" values={[c.utm === false]}>
-          <Check checked={c.utm !== false} onChange={(v) => setCre({ utm: v })} label="UTM-Parameter automatisch anhängen (so ordnet HyperLevel Leads und Umsatz der Kampagne zu)" />
+          <Check checked={c.utm !== false} onChange={(v) => setCre({ utm: v })} label="UTM-Parameter automatisch anhängen (so ordnet V Media CRM Leads und Umsatz der Kampagne zu)" />
         </MoreFields>
       </div>
 

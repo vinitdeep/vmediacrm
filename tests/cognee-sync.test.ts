@@ -40,7 +40,7 @@ describe('sharing is opt-in', () => {
     const items = c.fake.items(`gh_${c.A}_wiki`);
     expect(items).toHaveLength(1);
     expect(items[0].text).toContain('Onboarding-Call läuft so ab');
-    expect(items[0].text.startsWith('HyperLevel · Wiki & Dokumente · page:')).toBe(true);
+    expect(items[0].text.startsWith('V Media CRM · Wiki & Dokumente · page:')).toBe(true);
     expect(c.fake.calls.some((x) => x.path === '/api/v1/cognify')).toBe(true);
 
     const st = (await c.at(c.A)('GET', '/api/cognee/admin/status')).data;

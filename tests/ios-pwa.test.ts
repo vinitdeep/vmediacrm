@@ -91,7 +91,7 @@ describe('device table and head lines', () => {
 describe('manifest and white label', () => {
   it('stock look: standalone window, any orientation, the shipped icons', () => {
     const m = appManifest(pwaBrand({}));
-    expect(m).toMatchObject({ id: '/app', scope: '/app', start_url: '/app', display: 'standalone', orientation: 'any', name: DEFAULT_NAME, short_name: DEFAULT_NAME, lang: 'de' });
+    expect(m).toMatchObject({ id: '/app', scope: '/app', start_url: '/app', display: 'standalone', orientation: 'any', name: DEFAULT_NAME, short_name: DEFAULT_NAME, lang: 'en' });
     expect(m.icons.map((i) => i.src)).toEqual(['/icon-192.png', '/icon-512.png', '/icon-1024.png', '/icon-maskable-512.png', '/icon.svg']);
     expect(m.icons.some((i) => i.purpose === 'maskable')).toBe(true);
     expect(m.shortcuts.every((s) => s.icons[0].src === '/icon-192.png')).toBe(true);
@@ -109,10 +109,11 @@ describe('manifest and white label', () => {
   });
 
   it('treats the stock name and colours as "not customised" and ignores broken input', () => {
-    expect(pwaBrand({ name: 'HyperLevel', color: '#2563eb' }).custom).toBe(false);
-    expect(pwaBrand({ name: 'HyperLevel', color: '#1d4ed8' }).custom).toBe(false);
-    expect(pwaBrand({ name: 'HyperLevel', color: '#ff0000' }).custom).toBe(true);
-    expect(pwaBrand({ name: '  ', color: 'javascript:alert(1)' })).toMatchObject({ name: 'HyperLevel', color: '#2563eb', custom: false });
+    expect(pwaBrand({ name: 'V Media CRM', color: '#c8191f' }).custom).toBe(false);
+    expect(pwaBrand({ name: 'V Media CRM', color: '#2563eb' }).custom).toBe(false);
+    expect(pwaBrand({ name: 'V Media CRM', color: '#1d4ed8' }).custom).toBe(false);
+    expect(pwaBrand({ name: 'V Media CRM', color: '#ff0000' }).custom).toBe(true);
+    expect(pwaBrand({ name: '  ', color: 'javascript:alert(1)' })).toMatchObject({ name: 'V Media CRM', color: '#c8191f', custom: false });
     expect(pwaBrand({ name: 'x'.repeat(100) }).name).toHaveLength(45);
   });
 });
@@ -147,9 +148,9 @@ describe('routes', () => {
       expect(r.status, String(n)).toBe(200);
       expect(r.headers.get('content-type')).toBe('image/png');
       expect(ihdr(buf)).toMatchObject({ w: n, h: n, colorType: 2 }); // opaque: iOS would paint transparent corners black
-      // blue gradient of the stock icon, not white
+      // crimson gradient of the stock icon (V Media mark), not white
       const [red, , blue] = pixel(buf, 5, 5);
-      expect(blue).toBeGreaterThan(red);
+      expect(red).toBeGreaterThan(blue);
     }
     expect(ihdr((await png('/pwa/icon/maskable-512.png')).buf)).toMatchObject({ w: 512, h: 512 });
     expect(ihdr((await png('/pwa/icon/icon-192.png')).buf)).toMatchObject({ w: 192, h: 192, colorType: 6 }); // round: transparent corners
@@ -201,7 +202,7 @@ describe('routes', () => {
     for (let dy = -120; dy <= 120; dy += 8) for (let dx = -120; dx <= 120; dx += 8) seen.add(pixel(splash.buf, cx + dx, cy + dy).join(','));
     expect(seen.has('225,29,72')).toBe(true);
     // back to the stock look
-    await t.api.patch('/api/agency/branding', { name: 'HyperLevel', color: '#2563eb' });
+    await t.api.patch('/api/agency/branding', { name: 'V Media CRM', color: '#c8191f' });
     expect((await (await t.api.raw('/manifest.webmanifest')).json()).icons[0].src).toBe('/icon-192.png');
   });
 

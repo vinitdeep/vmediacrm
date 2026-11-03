@@ -66,7 +66,7 @@ function Setup({ st, onDone }: { st: any; onDone: () => void }) {
       <div className="card" style={{ maxWidth: 620 }} data-tour="acc-setup">
         <h2>Buchhaltung einrichten</h2>
         <p className="muted">
-          Beim Einrichten wird der Kontenrahmen angelegt. Er lässt sich bis zur ersten Buchung noch wechseln. Rechnungen und Zahlungen aus HyperLevel werden danach automatisch gebucht (in den Einstellungen abschaltbar).
+          Beim Einrichten wird der Kontenrahmen angelegt. Er lässt sich bis zur ersten Buchung noch wechseln. Rechnungen und Zahlungen aus V Media CRM werden danach automatisch gebucht (in den Einstellungen abschaltbar).
         </p>
         <div className="grid2">
           <Field label="Kontenrahmen" hint="Frag deinen Steuerberater, womit er arbeitet. SKR03 ist in kleinen Betrieben am häufigsten.">

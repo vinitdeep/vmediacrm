@@ -115,7 +115,7 @@ export const contactPushModule: Module = {
       if (!loc || !on(a)) return html('<!doctype html><meta charset="utf-8"><title>Nicht verfügbar</title><p style="font-family:system-ui;padding:24px">Benachrichtigungen sind hier nicht eingerichtet.</p>', 404);
       const c = conf(a);
       const attr = String(ctx.query.get('a') ?? '').slice(0, 200).replace(/[^\w.-]/g, '');
-      const color = /^#[0-9a-f]{3,8}$/i.test(String(loc.settings?.branding?.color ?? '')) ? loc.settings.branding.color : '#2563eb';
+      const color = /^#[0-9a-f]{3,8}$/i.test(String(loc.settings?.branding?.color ?? '')) ? loc.settings.branding.color : '#c8191f';
       const r = html(`<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(c.title)}</title>
 <style>body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#f5f6f8;color:#1f2937;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
 .card{background:#fff;border-radius:14px;box-shadow:0 6px 30px rgba(0,0,0,.08);padding:28px;max-width:420px;width:100%;text-align:center}

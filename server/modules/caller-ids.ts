@@ -6,7 +6,7 @@ import { telephonyConfig, twilioRequest, verifyTwilio } from './telephony.js';
 
 /**
  * Your own existing number as caller ID: Twilio "Verified Caller IDs". Adding a number starts Twilio's verification call – Twilio
- * rings that number and the person types the six-digit code HyperLevel shows; Twilio reports the result to a signed status callback
+ * rings that number and the person types the six-digit code V Media CRM shows; Twilio reports the result to a signed status callback
  * (and "Prüfen" asks Twilio's list as a fallback). Verified numbers – and the sub-account's Twilio numbers – can be chosen as the
  * caller ID of the browser phone, the power dialer, click-to-call and the outbound AI calls: `app.services.callerIds.pick()` is the
  * one place that decides, everything else falls back to the first Twilio number. Docs: docs/telephony.md#your-own-number-as-caller-id.

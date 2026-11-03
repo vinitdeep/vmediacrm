@@ -99,7 +99,7 @@ export function documentXml(o: { docs: DatevDoc[]; date: Date; description?: str
       .join('\n');
   });
   return `<?xml version="1.0" encoding="utf-8"?>
-<archive xmlns="${DATEV_DOCUMENT_NS}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="${DATEV_DOCUMENT_NS} Document_v060.xsd" version="6.0" generatingSystem="HyperLevel">
+<archive xmlns="${DATEV_DOCUMENT_NS}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="${DATEV_DOCUMENT_NS} Document_v060.xsd" version="6.0" generatingSystem="V Media CRM">
   <header>
 ${header.join('\n')}
   </header>

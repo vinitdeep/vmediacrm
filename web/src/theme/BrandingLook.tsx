@@ -96,7 +96,7 @@ export function LogoSet({ v, fb, set, client }: { v: Branding; fb: Partial<Brand
 
 /** Live mock of the sidebar (full and narrow) with the logos and the name as they will appear. */
 export function LogoPreview({ shown }: { shown: Branding }) {
-  const name = shown.name || 'HyperLevel';
+  const name = shown.name || 'V Media CRM';
   const wide = shown.logo_dark_url || shown.logo_url;
   const mark = shown.mark_dark_url || shown.mark_url;
   // No logo yet: the HyperLevel icon, as in the real sidebar (never an initial).
@@ -190,7 +190,7 @@ export function BrandingLook({ locationId }: { locationId?: string }) {
         'accent',
         <Field label="Akzentfarbe" hint={accent ? undefined : `Ohne Vorgabe gilt ${client ? 'die Farbe der Agentur' : 'die Markenfarbe oben (Standard-Theme) bzw. die des gewählten Themes'}.`}>
           <div className="actions">
-            <input type="color" value={isHex(accent) ? accent : themeById(draft.defaults.theme ?? inherited.theme ?? 'gohigh').light.accent} onChange={(e) => setD('accent', e.target.value)} aria-label="Standard-Akzentfarbe" style={{ width: 54 }} />
+            <input type="color" value={isHex(accent) ? accent : themeById(draft.defaults.theme ?? inherited.theme ?? 'vmedia').light.accent} onChange={(e) => setD('accent', e.target.value)} aria-label="Standard-Akzentfarbe" style={{ width: 54 }} />
             {accent && (
               <button className="btn small secondary" onClick={() => setD('accent', undefined)}>
                 Keine Vorgabe

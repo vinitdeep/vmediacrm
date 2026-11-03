@@ -6,14 +6,14 @@ import { slug } from './slug';
  * The printable course „Deine Firma mit … führen“ as Markdown, generated from the same data as the Academy lessons
  * (content/company.ts). docs/kurs-firma-fuehren.md is a copy – tests/company-course.test.ts keeps it current:
  *
- *   node --import tsx -e "import('./web/src/tour/company-course.ts').then((m) => require('node:fs').writeFileSync('docs/kurs-firma-fuehren.md', m.companyCourseMarkdown('HyperLevel')))"
+ *   node --import tsx -e "import('./web/src/tour/company-course.ts').then((m) => require('node:fs').writeFileSync('docs/kurs-firma-fuehren.md', m.companyCourseMarkdown('V Media CRM')))"
  */
 
 const plain = (s: string, brand: string) => s.replace(/\{brand\}/g, brand).replace(/\s+/g, ' ').trim();
 
 export const lessonHeading = (n: number, title: string) => `Lektion ${n}: ${title}`;
 
-export function companyCourseMarkdown(brand = 'HyperLevel'): string {
+export function companyCourseMarkdown(brand = 'V Media CRM'): string {
   const minutes = COMPANY_TOURS.reduce((s, t) => s + t.minutes, 0);
   const out: string[] = [
     `# Kurs: Deine Firma mit ${brand} führen`,

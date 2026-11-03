@@ -103,8 +103,8 @@ export default {
   Kommentare: 'Comments',
   'Mit KI bearbeiten': 'Edit with AI',
   Details: 'Details',
-  'Zum Speichern im Editor „File → Export → PowerPoint Presentation (.pptx)“ (Menü des Editors) wählen – ohne Office-Engine kann HyperLevel das eigene Format des Editors nicht umwandeln.':
-    'To save, choose “File → Export → PowerPoint Presentation (.pptx)” (the editor’s menu) in the editor – without the Office engine HyperLevel cannot convert the editor’s own format.',
+  'Zum Speichern im Editor „File → Export → PowerPoint Presentation (.pptx)“ (Menü des Editors) wählen – ohne Office-Engine kann V Media CRM das eigene Format des Editors nicht umwandeln.':
+    'To save, choose “File → Export → PowerPoint Presentation (.pptx)” (the editor’s menu) in the editor – without the Office engine V Media CRM cannot convert the editor’s own format.',
 
   // OfficeEditor.tsx – the editor bridge
   'Im Editor gespeichert': 'Saved in the editor',

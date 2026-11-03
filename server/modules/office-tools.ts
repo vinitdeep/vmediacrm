@@ -10,9 +10,9 @@ import type { Tool } from './mcp.js';
 
 /**
  * Agentic editing of Office files (docs/office.md#ai-agent-and-mcp): REST routes that read a file through the headless engine (or
- * HyperLevel's own text excerpt when none is installed), run a list of engine commands on a temporary copy and store the result as a
+ * V Media CRM's own text excerpt when none is installed), run a list of engine commands on a temporary copy and store the result as a
  * new version (author: the agent on behalf of the person, or the API/MCP connection), and make a PDF of a file; plus the MCP tools on
- * top of them, which the HyperLevel Agent uses in-process. Edits respect the edit lock: while somebody else has the file checked out the
+ * top of them, which the V Media CRM Agent uses in-process. Edits respect the edit lock: while somebody else has the file checked out the
  * edit is refused (423) with who holds it – nothing is queued or merged behind their back.
  */
 

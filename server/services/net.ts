@@ -89,7 +89,7 @@ export async function safeFetch(
     reject = done(reject);
     const req = (u.protocol === 'https:' ? httpsRequest : httpRequest)(
       u,
-      { method: init.method ?? 'GET', headers: { 'user-agent': `HyperLevel/${APP_VERSION}`, ...(init.headers ?? {}) }, lookup: (init.allowPrivate ? safeLookup(true) : guardedLookup) as any, timeout: timeoutMs },
+      { method: init.method ?? 'GET', headers: { 'user-agent': `V Media CRM/${APP_VERSION}`, ...(init.headers ?? {}) }, lookup: (init.allowPrivate ? safeLookup(true) : guardedLookup) as any, timeout: timeoutMs },
       (r) => {
         const chunks: Buffer[] = [];
         let size = 0;

@@ -8,7 +8,7 @@ import { activity, agencyAds, audit, fetcherOf, loadConnection, metaCreds, relay
 import { sameSecret } from '../services/meta.js';
 
 /**
- * Meta Lead Ads: instant forms created from HyperLevel, and the lead import – webhook (`leadgen`, X-Hub-Signature-256)
+ * Meta Lead Ads: instant forms created from V Media CRM, and the lead import – webhook (`leadgen`, X-Hub-Signature-256)
  * with a polling fallback. A lead becomes a contact (tagged, with its answers) and starts workflows
  * (trigger „Neuer Lead aus Anzeige“). See services/ads-leads.ts for the mapping.
  */

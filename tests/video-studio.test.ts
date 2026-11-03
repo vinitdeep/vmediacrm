@@ -339,7 +339,7 @@ describe('video studio (OpenShorts)', () => {
     expect((await t.api.post('/api/video-studio/jobs', { upload_id: up.id })).data.error).toMatch(/schon verwendet/);
   });
 
-  it('falls back to a signed HyperLevel download link for OpenShorts versions without upload slots', async () => {
+  it('falls back to a signed V Media CRM download link for OpenShorts versions without upload slots', async () => {
     const before = t.app.config.baseUrl;
     t.app.config.baseUrl = 'https://gh.example.com';
     const paths = fakeOs.paths;

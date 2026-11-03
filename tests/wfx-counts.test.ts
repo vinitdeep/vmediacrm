@@ -49,13 +49,9 @@ describe('workflow library depth', () => {
     const claims = (file: string, re: RegExp) => [...readFileSync(join(ROOT, file), 'utf8').matchAll(re)].map((m) => Number(m[1]));
     const enTriggers = claims('README.md', /(\d+)\+? triggers/gi);
     const enActions = claims('README.md', /(\d+)\+? (?:built-in )?actions/gi);
-    const deTriggers = claims('README.de.md', /(\d+)\+? Auslöser/g);
-    const deActions = claims('README.de.md', /(\d+)\+? (?:eingebaute |integrierte )?Aktionen/g);
     expect(enTriggers.length, 'README.md nennt die Zahl der Trigger').toBeGreaterThan(0);
     expect(enActions.length, 'README.md nennt die Zahl der Aktionen').toBeGreaterThan(0);
-    expect(deTriggers.length, 'README.de.md nennt die Zahl der Auslöser').toBeGreaterThan(0);
-    expect(deActions.length, 'README.de.md nennt die Zahl der Aktionen').toBeGreaterThan(0);
-    for (const n of [...enTriggers, ...deTriggers]) expect(n).toBeLessThanOrEqual(counts.triggers);
-    for (const n of [...enActions, ...deActions]) expect(n).toBeLessThanOrEqual(counts.actions);
+    for (const n of enTriggers) expect(n).toBeLessThanOrEqual(counts.triggers);
+    for (const n of enActions) expect(n).toBeLessThanOrEqual(counts.actions);
   });
 });

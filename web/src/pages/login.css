@@ -1,0 +1,347 @@
+/*
+ * Sign-in, first setup, second factor and the 2FA duty (pages/Login.tsx): a split screen.
+ * Left the brand panel – always dark ink, lit by the accent (so a white-label colour carries through) –
+ * right the form card on the theme's own canvas. One column on phones: the panel becomes a short band.
+ * Only theme variables outside the brand panel, so every theme and dark mode work.
+ */
+
+.login.login-split {
+  --login-ink: #0e0b0d;
+  --login-ink-2: #1a1216;
+  --login-glow: var(--brand);
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(420px, 46%) 1fr;
+  place-items: stretch;
+  background: var(--bg);
+}
+
+/* --- brand panel ------------------------------------------------------------------------- */
+.login-brand {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 44px 56px 36px;
+  color: #f4eeef;
+  background:
+    radial-gradient(120% 80% at 100% 0%, color-mix(in srgb, var(--login-glow) 55%, transparent) 0%, transparent 55%),
+    radial-gradient(90% 70% at 0% 100%, color-mix(in srgb, var(--login-glow) 30%, transparent) 0%, transparent 60%),
+    linear-gradient(160deg, var(--login-ink-2) 0%, var(--login-ink) 60%);
+}
+/* fine film grain */
+.login-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.5;
+  background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+/* a thin accent edge where the panel meets the form */
+.login-brand::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, transparent, var(--login-glow) 30%, var(--login-glow) 70%, transparent);
+  opacity: 0.85;
+}
+
+.login-art {
+  position: absolute;
+  z-index: -1;
+  right: -120px;
+  top: -40px;
+  width: 720px;
+  height: 720px;
+  pointer-events: none;
+}
+.login-art-lens circle,
+.login-art-lens path {
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1.5;
+}
+.login-art-lens circle:first-child {
+  stroke: color-mix(in srgb, var(--login-glow) 70%, #fff 0%);
+  stroke-width: 2;
+  stroke-dasharray: 3 9;
+}
+.login-art-lens .login-art-play {
+  fill: color-mix(in srgb, var(--login-glow) 80%, transparent);
+  stroke: none;
+}
+.login-art-strip > rect:first-child {
+  fill: rgba(0, 0, 0, 0.35);
+  stroke: rgba(255, 255, 255, 0.08);
+}
+.login-art-hole {
+  fill: rgba(255, 255, 255, 0.12);
+}
+.login-art-frame {
+  fill: color-mix(in srgb, var(--login-glow) 16%, transparent);
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.login-brand-top {
+  display: flex;
+  align-items: center;
+}
+.login-brand-logo {
+  max-height: 44px;
+  max-width: 220px;
+  display: block;
+}
+.login-brand-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.login-brand-id .login-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+.login-brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.login-brand-body {
+  max-width: 460px;
+}
+.login-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: color-mix(in srgb, var(--login-glow) 28%, rgba(255, 255, 255, 0.06));
+  border: 1px solid color-mix(in srgb, var(--login-glow) 60%, transparent);
+}
+.login-eyebrow::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--login-glow);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--login-glow) 35%, transparent);
+}
+.login-headline {
+  margin: 0 0 14px;
+  font-size: clamp(30px, 3.1vw, 42px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-wrap: balance;
+}
+.login-lede {
+  margin: 0 0 30px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: rgba(244, 238, 239, 0.74);
+}
+.login-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+}
+.login-points li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.login-points li > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+.login-points strong {
+  font-size: 15px;
+  color: #fff;
+}
+.login-points li > span:last-child > span {
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(244, 238, 239, 0.66);
+}
+.login-point-ico {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--login-glow) 85%, #fff 0%), color-mix(in srgb, var(--login-glow) 55%, #000));
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--login-glow) 35%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.login-brand-foot {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(244, 238, 239, 0.5);
+}
+
+/* --- form side --------------------------------------------------------------------------- */
+.login-main {
+  display: grid;
+  place-items: center;
+  padding: 40px 24px;
+  min-width: 0;
+  background:
+    radial-gradient(60% 50% at 50% 0%, color-mix(in srgb, var(--brand) 6%, transparent), transparent 70%),
+    var(--bg);
+}
+.login.login-split .login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 36px 34px 26px;
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(15, 10, 12, 0.04), 0 18px 48px -18px rgba(15, 10, 12, 0.22);
+}
+.login.login-split .login-card-wide {
+  max-width: 540px;
+}
+.login-split .login-head {
+  text-align: left;
+  margin-bottom: 22px;
+}
+.login-split .login-head h1 {
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+.login-split .login-head p {
+  margin: 0;
+  line-height: 1.5;
+}
+.login-split .login-head .login-mark {
+  margin: 0 0 14px;
+}
+.login-split .login-providers {
+  margin-top: 0;
+}
+.login-split .provider-btn {
+  min-height: 44px;
+}
+.login-split .login-card input:not([type='checkbox']):not([type='radio']),
+.login-split .login-card select {
+  min-height: 44px;
+}
+.login-split .login-submit {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+.login-split .login-error {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--red) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--red) 25%, transparent);
+}
+.login-help {
+  text-align: center;
+  margin: 18px 0 0;
+}
+.login-lang {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.login-lang > * {
+  margin-top: 0 !important;
+}
+
+/* --- smaller screens ----------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .login.login-split {
+    grid-template-columns: minmax(360px, 42%) 1fr;
+  }
+  .login-brand {
+    padding: 36px 36px 30px;
+  }
+}
+@media (max-width: 860px) {
+  .login.login-split {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .login-brand {
+    padding: 22px 20px 26px;
+    gap: 18px;
+  }
+  .login-brand::after {
+    top: auto;
+    left: 0;
+    width: auto;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--login-glow) 30%, var(--login-glow) 70%, transparent);
+  }
+  .login-art {
+    width: 420px;
+    height: 420px;
+    right: -150px;
+    top: -110px;
+  }
+  .login-eyebrow,
+  .login-lede,
+  .login-points,
+  .login-brand-foot {
+    display: none;
+  }
+  .login-headline {
+    font-size: 24px;
+    margin: 0;
+  }
+  .login-brand-id .login-icon {
+    width: 34px;
+    height: 34px;
+  }
+  .login-main {
+    place-items: start center;
+    padding: 20px 16px 32px;
+  }
+  .login.login-split .login-card {
+    padding: 26px 20px 20px;
+    border-radius: 16px;
+  }
+  .login-split .login-head h1 {
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .login-art-lens circle:first-child {
+    transform-origin: 430px 170px;
+    animation: login-aperture 60s linear infinite;
+  }
+}
+@keyframes login-aperture {
+  to {
+    transform: rotate(360deg);
+  }
+}

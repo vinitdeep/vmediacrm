@@ -174,7 +174,7 @@ Warum jetzt? Was ist der Auslöser?
         icon: '🧰',
         body: `| Tool | Wofür | Zugang über |
 |---|---|---|
-| HyperLevel | CRM, Posteingang, Aufgaben | {{autor}} |
+| V Media CRM | CRM, Posteingang, Aufgaben | {{autor}} |
 | Team-Chat | Schnelle Abstimmung | Einladung im CRM |
 | Wiki | Wissen und Prozesse | du bist schon drin |
 

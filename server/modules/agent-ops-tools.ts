@@ -10,7 +10,7 @@ import { mappingSummary } from './form-mapping.js';
  * settings – as specific MCP tools, so models pick them reliably instead of composing ghl_api calls. Each one is a thin relay onto
  * the existing REST route (rights, sub-account, validation, events, undo journal and audit log apply unchanged). Outbound or hard
  * to undo (cancelling an appointment, marking a no-show, merging contacts, enrolling in or activating a workflow, booking with a
- * confirmation mail) is marked so the HyperLevel Agent always asks first; drafts never send, and the create/update tools pass on
+ * confirmation mail) is marked so the V Media CRM Agent always asks first; drafts never send, and the create/update tools pass on
  * only the fields their schema names. Results are trimmed to what a model needs.
  */
 

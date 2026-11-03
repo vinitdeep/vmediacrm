@@ -49,4 +49,14 @@ export default {
   'Passkey hat nicht geklappt': 'The passkey did not work',
   'Kein Passkey erstellt': 'No passkey created',
   'Kein Passkey gewählt': 'No passkey chosen',
+  // the brand panel of the sign-in screens
+  'Agentur-CRM': 'Agency CRM',
+  'Vom ersten Lead bis zum fertigen Film.': 'From first lead to final cut.',
+  'Leads, Produktionen, Kunden und Automationen deiner Agentur – alles an einem Ort.': "Leads, productions, clients and automations – your agency's whole workflow in one place.",
+  'Pipeline im Blick': 'Pipeline at a glance',
+  'Jede Anfrage, jedes Angebot, jeder Deal – live an einem Ort.': 'Every enquiry, quote and deal – live, in one place.',
+  'Produktionen planen': 'Plan every production',
+  'Drehs, Schnitt und Freigaben mit deinen Kunden abstimmen.': 'Keep shoots, edits and client approvals in sync.',
+  'Automatisch nachfassen': 'Follow up on autopilot',
+  'KI-Workflows erledigen Follow-ups, Erinnerungen und Berichte.': 'AI workflows handle follow-ups, reminders and reports.',
 } satisfies Catalog;

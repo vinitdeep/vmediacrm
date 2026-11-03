@@ -8,7 +8,7 @@ import './ios-sheet.css';
 import { useT } from '../i18n';
 
 /**
- * Einstellungen → Mein Konto → "iPhone & iPad": whether this device runs HyperLevel as an app, how to install it, what works there
+ * Einstellungen → Mein Konto → "iPhone & iPad": whether this device runs V Media CRM as an app, how to install it, what works there
  * (Mitteilungen live in the block below, with the explicit button). Honest about the limits: docs/ios-web-app.md.
  */
 export function IosAppCard() {
@@ -36,7 +36,7 @@ export function IosAppCard() {
       {ios && standalone ? (
         <ul className="ios-facts">
           <li>
-            {t('HyperLevel läuft hier als App vom Home-Bildschirm: eigenes Fenster, bleibt angemeldet, Mitteilungen möglich.')}
+            {t('V Media CRM läuft hier als App vom Home-Bildschirm: eigenes Fenster, bleibt angemeldet, Mitteilungen möglich.')}
             {info.version ? ` (iOS ${info.version})` : '' /* i18n-ignore */}
           </li>
           <li>{info.badge ? t('Zahl auf dem App-Symbol: wird angezeigt, sobald Mitteilungen erlaubt sind.') : t('Zahl auf dem App-Symbol: dieses iOS unterstützt sie nicht.')}</li>
@@ -45,7 +45,7 @@ export function IosAppCard() {
       ) : (
         <>
           <p className="muted">
-            {ios ? t('Mit einem Tipp auf den Home-Bildschirm wird HyperLevel zur App – mit Mitteilungen, Zahl auf dem Symbol und ohne Browserleisten.') : t('HyperLevel lässt sich auf iPhone und iPad als App installieren – ohne App Store, mit Mitteilungen und Zahl auf dem Symbol.')}
+            {ios ? t('Mit einem Tipp auf den Home-Bildschirm wird V Media CRM zur App – mit Mitteilungen, Zahl auf dem Symbol und ohne Browserleisten.') : t('V Media CRM lässt sich auf iPhone und iPad als App installieren – ohne App Store, mit Mitteilungen und Zahl auf dem Symbol.')}
           </p>
           <ol className="ios-steps">
             {/* the steps of ios/install.ts are German message ids */}

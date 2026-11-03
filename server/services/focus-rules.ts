@@ -19,7 +19,7 @@ export interface RulePlan {
   fallback: boolean;
   say: string;
   tiles: PlannedTile[];
-  /** The person asked for something to be done (send, create, change …): Fokus only shows – the HyperLevel Agent can take over. */
+  /** The person asked for something to be done (send, create, change …): Fokus only shows – the V Media CRM Agent can take over. */
   action: string | null;
 }
 
@@ -228,7 +228,7 @@ export function planRules(text: string, lang: Lang = 'de', history: string[] = [
   // key figures first, then the lists – at most 8 tiles
   const ordered = [...tiles.filter((x) => x.type === 'kpi').slice(0, 4), ...tiles.filter((x) => x.type !== 'kpi')].slice(0, 8);
   let say: string;
-  if (wantsAction) say = L('Fokus zeigt nur an und ändert nichts. Das kann der HyperLevel Agent für dich erledigen – mit „Im Agent fortsetzen“.', 'Focus only shows things and never changes anything. The HyperLevel Agent can do this for you – use “Continue in Agent”.');
+  if (wantsAction) say = L('Fokus zeigt nur an und ändert nichts. Das kann der V Media CRM Agent für dich erledigen – mit „Im Agent fortsetzen“.', 'Focus only shows things and never changes anything. The V Media CRM Agent can do this for you – use “Continue in Agent”.');
   else if (fallback) say = L('Dazu habe ich keine passende Ansicht gefunden – hier ist deine Übersicht für heute.', 'I could not find a matching view for that – here is your overview for today.');
   else say = intents.slice(0, 2).map((i) => sayFor(i, mods, L, lang)).join(' ');
   return { intents, fallback, say, tiles: ordered, action: wantsAction ? text.trim().slice(0, 300) : null };

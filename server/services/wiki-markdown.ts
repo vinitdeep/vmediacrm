@@ -1050,7 +1050,7 @@ export function firstHeading(md: string): string {
 const absolute = (base: string, p: string) => `${base.replace(/\/$/, '')}${p}`;
 
 /**
- * Markdown that reads well outside HyperLevel (export): mentions become plain "@Name", records and pages
+ * Markdown that reads well outside V Media CRM (export): mentions become plain "@Name", records and pages
  * become links to the app, uploads get absolute URLs.
  */
 export function portableMarkdown(md: string, baseUrl: string): string {

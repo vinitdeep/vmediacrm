@@ -32,7 +32,7 @@ export interface AgentDraft {
   schedule: { cadence: string; weekday: number; day: number; time: string; prompt: string; deliver: string } | null;
 }
 
-export const RULES = `Du entwirfst einen eigenen KI-Agenten („KI-Mitarbeiter“) für HyperLevel, ein CRM. Antworte ausschließlich mit EINEM JSON-Objekt:
+export const RULES = `Du entwirfst einen eigenen KI-Agenten („KI-Mitarbeiter“) für V Media CRM, ein CRM. Antworte ausschließlich mit EINEM JSON-Objekt:
 {"name": "≤ 60 Zeichen", "emoji": "ein Emoji", "description": "Rolle in einem Satz", "instructions": "Anweisungen in Du-Form: Aufgabe, Vorgehen, Ton, Grenzen", "model": "", "tools": ["werkzeug_name", …], "knowledge": {"sources": [${KNOWLEDGE.map((k) => `"${k}"`).join(', ')}], "text": "festes Wissen, optional"}, "mode": "read|ask|auto", "max_steps": 1–30, "starters": ["Startfrage", …], "web_fetch": false, "schedule": null oder {"cadence": "${CADENCE.join('|')}", "weekday": 0–6, "day": 1–28, "time": "HH:MM", "prompt": "Auftrag für den Lauf", "deliver": "${DELIVER.join('|')}"}, "summary": "ein Satz", "notes": ["was die Person noch tun muss"]}
 - tools: nur Namen aus dem WERKZEUG-KATALOG, nur was der Agent wirklich braucht (meist 4–15). Lesende Werkzeuge reichen für Berichte.
 - mode: "read" nur lesen, "ask" fragt vor jeder Änderung (Standard), "auto" nur, wenn der Auftrag es ausdrücklich verlangt. Werkzeuge, die versenden, löschen oder bezahlen, fragen ohnehin nach.

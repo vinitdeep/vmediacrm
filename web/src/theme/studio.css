@@ -1,0 +1,137 @@
+/* ==========================================================================================================
+   Studio layer – the shared design tokens (type, radii, elevation, motion) and the refinements of the app shell
+   (sidebar, top bar, page heads) that sit on top of styles.css and theme.css. Every colour comes from the theme
+   variables, so all themes and both modes keep working; rules keyed on [data-theme-id='vmedia'] are the
+   signature touches of the default theme, V Media Studio (crimson glow on the open menu entry, ink sidebar).
+   Imported by web/src/ui.tsx, so it lands after styles.css and theme/theme.css and before ios/ios.css.
+   ========================================================================================================== */
+
+:root {
+  --font-sans: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans Variable', 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+
+  /* elevation: --shadow-ink / --shadow-a come from styles.css (warm ink in light mode, deeper black in dark mode) */
+  --sh-xs: 0 1px 2px rgba(var(--shadow-ink), calc(.05 * var(--shadow-a)));
+  --sh-sm: 0 1px 2px rgba(var(--shadow-ink), calc(.04 * var(--shadow-a))), 0 2px 8px -2px rgba(var(--shadow-ink), calc(.06 * var(--shadow-a)));
+  --sh-md: 0 2px 4px -1px rgba(var(--shadow-ink), calc(.06 * var(--shadow-a))), 0 10px 24px -6px rgba(var(--shadow-ink), calc(.1 * var(--shadow-a)));
+  --sh-lg: 0 4px 10px -2px rgba(var(--shadow-ink), calc(.07 * var(--shadow-a))), 0 18px 40px -10px rgba(var(--shadow-ink), calc(.18 * var(--shadow-a)));
+  --sh-xl: 0 8px 20px -6px rgba(var(--shadow-ink), calc(.12 * var(--shadow-a))), 0 32px 72px -16px rgba(var(--shadow-ink), calc(.32 * var(--shadow-a)));
+
+  /* neutral washes and lines, mixed from the theme's own text colour */
+  --hover-wash: color-mix(in srgb, var(--text) 5.5%, transparent);
+  --press-wash: color-mix(in srgb, var(--text) 9%, transparent);
+  --surface-2: color-mix(in srgb, var(--text) 2.6%, var(--panel));
+  --row-hover: color-mix(in srgb, var(--text) 2.4%, var(--panel));
+  --line-soft: color-mix(in srgb, var(--line) 70%, var(--panel));
+  --line-strong: color-mix(in srgb, var(--text) 9%, var(--line));
+  --line-hover: color-mix(in srgb, var(--text) 22%, var(--line));
+
+  /* glyphs drawn by CSS (select chevron, search glass): a mid grey that reads on light and dark controls */
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c847d' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  --glass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c847d' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --t-fast: .14s;
+  --t: .2s;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-fast: 0s; --t: 0s; }
+  .modal, .modal-bg, .toast { animation: none; }
+  .btn:active:not(:disabled) { transform: none; }
+}
+
+/* ---- type ---------------------------------------------------------------------------------------------- */
+h1 { font-size: calc(var(--fs) * 1.72); }
+h2 { font-size: calc(var(--fs) * 1.22); }
+h3 { font-size: calc(var(--fs) * 1.07); }
+kbd { font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace; border-radius: 6px; padding: 0 6px; background: var(--surface-2); }
+.page-head { align-items: center; margin-bottom: 22px; }
+.page-head h1 { line-height: 1.15; }
+.page-head p.muted { font-size: 13.5px; }
+.stats { gap: 14px; }
+.stat { transition: box-shadow var(--t), border-color var(--t); }
+.stat > .muted:first-child, .stat > .small:first-child { font-size: 12px; font-weight: 600; letter-spacing: .01em; }
+
+/* ---- top bar: frosted panel, search with a glass ------------------------------------------------------- */
+.topbar { min-height: 60px; padding: 10px 24px; gap: 10px; background: color-mix(in srgb, var(--panel) 84%, transparent); backdrop-filter: saturate(1.6) blur(14px); -webkit-backdrop-filter: saturate(1.6) blur(14px); border-bottom-color: var(--line); }
+.topbar .search input { background-color: var(--surface-2); border-color: transparent; border-radius: 10px; padding: 8px 12px 8px 36px; background-image: var(--glass); background-repeat: no-repeat; background-position: 12px center; background-size: 16px; }
+.topbar .search input:hover { border-color: var(--line-strong); }
+.topbar .search input:focus { background-color: var(--panel); border-color: var(--brand-ring); }
+.topbar .jump-btn { border-radius: 10px; }
+.topbar .jump-btn kbd { margin-left: 2px; }
+
+/* ---- controls refinements that must beat theme.css ----------------------------------------------------- */
+.btn:not(.secondary):not(.ghost):not(.danger):hover:not(:disabled) { box-shadow: 0 4px 14px -6px color-mix(in srgb, var(--brand) 70%, transparent), inset 0 1px 0 rgba(255, 255, 255, .16); }
+.btn.ai:not(.secondary):not(.ghost):not(.danger):hover { box-shadow: 0 4px 14px -6px rgba(109, 40, 217, .7); }
+.btn:focus-visible { outline: 2px solid var(--brand-ring); outline-offset: 2px; }
+.chip:hover { border-color: var(--line-hover); background: var(--hover-wash); }
+.chip.on, .views-bar .chip.on { border-color: color-mix(in srgb, var(--brand) 55%, transparent); background: var(--brand-soft); color: var(--brand-text); }
+.seg button { transition: background-color var(--t-fast), color var(--t-fast); }
+.seg button:hover:not(.on) { color: var(--text); background: var(--surface-2); }
+
+/* cards that are links or buttons lift on hover */
+:is(a.card, button.card, .card.click, .card[role='button']) { transition: box-shadow var(--t), border-color var(--t), transform var(--t); }
+:is(a.card, button.card, .card.click, .card[role='button']):hover { box-shadow: var(--sh-md); border-color: var(--line-strong); text-decoration: none; }
+
+/* ---- sidebar ------------------------------------------------------------------------------------------- */
+.side { border-right: 1px solid var(--side-line); }
+.side .brand { padding: 16px 14px 14px 16px; font-family: var(--font-display); font-size: 15.5px; font-weight: 750; letter-spacing: -.015em; }
+.side .brand .brand-mark { width: 34px; height: 34px; border-radius: 10px; }
+.side nav { padding: 6px 10px 16px; }
+.side nav .group { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; padding: 18px 10px 6px; }
+.side nav a { padding: 7px 10px; border-radius: 9px; font-size: 13.5px; font-weight: 500; gap: 11px; transition: background-color var(--t-fast), color var(--t-fast), box-shadow var(--t-fast); }
+.side nav a:hover { color: var(--side-text); }
+.side nav a.on { font-weight: 600; }
+.switcher { margin: 2px 12px 10px; }
+.switcher-btn { border-radius: 10px; padding: 9px 11px; transition: border-color var(--t-fast), background-color var(--t-fast); }
+.side .foot { padding: 12px 16px 14px; }
+.side-toggle { transition: background-color var(--t-fast), color var(--t-fast); }
+
+/* V Media Studio: an ink sidebar with a faint crimson light at the top, the open entry glows crimson. */
+:root:is([data-theme-id='vmedia'], :not([data-theme-id])) .side {
+  background:
+    radial-gradient(140% 38% at 0% 0%, color-mix(in srgb, var(--brand) 13%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--side-text) 2.5%, var(--side)), var(--side) 220px),
+    var(--side);
+}
+:root:is([data-theme-id='vmedia'], :not([data-theme-id])):not([data-dept-mode='vibrant']) .side nav a.on {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--brand) 30%, var(--side)), color-mix(in srgb, var(--brand) 9%, var(--side)));
+  color: #fff;
+  box-shadow: inset 2px 0 0 var(--brand), 0 6px 22px -8px color-mix(in srgb, var(--brand) 85%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--brand) 26%, transparent);
+}
+:root:is([data-theme-id='vmedia'], :not([data-theme-id])):not([data-dept-mode='vibrant']) .side nav a.on .ico { color: color-mix(in srgb, var(--brand) 45%, #fff); }
+:root:is([data-theme-id='vmedia'], :not([data-theme-id])) .side nav a .nav-badge { background: var(--brand); color: #fff; }
+:root:is([data-theme-id='vmedia'], :not([data-theme-id])) .side .brand::after { content: ''; position: absolute; left: 16px; right: 16px; bottom: 0; height: 1px; background: linear-gradient(90deg, color-mix(in srgb, var(--brand) 55%, transparent), transparent 80%); }
+/* page heads: a short department bar above the title instead of the stripe beside it */
+:root[data-theme-id='vmedia'][data-dept-mode='subtle'] .main[data-dept] .page-head { border-left: 0; padding-left: 0; border-radius: 0; }
+:root[data-theme-id='vmedia'][data-dept-mode='subtle'] .main[data-dept] .page-head > [data-tour='page-title']::before { content: ''; display: block; width: 28px; height: 3px; border-radius: 3px; margin-bottom: 10px; background: linear-gradient(90deg, var(--brand), color-mix(in srgb, var(--brand) 25%, transparent)); }
+
+/* a page whose head brings its own label (the dashboard hero's eyebrow) keeps no tick */
+:root[data-theme-id='vmedia'][data-dept-mode='subtle'] .main[data-dept] .dash-hero .page-head > [data-tour='page-title']::before { display: none; }
+
+/* rail: centred pills, the open one a crimson tile */
+@media (min-width: 600px) {
+  :root:is([data-sidebar='rail'], [data-size='medium']) .side nav a { border-radius: 10px; padding: 9px 0; }
+  :root:is([data-sidebar='rail'], [data-size='medium']):is([data-theme-id='vmedia'], :not([data-theme-id])):not([data-dept-mode='vibrant']) .side nav a.on { background: color-mix(in srgb, var(--brand) 28%, var(--side)); box-shadow: 0 6px 20px -8px color-mix(in srgb, var(--brand) 90%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--brand) 40%, transparent); }
+  :root:is([data-sidebar='rail'], [data-size='medium']) .side .brand::after { left: 14px; right: 14px; }
+}
+
+/* table headers that hold buttons or links (sorting) keep the header look */
+table.t th :is(button, a) { text-transform: inherit; letter-spacing: inherit; }
+:root:is([data-theme-id='vmedia'], :not([data-theme-id])) .side .nav-beta { background: color-mix(in srgb, var(--brand) 24%, transparent); color: color-mix(in srgb, var(--brand) 35%, #fff); }
+
+/* ---- overlays ------------------------------------------------------------------------------------------ */
+.rail-tip, .rail-flyout-box:not(:has(.nav-sub)) { border-radius: 8px; box-shadow: var(--sh-lg); }
+.rail-flyout-box { border-radius: var(--r-lg); box-shadow: var(--sh-xl); }
+.topbar .search .results a:hover { background: var(--hover-wash); }
+
+/* ---- Darstellung page: cards follow the same elevation ---------------------------------------------------- */
+.ap-theme, .ap-pal button, .ap-pack, .ap-profile { box-shadow: var(--sh-xs); transition: border-color var(--t-fast), box-shadow var(--t-fast); }
+.ap-theme:hover:not(:disabled), .ap-pack:hover:not(:disabled), .ap-pal button:hover:not(:disabled) { box-shadow: var(--sh-md); }
+.ap-offer { box-shadow: var(--sh-sm); }

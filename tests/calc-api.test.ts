@@ -423,7 +423,7 @@ describe('isolation and rights', () => {
   });
 });
 
-describe('MCP tools and the HyperLevel Agent', () => {
+describe('MCP tools and the V Media CRM Agent', () => {
   let scenario = '';
 
   it('lists the five tools; calculations are read-only, saving is a write', async () => {

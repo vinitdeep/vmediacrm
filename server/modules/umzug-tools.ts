@@ -4,7 +4,7 @@ import { SOURCE_KEYS, SOURCE_LABELS, PART_KEYS } from '../services/umzug-core.js
 import type { Tool } from './mcp.js';
 
 /**
- * MCP tools of the Umzug assistant and the deliverability wizard (HyperLevel Agent, Claude, ChatGPT, Codex). Thin relays
+ * MCP tools of the Umzug assistant and the deliverability wizard (V Media CRM Agent, Claude, ChatGPT, Codex). Thin relays
  * onto the REST routes (modules/umzug.ts, umzug-mailcheck.ts), so the key's sub-account, member rights and the audit
  * log apply. Credentials are never accepted here – they are entered in the app (Einstellungen → Umzug).
  */
@@ -57,7 +57,7 @@ export const UMZUG_TOOLS: Tool[] = [
   {
     name: 'ghl_umzug_sources',
     title: 'Umzug: Quellen und Stand',
-    description: `Umzug zu HyperLevel: die Quellen (${SOURCE_NAMES}) mit den Teilen, die mitkommen können, dem was NICHT mitkommt, ob die API-Verbindung im Ziel-Sub-Account steht, hochgeladenen Export-Dateien und den letzten Umzügen. Starte hier, wenn jemand von einem anderen Tool wechseln will. Die Zugangsdaten gibt die Person in der Oberfläche ein (Einstellungen → Umzug, Link in der Antwort) – frage nie nach API-Schlüsseln im Chat.`,
+    description: `Umzug zu V Media CRM: die Quellen (${SOURCE_NAMES}) mit den Teilen, die mitkommen können, dem was NICHT mitkommt, ob die API-Verbindung im Ziel-Sub-Account steht, hochgeladenen Export-Dateien und den letzten Umzügen. Starte hier, wenn jemand von einem anderen Tool wechseln will. Die Zugangsdaten gibt die Person in der Oberfläche ein (Einstellungen → Umzug, Link in der Antwort) – frage nie nach API-Schlüsseln im Chat.`,
     inputSchema: obj({ ...LOC }, []),
     annotations: RO,
     run: async (call, a) => {

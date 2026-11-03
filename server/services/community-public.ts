@@ -19,7 +19,7 @@ export interface PublicBrand {
 
 export function publicBrand(loc: LocationRow): PublicBrand {
   const b = loc.settings?.branding ?? {};
-  const color = /^#[0-9a-f]{6}$/i.test(String(b.color ?? '')) ? String(b.color) : '#2563eb';
+  const color = /^#[0-9a-f]{6}$/i.test(String(b.color ?? '')) ? String(b.color) : '#c8191f';
   return { name: String(b.name || loc.name), color, logo: String(b.logo_url || loc.logo_url || ''), favicon: String(b.favicon_url || '') };
 }
 

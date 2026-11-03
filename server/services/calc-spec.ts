@@ -327,7 +327,7 @@ function schemaOf(n: Node): any {
   return s;
 }
 /** JSON Schema (draft 2020-12) of the input; every field carries `description` and `default`. All fields are optional. */
-export const inputSchema = () => ({ $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'HyperLevel Gewinnrechner', ...schemaOf(SPEC) });
+export const inputSchema = () => ({ $schema: 'https://json-schema.org/draft/2020-12/schema', title: 'V Media CRM Gewinnrechner', ...schemaOf(SPEC) });
 
 /** Leaf fields as `path` rows with default and description (the docs table is generated from this). */
 export function specRows(): { path: string; type: string; unit: string; def: string; desc: string }[] {

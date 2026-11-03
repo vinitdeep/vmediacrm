@@ -149,7 +149,7 @@ export interface AdapterCtx {
   model: string;
   capability: Capability;
   input: GenInput;
-  /** Public URL the provider may call when done (null when HyperLevel is not reachable from outside). */
+  /** Public URL the provider may call when done (null when V Media CRM is not reachable from outside). */
   callbackUrl: string | null;
   /** Outbound HTTP (test hook `app.services.genmediaFetch` or a guarded request). */
   fetch(url: string, init?: GmRequest): Promise<GmResponse>;

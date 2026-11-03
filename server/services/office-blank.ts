@@ -3,7 +3,7 @@ import { readZip } from './umzug-zip.js';
 import type { OfficeKind } from './office-model.js';
 
 /**
- * Office files HyperLevel makes and reads on its own, without the optional engines (docs/office.md): blank documents (optionally with
+ * Office files V Media CRM makes and reads on its own, without the optional engines (docs/office.md): blank documents (optionally with
  * starting text or table rows, so the agent can create something useful on a server without engines) and a plain-text excerpt of
  * .docx/.xlsx/.pptx for reading. The files are minimal, valid Office Open XML / PDF; the engines and the editors open them.
  */
@@ -103,9 +103,9 @@ function theme(): string {
     .join('');
   const font = (face: string) => `<a:latin typeface="${face}"/><a:ea typeface=""/><a:cs typeface=""/>`;
   return (
-    `<a:theme xmlns:a="${A}" name="HyperLevel"><a:themeElements><a:clrScheme name="HyperLevel">${colors}</a:clrScheme>` +
-    `<a:fontScheme name="HyperLevel"><a:majorFont>${font('Calibri Light')}</a:majorFont><a:minorFont>${font('Calibri')}</a:minorFont></a:fontScheme>` +
-    `<a:fmtScheme name="HyperLevel"><a:fillStyleLst>${solid('phClr').repeat(3)}</a:fillStyleLst><a:lnStyleLst>${ln.repeat(3)}</a:lnStyleLst>` +
+    `<a:theme xmlns:a="${A}" name="V Media CRM"><a:themeElements><a:clrScheme name="V Media CRM">${colors}</a:clrScheme>` +
+    `<a:fontScheme name="V Media CRM"><a:majorFont>${font('Calibri Light')}</a:majorFont><a:minorFont>${font('Calibri')}</a:minorFont></a:fontScheme>` +
+    `<a:fmtScheme name="V Media CRM"><a:fillStyleLst>${solid('phClr').repeat(3)}</a:fillStyleLst><a:lnStyleLst>${ln.repeat(3)}</a:lnStyleLst>` +
     `<a:effectStyleLst>${'<a:effectStyle><a:effectLst/></a:effectStyle>'.repeat(3)}</a:effectStyleLst><a:bgFillStyleLst>${solid('phClr').repeat(3)}</a:bgFillStyleLst></a:fmtScheme>` +
     `</a:themeElements></a:theme>`
   );

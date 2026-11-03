@@ -3,7 +3,7 @@ import { anthropicSse, events, fakeModel, sse } from './agent-fakes.js';
 import { startTestApp } from './helpers.js';
 import { retry } from '../server/services/anthropic.js';
 
-/** The HyperLevel Agent: what it changes is journaled as the agent, its tool card offers "Rückgängig", and it can take its own change back. */
+/** The V Media CRM Agent: what it changes is journaled as the agent, its tool card offers "Rückgängig", and it can take its own change back. */
 
 const AKEY = 'sk-ant-api03-undoagent-abcdefghijklmnopqrstuvwxyz';
 const model = fakeModel();

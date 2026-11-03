@@ -27,7 +27,7 @@ beforeAll(async () => {
   ids.color = (await mk('Färben', 90)).id;
   ids.off = (await mk('Inaktiv', 30)).id;
   t.app.db.run('UPDATE calendars SET active = 0 WHERE id = ?', ids.off);
-  ids.other = (await t.api.post('/api/locations', { name: 'Andere Firma' })).data.id;
+  ids.other = (await t.api.post('/api/locations', { name: 'Andere Firma', timezone: 'Europe/Berlin' })).data.id;
 });
 afterAll(async () => {
   await t.close();

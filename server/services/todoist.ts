@@ -218,7 +218,7 @@ export const commandError = (s: CommandStatus | undefined) => (!s ? 'keine Antwo
 // --- due dates ---------------------------------------------------------------------------------
 
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
-/** HyperLevel stores date-only due dates as UTC midnight (the date picker does `new Date('YYYY-MM-DD')`). */
+/** V Media CRM stores date-only due dates as UTC midnight (the date picker does `new Date('YYYY-MM-DD')`). */
 const UTC_MIDNIGHT = /T00:00:00(\.0+)?Z$/;
 
 /** One canonical form for comparing: ISO to the second, date-only as UTC midnight, invalid → null. */
@@ -230,7 +230,7 @@ export function normalizeDue(v: unknown): string | null {
   return Number.isFinite(t) ? new Date(Math.floor(t / 1000) * 1000).toISOString() : null;
 }
 
-/** HyperLevel due_at → Todoist `due`: full-day date, or a fixed time in UTC with the location's zone. */
+/** V Media CRM due_at → Todoist `due`: full-day date, or a fixed time in UTC with the location's zone. */
 export function toTodoistDue(dueAt: string | null | undefined, tz: string): { date: string; timezone?: string } | null {
   const iso = normalizeDue(dueAt);
   if (!iso) return null;
@@ -238,7 +238,7 @@ export function toTodoistDue(dueAt: string | null | undefined, tz: string): { da
   return { date: `${iso.slice(0, 19)}Z`, timezone: tz };
 }
 
-/** Todoist `due` → HyperLevel due_at. Floating times are read in `tz` (the Todoist user's zone, else the location's). */
+/** Todoist `due` → V Media CRM due_at. Floating times are read in `tz` (the Todoist user's zone, else the location's). */
 export function fromTodoistDue(due: TodoistDue | null | undefined, tz: string): string | null {
   if (!due?.date) return null;
   const d = String(due.date);

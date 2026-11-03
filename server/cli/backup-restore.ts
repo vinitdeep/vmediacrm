@@ -46,7 +46,7 @@ async function main() {
   // A local encrypted file (downloaded from the bucket by hand): only the database.
   if (existsSync(target)) {
     const head = await readHeader(target);
-    if (!head.ok) fail(`${target} ist keine verschlüsselte Sicherung von HyperLevel`);
+    if (!head.ok) fail(`${target} ist keine verschlüsselte Sicherung von V Media CRM`);
     const dir = resolve(value('--to') ?? join(dataDir, `restore-${stampOf(new Date())}`));
     mkdirSync(dir, { recursive: true });
     const dbFile = join(dir, 'pghl.db');

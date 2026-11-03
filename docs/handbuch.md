@@ -46,7 +46,7 @@ Passwort, Zwei-Faktor-Login, Geräte, wer Zugang hat – und wo Zugangsdaten lie
 - Fremde Geräte abmelden
 - Zugänge, Admins und Schlüssel prüfen
 
-Mehr dazu: [Funktionen: Sicherheit](../README.de.md#funktionen)
+Mehr dazu: [Funktionen: Sicherheit](../README.md#at-a-glance)
 
 ---
 
@@ -72,7 +72,7 @@ Projekte und Kunden, Projekt-Wechsler, Strg+K und die Claude-Sitzungen jedes Pro
 - Wo die Claude-Sitzungen und Dokumente eines Projekts hängen
 - Projektübergreifende Listen nutzen
 
-Mehr dazu: [Als Agentur](../README.de.md#als-agentur)
+Mehr dazu: [Als Agentur](../README.md#at-a-glance)
 
 ---
 
@@ -103,7 +103,7 @@ Die 15-Minuten-Runde jeden Morgen: Posteingang (inkl. WhatsApp und Anrufe), Aufg
 - Die Pipeline pflegen
 - Ein eigenes Dashboard unter Berichte nutzen
 
-Mehr dazu: [Funktionen im Überblick](../README.de.md#funktionen)
+Mehr dazu: [Funktionen im Überblick](../README.md#at-a-glance)
 
 ---
 
@@ -134,7 +134,7 @@ Kontakt- und Firmen-Steckbriefe, eigene Objekte und Eigenschaften, Projekt-Steck
 - Den Projekt-Steckbrief aktuell halten
 - Website-Überwachung, Dokumente und Claude-Artefakte
 
-Mehr dazu: [Funktionen: Kontakte & Projekte](../README.de.md#funktionen)
+Mehr dazu: [Funktionen: Kontakte & Projekte](../README.md#at-a-glance)
 
 ---
 
@@ -189,7 +189,7 @@ Seiten-Builder, Blog, A/B-Tests, Formulare, Kalender-Buchung und eigene Domains.
 - Formulare und Buchungsseiten
 - Wie Domains funktionieren
 
-Mehr dazu: [Blog & Kurse](../README.de.md#blog--kurse)
+Mehr dazu: [Blog & Kurse](../README.md#at-a-glance)
 
 ---
 
@@ -210,7 +210,7 @@ Online-Kurse, Mitgliederbereich und Community-Gruppen – Zugang, Moderation, Mi
 - Den Mitgliederbereich (Login per E-Mail-Link)
 - Community-Gruppen und Moderation
 
-Mehr dazu: [Community](../README.de.md#community)
+Mehr dazu: [Community](../README.md#at-a-glance)
 
 ---
 
@@ -364,7 +364,7 @@ Backups, Protokoll, die wöchentliche Server-Ressourcen-Routine und was zu tun i
 - Die wöchentliche Server-Routine
 - Der Notfallplan bei einer ausgefallenen Website
 
-Mehr dazu: [Backup](../README.de.md#backup)
+Mehr dazu: [Backup](../README.md#deploy)
 
 ---
 
@@ -458,7 +458,7 @@ Neben dem Gesamt-Guide gibt es für jeden Bereich eine kurze Tour (5–15 Schrit
 - **Workflows: testen, Versionen und Austausch** (9 Schritte, ca. 5 Min.) – Mit Beispieldaten testen, das Protokoll je Schritt lesen, Entwürfe veröffentlichen, Versionen zurückholen und Workflows als JSON austauschen.
 - **Lead-Scoring: MQL & SQL** (12 Schritte, ca. 7 Min.) – Punkte für passende Eigenschaften und Aktivität, Schwellen wie MQL und SQL, Zerfall – und der Score an Kontakt und Kontaktliste.
 - **Canvas: zeichnen, planen, gestalten** (15 Schritte, ca. 8 Min.) – Unendliche Boards mit Formen, Pfeilen, Notizen und Designs – mit Live-Karten aus dem CRM, KI-Zeichnen und gemeinsamer Arbeit.
-- **Anzeigen: Meta & Google** (15 Schritte, ca. 8 Min.) – Kampagnen bei Facebook, Instagram und Google direkt in HyperLevel anlegen, prüfen, steuern – alles startet pausiert, Geld fließt erst nach deiner Bestätigung.
+- **Anzeigen: Meta & Google** (15 Schritte, ca. 8 Min.) – Kampagnen bei Facebook, Instagram und Google direkt in V Media CRM anlegen, prüfen, steuern – alles startet pausiert, Geld fließt erst nach deiner Bestätigung.
 - **Webinare: Automatisiert anmelden und verkaufen** (15 Schritte, ca. 8 Min.) – Ein Video zum Termin abspielen, Anmeldungen einsammeln, erinnern, Fragen und Angebot einblenden – und sehen, wer wie lange dabei war.
 - **Kommentar-zu-DM auf Instagram und Facebook** (9 Schritte, ca. 6 Min.) – Auf ein Stichwort im Kommentar öffentlich antworten, privat den Link schicken und den Kontakt anlegen.
 - **„Webhook empfangen“ in Workflows** (10 Schritte, ca. 6 Min.) – Daten aus Shops, Typeform & Co. per Webhook annehmen: geheime URL, Test-Daten, Feldzuordnung und Signatur.
@@ -522,7 +522,7 @@ Neben dem Gesamt-Guide gibt es für jeden Bereich eine kurze Tour (5–15 Schrit
 
 - **Telefonmenü, Zeitpläne und Warteschlangen** (9 Schritte, ca. 7 Min.) – Anrufer mit einer Ansage begrüßen, per Taste verteilen, Öffnungszeiten und Feiertage beachten, in Gruppen und Warteschlangen klingeln lassen – und den Ablauf vorab testen.
 - **Nummern kaufen, zuordnen und Anrufe nach Quelle** (5 Schritte, ca. 6 Min.) – Rufnummern bei Twilio kaufen und freigeben, jeder Nummer ein Ziel geben, Tracking-Nummern je Kampagne und Pool-Nummern für die Website – mit Auswertung der Anrufe nach Quelle.
-- **Postfach verbinden: Gmail & Outlook** (12 Schritte, ca. 5 Min.) – Gmail oder Outlook direkt verbinden: Mails im Posteingang, aus HyperLevel im selben Thread antworten, archivieren, Labels, Entwürfe und geplantes Senden.
+- **Postfach verbinden: Gmail & Outlook** (12 Schritte, ca. 5 Min.) – Gmail oder Outlook direkt verbinden: Mails im Posteingang, aus V Media CRM im selben Thread antworten, archivieren, Labels, Entwürfe und geplantes Senden.
 - **Raum-Modus und XR: mit Blick, Pinch und Brille arbeiten** (9 Schritte, ca. 5 Min.) – Große Ziele für Vision Pro, Quest und Android XR, vier Seiten nebeneinander auf dem Riesen-Bildschirm der Brille – und Boards als schwebende Panels im Raum.
 - **Dein Konto absichern** (6 Schritte, ca. 4 Min.) – Passwort, Zwei-Faktor-Login, angemeldete Geräte und hell/dunkel.
 - **Darstellung anpassen** (11 Schritte, ca. 5 Min.) – Theme, Akzentfarbe, Bereichsfarben, schmale Seitenleiste, Icon-Pack und welche Bereiche im Menü stehen.
@@ -545,7 +545,7 @@ Neben dem Gesamt-Guide gibt es für jeden Bereich eine kurze Tour (5–15 Schrit
 - **Zapier, Make & n8n (REST-Hooks)** (7 Schritte, ca. 5 Min.) – API-Schlüssel je Tool, Sofort-Auslöser per REST-Hook, Zustell-Protokoll und die API-Referenz.
 - **Umzug aus HubSpot** (8 Schritte, ca. 5 Min.) – Kontakte, Firmen, Deals, Notizen, Aufgaben, Aktivitäten und Tickets aus HubSpot holen – mit Probelauf und Fortschritt.
 - **App fürs Handy & Widgets** (7 Schritte, ca. 4 Min.) – Die Android-App installieren und koppeln, gekoppelte Geräte verwalten, Widgets und Benachrichtigungen.
-- **iPhone & iPad: HyperLevel als App** (9 Schritte, ca. 4 Min.) – Zum Home-Bildschirm hinzufügen, Mitteilungen und Zahl auf dem Symbol einschalten, iPad-Ansicht und Tastaturkürzel.
+- **iPhone & iPad: V Media CRM als App** (9 Schritte, ca. 4 Min.) – Zum Home-Bildschirm hinzufügen, Mitteilungen und Zahl auf dem Symbol einschalten, iPad-Ansicht und Tastaturkürzel.
 
 ### Agentur & Betrieb
 

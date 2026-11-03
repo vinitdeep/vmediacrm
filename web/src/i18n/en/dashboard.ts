@@ -43,4 +43,9 @@ export default {
   'Mehr anzeigen': 'Show more',
   // accessibility: names of controls without a visible label
   Zeitraum: 'Period',
+  // the greeting at the top
+  'Guten Morgen, {name}': 'Good morning, {name}',
+  'Guten Tag, {name}': 'Good afternoon, {name}',
+  'Guten Abend, {name}': 'Good evening, {name}',
+  '{n} im Zeitraum': '{n} in this period',
 } satisfies Catalog;

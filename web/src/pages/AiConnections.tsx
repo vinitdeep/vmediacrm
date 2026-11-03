@@ -213,7 +213,7 @@ function ConnectionForm({ preset, conn, meta, agency, onClose, onSaved }: { pres
             )}
           </div>
           {preset.wire === 'http' && (
-            <Field label="Webhook-Geheimnis (optional)" hint={`${conn?.webhook_secret_set ? 'Hinterlegt – leer lassen, um es zu behalten. ' : ''}Damit prüft HyperLevel die Signatur von Rückmeldungen des Anbieters (bei kie.ai der „webhookHmacKey“). Verschlüsselt gespeichert, nie wieder angezeigt.`}>
+            <Field label="Webhook-Geheimnis (optional)" hint={`${conn?.webhook_secret_set ? 'Hinterlegt – leer lassen, um es zu behalten. ' : ''}Damit prüft V Media CRM die Signatur von Rückmeldungen des Anbieters (bei kie.ai der „webhookHmacKey“). Verschlüsselt gespeichert, nie wieder angezeigt.`}>
               <Input type="password" autoComplete="off" value={f.webhook_secret} onChange={(v) => set({ webhook_secret: v })} />
             </Field>
           )}

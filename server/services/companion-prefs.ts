@@ -4,7 +4,7 @@ import { TRIGGER_IDS, type TriggerPriority } from './companion-triggers.js';
 import { VOICE_RE } from './voice-settings.js';
 
 /**
- * Fokus-Modus mit Companion: one person's choices per sub-account – which agent answers (the built-in HyperLevel Agent as
+ * Fokus-Modus mit Companion: one person's choices per sub-account – which agent answers (the built-in V Media CRM Agent as
  * "Jarvis" or one of their custom agents), its name and wake phrase, the shortcut, reading answers aloud, and the proactive
  * check-ins (interval or fixed times, quiet hours, weekdays only, only when something changed). Pure: validation, defaults and
  * the "is a check-in due now?" rule the scheduler in modules/companion.ts asks every minute. The wake word itself is switched on
@@ -93,7 +93,7 @@ export interface CheckinPrefs {
 }
 
 export interface CompanionPrefs {
-  /** null = the built-in HyperLevel Agent (shown as the persona "Jarvis"), else a custom agent's id */
+  /** null = the built-in V Media CRM Agent (shown as the persona "Jarvis"), else a custom agent's id */
   agent_id: string | null;
   /** '' = the default: "Jarvis" for the built-in agent, the custom agent's own name otherwise */
   name: string;

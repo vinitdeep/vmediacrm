@@ -1,6 +1,6 @@
 /**
  * Realtime for the canvas: Server-Sent Events per board (changes, presence, comments) and the
- * presence list (cursors of people and agents). In memory – one HyperLevel process serves a board;
+ * presence list (cursors of people and agents). In memory – one V Media CRM process serves a board;
  * clients catch up after a reconnect with `/changes?since=<seq>`.
  * A person's stream is re-checked every heartbeat: it ends (`bye`) when the login it was opened with is gone
  * (signed out, revoked, expired – services/stream-login.ts) or the person may no longer see the board.

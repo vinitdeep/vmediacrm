@@ -161,7 +161,7 @@ const steps = (): StepDef[] => [
           yield { records, cursor: pg.next ? { ci, page: pg.next } : ci + 1 < list.length ? { ci: ci + 1, page: 1 } : undefined, total: pg.total };
         }
       }
-      if (approx) ctx.warn('Fortschritt: Teachable nennt den Fortschritt in Prozent – HyperLevel zählt erledigte Lektionen; es wurden die ersten n Lektionen als erledigt markiert (Näherung).');
+      if (approx) ctx.warn('Fortschritt: Teachable nennt den Fortschritt in Prozent – V Media CRM zählt erledigte Lektionen; es wurden die ersten n Lektionen als erledigt markiert (Näherung).');
     },
   },
 ];

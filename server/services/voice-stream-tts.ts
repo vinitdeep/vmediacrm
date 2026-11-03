@@ -228,7 +228,7 @@ export const azureStream: TtsStreamer = async function* (ctx, req) {
   const ep = azureEndpoints(ctx.conn.baseUrl ?? '');
   const voice = req.voice || 'de-DE-KatjaNeural';
   const res = await ok(
-    await post(ctx, ep.tts, { ...headers, 'content-type': 'application/ssml+xml', 'x-microsoft-outputformat': 'raw-8khz-8bit-mono-mulaw', 'user-agent': 'HyperLevel' }, azureSsml(req.text, voice, req.speed, req.language), req.signal),
+    await post(ctx, ep.tts, { ...headers, 'content-type': 'application/ssml+xml', 'x-microsoft-outputformat': 'raw-8khz-8bit-mono-mulaw', 'user-agent': 'V Media CRM' }, azureSsml(req.text, voice, req.speed, req.language), req.signal),
     'Azure Speech',
     'azure_speech',
   );

@@ -2,7 +2,7 @@ import { speak, speakableText, stopSpeaking } from '../agent/voice';
 import { pickNativeVoice } from '../companion/voice-plan';
 
 /**
- * Voice for Fokus-Modus on top of the HyperLevel Agent's helpers (agent/voice.ts): answers are read with the sub-account's own
+ * Voice for Fokus-Modus on top of the V Media CRM Agent's helpers (agent/voice.ts): answers are read with the sub-account's own
  * voice when one is set up (server text to speech), otherwise with the browser's speechSynthesis in the UI language; speaking
  * uses the server's speech to text, otherwise the browser's own recognition where there is one. Everything degrades quietly –
  * no microphone, no voices, blocked autoplay: nothing happens and nothing throws.

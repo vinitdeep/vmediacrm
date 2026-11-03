@@ -40,7 +40,7 @@ export async function discordCall<T = any>(fetcher: FetchLike, botToken: string,
   try {
     r = await fetcher(`${DISCORD_API}${path}`, {
       method,
-      headers: { authorization: `Bot ${botToken}`, 'content-type': 'application/json', 'user-agent': 'DiscordBot (https://github.com, 1.0) HyperLevel' },
+      headers: { authorization: `Bot ${botToken}`, 'content-type': 'application/json', 'user-agent': 'DiscordBot (https://github.com, 1.0) V Media CRM' },
       body: body === undefined ? undefined : JSON.stringify(body),
       signal: AbortSignal.timeout(timeoutMs),
     });

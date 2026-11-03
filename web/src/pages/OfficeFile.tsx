@@ -12,7 +12,7 @@ import { Faces, KindIcon, SetupNote, kindOne, useOpenBy } from './OfficeParts';
 /**
  * One Office file: open it in the browser editor – to edit (with the edit lock, renewed while open and released on "Fertig") or
  * read-only –, versions with restore, comments with @mentions, links, and "Mit KI bearbeiten", which hands the request to the
- * HyperLevel Agent (its office tools save the result as a new version; confirmations happen in the agent panel).
+ * V Media CRM Agent (its office tools save the result as a new version; confirmations happen in the agent panel).
  */
 
 type Mode = 'closed' | 'edit' | 'read';
@@ -384,7 +384,7 @@ export function OfficeFile({ id }: { id: string }) {
         </div>
       </div>
       {!editorReady && <SetupNote status={s} />}
-      {mode === 'edit' && f.kind === 'pptx' && !s.engines.pptx && <p className="of-note small">{t('Zum Speichern im Editor „File → Export → PowerPoint Presentation (.pptx)“ (Menü des Editors) wählen – ohne Office-Engine kann HyperLevel das eigene Format des Editors nicht umwandeln.')}</p>}
+      {mode === 'edit' && f.kind === 'pptx' && !s.engines.pptx && <p className="of-note small">{t('Zum Speichern im Editor „File → Export → PowerPoint Presentation (.pptx)“ (Menü des Editors) wählen – ohne Office-Engine kann V Media CRM das eigene Format des Editors nicht umwandeln.')}</p>}
       <div className="of-body">
         <div className="of-main">
           {mode !== 'closed' && editorReady ? (

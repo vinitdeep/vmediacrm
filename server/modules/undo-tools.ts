@@ -6,8 +6,8 @@ import type { Tool } from './mcp.js';
 
 /**
  * Rückgängig for agents and phones (docs/undo.md):
- * - MCP tools `ghl_undo_list` (recent changes, filterable by who made them: a person, an API key, MCP, the HyperLevel Agent)
- *   and `ghl_undo` (restore one) – so an agent can roll back its own mistakes. The HyperLevel Agent picks them up like any tool.
+ * - MCP tools `ghl_undo_list` (recent changes, filterable by who made them: a person, an API key, MCP, the V Media CRM Agent)
+ *   and `ghl_undo` (restore one) – so an agent can roll back its own mistakes. The V Media CRM Agent picks them up like any tool.
  * - Mobile API `GET /api/mobile/undo/recent` and `POST /api/mobile/undo/:id` for an undo snackbar in the Android app.
  * Both go through the regular /api/undo routes, so rights, sub-account isolation and the audit log are the same.
  */
@@ -26,7 +26,7 @@ const TOOLS: Tool[] = [
     name: 'ghl_undo_list',
     title: 'Letzte Änderungen (Rückgängig)',
     description:
-      'Die letzten Änderungen eines Projekts, die sich rückgängig machen lassen – mit Wer (Person, API-Schlüssel, MCP, HyperLevel Agent), Was, Wann und vorher → nachher. actor: me (Standard: meine eigenen / die dieses Schlüssels), agent (HyperLevel Agent), api_key, mcp, agency_key, user (Personen), all (nur Admins/Agentur-Schlüssel sehen die Änderungen anderer). Gelöschtes mit Papierkorb: trash=true. Jeder Eintrag hat eine id für ghl_undo.',
+      'Die letzten Änderungen eines Projekts, die sich rückgängig machen lassen – mit Wer (Person, API-Schlüssel, MCP, V Media CRM Agent), Was, Wann und vorher → nachher. actor: me (Standard: meine eigenen / die dieses Schlüssels), agent (V Media CRM Agent), api_key, mcp, agency_key, user (Personen), all (nur Admins/Agentur-Schlüssel sehen die Änderungen anderer). Gelöschtes mit Papierkorb: trash=true. Jeder Eintrag hat eine id für ghl_undo.',
     inputSchema: obj(
       {
         ...LOC,

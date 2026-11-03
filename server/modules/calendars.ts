@@ -225,7 +225,7 @@ function icsFor(appt: any, cal: CalendarRow, locName: string) {
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//HyperLevel//DE',
+    'PRODID:-//V Media CRM//DE',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
     // The UID suffix is the project's first name; kept stable so calendars that imported it don't duplicate events.

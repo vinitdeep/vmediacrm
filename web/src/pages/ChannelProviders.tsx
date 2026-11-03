@@ -34,7 +34,7 @@ const WEBHOOK_HINT: Record<string, string> = {
   seven: 'seven.io → Entwickler → Webhooks: diese Adresse für „SMS-Status“ (dlr) und „Eingehende SMS“ (sms_mo).',
   bird: 'Bird → Developer → Webhooks: Abo für sms.outbound (Status) und sms.inbound mit dieser Adresse.',
   vonage: 'Vonage-Application → Messages: Inbound URL und Status URL = diese Adresse; „Signed webhooks“ mit dem Signature Secret.',
-  plivo: 'Plivo → Messaging → Applications: Message URL = diese Adresse (POST). Statusmeldungen schickt HyperLevel bei jeder SMS mit.',
+  plivo: 'Plivo → Messaging → Applications: Message URL = diese Adresse (POST). Statusmeldungen schickt V Media CRM bei jeder SMS mit.',
 };
 
 export function ProviderPanel({ kind, provider, onSaved }: { kind: 'mail' | 'sms'; provider: string; onSaved: (patch: Record<string, string>) => void }) {

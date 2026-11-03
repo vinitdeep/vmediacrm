@@ -3,7 +3,7 @@ import { MODEL_RE } from './ai-presets.js';
 
 /**
  * Voice settings per sub-account (defaults for text to speech and speech to text, the phone agent's engine,
- * defaults of the HyperLevel Agent panel, voicemail and call summaries) and per-user preferences of the panel.
+ * defaults of the V Media CRM Agent panel, voicemail and call summaries) and per-user preferences of the panel.
  * Which provider is used comes from the BYOK registry's routing ("Sprachausgabe" / "Transkription"); the
  * connection ids here are optional overrides per use.
  */
@@ -131,7 +131,7 @@ export function cleanVoiceSettings(b: any, cur: VoiceSettings): VoiceSettings {
   return out;
 }
 
-// --- per user (HyperLevel Agent panel) -------------------------------------------------------------------------------
+// --- per user (V Media CRM Agent panel) -------------------------------------------------------------------------------
 
 export interface VoiceUserPrefs {
   /** null = the sub-account's default. */

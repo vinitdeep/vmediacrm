@@ -14,7 +14,7 @@ export const SITES_TOURS: Tour[] = [
     practice: true,
     keywords: 'funnel website landingpage seite builder block seo domain vorlage impressum',
     learned: ['Einen Funnel oder eine Website aus einer Vorlage anlegen', 'Seiten wechseln und hinzufügen', 'Blöcke hinzufügen, sortieren und einstellen', 'SEO-Angaben und die eigene Domain'],
-    docs: { label: 'Eigene Domains', file: 'README', anchor: 'eigene-domains' },
+    docs: { label: 'Eigene Domains', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Funnels & Websites', route: 'funnels', target: 'page-head', text: 'Ein **Funnel** ist eine Abfolge von Seiten (z. B. Anmeldung → Danke). Eine **Website** hat Startseite, Impressum, Datenschutz – und einen Blog.' },
       { title: 'Deine Seiten', target: 'funnels-list', optional: true, text: 'Jede Karte zeigt Art, Seitenzahl, Aufrufe und – falls vorhanden – die eigene Domain.', missing: 'Noch keine Seiten – gleich legst du eine an.' },
@@ -90,7 +90,7 @@ export const SITES_TOURS: Tour[] = [
     routes: ['funnels'],
     keywords: 'blog beitrag artikel markdown seo rss veröffentlichen geplant',
     learned: ['Den Blog einer Website finden', 'Einen Beitrag anlegen (Entwurf, geplant, veröffentlicht)', 'Beiträge filtern und den Blog ansehen', 'Blog-Einstellungen'],
-    docs: { label: 'Blog & Kurse', file: 'README', anchor: 'blog--kurse' },
+    docs: { label: 'Blog & Kurse', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Der Blog hängt an einer Website', route: 'funnels', target: 'funnels-list', kind: 'click', optional: true, text: 'Jede **Website** hat ihren eigenen Blog unter /blog.', do: 'Öffne eine Website (Karte mit dem Globus).', missing: 'Lege zuerst eine Website an (Art „Website“) – Tour „Funnels & Websites“.' },
       { title: 'Reiter Blog', target: 'tab-blog', kind: 'click', text: 'Den Reiter gibt es nur bei Websites, nicht bei Funnels.', do: 'Klicke auf **Blog**.', missing: 'Das ist ein Funnel – Blogs gibt es nur bei Websites.' },
@@ -111,7 +111,7 @@ export const SITES_TOURS: Tour[] = [
     routes: ['funnels'],
     keywords: 'ab test variante conversion split test gewinner landingpage',
     learned: ['Einen A/B-Test für eine Seite anlegen', 'Ein Ziel wählen (Formular, Termin, Kauf, Zielseite)', 'Variante B bearbeiten und starten', 'Den Gewinner zur Live-Seite machen'],
-    docs: { label: 'A/B-Tests, Order-Bumps & Upsells', file: 'README', anchor: 'ab-tests-order-bumps--upsells' },
+    docs: { label: 'A/B-Tests, Order-Bumps & Upsells', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Seite öffnen', route: 'funnels', target: 'funnels-list', kind: 'click', optional: true, text: 'A/B-Tests laufen je Seite eines Funnels oder einer Website.', do: 'Öffne einen Funnel.', missing: 'Lege zuerst einen Funnel an – Tour „Funnels & Websites“.' },
       { title: 'Reiter A/B-Test', target: 'tab-ab', kind: 'click', text: 'Unter den Seiten gibt es die Reiter „Inhalt“ und „A/B-Test“. Ein ● zeigt einen laufenden Test.', do: 'Klicke auf **A/B-Test**.' },

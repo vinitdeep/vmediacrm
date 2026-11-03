@@ -16,7 +16,7 @@ export const JOURNEY: Tour[] = [
     minutes: 20,
     keywords: 'sicherheit 2fa passwort zugang übergabe',
     learned: ['Wo Zugangsdaten hingehören: in den Passwort-Manager, nie in Notizen oder Mails', 'Den eigenen Zugang mit 2FA und Backup-Codes absichern', 'Fremde Geräte abmelden', 'Zugänge, Admins und Schlüssel prüfen'],
-    docs: { label: 'Funktionen: Sicherheit', file: 'README', anchor: 'funktionen' },
+    docs: { label: 'Funktionen: Sicherheit', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Willkommen zur Übernahme', text: 'Dieser Guide führt dich in 14 Kapiteln durch alles, was du brauchst, um die Firma mit {brand} zu führen. Jedes Kapitel dauert 10–35 Minuten. Pausiere jederzeit mit ✕ – in der Akademie geht es genau hier weiter.' },
       { title: 'Grundregel für Zugangsdaten', text: 'Passwörter, API-Schlüssel und Tokens gehören in einen **Passwort-Manager** (z. B. 1Password oder Bitwarden) – nie in Notizen, E-Mails, Chats oder den Projekt-Steckbrief. {brand} zeigt gespeicherte Geheimnisse nie wieder an, nur „hinterlegt“.' },
@@ -42,7 +42,7 @@ export const JOURNEY: Tour[] = [
     minutes: 15,
     keywords: 'agentur projekte kunden wechsler strg k claude',
     learned: ['Alle Projekte und Kunden finden', 'Mit Projekt-Wechsler und Strg+K schnell springen', 'Wo die Claude-Sitzungen und Dokumente eines Projekts hängen', 'Projektübergreifende Listen nutzen'],
-    docs: { label: 'Als Agentur', file: 'README', anchor: 'als-agentur' },
+    docs: { label: 'Als Agentur', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Alle Projekte', route: 'agency/projects', target: 'agency-projects', admin: true, text: 'Jede Karte ist ein Projekt oder Kunde (Sub-Account) – mit Status, Website-Erreichbarkeit, offenen Deals, Aufgaben und Post. Ein Klick wechselt hinein.' },
       { title: 'Dein Projekt', route: 'project', target: 'page-head', perm: 'dashboard', text: 'Jedes Projekt hat einen Steckbrief: Was ist das, wie läuft es, wo liegt was.' },
@@ -67,7 +67,7 @@ export const JOURNEY: Tour[] = [
     minutes: 20,
     keywords: 'tagesroutine posteingang aufgaben termine pipeline tickets berichte dashboard morgen',
     learned: ['Die feste Reihenfolge der Morgenrunde', 'Ungelesene Nachrichten und verpasste Anrufe abarbeiten', 'Aufgaben und Termine im Blick behalten', 'Die Pipeline pflegen', 'Ein eigenes Dashboard unter Berichte nutzen'],
-    docs: { label: 'Funktionen im Überblick', file: 'README', anchor: 'funktionen' },
+    docs: { label: 'Funktionen im Überblick', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Die Morgenrunde', text: 'Jeden Morgen dieselbe Runde, ca. 15 Minuten: 1. Dashboard, 2. Posteingang, 3. verpasste Anrufe, 4. Aufgaben, 5. Termine, 6. Pipeline – und wenn ihr Kundenservice macht: 7. Tickets. Bei mehreren Projekten: zuerst die Agentur-Übersicht.' },
       { title: '1. Dashboard', route: 'dashboard', target: 'dashboard-stats', perm: 'dashboard', text: 'Ein Blick genügt: Neue Kontakte, Nachrichten, Termine, Umsatz. Ungewöhnliche Zahlen? Nachhaken.' },
@@ -97,7 +97,7 @@ export const JOURNEY: Tour[] = [
     practice: true,
     keywords: 'kontakte firmen objekte eigenschaften steckbrief website überwachung dokumente artefakte',
     learned: ['Einen Kunden finden und alles über ihn sehen', 'Tags und Notizen sinnvoll nutzen', 'Firmen, eigene Objekte und Eigenschaften', 'Den Projekt-Steckbrief aktuell halten', 'Website-Überwachung, Dokumente und Claude-Artefakte'],
-    docs: { label: 'Funktionen: Kontakte & Projekte', file: 'README', anchor: 'funktionen' },
+    docs: { label: 'Funktionen: Kontakte & Projekte', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Einen Kunden finden', route: 'contacts', target: 'contacts-search', kind: 'fill', perm: 'contacts', text: 'Name, E-Mail, Telefon oder Firma – die Suche findet alles.', do: 'Such einen Kunden, z. B. „Anna“.', demo: { fill: 'Anna' } },
       { title: 'Öffnen', target: 'contacts-table', kind: 'click', optional: true, perm: 'contacts', text: 'Ein Klick auf die Zeile öffnet den Kontakt-Steckbrief mit allen Daten und dem Verlauf.', do: 'Klicke auf einen Kontakt.', missing: 'Keine Treffer – leere das Suchfeld oder wechsle in die Übungs-Firma.' },
@@ -155,7 +155,7 @@ export const JOURNEY: Tour[] = [
     practice: true,
     keywords: 'website funnel blog ab test formular kalender buchung domain',
     learned: ['Welche Websites und Funnels es gibt und wie man sie bearbeitet', 'Wo Blog und A/B-Tests stecken', 'Formulare und Buchungsseiten', 'Wie Domains funktionieren'],
-    docs: { label: 'Blog & Kurse', file: 'README', anchor: 'blog--kurse' },
+    docs: { label: 'Blog & Kurse', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Alle Seiten', route: 'funnels', target: 'page-head', perm: 'funnels', text: 'Funnels (Abfolgen wie Anmeldung → Danke) und ganze Websites. Jede Karte zeigt Aufrufe und Domain.' },
       { title: 'Die Liste', target: 'funnels-list', optional: true, perm: 'funnels', text: 'Öffne jede Website einmal und klick auf „Live ↗“: Sieht alles richtig aus, stimmen Impressum und Datenschutz?', missing: 'Hier gibt es noch keine Seiten.' },
@@ -180,7 +180,7 @@ export const JOURNEY: Tour[] = [
     minutes: 15,
     keywords: 'kurs mitgliederbereich community gruppe moderation zugang',
     learned: ['Wie Kurse aufgebaut sind und wie Mitglieder Zugang bekommen', 'Den Mitgliederbereich (Login per E-Mail-Link)', 'Community-Gruppen und Moderation'],
-    docs: { label: 'Community', file: 'README', anchor: 'community' },
+    docs: { label: 'Community', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Kurse', route: 'courses', target: 'page-head', perm: 'courses', text: 'Kurse mit Modulen und Lektionen. Mitglieder lernen im Mitgliederbereich, ohne Passwort – sie bekommen einen Login-Link per E-Mail.' },
       { title: 'Kursliste', target: 'courses-list', optional: true, perm: 'courses', text: 'Status, Lektionen, Teilnehmer. Öffne einen Kurs, um Inhalt, Teilnehmer und Zugang zu sehen.', missing: 'Noch keine Kurse.' },
@@ -328,7 +328,7 @@ export const JOURNEY: Tour[] = [
     minutes: 20,
     keywords: 'betrieb backup protokoll server ressourcen website down störung update',
     learned: ['Backups herunterladen und sicher ablegen', 'Im Protokoll nachvollziehen, wer was geändert hat', 'Die wöchentliche Server-Routine', 'Der Notfallplan bei einer ausgefallenen Website'],
-    docs: { label: 'Backup', file: 'README', anchor: 'backup' },
+    docs: { label: 'Backup', file: 'README', anchor: 'deploy' },
     steps: [
       { title: 'Backups', route: 'settings/locations', target: 'backups', text: 'Täglich automatisch, die letzten 14 bleiben auf dem Server. Lade jetzt eins herunter und leg es an einen zweiten Ort – monatlich wiederholen.', do: 'Klicke auf **Jetzt herunterladen**.' },
       { title: 'Was im Backup ist', target: 'backups', text: 'Die komplette Datenbank (alle Sub-Accounts, Kontakte, Rechnungen …). Bilder und Uploads liegen zusätzlich im Datenordner des Servers – die sichert der Server-Anbieter mit.' },

@@ -49,7 +49,7 @@ describe('loading the template into an empty sub-account', () => {
   let result: any;
 
   it('lists the built-in template', async () => {
-    hq = (await t.api.post('/api/locations', { name: 'HyperLevel GmbH' })).data.id;
+    hq = (await t.api.post('/api/locations', { name: 'V Media CRM GmbH' })).data.id;
     const list = (await t.api.get(`/api/snapshot-templates?location_id=${hq}`)).data;
     const tpl = list.find((x: any) => x.id === 'saas-hq');
     expect(tpl).toMatchObject({ name: 'Software- & SaaS-Firma (HQ)', applied_at: null });

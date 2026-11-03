@@ -1,5 +1,5 @@
 import { use, useSyncExternalStore } from 'react';
-import { CATALOGS, LOCALES, SOURCE_LOCALE, type Catalog, type Locale, type Namespace, type PluralForms } from './registry';
+import { CATALOGS, FALLBACK_LOCALE, LOCALES, SOURCE_LOCALE, type Catalog, type Locale, type Namespace, type PluralForms } from './registry';
 
 /**
  * The language layer of the app – no library, about 1.5 KB gzip in the first download (docs/translating.md):
@@ -106,13 +106,13 @@ export function storedLocale(): Locale | null {
   }
 }
 
-/** First supported language in a list like navigator.languages / Accept-Language order; German when none matches. */
+/** First supported language in a list like navigator.languages / Accept-Language order; English when none matches. */
 export function pickLocale(tags: readonly string[] | undefined): Locale {
   for (const tag of tags ?? []) {
     const base = String(tag).trim().toLowerCase().split(/[-_]/)[0];
     if (isLocale(base)) return base;
   }
-  return SOURCE_LOCALE;
+  return FALLBACK_LOCALE;
 }
 const browserTags = (): readonly string[] => (typeof navigator === 'undefined' ? [] : navigator.languages?.length ? navigator.languages : [navigator.language]);
 /** What this browser asks for (the same list it sends as Accept-Language). */
@@ -201,7 +201,7 @@ export function serverText(message: string): string {
 // --- formatting ---------------------------------------------------------------------------------------------------
 /**
  * The Intl locale for numbers, dates and money: German stays de-DE (as before); another language takes the regional
- * variant the browser asks for (en-US, en-AU …) or its default (en-GB).
+ * variant the browser asks for (en-US, en-AU …) or its default (en-IN).
  */
 export function intlLocale(l: Locale = current): string {
   if (l === SOURCE_LOCALE) return LOCALES[l].intl;

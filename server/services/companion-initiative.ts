@@ -9,7 +9,7 @@ import type { InitiativeLevel } from './companion-prefs.js';
  * suggest from the briefing's next steps instead.
  *
  * Safety: a suggestion may carry a prepared draft (a reply, an e-mail, a task list, a social post) – it is only text stored with the
- * suggestion, nothing is written anywhere. Accepting hands the draft to the HyperLevel Agent as data with a fixed instruction built
+ * suggestion, nothing is written anywhere. Accepting hands the draft to the V Media CRM Agent as data with a fixed instruction built
  * here (never the model's free text as an instruction); sending still needs the agent's confirmation card – a spoken "ja" is not one.
  * A suggestion may only point at a record from the facts (`ref`), so the model cannot invent ids; numbers in what is spoken must come
  * from the facts (noInventedNumbers).
@@ -275,7 +275,7 @@ export function rulesSuggestions(o: { steps: { key: string; label: string; entit
 }
 
 /**
- * What the HyperLevel Agent gets when the person accepts: a fixed instruction per draft type, the draft as quoted data, the record as
+ * What the V Media CRM Agent gets when the person accepts: a fixed instruction per draft type, the draft as quoted data, the record as
  * the selected entity. The agent still asks before anything goes out. Pure.
  */
 export function acceptPrompt(s: Pick<Suggestion, 'draft_type' | 'draft' | 'title' | 'entity'>, lang: 'de' | 'en'): string {

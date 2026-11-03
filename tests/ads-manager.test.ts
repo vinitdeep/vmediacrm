@@ -303,7 +303,7 @@ describe('campaign builder: review, publish – paused by default', () => {
     expect(again.data.status).toBe('paused');
   });
 
-  it('publishes a Meta lead campaign with an instant form (created by HyperLevel) and a custom audience', async () => {
+  it('publishes a Meta lead campaign with an instant form (created by V Media CRM) and a custom audience', async () => {
     const form = await t.api.post('/api/ads/leadforms', { name: 'Probestunde', headline: 'Gratis testen', questions: ['FULL_NAME', 'EMAIL', 'PHONE', { type: 'CUSTOM', key: 'erfahrung', label: 'Deine Erfahrung?' }], privacy_url: 'https://example.org/datenschutz', thank_you: { title: 'Danke!', body: 'Wir melden uns.', url: 'https://example.org/danke' } });
     expect(form.status).toBe(200);
     const created = fake.reqs.filter((r) => r.path.endsWith('/leadgen_forms') && r.method === 'POST').at(-1)!;
@@ -883,7 +883,7 @@ describe('MCP tools: five tools, paused drafts, spending only by approval', () =
   });
 });
 
-describe('the HyperLevel Agent and the native app', () => {
+describe('the V Media CRM Agent and the native app', () => {
   it('the agent\'s tool call also ends in an approval (it is not a person)', async () => {
     const list = (await t.api.get('/api/ads/campaigns')).data.campaigns;
     const camp = list.find((x: any) => x.name === 'Agent paused');

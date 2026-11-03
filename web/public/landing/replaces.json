@@ -1,7 +1,7 @@
 {
  "as_of": "2026-10-10",
  "product": {
-  "name": "HyperLevel",
+  "name": "V Media CRM",
   "self_hosted": {
    "price_month": 0,
    "currency": "EUR"
@@ -1218,7 +1218,7 @@
      "currency": "USD",
      "billing": "jährlich abgerechnet, pro Kunde (monatliche Zahlung teurer, Preis nicht angezeigt)",
      "source": "https://agencyanalytics.com/pricing",
-     "note": "85+ Marketing-Integrationen (u. a. Google Analytics/Search Console) – mehr Datenquellen als HyperLevel"
+     "note": "85+ Marketing-Integrationen (u. a. Google Analytics/Search Console) – mehr Datenquellen als V Media CRM"
     },
     {
      "name": "DashThis",
@@ -1229,8 +1229,8 @@
      "source": "https://dashthis.com/pricing/"
     }
    ],
-   "row_note_de": "AgencyAnalytics und DashThis verbinden viele externe Datenquellen (GA4, Search Console, SEO, Social); HyperLevel berichtet nur über eigene Daten plus Meta/Google Ads.",
-   "row_note_en": "AgencyAnalytics and DashThis connect many external sources (GA4, Search Console, SEO, social); HyperLevel reports on its own data plus Meta/Google Ads.",
+   "row_note_de": "AgencyAnalytics und DashThis verbinden viele externe Datenquellen (GA4, Search Console, SEO, Social); V Media CRM berichtet nur über eigene Daten plus Meta/Google Ads.",
+   "row_note_en": "AgencyAnalytics and DashThis connect many external sources (GA4, Search Console, SEO, social); V Media CRM reports on its own data plus Meta/Google Ads.",
    "min_price": 20,
    "min_currency": "USD",
    "min_tool": "AgencyAnalytics",
@@ -1286,7 +1286,7 @@
      "currency": "USD",
      "billing": "Herstellerseite blockt Abruf (403); Drittquellen: einmalig 229 $ plus 179 $/Jahr – nicht übernommen",
      "source": "https://median.co/pricing",
-     "note": "Web-zu-App (Android/iOS) für Stores – geht über HyperLevel hinaus; nicht in Minimum/Spanne"
+     "note": "Web-zu-App (Android/iOS) für Stores – geht über V Media CRM hinaus; nicht in Minimum/Spanne"
     }
    ],
    "row_note_de": "Vergleich mit PWA-/App-Wrapper-Diensten; CRM-Apps der Wettbewerber sind meist im Preis enthalten und kein eigener Posten.",
@@ -1339,14 +1339,14 @@
    "combined_eur_estimate": 353.36
   },
   "notes": {
-   "de": "Summe = je Zeile das günstigste gelistete Tool (Einstiegsplan), getrennt nach Währung; Zeilen ohne Preis (MCP-Server) fehlen. Bei HyperLevel kommen Nutzungskosten beim eigenen Anbieter hinzu (SMS, E-Mail-Versand, KI-Tokens, Telefonminuten); manche Vergleichstools enthalten ein Kontingent (z. B. Textedly 500 SMS, fonio.ai 1.000 Minuten, Brevo 5.000 E-Mails), andere rechnen ebenfalls nach Verbrauch ab. Viele Tools rechnen pro Nutzer ab; die Summe gilt für 1 Nutzer bzw. die kleinste kaufbare Konfiguration. 'full_coverage_only' zählt nur Zeilen, die HyperLevel vollständig abdeckt. Preise ohne MwSt.",
-   "en": "Sum = cheapest listed tool (entry plan) per row, per currency; rows without a price (MCP server) are left out. With HyperLevel, usage costs at your own providers come on top (SMS, email sending, AI tokens, call minutes); some compared tools include an allowance (e.g. Textedly 500 SMS, fonio.ai 1,000 minutes, Brevo 5,000 emails), others also bill usage. Many tools charge per user; the sum is for 1 user or the smallest purchasable configuration. 'full_coverage_only' counts only rows HyperLevel fully covers. Prices exclude VAT."
+   "de": "Summe = je Zeile das günstigste gelistete Tool (Einstiegsplan), getrennt nach Währung; Zeilen ohne Preis (MCP-Server) fehlen. Bei V Media CRM kommen Nutzungskosten beim eigenen Anbieter hinzu (SMS, E-Mail-Versand, KI-Tokens, Telefonminuten); manche Vergleichstools enthalten ein Kontingent (z. B. Textedly 500 SMS, fonio.ai 1.000 Minuten, Brevo 5.000 E-Mails), andere rechnen ebenfalls nach Verbrauch ab. Viele Tools rechnen pro Nutzer ab; die Summe gilt für 1 Nutzer bzw. die kleinste kaufbare Konfiguration. 'full_coverage_only' zählt nur Zeilen, die V Media CRM vollständig abdeckt. Preise ohne MwSt.",
+   "en": "Sum = cheapest listed tool (entry plan) per row, per currency; rows without a price (MCP server) are left out. With V Media CRM, usage costs at your own providers come on top (SMS, email sending, AI tokens, call minutes); some compared tools include an allowance (e.g. Textedly 500 SMS, fonio.ai 1,000 minutes, Brevo 5,000 emails), others also bill usage. Many tools charge per user; the sum is for 1 user or the smallest purchasable configuration. 'full_coverage_only' counts only rows V Media CRM fully covers. Prices exclude VAT."
   },
   "fx_rate_usd_per_eur": 1.1206,
   "fx_date": "2026-10-09",
   "fx_source": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
   "fx_note": "ECB-Referenzkurs vom 2026-10-09 (Freitag; der 2026-10-10 ist ein Samstag, an dem die EZB keinen Kurs veröffentlicht): 1 EUR = 1,1206 USD. Die kombinierte EUR-Schätzung rechnet die USD-Summe mit diesem Kurs um. Preise ohne MwSt., wie vom Anbieter angezeigt.",
-  "corrections": "Checked against the code on 2026-10-10: Office row removed (module not released), ChatGPT/Claude removed from \"KI-Chat & Inhalte\" (HyperLevel uses an AI provider, it does not replace one; row partial and not in the total), MCP row: other vendors have MCP servers too."
+  "corrections": "Checked against the code on 2026-10-10: Office row removed (module not released), ChatGPT/Claude removed from \"KI-Chat & Inhalte\" (V Media CRM uses an AI provider, it does not replace one; row partial and not in the total), MCP row: other vendors have MCP servers too."
  },
  "unverified": [
   "Wix Light: Preisseite ist standortabhängig; Abruf zeigte 17,77 $/Monat inkl. GST (jährlich), US-Listenpreis 17 $ nur über Suche bestätigt; Monatszahlungspreis nicht öffentlich.",

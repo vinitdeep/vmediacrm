@@ -2,7 +2,7 @@ import type { App } from '../../core/app.js';
 import { CATALOG, type CogneeType } from './model.js';
 
 /**
- * What HyperLevel records become documents for the memory: one `KindDef` per kind of record. A kind knows
+ * What V Media CRM records become documents for the memory: one `KindDef` per kind of record. A kind knows
  *  - `next`: the records changed after a cursor (updated_at, id), oldest first – index-driven, every query filters on the sub-account;
  *  - `build`: the text sent to Cognee (null = not eligible any more);
  *  - `alive`: SQL that finds a record again by the mapping row `i` – an anti-join on it finds records that were deleted,
@@ -311,5 +311,5 @@ export const kindOf = (type: CogneeType, key: string) => KINDS.find((k) => k.typ
  * and two records never share one data item), then the body.
  */
 export function documentText(type: CogneeType, kind: string, recordId: string, b: Built): string {
-  return `HyperLevel · ${CATALOG[type].label} · ${kind}:${recordId}\n\n${b.body}`;
+  return `V Media CRM · ${CATALOG[type].label} · ${kind}:${recordId}\n\n${b.body}`;
 }

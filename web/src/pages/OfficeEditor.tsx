@@ -5,7 +5,7 @@ import { confirmAsk, toast, toastError } from '../ui';
 import { MIME, fetchBytes, postBytes, randomChannel, type OfficeDetail, type OfficeStatus } from './office-kit';
 
 /**
- * The browser editor of one file in a sandboxed iframe (/office/app/<kind>/, served by the server with a strict CSP) and HyperLevel's side
+ * The browser editor of one file in a sandboxed iframe (/office/app/<kind>/, served by the server with a strict CSP) and V Media CRM's side
  * of the load/save bridge (server/services/office-bridge-js.ts): when the editor reports "ready", the file's bytes go in (the PDF
  * editor fetches its signed link itself); a save inside the editor comes back as bytes and is stored as a new version; an export of
  * another kind (a PDF of a document) is downloaded and offered to be kept in Office too. Messages are only taken from this iframe and
@@ -109,7 +109,7 @@ export const OfficeEditor = forwardRef<EditorHandle, { file: OfficeDetail; statu
     const base = `/office/app/${file.kind}/`;
     return file.kind === 'pdf' && file.editor_file_url ? `${base}?file=${encodeURIComponent(file.editor_file_url)}#c=${channel}` : `${base}#c=${channel}`;
   }, [channel]); // eslint-disable-line react-hooks/exhaustive-deps
-  // strict (default): no allow-same-origin – the editor's code gets an opaque origin and cannot reach HyperLevel's API or cookies
+  // strict (default): no allow-same-origin – the editor's code gets an opaque origin and cannot reach V Media CRM's API or cookies
   const sandbox = status.sandbox === 'same-origin' ? 'allow-scripts allow-same-origin allow-downloads' : 'allow-scripts allow-downloads';
   return (
     <div className="of-editor">

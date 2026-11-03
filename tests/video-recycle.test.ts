@@ -304,7 +304,7 @@ describe('content recycling', () => {
     expect(JSON.parse(post.seo)).toMatchObject({ title: 'Wände streichen – Tipps', description: 'So gelingt es.' });
     expect(JSON.parse(post.tags)).toEqual(['Malerei', 'Tipps']);
 
-    // Newsletter: campaign draft with video, takeaways, the clips as permanent HyperLevel links and a footer.
+    // Newsletter: campaign draft with video, takeaways, the clips as permanent V Media CRM links and a footer.
     const nl = await item(job.id, 'newsletter');
     const camp = (await t.api.post(`/api/video-studio/recycle/${nl.id}/apply`, {})).data;
     expect(camp).toMatchObject({ status: 'applied', applied_label: 'Kampagnen-Entwurf' });
@@ -323,7 +323,7 @@ describe('content recycling', () => {
     expect(part.status).toBe(206);
     expect(await part.text()).toBe('CLIP');
     expect((await t.api.raw(clipLink.replace('http://localhost', '').replace(/\.([\w-]{24})\./, '.AAAAAAAAAAAAAAAAAAAAAAAA.'))).status).toBe(404);
-    // A copy on HyperLevel's disk: still there after OpenShorts deleted the job.
+    // A copy on V Media CRM's disk: still there after OpenShorts deleted the job.
     const videoCalls = osCalls.filter((x) => x.startsWith('GET /videos/')).length;
     await t.api.raw(clipLink.replace('http://localhost', ''));
     expect(osCalls.filter((x) => x.startsWith('GET /videos/')).length).toBe(videoCalls);
@@ -345,7 +345,7 @@ describe('content recycling', () => {
     expect(liPost.posts.map((p: any) => p.integration.id)).toEqual(['int-li']);
     expect(liPost.posts[0].value[0].content).toContain('kein Hexenwerk');
 
-    // Instagram carries the best clip as video – needs HyperLevel reachable by https for Postiz.
+    // Instagram carries the best clip as video – needs V Media CRM reachable by https for Postiz.
     const ig = await item(job.id, 'instagram');
     expect((await t.api.post(`/api/video-studio/recycle/${ig.id}/apply`, { integration_ids: ['int-ig'] })).data.error).toMatch(/https/);
     await withBase('https://gh.example.com', async () => {
@@ -364,7 +364,7 @@ describe('content recycling', () => {
     expect(task.result.titles).toHaveLength(10);
     expect(task.result.description).toBe('In diesem Video zeigen wir alles.\n\nKapitel:\n00:00 Intro\n00:31 Wandfarbe\n\n#malerei');
 
-    // Show notes become a project document (needs an https address of HyperLevel).
+    // Show notes become a project document (needs an https address of V Media CRM).
     const sn = await item(job.id, 'shownotes');
     expect((await t.api.post(`/api/video-studio/recycle/${sn.id}/apply`, {})).data.error).toMatch(/https/);
     await withBase('https://gh.example.com', async () => {

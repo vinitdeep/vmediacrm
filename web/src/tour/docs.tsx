@@ -46,7 +46,7 @@ export function Handbook() {
       </PageHead>
       <p className="muted no-print">Tipp: Im Druckdialog „Als PDF speichern“ wählen – dann hast du das Handbuch als Datei. Die Markdown-Fassung liegt im Code unter docs/handbuch.md.</p>
       <div className="card doc-card">
-        <Markdown text={handbookMarkdown(session.branding.name || 'HyperLevel')} />
+        <Markdown text={handbookMarkdown(session.branding.name || 'V Media CRM')} />
       </div>
     </div>
   );

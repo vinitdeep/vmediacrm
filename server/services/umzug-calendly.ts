@@ -256,7 +256,7 @@ async function describe(h: VendorHttp, parts: PartKey[]) {
   if (parts.includes('calendars')) await count('calendars', 'event_types', 'Termintypen', () => total('/event_types', { user: user.uri }));
   if (parts.includes('appointments')) {
     await count('appointments', 'events', 'Termine (vergangene und kommende, auch abgesagte)', () => total('/scheduled_events', { user: user.uri }));
-    warnings.push('Zu jedem Termin liest HyperLevel die Teilnehmer in einem eigenen Aufruf – bei vielen Terminen dauert das. Der Probelauf liest nur die ersten.');
+    warnings.push('Zu jedem Termin liest V Media CRM die Teilnehmer in einem eigenen Aufruf – bei vielen Terminen dauert das. Der Probelauf liest nur die ersten.');
     warnings.push('Es werden die Termintypen und Termine des Token-Inhabers gelesen. Für andere Teammitglieder den Umzug mit deren Token wiederholen.');
   }
   return { counts, fields: parts.includes('contacts') ? CONTACT_FIELDS : [], warnings };
@@ -269,13 +269,13 @@ export const CALENDLY: SourceDef = {
   credentials: [{ key: 'token', label: 'Persönlicher Zugangs-Token', secret: true, placeholder: 'eyJraWQi…', hint: 'Calendly → Integrationen → „API & Webhooks“ → „Persönliche Zugangs-Tokens“ → „Token erzeugen“' }],
   howto: [
     'Bei Calendly unter „Integrationen“ → „API & Webhooks“ → „Persönliche Zugangs-Tokens“ einen Token erzeugen und kopieren.',
-    'Den Token hier einfügen. HyperLevel liest nur und ändert bei Calendly nichts.',
+    'Den Token hier einfügen. V Media CRM liest nur und ändert bei Calendly nichts.',
     'Die Kalender kommen inaktiv an, ohne E-Mails und Erinnerungen: prüfe Zeiten und Texte, aktiviere sie und schalte danach die Calendly-Links um. Nach dem Umzug den Token bei Calendly löschen.',
   ],
   limits: [
     'Die Termine anderer Teammitglieder (jedes Mitglied hat eigene Termine – mit deren Token wiederholen) und Team-Zuweisungen',
     'Routing-Formulare, Workflows, E-Mail-Texte und Erinnerungen, Umfragen (Polls), Zahlungen über Calendly und eingebettete Buchungsseiten',
-    'Kalender-Verbindungen (Google, Outlook) – in HyperLevel neu verbinden; das Design der Buchungsseite',
+    'Kalender-Verbindungen (Google, Outlook) – in V Media CRM neu verbinden; das Design der Buchungsseite',
     'Calendly kennt keine Werbeeinwilligung: wer gebucht hat, ist im Einwilligungs-Nachweis „ohne Werbeeinwilligung“ vermerkt',
   ],
   parts: [

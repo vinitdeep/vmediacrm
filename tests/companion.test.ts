@@ -178,10 +178,10 @@ beforeEach(() => {
 });
 
 describe('settings per person and sub-account', () => {
-  it('starts as Jarvis with the HyperLevel Agent, saves choices and refuses foreign agents', async () => {
+  it('starts as Jarvis with the V Media CRM Agent, saves choices and refuses foreign agents', async () => {
     const r = await t.api.get('/api/companion/prefs');
     expect(r.status).toBe(200);
-    expect(r.data).toMatchObject({ name: 'Jarvis', wake_phrase: 'Hey Jarvis', agent: { id: null, name: 'HyperLevel Agent' }, prefs: { checkin: { mode: 'off', quiet_from: '20:00', quiet_to: '08:00', only_changed: true } } });
+    expect(r.data).toMatchObject({ name: 'Jarvis', wake_phrase: 'Hey Jarvis', agent: { id: null, name: 'V Media CRM Agent' }, prefs: { checkin: { mode: 'off', quiet_from: '20:00', quiet_to: '08:00', only_changed: true } } });
     expect((await t.api.put('/api/companion/prefs', { name: 'Friday', wake_phrase: '' })).data).toMatchObject({ name: 'Friday', wake_phrase: 'Hey Friday' });
     expect((await t.api.put('/api/companion/prefs', { checkin: { minutes: 1 } })).status).toBe(400);
     expect((await t.api.put('/api/companion/prefs', { agent_id: 'gibt-es-nicht' })).status).toBe(404);

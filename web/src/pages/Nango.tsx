@@ -45,7 +45,7 @@ function Logo({ src, name, size = 32 }: { src?: string; name: string; size?: num
   return <img className="cx-logo" src={src} alt="" width={size} height={size} loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken(true)} />;
 }
 
-/** „Verbinden“: HyperLevel starts a Nango connect session and sends the browser there – a redirect, no popup. */
+/** „Verbinden“: V Media CRM starts a Nango connect session and sends the browser there – a redirect, no popup. */
 async function connect(integration: string) {
   const r = await act(() => api.post<{ url: string; attempt_id: string }>('/api/nango/connect', { integration }));
   if (r?.url) location.href = r.url;
@@ -71,7 +71,7 @@ export function NangoAgencySetup() {
         Nango (eigene OAuth-Apps) <SignupLink id="nango" />
       </h2>
       <p className="muted small">
-        Hunderte APIs über <a href="https://nango.dev" target="_blank" rel="noopener">Nango</a> – Cloud oder selbst gehostet. Du legst je Anbieter einmal eine eigene OAuth-App im Nango-Dashboard an; danach klicken Sub-Accounts nur noch „Verbinden“. Nango steht unter der Elastic License 2.0 (quelloffen, nicht OSI); die kostenlose selbst gehostete Version kann Anmeldung + Proxy – genau das, was HyperLevel nutzt.
+        Hunderte APIs über <a href="https://nango.dev" target="_blank" rel="noopener">Nango</a> – Cloud oder selbst gehostet. Du legst je Anbieter einmal eine eigene OAuth-App im Nango-Dashboard an; danach klicken Sub-Accounts nur noch „Verbinden“. Nango steht unter der Elastic License 2.0 (quelloffen, nicht OSI); die kostenlose selbst gehostete Version kann Anmeldung + Proxy – genau das, was V Media CRM nutzt.
       </p>
       <Field label="Nango-Adresse" hint="Nango Cloud: https://api.nango.dev · selbst gehostet: die Server-Adresse (z. B. https://nango.example.com oder http://nango-server:3003 im selben Docker-Netz).">
         <Select value={cloud ? 'cloud' : 'self'} onChange={(x) => set({ base_url: x === 'cloud' ? 'https://api.nango.dev' : '' })} options={[['cloud', 'Nango Cloud'], ['self', 'Selbst gehostet']]} />
@@ -85,7 +85,7 @@ export function NangoAgencySetup() {
       </button>
       {more && (
         <>
-          <Field label="Webhook-Signaturschlüssel (optional)" hint={<>Nango Cloud/Enterprise: Environment Settings → Webhooks → Signing key. Webhook-URL in Nango: <code>{v.webhook_url}</code>. Ohne Webhooks (kostenlose selbst gehostete Version) gleicht HyperLevel beim Zurückkommen ab.</>}>
+          <Field label="Webhook-Signaturschlüssel (optional)" hint={<>Nango Cloud/Enterprise: Environment Settings → Webhooks → Signing key. Webhook-URL in Nango: <code>{v.webhook_url}</code>. Ohne Webhooks (kostenlose selbst gehostete Version) gleicht V Media CRM beim Zurückkommen ab.</>}>
             <Input type="password" value={f.webhook_key} onChange={(x) => set({ webhook_key: x })} autoComplete="off" placeholder={v.webhook_key_set ? '•••••••• gespeichert' : ''} />
           </Field>
           <Field label="Connect-UI-Adresse (optional)" hint="Nur nötig, wenn deine Nango-Version keinen connect_link liefert (selbst gehostet: NANGO_PUBLIC_CONNECT_URL, z. B. https://connect.nango.example.com).">
@@ -132,7 +132,7 @@ export function NangoAgencySetup() {
 
 // --- sub-account: Apps → Nango ------------------------------------------------------------------------------
 
-/** Pending connections: after returning from Nango (or when the tab becomes visible again) HyperLevel asks Nango once. */
+/** Pending connections: after returning from Nango (or when the tab becomes visible again) V Media CRM asks Nango once. */
 function usePendingSync(pending: Json[] | undefined, onDone: () => void) {
   useEffect(() => {
     if (!pending?.length) return;
@@ -246,7 +246,7 @@ function NangoCard({ i }: { i: Integration }) {
       <div className="cx-tk-foot">
         <code className="small">{i.key}</code>
         {!i.supported ? (
-          <span className="muted small" title="HyperLevel unterstützt Integrations-IDs mit Buchstaben, Ziffern und . _ - ~ @">ID nicht unterstützt</span>
+          <span className="muted small" title="V Media CRM unterstützt Integrations-IDs mit Buchstaben, Ziffern und . _ - ~ @">ID nicht unterstützt</span>
         ) : st && i.connection === 'active' ? (
           <Badge tone={st[1]}>{st[0]}</Badge>
         ) : (

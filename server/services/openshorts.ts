@@ -58,7 +58,7 @@ export function cleanBaseUrl(raw: unknown): string {
 }
 
 export async function osFetch(f: FetchLike, cfg: OsConfig, method: string, path: string, opts: OsRequest = {}): Promise<Response> {
-  const headers: Record<string, string> = { accept: 'application/json', 'user-agent': `HyperLevel-VideoStudio/${APP_VERSION}`, ...(opts.headers ?? {}) };
+  const headers: Record<string, string> = { accept: 'application/json', 'user-agent': `V Media CRM-VideoStudio/${APP_VERSION}`, ...(opts.headers ?? {}) };
   if (cfg.apiKey) headers.authorization = `Bearer ${cfg.apiKey}`;
   if (opts.elevenlabs && cfg.elevenlabsKey) headers['x-elevenlabs-key'] = cfg.elevenlabsKey;
   if (opts.fal && cfg.falKey) headers['x-fal-key'] = cfg.falKey;

@@ -43,7 +43,7 @@ function NewFieldModal({ field, initial, onSave, onClose }: { field: SourceField
       <p className="muted small">
         Das Feld „{field.label}“ aus der Quelle bekommt ein neues Kontaktfeld. Es wird beim Import angelegt – schon vorhandene Felder mit gleichem Namen werden wiederverwendet.
       </p>
-      <Field label="Bezeichnung in HyperLevel">
+      <Field label="Bezeichnung in V Media CRM">
         <Input value={label} onChange={setLabel} maxLength={100} autoFocus />
       </Field>
       <Field label="Art des Feldes">

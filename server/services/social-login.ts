@@ -102,7 +102,7 @@ export function identityFromClaims(id: SocialId, c: Record<string, any>, appleUs
 
 /** GitHub: account id and the verified primary e-mail from the API. */
 export async function githubIdentity(fetcher: Fetcher, accessToken: string): Promise<SocialIdentity> {
-  const headers = { authorization: `Bearer ${accessToken}`, accept: 'application/vnd.github+json', 'user-agent': 'HyperLevel-Login', 'x-github-api-version': '2022-11-28' };
+  const headers = { authorization: `Bearer ${accessToken}`, accept: 'application/vnd.github+json', 'user-agent': 'V Media CRM-Login', 'x-github-api-version': '2022-11-28' };
   const user = await fetchJson(fetcher, 'https://api.github.com/user', { headers });
   if (!user || (typeof user.id !== 'number' && typeof user.id !== 'string')) throw new Error('GitHub: Konto unlesbar');
   const emails = await fetchJson(fetcher, 'https://api.github.com/user/emails', { headers }).catch(() => []);

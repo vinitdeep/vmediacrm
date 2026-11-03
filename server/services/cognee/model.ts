@@ -87,7 +87,7 @@ export const CATALOG: Record<CogneeType, TypeInfo> = {
     personal: false,
     defaultOn: false,
     redactDefault: false,
-    description: 'Hinweise, die jemand ausdrücklich merken lässt (Tool „ghl_memory_remember“ oder die Oberfläche). Sie liegen auch in HyperLevel und lassen sich dort löschen.',
+    description: 'Hinweise, die jemand ausdrücklich merken lässt (Tool „ghl_memory_remember“ oder die Oberfläche). Sie liegen auch in V Media CRM und lassen sich dort löschen.',
   },
 };
 

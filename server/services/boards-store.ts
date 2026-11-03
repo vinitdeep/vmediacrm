@@ -57,10 +57,10 @@ const AGENT_VIA = new Set(['mcp', 'api_key', 'agency_key', 'agent']);
 export interface Actor {
   id: string | null;
   name: string;
-  /** What kind of caller: a person, the HyperLevel Agent, a key / MCP connection. */
+  /** What kind of caller: a person, the V Media CRM Agent, a key / MCP connection. */
   via: 'session' | 'agent' | 'mcp' | 'api_key' | 'agency_key' | 'app';
 }
-/** Who is acting: a person, the HyperLevel Agent on behalf of a person, or a key/MCP connection (named after the key). */
+/** Who is acting: a person, the V Media CRM Agent on behalf of a person, or a key/MCP connection (named after the key). */
 export function actorOf(app: App, ctx: Ctx): Actor {
   const via = (String(ctx.via ?? 'session') as Actor['via']) || 'session';
   if (AGENT_VIA.has(via) || (!ctx.user && ctx.viaApiKey)) {

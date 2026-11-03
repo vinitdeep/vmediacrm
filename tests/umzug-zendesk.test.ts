@@ -156,7 +156,7 @@ describe('Zendesk: re-run and undo', () => {
     expect({ t: h.count('tickets'), e: h.count('ticket_events'), a: h.count('kb_articles'), c: h.count('contacts') }).toEqual(before);
     expect(h.lines(again).tickets.updated).toBe(4);
   });
-  it('a reply written in HyperLevel since keeps that ticket on undo; everything else goes', async () => {
+  it('a reply written in V Media CRM since keeps that ticket on undo; everything else goes', async () => {
     const t = h.one("SELECT id FROM tickets WHERE location_id = ? AND subject = 'Passwort vergessen'");
     h.t.app.db.run("INSERT INTO ticket_events (id, location_id, ticket_id, type, body, user_id, data, created_at) VALUES ('evtest0000000000001', ?, ?, 'note', 'eigene Notiz', (SELECT id FROM users LIMIT 1), '{}', ?)", h.loc(), t.id, new Date().toISOString());
     const done = await h.undo(imported.id);

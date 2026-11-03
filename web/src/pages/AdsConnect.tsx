@@ -86,7 +86,7 @@ function MetaCard({ c, reload }: { c: any; reload: () => void }) {
         </>
       ) : (
         <p className="muted">
-          Melde dich mit deinem Facebook-Login an – HyperLevel legt Kampagnen in deinem Werbekonto an (pausiert) und liest die Zahlen. Das Passwort sieht HyperLevel nie.
+          Melde dich mit deinem Facebook-Login an – V Media CRM legt Kampagnen in deinem Werbekonto an (pausiert) und liest die Zahlen. Das Passwort sieht V Media CRM nie.
           {!c.agency.ready && <strong> Die Agentur muss zuerst die Meta-App hinterlegen (unten, „Agentur“).</strong>}
         </p>
       )}
@@ -182,7 +182,7 @@ function GoogleCard({ c, reload }: { c: any; reload: () => void }) {
         </>
       ) : (
         <p className="muted">
-          Melde dich mit dem Google-Konto an, das auf das Google-Ads-Konto zugreifen darf. HyperLevel nutzt dafür die Google-App und den Developer-Token der Agentur.
+          Melde dich mit dem Google-Konto an, das auf das Google-Ads-Konto zugreifen darf. V Media CRM nutzt dafür die Google-App und den Developer-Token der Agentur.
           {!c.agency.ready && (
             <strong>
               {' '}

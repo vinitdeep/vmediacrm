@@ -1,5 +1,5 @@
 /**
- * Pull a GoHighLevel sub-account into HyperLevel from the command line:
+ * Pull a GoHighLevel sub-account into V Media CRM from the command line:
  *
  *   GHL_TOKEN=pit-… npm run import:ghl -- [ghlLocationId] [targetLocationId]
  *
@@ -25,7 +25,7 @@ if (!ghlLoc) process.exit(0);
 const instance = createApp({ ...loadConfig(), tickMs: 0 }, MODULES);
 const loc = target ?? instance.app.db.get('SELECT id FROM locations ORDER BY created_at LIMIT 1')?.id;
 if (!loc) {
-  console.error('Kein Sub-Account in HyperLevel – erst einrichten (npm start, Browser öffnen).');
+  console.error('Kein Sub-Account in V Media CRM – erst einrichten (npm start, Browser öffnen).');
   process.exit(1);
 }
 const progress = await importFromGhl(instance.app, loc, client, ghlLoc, [...IMPORT_PARTS]);

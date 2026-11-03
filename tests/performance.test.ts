@@ -52,7 +52,7 @@ describe('static files', () => {
     t = await startTestApp();
     const web = t.app.config.webDir;
     mkdirSync(join(web, 'assets'), { recursive: true });
-    writeFileSync(join(web, 'index.html'), `<!doctype html><title>HyperLevel</title><script type="module" src="/assets/index-Ab12Cd34.js"></script>`);
+    writeFileSync(join(web, 'index.html'), `<!doctype html><title>V Media CRM</title><script type="module" src="/assets/index-Ab12Cd34.js"></script>`);
     writeFileSync(join(web, 'assets/index-Ab12Cd34.js'), js);
     writeFileSync(join(web, 'assets/index-Ab12Cd34.js.br'), brotliCompressSync(js));
     writeFileSync(join(web, 'assets/index-Ab12Cd34.js.gz'), gzipSync(js));

@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 
 /**
  * Composio (composio.dev) over its REST API v3.1 – plain fetch, no SDK. Every Composio HTTP call
- * HyperLevel makes lives in this file, plus the pure helpers for its webhooks (signature, payload
+ * V Media CRM makes lives in this file, plus the pure helpers for its webhooks (signature, payload
  * versions V1–V3). Tests swap the network for `app.services.composioFetch`.
  *
  * Based on Composio's published OpenAPI spec (Platform API v3.1, backend.composio.dev). Points that
@@ -13,7 +13,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 export const COMPOSIO_BASE = 'https://backend.composio.dev';
 const API = '/api/v3.1';
 
-/** Webhook events HyperLevel subscribes to (V3 payloads). */
+/** Webhook events V Media CRM subscribes to (V3 payloads). */
 export const WEBHOOK_EVENTS = ['composio.trigger.message', 'composio.connected_account.expired'];
 
 /** One Composio user per sub-account: connected accounts and triggers are owned by it. */
@@ -142,7 +142,7 @@ export function toolOut(t: any, full = false): ToolInfo {
   };
 }
 
-/** A thin client: one method per Composio endpoint HyperLevel uses. */
+/** A thin client: one method per Composio endpoint V Media CRM uses. */
 export function composioClient(o: ClientOptions) {
   const doFetch: FetchLike = o.fetch ?? ((u, i) => fetch(u, i));
   const base = (o.baseUrl ?? COMPOSIO_BASE).replace(/\/$/, '');
@@ -270,7 +270,7 @@ export function composioClient(o: ClientOptions) {
     async getTriggerType(slug: string) {
       return triggerTypeOut(await request('GET', `/triggers_types/${encodeURIComponent(slug)}`));
     },
-    /** POST /trigger_instances/{slug}/upsert → trigger id. `egressUrl` sends this trigger's events to HyperLevel even if the project webhook points elsewhere. */
+    /** POST /trigger_instances/{slug}/upsert → trigger id. `egressUrl` sends this trigger's events to V Media CRM even if the project webhook points elsewhere. */
     async upsertTrigger(slug: string, p: { userId: string; connectedAccountId: string; config: Record<string, unknown>; egressUrl?: string }): Promise<string> {
       const r = await request('POST', `/trigger_instances/${encodeURIComponent(slug)}/upsert`, {
         body: { user_id: p.userId, connected_account_id: p.connectedAccountId, trigger_config: p.config, ...(p.egressUrl ? { egress_url: p.egressUrl } : {}) },

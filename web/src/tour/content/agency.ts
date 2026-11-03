@@ -13,7 +13,7 @@ export const AGENCY_TOURS: Tour[] = [
     routes: ['agency/projects', 'agency/contacts', 'agency/deals', 'agency/tasks', 'agency/docs', 'agency'],
     keywords: 'agentur übersicht projekte alle kontakte deals aufgaben dokumente artefakte',
     learned: ['Alle Projekte auf einen Blick – mit Website-Status', 'Kontakte, Deals und Aufgaben über alle Projekte hinweg', 'Dokumente und Claude-Artefakte finden', 'Mit einem Klick in ein Projekt wechseln'],
-    docs: { label: 'Als Agentur', file: 'README', anchor: 'als-agentur' },
+    docs: { label: 'Als Agentur', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Alle Projekte', route: 'agency/projects', target: 'agency-projects', text: 'Jede Karte ist ein Projekt bzw. Kunde: Status, Website mit Erreichbarkeit, offene Deals, Aufgaben, Post. Ein Klick wechselt hinein.' },
       { title: 'Filtern', target: 'page-title', text: 'Archivierte Projekte sind ausgeblendet. Über den Status-Filter holst du sie zurück.' },
@@ -35,7 +35,7 @@ export const AGENCY_TOURS: Tour[] = [
     routes: ['agency/clients', 'agency/snapshots'],
     keywords: 'kunde neuer kunde snapshot vorlage startpaket kunden login',
     learned: ['Einen neuen Kunden mit Login anlegen', 'Was ein Snapshot enthält (und was nicht)', 'Snapshots erstellen, exportieren und anwenden'],
-    docs: { label: 'Als Agentur', file: 'README', anchor: 'als-agentur' },
+    docs: { label: 'Als Agentur', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Kunden', route: 'agency/clients', target: 'clients-list', text: 'Alle Sub-Accounts mit Kontakten, Websites und Logins. Von hier aus wechselst du hinein oder gibst dem Kunden sein eigenes Branding.' },
       { title: 'Neuer Kunde', target: 'clients-new', text: 'Name, Kontaktdaten, optional ein Snapshot als Startpaket und ein Login für den Kunden mit ausgewählten Bereichen.' },
@@ -102,7 +102,7 @@ export const AGENCY_TOURS: Tour[] = [
     routes: ['agency/branding', 'agency/domains'],
     keywords: 'white label branding logo farbe domain app domain dns a-record zertifikat',
     learned: ['Name, Logo, Farbe und Login-Texte der Agentur setzen', 'Eine eigene App-Domain einrichten', 'Wie Kunden-Domains online gehen (A-Record → HTTPS automatisch)'],
-    docs: { label: 'Eigene Domains', file: 'README', anchor: 'eigene-domains' },
+    docs: { label: 'Eigene Domains', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'White-Label', route: 'agency/branding', target: 'branding-form', text: 'So heißt die App für dich und deine Kunden: Name, Farbe, Logo, Favicon und die Texte der Login-Seite.' },
       { title: 'Logos und Favicon', target: 'branding-logos', text: 'Lade ein Logo hoch (PNG, SVG, WebP): ein helles und eins für dunkle Seitenleisten, dazu ein quadratisches Zeichen für die schmale Leiste. SVGs mit Skripten werden abgelehnt.' },

@@ -136,7 +136,7 @@ export const restHooksModule: Module = {
       const attempts = Number(d.attempts) + 1;
       const headers = {
         'content-type': 'application/json',
-        'user-agent': `HyperLevel-RestHooks/${APP_VERSION}`,
+        'user-agent': `V Media CRM-RestHooks/${APP_VERSION}`,
         'x-pghl-signature': signBody(openIfSealed(app, hook.secret), d.payload),
         'x-pghl-signature-256': hmacSignature(openIfSealed(app, hook.secret), d.payload),
         'x-pghl-event': d.event,

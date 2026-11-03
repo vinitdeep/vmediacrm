@@ -288,8 +288,8 @@ export default {
   'Neue Nachrichten, Aufgaben und Zahlungen melden sich auf diesem Gerät – auch bei geschlossener App. Auf dem App-Symbol zeigt eine Zahl, was ungelesen ist.':
     'New messages, tasks and payments show up on this device – even when the app is closed. A number on the app icon shows what is unread.',
   'Gerät neu verbinden': 'Reconnect the device',
-  'Mitteilungen sind erlaubt, aber dieses Gerät ist bei HyperLevel nicht (mehr) angemeldet – das passiert nach einem Update von iOS oder wenn du dich mit einem anderen Konto angemeldet hast.':
-    'Notifications are allowed, but this device is not (or no longer) registered with HyperLevel – that happens after an iOS update or when you signed in with another account.',
+  'Mitteilungen sind erlaubt, aber dieses Gerät ist bei V Media CRM nicht (mehr) angemeldet – das passiert nach einem Update von iOS oder wenn du dich mit einem anderen Konto angemeldet hast.':
+    'Notifications are allowed, but this device is not (or no longer) registered with V Media CRM – that happens after an iOS update or when you signed in with another account.',
   'Gerät verbinden': 'Connect device',
   'Mitteilungen sind an': 'Notifications are on',
   'Dieses Gerät bekommt Mitteilungen. Mit „Test senden“ siehst du, wie sie aussehen.': 'This device gets notifications. “Send a test” shows what they look like.',
@@ -306,13 +306,13 @@ export default {
   // iPhone & iPad (ios/IosAppCard.tsx, ios/install.ts)
   'als App geöffnet': 'opened as an app',
   'im Browser': 'in the browser',
-  'HyperLevel läuft hier als App vom Home-Bildschirm: eigenes Fenster, bleibt angemeldet, Mitteilungen möglich.': 'HyperLevel runs here as an app from the home screen: its own window, stays signed in, notifications possible.',
+  'V Media CRM läuft hier als App vom Home-Bildschirm: eigenes Fenster, bleibt angemeldet, Mitteilungen möglich.': 'V Media CRM runs here as an app from the home screen: its own window, stays signed in, notifications possible.',
   'Zahl auf dem App-Symbol: wird angezeigt, sobald Mitteilungen erlaubt sind.': 'Number on the app icon: shown as soon as notifications are allowed.',
   'Zahl auf dem App-Symbol: dieses iOS unterstützt sie nicht.': 'Number on the app icon: this iOS does not support it.',
   'iPad: Seitenleiste, Zwei-Spalten-Ansichten, Tastaturkürzel (⌘/) und Stift (Scribble) sind eingeschaltet.': 'iPad: sidebar, two-column views, keyboard shortcuts (⌘/) and pencil (Scribble) are on.',
   'Ziehe eine Seite oben nach unten, um sie neu zu laden.': 'Pull a page down from the top to reload it.',
-  'Mit einem Tipp auf den Home-Bildschirm wird HyperLevel zur App – mit Mitteilungen, Zahl auf dem Symbol und ohne Browserleisten.': 'One tap to the home screen turns HyperLevel into an app – with notifications, a number on the icon and no browser bars.',
-  'HyperLevel lässt sich auf iPhone und iPad als App installieren – ohne App Store, mit Mitteilungen und Zahl auf dem Symbol.': 'HyperLevel can be installed as an app on iPhone and iPad – without the App Store, with notifications and a number on the icon.',
+  'Mit einem Tipp auf den Home-Bildschirm wird V Media CRM zur App – mit Mitteilungen, Zahl auf dem Symbol und ohne Browserleisten.': 'One tap to the home screen turns V Media CRM into an app – with notifications, a number on the icon and no browser bars.',
+  'V Media CRM lässt sich auf iPhone und iPad als App installieren – ohne App Store, mit Mitteilungen und Zahl auf dem Symbol.': 'V Media CRM can be installed as an app on iPhone and iPad – without the App Store, with notifications and a number on the icon.',
   'Adresse zum Öffnen auf dem iPhone oder iPad (in Safari):': 'Address to open on the iPhone or iPad (in Safari):',
   'Anleitung mit Bild zeigen': 'Show illustrated instructions',
   'Öffne diese Seite in Safari (Link kopieren oder „In Safari öffnen“ im Menü dieser App).': 'Open this page in Safari (copy the link or “Open in Safari” in the menu of this app).',

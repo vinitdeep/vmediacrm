@@ -56,7 +56,7 @@ export function responsesBody(req: ChatRequest, skipEffort = false): Record<stri
     store: false,
     stream: true,
   };
-  if (req.tools.length) body.tools = [{ type: 'namespace', name: NAMESPACE, description: 'Werkzeuge des CRM HyperLevel', tools: req.tools.map((t) => ({ type: 'function', name: t.name, description: t.description.slice(0, 1024), parameters: t.inputSchema })) }];
+  if (req.tools.length) body.tools = [{ type: 'namespace', name: NAMESPACE, description: 'Werkzeuge des CRM V Media CRM', tools: req.tools.map((t) => ({ type: 'function', name: t.name, description: t.description.slice(0, 1024), parameters: t.inputSchema })) }];
   Object.assign(body, effortFields('responses', effortPlanOf(req, skipEffort)));
   return body;
 }

@@ -137,7 +137,7 @@ export const mailboxesModule: Module = {
       `,
     ],
     [
-      // Opt-in: mail sent from this mailbox in HyperLevel gets the open pixel and tracked links (off by default – 1:1 mail may need consent).
+      // Opt-in: mail sent from this mailbox in V Media CRM gets the open pixel and tracked links (off by default – 1:1 mail may need consent).
       '002-track-engagement',
       `ALTER TABLE mailboxes ADD COLUMN track_engagement INTEGER NOT NULL DEFAULT 0;`,
     ],
@@ -471,7 +471,7 @@ export const mailboxesModule: Module = {
           icon: 'email',
           scope: 'both',
           setup: { location: 'settings/messaging', agency: 'agency/integrations' },
-          description: 'Posteingang, Gesendet und Entwürfe über die offiziellen Gmail- und Microsoft-Graph-Schnittstellen, Antworten aus HyperLevel über das eigene Postfach, Archivieren und Labels in beide Richtungen.',
+          description: 'Posteingang, Gesendet und Entwürfe über die offiziellen Gmail- und Microsoft-Graph-Schnittstellen, Antworten aus V Media CRM über das eigene Postfach, Archivieren und Labels in beide Richtungen.',
           credentials: 'Google-/Microsoft-OAuth-App der Agentur (Agentur → Integrationen); verbinden unter Einstellungen → E-Mail & SMS → Postfach verbinden. Push optional über Pub/Sub bzw. Graph-Benachrichtigungen.',
           docs: 'docs/mailbox-sync.md',
         },

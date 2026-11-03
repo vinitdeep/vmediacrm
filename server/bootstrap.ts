@@ -15,6 +15,6 @@ export function bootstrapAdmin(app: App, env: NodeJS.ProcessEnv) {
     return;
   }
   app.db.insert('users', { id: id(), email, name: env.PGHL_ADMIN_NAME || email, password_hash: hashPassword(password), role: 'admin', locations: [], created_at: now() });
-  createLocation(app.db, env.PGHL_COMPANY_NAME || 'Meine Firma', env.PGHL_TIMEZONE || 'Europe/Berlin');
+  createLocation(app.db, env.PGHL_COMPANY_NAME || 'V Media Production', env.PGHL_TIMEZONE || 'Asia/Kolkata');
   console.log(`Admin ${email} angelegt.`);
 }

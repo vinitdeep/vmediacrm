@@ -8,7 +8,7 @@ import type { UiContext } from '../agent/context';
 import { currentRun, onRunStore, resetRun, toBackground, type RunController, type RunResult } from './tasks';
 
 /**
- * The HyperLevel Agent inside focus mode: what the person asked to be done goes to the companion's agent (POST /api/agent/chat with
+ * The V Media CRM Agent inside focus mode: what the person asked to be done goes to the companion's agent (POST /api/agent/chat with
  * source "focus" – the same agent, tools, rights, confirmation cards, audit log and undo as the side panel), and its streamed answer,
  * tool steps and confirmation card render in the focus result area. The run itself lives in companion/tasks.ts, so it goes on in the
  * background while the person asks something else or leaves focus mode. Voice never confirms: the card waits for a click on "Ausführen".

@@ -156,7 +156,7 @@ export const agentConnectModule: Module = {
       }
       return {
         openapi: '3.1.0',
-        info: { title: `HyperLevel – ${locationName}`.slice(0, 100), version: '1.0.0', description: 'CRM-Aktionen für einen Custom GPT: Kontakte, Deals, Aufgaben, Posteingang, Tickets, Berichte. Jede Aktion läuft mit den Rechten des Schlüssels und landet im Protokoll.' },
+        info: { title: `V Media CRM – ${locationName}`.slice(0, 100), version: '1.0.0', description: 'CRM-Aktionen für einen Custom GPT: Kontakte, Deals, Aufgaben, Posteingang, Tickets, Berichte. Jede Aktion läuft mit den Rechten des Schlüssels und landet im Protokoll.' },
         servers: [{ url: app.baseUrl() }],
         paths,
         components: { securitySchemes: { bearerAuth: { type: 'http', scheme: 'bearer' } }, schemas: {} },
@@ -221,7 +221,7 @@ export const agentConnectModule: Module = {
       const loc = bodyLocation(app, ctx, ctx.query.get('location'));
       const u = userOf(ctx);
       return {
-        default_agent: { id: null, name: 'HyperLevel Agent', emoji: '✨' },
+        default_agent: { id: null, name: 'V Media CRM Agent', emoji: '✨' },
         agents: app.services.agentDefs?.listFor(u, loc.id) ?? [],
         connection: (() => {
           const r = svc().resolveTarget(loc.id);

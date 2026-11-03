@@ -16,7 +16,7 @@ export const CALC_TOURS: Tour[] = [
     docs: { label: 'Gewinnrechner', file: 'gewinnrechner' },
     steps: [
       { title: 'Gewinnrechner', route: 'calc', target: 'nav-calc', text: 'Hier rechnest du, was bei einem Preis und einer Kundenzahl **nach allen Kosten, Gebühren und Steuern** übrig bleibt – bevor du etwas festlegst. Es ist eine Schätzung, keine Steuerberatung.' },
-      { title: 'Mit einer Vorlage starten', target: 'calc-presets', text: 'Sechs Vorlagen zeigen typische Modelle: HyperLevel Staffel, Standort-Modell, SaaS pro Nutzer, Agentur-Retainer, Kurs/Community und Handwerk. Alle Zahlen sind Beispiele – du ersetzt sie durch deine.' },
+      { title: 'Mit einer Vorlage starten', target: 'calc-presets', text: 'Sechs Vorlagen zeigen typische Modelle: V Media CRM Staffel, Standort-Modell, SaaS pro Nutzer, Agentur-Retainer, Kurs/Community und Handwerk. Alle Zahlen sind Beispiele – du ersetzt sie durch deine.' },
       { title: 'Preismodell', target: 'calc-pricing', optional: true, missing: 'Das Feld „Preismodell“ steckt in der Spalte „Eingaben“ – auf dem Handy über „Eingaben“ oben.', text: 'Pro Tarif: Grundpreis, inklusive Einheiten (Standorte, Plätze, Accounts), Stufenpreis je weitere Einheit und ein Deckel. Mehrere Tarife mit „Anteil der Kunden“ bilden Teamgrößen-Staffeln oder Agentur-Stufen ab.' },
       { title: 'Kunden', target: 'calc-customers', optional: true, text: 'Zahl der Kunden, Kündigungsquote, Anteil Geschäfts- und EU-Kunden und – genauer als ein Durchschnitt – die Verteilung der Standorte je Kunde. Das Wachstum füttert die Prognose.' },
       { title: 'Variable Kosten', target: 'calc-costs', optional: true, text: 'Zahlungsgebühren (Standard: Stripe 1,5 % + 0,25 €), Hosting, KI, E-Mail/SMS, Support-Zeit, Partner-Provision und App-Store-Gebühren. Sie steigen mit jedem Kunden.' },
@@ -29,7 +29,7 @@ export const CALC_TOURS: Tour[] = [
       { title: 'Was am meisten bewegt', target: 'calc-tornado', optional: true, text: 'Jeder Balken zeigt, wie sich der Nettogewinn pro Jahr ändert, wenn dieser eine Wert um 20 % kleiner oder größer wird. Oben stehen die Hebel mit der größten Wirkung.' },
       { title: 'Prognose', target: 'tab-projection', kind: 'click', do: 'Klicke auf **Prognose**.', text: 'Hier siehst du Kunden, laufenden Umsatz und Gewinn über 12, 24 und 36 Monate mit Neukunden und Kündigungen – und den Monat, ab dem das Geschäft insgesamt im Plus ist.' },
       { title: 'Szenarien speichern', target: 'calc-save', text: 'Speichere die Rechnung als Szenario, zum Beispiel „Standort-Modell, 300 Kunden“. Unter „Szenarien“ vergleichst du bis zu sechs nebeneinander; „CSV“ exportiert die Tabelle für Excel.' },
-      { title: 'Der Agent rechnet mit', target: 'calc-agent', optional: true, text: 'Der HyperLevel Agent und externe KI-Clients nutzen denselben Rechner: „Was bleibt bei 300 Kunden übrig?“ oder „Ab wie vielen Kunden bin ich im Plus?“ – mit Annahmen und dem Hinweis auf die Schätzung.' },
+      { title: 'Der Agent rechnet mit', target: 'calc-agent', optional: true, text: 'Der V Media CRM Agent und externe KI-Clients nutzen denselben Rechner: „Was bleibt bei 300 Kunden übrig?“ oder „Ab wie vielen Kunden bin ich im Plus?“ – mit Annahmen und dem Hinweis auf die Schätzung.' },
     ],
   },
 ];

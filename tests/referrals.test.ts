@@ -176,7 +176,7 @@ describe('referral links: API, redirect, MCP', () => {
     expect(cleared.data.total_clicks).toBe(0);
   });
 
-  it('marks maintainer defaults as HyperLevel partner links and lets the agency replace them', async () => {
+  it('marks maintainer defaults as V Media CRM partner links and lets the agency replace them', async () => {
     t.app.services.referralDefaults = { kie: 'https://kie.ai/?ref=maintainer', openai: 'http://not-https.example/' };
     try {
       const r = await t.api.get('/api/referrals');

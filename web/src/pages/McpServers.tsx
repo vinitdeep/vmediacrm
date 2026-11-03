@@ -61,8 +61,8 @@ export function McpServers({ agency = false }: { agency?: boolean }) {
         </div>
         <p className="muted small">
           {agency
-            ? 'Externe MCP-Server für alle oder ausgewählte Sub-Accounts: HyperLevel liest ihre Werkzeuge, du gibst einzelne frei – nutzbar in Workflows („MCP-Werkzeug ausführen“), im KI-Agenten und optional über HyperLevels eigenes /mcp für Claude & Codex.'
-            : 'Werkzeuge aus anderen MCP-Servern für diesen Sub-Account – eigene und die von der Agentur freigegebenen. Nur freigegebene Werkzeuge laufen; HyperLevel ruft sie serverseitig auf und behandelt Antworten als Daten.'}
+            ? 'Externe MCP-Server für alle oder ausgewählte Sub-Accounts: V Media CRM liest ihre Werkzeuge, du gibst einzelne frei – nutzbar in Workflows („MCP-Werkzeug ausführen“), im KI-Agenten und optional über V Media CRM eigenes /mcp für Claude & Codex.'
+            : 'Werkzeuge aus anderen MCP-Servern für diesen Sub-Account – eigene und die von der Agentur freigegebenen. Nur freigegebene Werkzeuge laufen; V Media CRM ruft sie serverseitig auf und behandelt Antworten als Daten.'}
         </p>
         {servers.length ? (
           <div className="cx-conns">
@@ -220,7 +220,7 @@ function ServerForm({ agency, base, initial, canInternal, locations, callbackUrl
               </Field>
             </div>
             <div className="grow">
-              <Field label="Token" hint={f.token_hint || 'Bei „Authorization“ setzt HyperLevel „Bearer “ davor. Verschlüsselt gespeichert, nie wieder angezeigt.'}>
+              <Field label="Token" hint={f.token_hint || 'Bei „Authorization“ setzt V Media CRM „Bearer “ davor. Verschlüsselt gespeichert, nie wieder angezeigt.'}>
                 <Input type="password" value={f.secret} onChange={(v) => set({ secret: v })} autoComplete="off" placeholder={f.secret_set ? `gespeichert ${f.secret_hint}` : ''} />
               </Field>
             </div>
@@ -234,7 +234,7 @@ function ServerForm({ agency, base, initial, canInternal, locations, callbackUrl
             <Field label="Scopes (optional)" hint="Leer = was der Server vorschlägt.">
               <Input value={f.oauth_scope ?? ''} onChange={(v) => set({ oauth_scope: v })} placeholder="z. B. read write" />
             </Field>
-            <p className="muted small">Die meisten Server registrieren HyperLevel automatisch (Dynamic Client Registration). Sonst eine eigene OAuth-App beim Anbieter anlegen – Rückleitungs-Adresse:</p>
+            <p className="muted small">Die meisten Server registrieren V Media CRM automatisch (Dynamic Client Registration). Sonst eine eigene OAuth-App beim Anbieter anlegen – Rückleitungs-Adresse:</p>
             <CodeBox text={callbackUrl} />
             <div className="row">
               <div className="grow">
@@ -263,7 +263,7 @@ function ServerForm({ agency, base, initial, canInternal, locations, callbackUrl
           </Field>
         )}
         <Check checked={!!f.expose_agent} onChange={(v) => set({ expose_agent: v })} label="Freigegebene Werkzeuge im KI-Agenten anbieten" />
-        <Check checked={!!f.expose_mcp} onChange={(v) => set({ expose_mcp: v })} label="Über HyperLevels /mcp an Claude, Codex & Co. weitergeben (als ext_…)" />
+        <Check checked={!!f.expose_mcp} onChange={(v) => set({ expose_mcp: v })} label="Über V Media CRM /mcp an Claude, Codex & Co. weitergeben (als ext_…)" />
         {canInternal && <Check checked={!!f.allow_private} onChange={(v) => set({ allow_private: v })} label={`Internes Netz erlauben (Server im LAN/Docker-Netz${f.self_hosted ? ' – bei selbst gehosteten Servern üblich' : ''}) – nur die Agentur`} />}
       </div>
     </Modal>
@@ -398,7 +398,7 @@ function ServerDetail({ agency, base, id, onClose, onEdit }: { agency: boolean; 
         {v.editable && (
           <div className="row" style={{ gap: 16, marginTop: 8 }}>
             <Check checked={v.expose_agent} onChange={async (x) => (await act(() => api.patch(`${base}/${id}`, { expose_agent: x }))) && s.reload()} label="Im KI-Agenten" />
-            <Check checked={v.expose_mcp} onChange={async (x) => (await act(() => api.patch(`${base}/${id}`, { expose_mcp: x }))) && s.reload()} label="Über HyperLevels /mcp (Claude, Codex)" />
+            <Check checked={v.expose_mcp} onChange={async (x) => (await act(() => api.patch(`${base}/${id}`, { expose_mcp: x }))) && s.reload()} label="Über V Media CRM /mcp (Claude, Codex)" />
           </div>
         )}
         {!agency && v.tools.some((t: Json) => t.enabled) && <TryTool server={v} />}

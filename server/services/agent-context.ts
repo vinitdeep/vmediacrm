@@ -1,7 +1,7 @@
 import type { Caller } from '../modules/mcp.js';
 
 /**
- * "Das hier" for the HyperLevel Agent (docs/agent.md#open-the-agent): which record an app route like `contacts/<id>` or
+ * "Das hier" for the V Media CRM Agent (docs/agent.md#open-the-agent): which record an app route like `contacts/<id>` or
  * `workflows/<id>` names, how to load it with the user's rights and how to label it. One table for the context chip
  * (GET /api/agent/context), the context line of every chat message and the `ui_context` tool – so asking the agent works the
  * same from every record page, also from the companion in focus mode (it sends the page it was opened from).

@@ -90,7 +90,7 @@ export const dunningBillingModule: Module = {
 
     const frame = (location: any, body: string, status = 200): RawResult => {
       const brand = location.settings?.branding ?? {};
-      const color = /^#[0-9a-f]{6}$/i.test(brand.color ?? '') ? brand.color : '#2563eb';
+      const color = /^#[0-9a-f]{6}$/i.test(brand.color ?? '') ? brand.color : '#c8191f';
       const name = brand.name || location.name;
       const logo = brand.logo_url || location.logo_url || '';
       const r = html(`<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Abo &amp; Rechnungen · ${escapeHtml(name)}</title>

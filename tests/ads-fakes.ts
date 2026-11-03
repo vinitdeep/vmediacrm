@@ -174,7 +174,7 @@ export function createAdsFake() {
       }
       if (m && method === 'GET') return json({ data: f.pageForms });
       m = /^(\d+)\/subscribed_apps$/.exec(path);
-      if (m && method === 'GET') return json({ data: [{ id: META_APP.app_id, name: 'HyperLevel', subscribed_fields: f.subscribedFields }] });
+      if (m && method === 'GET') return json({ data: [{ id: META_APP.app_id, name: 'V Media CRM', subscribed_fields: f.subscribedFields }] });
       if (m && method === 'POST') {
         if (!isPage) return json({ error: { message: 'Page access token required', code: 190 } }, 400);
         f.subscribedFields = String(body.subscribed_fields).split(',');

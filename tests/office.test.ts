@@ -62,8 +62,8 @@ describe('model and blank files', () => {
     expect(cleanCommands([{ command: 'insert.text', params: { text: 'Hallo' } }], 'docx')).toEqual([{ command: 'insert.text', params: { text: 'Hallo' } }]);
     expect(() => cleanCommands([{ command: 'insert.picture', params: { path: '/etc/passwd' } }], 'docx')).toThrow(/„path“ ist nicht erlaubt/);
     expect(() => cleanCommands([{ command: 'x.y', params: { nested: [{ imageUrl: 'http://x' }] } }], 'docx')).toThrow(/nicht erlaubt/);
-    expect(() => cleanCommands([{ command: 'file.save', params: {} }], 'docx')).toThrow(/übernimmt HyperLevel/);
-    expect(() => cleanCommands([{ command: 'doc_save', params: {} }], 'pdf')).toThrow(/übernimmt HyperLevel/);
+    expect(() => cleanCommands([{ command: 'file.save', params: {} }], 'docx')).toThrow(/übernimmt V Media CRM/);
+    expect(() => cleanCommands([{ command: 'doc_save', params: {} }], 'pdf')).toThrow(/übernimmt V Media CRM/);
     expect(cleanCommands([{ command: 'page_rotate', params: { pages: [1], degrees: 90 } }], 'pdf')).toHaveLength(1);
     expect(() => cleanCommands('x', 'docx')).toThrow('commands muss eine Liste sein');
     expect(writesToCommands([{ range: 'a1:b2', values: [[1, 'x'], [true, null]], sheet: 'Umsatz' }])).toEqual([

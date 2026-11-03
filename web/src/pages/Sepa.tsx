@@ -101,7 +101,7 @@ function PaperDialog({ onClose, onSaved }: { onClose: () => void; onSaved: (id: 
               <Select value={f.kind} onChange={set('kind')} options={[['RCUR', 'Wiederkehrende Zahlungen'], ['OOFF', 'Eine einmalige Zahlung']]} />
             </Field>
           </div>
-          <Field label="Mandatsreferenz (optional)" hint="Leer lassen: HyperLevel vergibt die nächste Nummer. Die Referenz auf dem Papier-Mandat muss genau so lauten.">
+          <Field label="Mandatsreferenz (optional)" hint="Leer lassen: V Media CRM vergibt die nächste Nummer. Die Referenz auf dem Papier-Mandat muss genau so lauten.">
             <Input value={f.reference} onChange={set('reference')} maxLength={35} spellCheck={false} />
           </Field>
           <Fold title="Anschrift des Kontoinhabers (außerhalb des EWR Pflicht)">
@@ -390,7 +390,7 @@ function SettingsTab({ onSaved }: { onSaved: () => void }) {
           <Select value={f.default_scheme} onChange={set('default_scheme')} options={[['CORE', 'Basislastschrift (CORE) – Verbraucher und Firmen'], ['B2B', 'Firmenlastschrift (B2B) – nur Firmen, kein Widerspruch']]} />
         </Field>
       </Panel>
-      <Panel title="Vorabankündigung" sub="Vor jedem Einzug erfährt der Kunde Betrag und Datum. Standard sind 14 Tage; kürzer (mindestens 1 Tag) nur, wenn es im Mandat steht – HyperLevel schreibt die Frist in den Mandatstext." tour="sepa-lead">
+      <Panel title="Vorabankündigung" sub="Vor jedem Einzug erfährt der Kunde Betrag und Datum. Standard sind 14 Tage; kürzer (mindestens 1 Tag) nur, wenn es im Mandat steht – V Media CRM schreibt die Frist in den Mandatstext." tour="sepa-lead">
         <Field label="Vorlauf in Tagen">
           <Input type="number" min={1} max={60} value={f.prenotify_days} onChange={set('prenotify_days')} />
         </Field>

@@ -2,7 +2,7 @@ import type { RWorkflow } from './umzug-core.js';
 import { clip, convertMergeTags } from './umzug-text.js';
 
 /**
- * Best-effort translation of other tools' automations into HyperLevel workflow drafts. Common triggers and
+ * Best-effort translation of other tools' automations into V Media CRM workflow drafts. Common triggers and
  * actions are mapped; everything else becomes a note step that carries the original JSON, so nothing is
  * lost silently. Branches (if/else, splits, goals) are not rebuilt: the steps are laid out in a row and
  * the draft says so. The writer always saves these as drafts labelled "bitte prüfen".
@@ -88,7 +88,7 @@ export function mapBlock(vendor: Vendor, b: Json, look: Lookup = {}): { steps: J
     const t = tagName();
     return t ? { steps: [{ type: 'remove_tag', tags: [t] }], warnings: [] } : fail('Tag-Name unbekannt');
   }
-  if (/^(updatefield|setfield|updatecontact|updatecustomfield)$/.test(kind)) return text(p.field) || text(p.fieldname) ? { steps: [{ type: 'update_field', field: text(p.field) || text(p.fieldname), value: text(p.value) }], warnings: ['Feldname aus der Quelle – bitte dem HyperLevel-Feld zuordnen'] } : fail('Feld unbekannt');
+  if (/^(updatefield|setfield|updatecontact|updatecustomfield)$/.test(kind)) return text(p.field) || text(p.fieldname) ? { steps: [{ type: 'update_field', field: text(p.field) || text(p.fieldname), value: text(p.value) }], warnings: ['Feldname aus der Quelle – bitte dem V Media CRM-Feld zuordnen'] } : fail('Feld unbekannt');
   if (/^(createtask|addtask|task)$/.test(kind)) return { steps: [{ type: 'create_task', title: text(p.title) || text(p.name) || 'Aufgabe', due_in_days: Number(p.days ?? 0) || 0 }], warnings: [] };
   if (/^(addnote|note)$/.test(kind)) return { steps: [{ type: 'add_note', body: text(p.note) || text(p.body) || text(p.text) || 'Notiz' }], warnings: [] };
   if (/^(notify|sendnotification|notifyteam|notification)$/.test(kind)) return { steps: [{ type: 'notify', subject: text(p.subject) || 'Benachrichtigung', body: text(p.body) || text(p.message) || '' }], warnings: [] };
@@ -116,7 +116,7 @@ export function mapAutomation(vendor: Vendor, input: { id: string | number; name
     warnings.push('Die Schritte dieser Automation hat die API nicht geliefert – nur Name und Status wurden übernommen');
     steps.push({ type: 'add_note', body: `Die Schritte der ${vendor === 'activecampaign' ? 'ActiveCampaign' : vendor === 'kit' ? 'Kit' : 'Keap'}-Automation „${clip(input.name, 80)}“ wurden nicht geliefert. Bitte hier nachbauen.` });
   }
-  if (blocks.some((b) => /(if|else|condition|split|goal|branch)/.test(norm(b.type ?? b.kind)))) warnings.push('Die Automation hatte Verzweigungen: HyperLevel-Entwurf läuft geradlinig, bitte prüfen');
+  if (blocks.some((b) => /(if|else|condition|split|goal|branch)/.test(norm(b.type ?? b.kind)))) warnings.push('Die Automation hatte Verzweigungen: V Media CRM-Entwurf läuft geradlinig, bitte prüfen');
   if (input.active === false) warnings.push('In der Quelle war die Automation inaktiv');
   return { kind: 'workflow', ext: `a:${input.id}`, name: clip(input.name, 160) || 'Automation', trigger: t.trigger, steps, warnings: [...new Set(warnings)] };
 }

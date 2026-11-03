@@ -192,7 +192,7 @@ export const KAJABI: SourceDef = {
     { key: 'client_secret', label: 'Client-Secret', secret: true },
   ],
   howto: ['In Kajabi: Einstellungen → „API“ bzw. „Entwickler“ → neuen API-Zugang erstellen (Client-ID und Client-Secret).', 'Beides hier eintragen. Der API-Zugang ist nicht in jedem Kajabi-Tarif enthalten – dann nimm die Export-Dateien (Kontakte, Käufe, Kursstruktur).', 'Kajabi liefert keine Lektionen und Videos über die API: Kurse werden angelegt, der Aufbau kommt aus der Kursstruktur-Datei.'],
-  limits: ['Lektionen, Videos und Dateien der Kurse (nicht über die API – dafür die Kursstruktur-Datei)','Community, Podcasts und Coaching-Produkte','Seiten, Funnels und E-Mail-Sequenzen','Laufende Abos bleiben beim Zahlungsanbieter (Stripe/PayPal) – neue Zahlungen musst du in HyperLevel einrichten'],
+  limits: ['Lektionen, Videos und Dateien der Kurse (nicht über die API – dafür die Kursstruktur-Datei)','Community, Podcasts und Coaching-Produkte','Seiten, Funnels und E-Mail-Sequenzen','Laufende Abos bleiben beim Zahlungsanbieter (Stripe/PayPal) – neue Zahlungen musst du in V Media CRM einrichten'],
   parts: [
     { key: 'contacts', label: 'Kontakte und Tags', on: true, note: 'Abgemeldete Kontakte bekommen „Nicht stören“.' },
     { key: 'products', label: 'Angebote → Produkte', on: true },

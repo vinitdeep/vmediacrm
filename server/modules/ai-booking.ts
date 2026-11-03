@@ -15,7 +15,7 @@ import { managePage } from '../services/teamcal-pages.js';
 /**
  * AI books appointments directly in chat (docs/booking.md#ai-books-appointments). The phone agent's booking logic
  * (services/ai-booking.ts) as shared tools: `ghl_booking_slots` (free times) and `ghl_book_appointment` (book a free slot and confirm
- * it in the contact's channel with links to reschedule and cancel) for the HyperLevel Agent – they run without confirmation at the
+ * it in the contact's channel with links to reschedule and cancel) for the V Media CRM Agent – they run without confirmation at the
  * agent's safety level "Termin buchen", also in auto-replies of every inbox channel – plus the website chat bot of the KI-Assistent
  * (hook `chatBotTurn`, switched on per sub-account). The page behind the reschedule link is `/book/move/<token>`.
  */
@@ -223,7 +223,7 @@ export const aiBookingModule: Module = {
     };
     // The KI-Assistent's website chat bot asks here for every turn (modules/ai-assistant.ts → botTurn).
     app.services.chatBotTurn = (o: Parameters<typeof chatTurn>[1]) => chatTurn(app, o);
-    // The HyperLevel Agent learns how to use the two tools when the sub-account released calendars for the AI.
+    // The V Media CRM Agent learns how to use the two tools when the sub-account released calendars for the AI.
     app.services.agentPromptExtras = [
       ...(app.services.agentPromptExtras ?? []),
       (i: { locationId: string }) =>

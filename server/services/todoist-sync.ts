@@ -22,7 +22,7 @@ import {
 } from './todoist.js';
 
 /**
- * Two-way sync between HyperLevel tasks and Todoist (agency level, one Todoist account).
+ * Two-way sync between V Media CRM tasks and Todoist (agency level, one Todoist account).
  *
  * - Layout `sections` (default, fits the free plan): ONE Todoist project (named `parent_name` or
  *   an existing one) with one section per sub-account. Layout `projects`: one project per
@@ -94,11 +94,11 @@ export interface TodoistState {
   limit_at?: string;
 }
 
-export const DEFAULT_CONFIG: TodoistConfig = { enabled: false, direction: 'both', scope: 'all', layout: 'sections', parent_name: 'HyperLevel', default_mode: 'auto', label: true };
+export const DEFAULT_CONFIG: TodoistConfig = { enabled: false, direction: 'both', scope: 'all', layout: 'sections', parent_name: 'V Media CRM', default_mode: 'auto', label: true };
 export const LABEL = 'ghp';
-const FOOTER = '↗ HyperLevel:';
+const FOOTER = '↗ V Media CRM:';
 /** Also strips the footer of older versions (written under the former product names GoHigh and GoHighPaul). */
-const FOOTER_RE = /\s*↗ (?:HyperLevel|GoHigh(?:Paul)?): \S+\s*$/u;
+const FOOTER_RE = /\s*↗ (?:V Media CRM|HyperLevel|GoHigh(?:Paul)?): \S+\s*$/u;
 /** Never delete more than this many Todoist tasks in one run when it is also more than half of all links. */
 const MASS_DELETE = 25;
 const LIMIT_RETRY_MS = 24 * 3600_000;
@@ -172,7 +172,7 @@ export interface Target {
 }
 
 export const homeId = (cfg: TodoistConfig, st: TodoistState) => cfg.home_project_id || st.parent_project_id || null;
-export const homeName = (cfg: TodoistConfig) => cfg.home_project_name || cfg.parent_name || 'HyperLevel';
+export const homeName = (cfg: TodoistConfig) => cfg.home_project_name || cfg.parent_name || 'V Media CRM';
 
 export function targets(app: App, cfg = getConfig(app), state = getState(app)): Target[] {
   const rows = new Map(app.db.all('SELECT * FROM todoist_projects').map((r) => [r.location_id, r]));
@@ -379,7 +379,7 @@ function applyPull(app: App, cfg: TodoistConfig, state: TodoistState, res: { ite
         if (remoteAt > localAt) {
           log(app, 'conflict', `„${local.title}“ in beiden Systemen geändert – Todoist ist neuer und gewinnt.`, { task_id: task.id, todoist_id: item.id });
         } else {
-          log(app, 'conflict', `„${local.title}“ in beiden Systemen geändert – HyperLevel ist neuer und gewinnt.`, { task_id: task.id, todoist_id: item.id });
+          log(app, 'conflict', `„${local.title}“ in beiden Systemen geändert – V Media CRM ist neuer und gewinnt.`, { task_id: task.id, todoist_id: item.id });
           // remember what Todoist has now; a cleared local hash makes the push send every field
           db.run('UPDATE todoist_links SET remote_hash = ?, synced_done = ?, local_hash = NULL, remote_updated_at = ?, project_id = ?, section_id = ? WHERE task_id = ?', hashFields(remote), remoteDone ? 1 : 0, item.updated_at ?? null, item.project_id, item.section_id ?? null, link.task_id);
           continue;

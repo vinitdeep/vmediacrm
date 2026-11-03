@@ -89,7 +89,7 @@ const LESSONS: Omit<Tour, 'group' | 'chapter' | 'next'>[] = [
       { title: 'Realistische Fristen', route: 'settings/helpdesk', target: 'page-title', text: 'Versprich nur, was du halten kannst. Allein gegründet? Dann lieber „erste Antwort innerhalb eines Werktags“ als eine Stunde, die du nicht schaffst.' },
       { title: 'Wissensdatenbank', route: 'help-center', target: 'nav-help-center', text: 'Die Vorlage legt vier Entwürfe an: Cloud vs. Self-Hosting, Preise, Umzug von HighLevel, DSGVO/AVV. Lies sie, passe sie an und veröffentliche sie.' },
       { title: 'Die goldene Regel', text: 'Jede Frage, die zweimal kommt, wird ein Hilfe-Artikel. So beantwortet die Wissensdatenbank mit der Zeit die Hälfte der Tickets für dich.' },
-      task('Passe die Fristen an, veröffentliche zwei der vier Hilfe-Artikel und schicke dir selbst ein Ticket über das Formular **Support**.', 'Öffne **Wissensdatenbank** und veröffentliche den Artikel „Was kostet HyperLevel?“.', { route: 'help-center' }),
+      task('Passe die Fristen an, veröffentliche zwei der vier Hilfe-Artikel und schicke dir selbst ein Ticket über das Formular **Support**.', 'Öffne **Wissensdatenbank** und veröffentliche den Artikel „Was kostet V Media CRM?“.', { route: 'help-center' }),
     ],
   },
   {
@@ -109,7 +109,7 @@ const LESSONS: Omit<Tour, 'group' | 'chapter' | 'next'>[] = [
       { title: 'Mahnwesen', route: 'dunning', target: 'nav-dunning', text: 'Freundliche Erinnerung, dann Mahnstufen – automatisch, aber mit deiner Freigabe für die letzte Stufe.' },
       { title: 'Buchhaltung light und DATEV', route: 'accounting', target: 'nav-accounting', text: 'Belege hochladen, Bankumsätze zuordnen, monatlich den DATEV-Export an die Steuerberatung. Die Buchhaltung bereitet vor – die Steuerberatung entscheidet.' },
       { title: 'Gewinnrechner', route: 'calc', target: 'nav-calc', text: 'Was bleibt bei 49,99 €, 99,99 € und 199 € nach USt, Gebühren, Kosten und Steuern? Lege ein Szenario mit deinen echten Zahlen an – eine Schätzung, keine Steuerberatung.' },
-      task('Schreib eine Test-Rechnung an dich selbst, aktiviere eine Mahnstufe und lege im Gewinnrechner ein Szenario mit deinen drei Tarifen an.', 'Öffne den **Gewinnrechner** und nimm die Vorlage „HyperLevel Staffel“ als Start.', { route: 'calc' }),
+      task('Schreib eine Test-Rechnung an dich selbst, aktiviere eine Mahnstufe und lege im Gewinnrechner ein Szenario mit deinen drei Tarifen an.', 'Öffne den **Gewinnrechner** und nimm die Vorlage „V Media CRM Staffel“ als Start.', { route: 'calc' }),
     ],
   },
   {

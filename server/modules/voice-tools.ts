@@ -1,7 +1,7 @@
 import type { Tool } from './mcp.js';
 
 /**
- * MCP tools of the voice layer ("Stimme"): the HyperLevel Agent, Claude and Codex can read and change the voice settings, list
+ * MCP tools of the voice layer ("Stimme"): the V Media CRM Agent, Claude and Codex can read and change the voice settings, list
  * voices, try one out and transcribe an audio file. Every tool is a thin relay onto the REST API (modules/voice.ts), so
  * permissions, validation and the audit log apply. Audio itself is never returned (too large for a model's context).
  */

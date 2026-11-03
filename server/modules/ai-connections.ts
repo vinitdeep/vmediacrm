@@ -356,7 +356,7 @@ export const aiConnectionsModule: Module = {
           for (let i = 0; i < chain.length; i++) {
             const cur = chain[i];
             try {
-              const out = await completeText(cur, input, fetchFor(cur), { baseUrl: app.baseUrl(), name: 'HyperLevel' });
+              const out = await completeText(cur, input, fetchFor(cur), { baseUrl: app.baseUrl(), name: 'V Media CRM' });
               recordUsage(cur.connectionId, locId, out.usage, out.costMicros);
               if (i > 0) console.info(`[ai-connections] Ersatzmodell hat geantwortet: ${targetLabel({ ...cur, model: out.model })} (statt ${targetLabel(target)})`);
               return out;
@@ -751,7 +751,7 @@ export const aiConnectionsModule: Module = {
               tools: [{ name: 'ping', description: 'Verbindungstest', inputSchema: { type: 'object', properties: { ok: { type: 'boolean' } }, required: ['ok'] } }],
               maxTokens: 300,
               timeoutMs: 45_000,
-              app: { baseUrl: app.baseUrl(), name: 'HyperLevel' },
+              app: { baseUrl: app.baseUrl(), name: 'V Media CRM' },
             },
             f,
           );

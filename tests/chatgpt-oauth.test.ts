@@ -26,12 +26,12 @@ describe('authorize URL and PKCE', () => {
 
   it('registers on the first sign-in with dynamic_agent_client and the app name hint', async () => {
     const p = newPkce();
-    const u = new URL(await buildAuthorizeUrl(ai.fetch, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'HyperLevel', pkce: p }));
+    const u = new URL(await buildAuthorizeUrl(ai.fetch, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'V Media CRM', pkce: p }));
     expect(`${u.origin}${u.pathname}`).toBe('https://auth.openai.com/api/accounts/authorize');
     const q = u.searchParams;
     expect(Object.fromEntries(q)).toMatchObject({
       client_id: 'dynamic_agent_client',
-      agent_name_hint: 'HyperLevel',
+      agent_name_hint: 'V Media CRM',
       ext_agent_host_id: 'urn:uuid:11111111-1111-4111-8111-111111111111',
       response_type: 'code',
       redirect_uri: 'http://127.0.0.1:1455/auth/callback',
@@ -49,7 +49,7 @@ describe('authorize URL and PKCE', () => {
   });
 
   it('re-authorizes with the issued client id, without the name hint, with a login hint and optional re-consent', async () => {
-    const u = new URL(await buildAuthorizeUrl(ai.fetch, { clientId: 'oaiapp_abc', hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'HyperLevel', pkce: newPkce(), loginHint: 'paula@example.com', reconsent: true }));
+    const u = new URL(await buildAuthorizeUrl(ai.fetch, { clientId: 'oaiapp_abc', hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'V Media CRM', pkce: newPkce(), loginHint: 'paula@example.com', reconsent: true }));
     expect(u.searchParams.get('client_id')).toBe('oaiapp_abc');
     expect(u.searchParams.has('agent_name_hint')).toBe(false);
     expect(u.searchParams.get('login_hint')).toBe('paula@example.com');
@@ -60,7 +60,7 @@ describe('authorize URL and PKCE', () => {
     const evil: typeof ai.fetch = async () => new Response(JSON.stringify({ issuer: 'https://auth.openai.com', authorization_endpoint: 'https://evil.example/authorize', token_endpoint: 'https://auth.openai.com/t', jwks_uri: 'https://auth.openai.com/j' }), { status: 200 });
     resetDiscovery();
     // discovery fails -> the documented authorize URL is used, never the foreign one
-    const u = await buildAuthorizeUrl(evil, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'HyperLevel', pkce: newPkce() });
+    const u = await buildAuthorizeUrl(evil, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'V Media CRM', pkce: newPkce() });
     expect(u.startsWith('https://auth.openai.com/api/accounts/authorize?')).toBe(true);
   });
 });
@@ -106,7 +106,7 @@ describe('the address the person pastes back', () => {
 describe('code exchange, refresh and revoke against the fake service', () => {
   it('walks the whole flow: PKCE is enforced, tokens and identity come back, the plan scope is checked', async () => {
     const p = newPkce();
-    const authorize = await buildAuthorizeUrl(ai.fetch, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'HyperLevel', pkce: p });
+    const authorize = await buildAuthorizeUrl(ai.fetch, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'V Media CRM', pkce: p });
     const pasted = ai.consent(authorize);
     const { code, clientId } = parseCallback(pasted, p.state);
     // a wrong verifier is refused by OpenAI's side
@@ -126,7 +126,7 @@ describe('code exchange, refresh and revoke against the fake service', () => {
 
   it('rotates the refresh token: the new one works, the old one is dead (reuse needs a new sign-in)', async () => {
     const p = newPkce();
-    const cb = parseCallback(ai.consent(await buildAuthorizeUrl(ai.fetch, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'HyperLevel', pkce: p })), p.state);
+    const cb = parseCallback(ai.consent(await buildAuthorizeUrl(ai.fetch, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'V Media CRM', pkce: p })), p.state);
     const first = (await exchangeCode(ai.fetch, { ...cb, verifier: p.verifier })).credentials;
     const second = await refreshCredentials(ai.fetch, cb.clientId, first);
     expect(second.refreshToken).not.toBe(first.refreshToken);
@@ -190,7 +190,7 @@ describe('ID token verification', () => {
 describe('model catalogue', () => {
   it('lists the models marked "list" in the order the server gives them', async () => {
     const p = newPkce();
-    const cb = parseCallback(ai.consent(await buildAuthorizeUrl(ai.fetch, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'HyperLevel', pkce: p })), p.state);
+    const cb = parseCallback(ai.consent(await buildAuthorizeUrl(ai.fetch, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'V Media CRM', pkce: p })), p.state);
     const { credentials } = await exchangeCode(ai.fetch, { ...cb, verifier: p.verifier });
     expect(await listPlanModels(ai.fetch, credentials.accessToken)).toEqual([
       { slug: 'gpt-6.1-sol', name: 'GPT-6.1 Sol' },
@@ -243,7 +243,7 @@ describe('Responses stream', () => {
   const login = async () => {
     // an access token the fake accepts
     const p = newPkce();
-    const cb = parseCallback(ai.consent(await buildAuthorizeUrl(ai.fetch, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'HyperLevel', pkce: p })), p.state);
+    const cb = parseCallback(ai.consent(await buildAuthorizeUrl(ai.fetch, { hostId: 'urn:uuid:11111111-1111-4111-8111-111111111111', appName: 'V Media CRM', pkce: p })), p.state);
     const { credentials } = await exchangeCode(ai.fetch, { ...cb, verifier: p.verifier });
     return (u: string, i: any = {}) => ai.fetch(u, { ...i, headers: { ...(i.headers ?? {}), authorization: `Bearer ${credentials.accessToken}` } });
   };

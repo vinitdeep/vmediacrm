@@ -184,7 +184,7 @@ export function VideoStudio({ path = [] }: { path?: string[] }) {
         <div className="card vs-setup-hint">
           <Icon name="studio" size={28} />
           <h2>Noch nicht verbunden</h2>
-          <p className="muted">Das Video-Studio schneidet über OpenShorts – selbst gehostet neben HyperLevel oder über openshorts.app.</p>
+          <p className="muted">Das Video-Studio schneidet über OpenShorts – selbst gehostet neben V Media CRM oder über openshorts.app.</p>
           {session.user.role === 'admin' ? (
             <button className="btn" onClick={() => navigate('agency/integrations/setup')}>
               OpenShorts verbinden
@@ -489,7 +489,7 @@ function ClipCard({ c, focus, studio, onEdit, onPlan, onChange }: { c: any; focu
     if (await act(() => api.del(`/api/video-studio/clips/${c.id}`), 'Entfernt')) onChange();
   };
   const busy = c.pending > 0;
-  // A still frame for newsletters (captured once in the browser, stored by HyperLevel).
+  // A still frame for newsletters (captured once in the browser, stored by V Media CRM).
   useEffect(() => {
     if (!c.thumb_url && !busy) captureThumb(c.id, mediaSrc(c.video_url, `&v=${encodeURIComponent(c.updated_at)}`));
   }, [c.id, c.thumb_url, busy]);
@@ -665,7 +665,7 @@ function PlanClip({ clip, studio, onClose, onDone }: { clip: any; studio: Studio
         <Empty>Der Social Planner ist noch nicht verbunden (Agentur → Integrationen → Postiz).</Empty>
       ) : (
         <>
-          {!studio.public_base && <p className="vs-warn">Postiz holt das Video bei HyperLevel ab – dafür muss HyperLevel öffentlich per https erreichbar sein (PGHL_BASE_URL).</p>}
+          {!studio.public_base && <p className="vs-warn">Postiz holt das Video bei V Media CRM ab – dafür muss V Media CRM öffentlich per https erreichbar sein (PGHL_BASE_URL).</p>}
           <Field label="Kanäle dieses Sub-Accounts">
             {channels.length ? (
               <div className="social-pick">
@@ -1076,7 +1076,7 @@ export function OpenShortsSetup() {
       <h2>
         <Icon name="studio" /> OpenShorts (Video-Studio)
       </h2>
-      <p className="muted small">Schneidet aus langen Videos Shorts mit Untertiteln. Selbst gehostet neben HyperLevel (Vorlage: deploy/openshorts/docker-compose.yml) oder die gehostete API von openshorts.app.</p>
+      <p className="muted small">Schneidet aus langen Videos Shorts mit Untertiteln. Selbst gehostet neben V Media CRM (Vorlage: deploy/openshorts/docker-compose.yml) oder die gehostete API von openshorts.app.</p>
       <Field label="Adresse" hint="Selbst gehostet: das Backend im Docker-Netz, z. B. http://openshorts:8000 · gehostet: https://api.openshorts.app">
         <Input value={url ?? v.url} onChange={setUrl} placeholder="http://openshorts:8000" />
       </Field>
@@ -1092,7 +1092,7 @@ export function OpenShortsSetup() {
       </Field>
       <details className="vs-details">
         <summary>Eigene Schlüssel für Vertonung und KI-Shorts (optional)</summary>
-        <p className="muted small">Gemini (bzw. LLM_BASE_URL) steht in der Umgebung von OpenShorts selbst. ElevenLabs und fal.ai nimmt OpenShorts nur pro Anfrage an – HyperLevel schickt sie verschlüsselt gespeichert mit. <SignupLink id="gemini" label="Gemini-Konto anlegen" /></p>
+        <p className="muted small">Gemini (bzw. LLM_BASE_URL) steht in der Umgebung von OpenShorts selbst. ElevenLabs und fal.ai nimmt OpenShorts nur pro Anfrage an – V Media CRM schickt sie verschlüsselt gespeichert mit. <SignupLink id="gemini" label="Gemini-Konto anlegen" /></p>
         <Field label="ElevenLabs-Schlüssel" hint={<>KI-Vertonung in andere Sprachen und Stimmen für KI-Shorts <SignupLink id="elevenlabs" /></>}>
           <div className="vs-inline">
             <Input type="password" value={eleven} onChange={setEleven} placeholder={v.elevenlabs_set ? `•••••••• ${v.elevenlabs_hint} (gespeichert)` : ''} autoComplete="off" />
@@ -1151,7 +1151,7 @@ export function OpenShortsSetup() {
                 ))}
               </div>
               <p className="muted small">
-                {v.webhooks ? 'Fertig-Meldungen kommen per signiertem Webhook; zusätzlich fragt HyperLevel regelmäßig nach.' : `HyperLevel ist unter ${v.base_url} nicht öffentlich erreichbar – Status kommt per Abfrage (alle 20 s), Postiz kann Clips erst mit https-Adresse abholen.`}
+                {v.webhooks ? 'Fertig-Meldungen kommen per signiertem Webhook; zusätzlich fragt V Media CRM regelmäßig nach.' : `V Media CRM ist unter ${v.base_url} nicht öffentlich erreichbar – Status kommt per Abfrage (alle 20 s), Postiz kann Clips erst mit https-Adresse abholen.`}
                 {i.retention_hours ? ` OpenShorts hebt Jobs ${hours(i.retention_hours)} auf (JOB_RETENTION_SECONDS).` : ''}
                 {!i.youtube_urls ? ' YouTube-Links sind in dieser Instanz abgeschaltet.' : ''}
               </p>

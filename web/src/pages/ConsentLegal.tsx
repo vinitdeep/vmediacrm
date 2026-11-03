@@ -177,7 +177,7 @@ export function LegalWizard() {
       <div className="card" data-tour="legal-services">
         <h2>Genutzte Dienste</h2>
         <p className="muted">
-          Die Datenschutzerklärung nennt nur, was du wirklich nutzt. Erkannt wird aus deinen Einstellungen und Daten; Dienste außerhalb von HyperLevel (z. B. ein Tool in deinem Website-Code, das nicht erkannt wurde) kannst du hier von Hand einschalten – oder Erkanntes abschalten.
+          Die Datenschutzerklärung nennt nur, was du wirklich nutzt. Erkannt wird aus deinen Einstellungen und Daten; Dienste außerhalb von V Media CRM (z. B. ein Tool in deinem Website-Code, das nicht erkannt wurde) kannst du hier von Hand einschalten – oder Erkanntes abschalten.
         </p>
         {!services.data ? (
           <Spinner />
@@ -220,7 +220,7 @@ export function LegalWizard() {
 
       <div className="card" data-tour="legal-external">
         <h2>Externe Textquelle (optional)</h2>
-        <p className="muted small">Platzhalter für Dienste wie eRecht24. Solange keine Schnittstelle eingerichtet ist, wird nichts abgerufen und die Vorlagen von HyperLevel werden verwendet.</p>
+        <p className="muted small">Platzhalter für Dienste wie eRecht24. Solange keine Schnittstelle eingerichtet ist, wird nichts abgerufen und die Vorlagen von V Media CRM werden verwendet.</p>
         <Check checked={p.external.enabled} onChange={(v) => set({ external: { ...p.external, enabled: v } })} label="Externe Quelle für Impressum und Datenschutz verwenden, sobald verfügbar" />
         {p.external.enabled && (
           <div className="grid2">

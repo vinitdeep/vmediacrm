@@ -13,7 +13,7 @@ import './agent.css';
 import { useT } from '../i18n';
 
 /**
- * The HyperLevel Agent on every page: a right drawer (full screen on phones and on demand), opened with
+ * The V Media CRM Agent on every page: a right drawer (full screen on phones and on demand), opened with
  * the sidebar/topbar button or Ctrl/Cmd+J. Streams answers (SSE), shows each tool call as a card
  * (expandable arguments/result, links to the records), asks for confirmation before changes, can be
  * stopped, keeps a history per user, switches agents and models, takes files (CSV import, images for
@@ -632,7 +632,7 @@ export function AgentPanel() {
             {agent?.emoji ?? '✨'}
           </span>
           <select className="agent-select" value={agentId ?? ''} onChange={(e) => pickAgent(e.target.value)} aria-label="Agent wählen" data-tour="agent-switch">
-            <option value="">{boot?.default_agent?.name ?? 'HyperLevel Agent'}</option>
+            <option value="">{boot?.default_agent?.name ?? 'V Media CRM Agent'}</option>
             {agents.map((a) => (
               <option key={a.id} value={a.id}>
                 {a.emoji} {a.name}
@@ -722,7 +722,7 @@ export function AgentPanel() {
             {!items.length && (
               <div className="agent-empty" data-tour="agent-starters">
                 <div className="agent-empty-avatar">{agent?.emoji ?? '✨'}</div>
-                <h3>{agent?.name ?? 'HyperLevel Agent'}</h3>
+                <h3>{agent?.name ?? 'V Media CRM Agent'}</h3>
                 <p className="muted small">{agent?.description}</p>
                 {noModel ? (
                   <div className="agent-notice">

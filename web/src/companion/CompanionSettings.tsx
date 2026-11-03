@@ -176,14 +176,14 @@ export function CompanionSettings({ onClose, initialTab = 'companion' }: { onClo
       />
       {tab === 'companion' && (
         <div className="cmp-set">
-          <Field label={t('Wer antwortet')} hint={t('Der Companion ist der HyperLevel Agent oder einer deiner KI-Agenten – mit seinen Werkzeugen, Rechten, Bestätigungen und dem Protokoll. Er entscheidet auch, wer Aufgaben aus dem Fokus-Modus erledigt.')}>
+          <Field label={t('Wer antwortet')} hint={t('Der Companion ist der V Media CRM Agent oder einer deiner KI-Agenten – mit seinen Werkzeugen, Rechten, Bestätigungen und dem Protokoll. Er entscheidet auch, wer Aufgaben aus dem Fokus-Modus erledigt.')}>
             <Select
               value={p.agent_id ?? ''}
               onChange={(v) => void save({ agent_id: v || null })}
-              options={[['', t('Jarvis – HyperLevel Agent (Standard)')], ...agents.map((a): [string, string] => [a.id, `${a.emoji} ${a.name}`])]}
+              options={[['', t('Jarvis – V Media CRM Agent (Standard)')], ...agents.map((a): [string, string] => [a.id, `${a.emoji} ${a.name}`])]}
             />
           </Field>
-          {c.agent_missing && <p className="cmp-warn">{t('Der gewählte Agent ist nicht mehr verfügbar – bis du einen anderen wählst, antwortet der HyperLevel Agent.')}</p>}
+          {c.agent_missing && <p className="cmp-warn">{t('Der gewählte Agent ist nicht mehr verfügbar – bis du einen anderen wählst, antwortet der V Media CRM Agent.')}</p>}
           <Field label={t('Name')} hint={t('So heißt dein Companion – und so weckst du ihn.')}>
             {/* i18n-ignore-next-line */}
             <input value={name} maxLength={40} placeholder={c.agent.id ? c.agent.name : 'Jarvis'} onChange={(e) => setName(e.target.value)} onBlur={() => name !== p.name && void save({ name })} />
@@ -203,7 +203,7 @@ export function CompanionSettings({ onClose, initialTab = 'companion' }: { onClo
               {bus.wakeError && <p className="cmp-warn">{t(bus.wakeError)}</p>}
               <p className="cmp-note">
                 {t(
-                  'Das Weckwort nutzt die Spracherkennung deines Browsers – nur auf diesem Gerät und nur, solange der Tab sichtbar ist. In Chrome und Edge geht der Ton dafür an den Browser-Hersteller (Google bzw. Microsoft), in Safari an Apple. HyperLevel bekommt nur den Text nach dem Weckwort; aufgenommen oder gespeichert wird nichts. Solange es zuhört, zeigt der Knopf am Rand ein grünes Ohr – ein Klick schaltet es aus.',
+                  'Das Weckwort nutzt die Spracherkennung deines Browsers – nur auf diesem Gerät und nur, solange der Tab sichtbar ist. In Chrome und Edge geht der Ton dafür an den Browser-Hersteller (Google bzw. Microsoft), in Safari an Apple. V Media CRM bekommt nur den Text nach dem Weckwort; aufgenommen oder gespeichert wird nichts. Solange es zuhört, zeigt der Knopf am Rand ein grünes Ohr – ein Klick schaltet es aus.',
                 )}
               </p>
             </>

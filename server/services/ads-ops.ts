@@ -288,7 +288,7 @@ export function cacheRemote(app: App, locationId: string, platform: Platform, c:
   );
 }
 
-/** Reads the campaigns of the connected ad account and keeps the local copy (and HyperLevel's own campaign status) in step. */
+/** Reads the campaigns of the connected ad account and keeps the local copy (and V Media CRM's own campaign status) in step. */
 export async function refreshRemote(app: App, locationId: string, platform: Platform): Promise<number> {
   const conn = loadConnection(app, locationId, platform);
   if (!connected(app, platform, conn)) throw bad(`${PLATFORM_LABEL[platform]} ist nicht verbunden`);
@@ -337,7 +337,7 @@ const nameOf = (app: App, locationId: string, platform: Platform, remoteId: stri
   app.db.get<{ name: string }>('SELECT name FROM ads_campaigns WHERE location_id = ? AND platform = ? AND remote_id = ?', locationId, platform, remoteId)?.name ??
   remoteId;
 
-/** The local record behind a platform campaign, if HyperLevel created it. */
+/** The local record behind a platform campaign, if V Media CRM created it. */
 export const localOf = (app: App, locationId: string, platform: Platform, remoteId: string): CampaignRow | undefined => {
   const row = app.db.get('SELECT * FROM ads_campaigns WHERE location_id = ? AND platform = ? AND remote_id = ?', locationId, platform, remoteId);
   return row ? (parseJson(row, ['spec', 'remote']) as CampaignRow) : undefined;
@@ -355,7 +355,7 @@ export async function applyStatus(app: App, ctx: Ctx | undefined, o: { locationI
       const api = meta.metaApi(fetcherOf(app), c.version, c.token);
       const st = o.status === 'active' ? 'ACTIVE' : 'PAUSED';
       await meta.setStatus(api, remoteId, st);
-      // What HyperLevel created below the campaign was created paused: switching on means switching on all three levels.
+      // What V Media CRM created below the campaign was created paused: switching on means switching on all three levels.
       if (o.status === 'active' && local?.remote.adset_id) await meta.setStatus(api, String(local.remote.adset_id), 'ACTIVE');
       if (o.status === 'active' && local?.remote.ad_id) await meta.setStatus(api, String(local.remote.ad_id), 'ACTIVE');
     } else {
@@ -460,7 +460,7 @@ async function execute(app: App, ctx: Ctx | undefined, a: SpendAction, actor?: s
 /**
  * Anything that can cost money – switching a campaign on, changing a budget:
  *  - a person in the web or native app has to confirm it (`confirm: true`, after seeing the summary);
- *  - API keys, MCP clients, the HyperLevel Agent and automations never execute it: they leave an approval
+ *  - API keys, MCP clients, the V Media CRM Agent and automations never execute it: they leave an approval
  *    that a person decides on under Anzeigen → Freigaben (or in the app).
  */
 export async function spend(app: App, ctx: Ctx, a: SpendAction, confirm: boolean): Promise<SpendResult> {

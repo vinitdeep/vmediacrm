@@ -7,7 +7,7 @@ import type { Tool } from './mcp.js';
 
 /**
  * Google-Lead-Formulare als Lead-Quelle – docs/ads-manager.md#google-lead-forms. Google Ads lead form assets deliver each lead to a
- * webhook URL with a key you choose ("google_key"). HyperLevel gives every sub-account its own URL and key; a lead becomes a
+ * webhook URL with a key you choose ("google_key"). V Media CRM gives every sub-account its own URL and key; a lead becomes a
  * contact (tagged, the form's answers as custom fields, attribution `google / cpc`) and fires the same trigger as Meta leads
  * („Neuer Lead aus Anzeige“, `ads.lead` with `platform: 'Google'`). Test leads from the Google Ads "Send test data" button are
  * imported with the tag `test-lead`. Only the hash of the key is stored; a lead id is imported once.

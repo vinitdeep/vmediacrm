@@ -77,7 +77,7 @@ describe('Docker packaging', () => {
         }
         expect(ok).toBe(true);
         const v = await (await fetch(`http://127.0.0.1:${port}/api/version`)).json();
-        expect(v).toMatchObject({ name: 'HyperLevel', version: JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version, setup_required: true });
+        expect(v).toMatchObject({ name: 'V Media CRM', version: JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version, setup_required: true });
         expect(execFileSync('docker', ['exec', name, 'cat', '/proc/1/status'], { encoding: 'utf8' })).toMatch(/^Uid:\s+1000\s/m);
         expect((await fetch(`http://127.0.0.1:${port}/THIRD_PARTY_LICENSES.txt`)).ok).toBe(true);
       } finally {

@@ -5,7 +5,7 @@ import { downsample, floatToPcm16, pcm16ToFloat, pcmBytes } from './pcm';
  * Echtzeit-Stimme (1.0.54): a pluggable realtime engine – audio in, audio out, both at once, the model's own turn-taking and barge-in.
  * The Gemini Live implementation talks to our server only (POST /api/companion/live/session → a one-time ticket → WebSocket
  * /ws/companion-live), which holds the sub-account's Gemini key and relays to Google; the key never reaches the browser. The model's
- * tool calls ("hyperlevel_agent") come back here and run through the same HyperLevel Agent path as everything in focus mode – with its
+ * tool calls ("hyperlevel_agent") come back here and run through the same V Media CRM Agent path as everything in focus mode – with its
  * rights and its confirmation card; the engine only reports back what happened (a write waits for the click, never for a "ja").
  * When the server cannot reach Gemini or there is no key, `onFallback` says why and the classic voice takes over.
  */
@@ -15,7 +15,7 @@ export type RealtimeState = 'connecting' | 'listening' | 'thinking' | 'speaking'
 export interface RealtimeHooks {
   onState: (s: RealtimeState) => void;
   onTranscript: (who: 'user' | 'model', text: string) => void;
-  /** the model hands a request to the HyperLevel Agent; resolve with what to tell it */
+  /** the model hands a request to the V Media CRM Agent; resolve with what to tell it */
   onTool: (request: string) => Promise<{ result: string; confirm: boolean }>;
   /** the person said goodbye / the session ended normally */
   onEnd: () => void;

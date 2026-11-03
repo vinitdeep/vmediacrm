@@ -6,22 +6,22 @@
    data-sidebar (full|rail) · data-density · data-font · data-icons
    ========================================================================================================== */
 
-/* Fallbacks until the theme CSS is there (first visit): the standard theme. */
+/* Fallbacks until the theme CSS is there (first visit): the default theme, V Media Studio. */
 :root {
   --on-brand: #fff;
   --brand-text: var(--brand);
-  --brand-hover: var(--brand);
+  --brand-hover: color-mix(in srgb, var(--brand) 86%, #000);
   --brand-ring: var(--brand);
   --brand-select: color-mix(in srgb, var(--brand) 24%, var(--panel));
-  --side-muted: #64748b;
-  --side-icon: #7c8aa5;
-  --side-hover: #1e293b;
-  --side-active: #263449;
-  --side-line: #1e293b;
-  --side-control: #1e293b;
-  --side-control-line: #334155;
-  --side-scroll: rgba(148, 163, 184, .16);
-  --side-scroll-hover: rgba(148, 163, 184, .38);
+  --side-muted: #8f8780;
+  --side-icon: #9b938c;
+  --side-hover: #1f1d1c;
+  --side-active: #2a2726;
+  --side-line: #211f1e;
+  --side-control: #171615;
+  --side-control-line: #34302e;
+  --side-scroll: rgba(216, 210, 203, .16);
+  --side-scroll-hover: rgba(216, 210, 203, .38);
   --fs: 14px;
   --fs-small: 12px;
   --dn-card: 16px; --dn-cell-y: 9px; --dn-cell-x: 12px; --dn-btn-y: 8px; --dn-btn-x: 14px; --dn-in-y: 8px; --dn-in-x: 10px; --dn-nav-y: 7px; --dn-field: 12px; --dn-head: 18px; --dn-page-y: 22px; --dn-page-x: 24px;
@@ -29,7 +29,7 @@
 
 /* ---- accent: selection, focus, primary buttons ---- */
 ::selection { background: var(--brand-select); }
-input:focus, select:focus, textarea:focus { outline-color: var(--brand-ring); }
+input:focus, select:focus, textarea:focus { outline-color: color-mix(in srgb, var(--brand-ring) 26%, transparent); border-color: var(--brand-ring); }
 :where(a, button, summary, [tabindex]):focus-visible { outline: 2px solid var(--brand-ring); outline-offset: 2px; }
 .btn:not(.secondary):not(.ghost):not(.danger):hover { background: var(--brand-hover); filter: none; }
 .btn.danger { color: #fff; }

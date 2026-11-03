@@ -431,7 +431,7 @@ describe('BYOK: the use „Funnel & Website AI“', () => {
   });
 });
 
-describe('MCP tool ghl_site_generate and the HyperLevel Agent', () => {
+describe('MCP tool ghl_site_generate and the V Media CRM Agent', () => {
   it('previews, and only creates a draft when asked', async () => {
     const key = (await t.api.post('/api/agency/api-keys', { name: 'Site AI' })).data.key;
     const rpc = async (method: string, params: unknown) => (await fetch(`${t.base}/mcp`, { method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) })).json();

@@ -1029,7 +1029,7 @@ function InvSettings() {
     <div className="card" style={{ maxWidth: 680 }} data-tour="inv-settings">
       <h2>Automatischer Warenausgang</h2>
       <p className="muted small">
-        Wenn eine Rechnung bezahlt (oder versendet) wird, bucht HyperLevel die Positionen aus dem Lager aus. Eine Position wird einem Artikel zugeordnet über die Artikelnummer im Text (z. B. „[KAFFEE-500]“), das verknüpfte Produkt oder den Artikelnamen. Bei Zweifeln wird nichts geraten – die Position bleibt unberührt. Jede Rechnung wird nur einmal ausgebucht.
+        Wenn eine Rechnung bezahlt (oder versendet) wird, bucht V Media CRM die Positionen aus dem Lager aus. Eine Position wird einem Artikel zugeordnet über die Artikelnummer im Text (z. B. „[KAFFEE-500]“), das verknüpfte Produkt oder den Artikelnamen. Bei Zweifeln wird nichts geraten – die Position bleibt unberührt. Jede Rechnung wird nur einmal ausgebucht.
       </p>
       <Field label="Ausbuchen, wenn die Rechnung …">
         <Select value={f.auto_issue_on} onChange={(v) => setF({ ...f, auto_issue_on: v })} options={[['paid', 'bezahlt ist'], ['sent', 'versendet wird'], ['off', 'nie (nur von Hand)']]} />

@@ -80,7 +80,7 @@ export const csatModule: Module = {
     const secret = app.config.secret;
     const colorOf = (loc: string) => {
       const l = app.location(loc);
-      return loadHelpdeskSettings(app, loc).help_center.color || l?.settings?.branding?.color || '#2563eb';
+      return loadHelpdeskSettings(app, loc).help_center.color || l?.settings?.branding?.color || '#c8191f';
     };
 
     // --- CSAT ------------------------------------------------------------------------------------

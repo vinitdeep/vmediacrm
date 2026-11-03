@@ -184,7 +184,7 @@ export const coursesModule: Module = {
       return {
         slug: row?.slug ?? '',
         settings: { title: '', welcome: '', color: '', logo_url: '', support_email: '', ...(row?.settings ?? {}) },
-        defaults: { title: `${brand.name || l.name} – Mitgliederbereich`, color: brand.color || '#2563eb', logo_url: brand.logo_url || l.logo_url || '', support_email: brand.support_email || l.email || '' },
+        defaults: { title: `${brand.name || l.name} – Mitgliederbereich`, color: brand.color || '#c8191f', logo_url: brand.logo_url || l.logo_url || '', support_email: brand.support_email || l.email || '' },
         url: portalUrl(app, loc),
       };
     };

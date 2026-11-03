@@ -6,7 +6,7 @@ import type { Caller, Tool } from './mcp.js';
 
 /**
  * MCP tools for the planner (projects, tasks with subtasks, status moves, time, timesheets, billing) – so the
- * HyperLevel Agent, Claude, ChatGPT and Codex can plan and track work. Every tool is a thin relay onto the REST API
+ * V Media CRM Agent, Claude, ChatGPT and Codex can plan and track work. Every tool is a thin relay onto the REST API
  * (rights, validation, audit log apply). "Projekt" here means a planning project inside a sub-account, not the
  * sub-account itself (that is `location_id`). Also registers the report sources "Zeiteinträge" and "Projekte".
  */

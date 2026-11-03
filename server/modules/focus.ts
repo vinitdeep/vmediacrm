@@ -12,14 +12,14 @@ import { PURPOSES } from './ai-assistant.js';
 import type { Tool } from './mcp.js';
 
 /**
- * Fokus-Modus: HyperLevel as a source of truth you simply ask. A question – typed, spoken, or from another agent over MCP – becomes an
+ * Fokus-Modus: V Media CRM as a source of truth you simply ask. A question – typed, spoken, or from another agent over MCP – becomes an
  * ephemeral view made of Living Boards widgets: a short spoken-style sentence plus tiles, each with its data and where that data
  * comes from. The model (KI-Assistent, purpose "focus") only picks widgets and settings in a strict schema; without a model, after
  * an invalid answer or over the hourly limit, German/English keyword rules do the same (services/focus-rules.ts). Every tile is
  * checked against the widget catalogue and read through the caller's own API routes, pinned to the caller's sub-account – so
  * nothing is invented and nothing is shown the caller could not open on its page. Read only: no route here writes CRM data (an AI
  * call is logged in ai_calls like every other). Asking for an action ("schick eine Mail …") gets a note and the offer to continue in
- * the HyperLevel Agent. Docs: docs/living-boards.md#fokus-modus.
+ * the V Media CRM Agent. Docs: docs/living-boards.md#fokus-modus.
  */
 
 /** AI questions per person and hour (like the board wishes); beyond that the rules answer. */
@@ -139,7 +139,7 @@ export const focusModule: Module = {
           const tz = app.location(ctx.locationId)?.timezone || 'Europe/Berlin';
           const types = focusTypes(reg);
           const prompt = focusPrompt({ today: ymdInTz(new Date(), tz), tz, person: ctx.user?.name ?? 'Unbekannt', lang: input.lang, catalogue: types.map((d) => reg.describe(d)), context: await viewerContext(ctx), history: input.history, request: input.text });
-          const system = FOCUS_SYSTEM.replace('{brand}', String(app.services.brandName?.() ?? 'HyperLevel')).replace('{lang}', input.lang === 'en' ? 'Englisch' : 'Deutsch');
+          const system = FOCUS_SYSTEM.replace('{brand}', String(app.services.brandName?.() ?? 'V Media CRM')).replace('{lang}', input.lang === 'en' ? 'Englisch' : 'Deutsch');
           const r = await app.services.aiRun({ locationId: ctx.locationId, purpose: 'focus', user: prompt, system: [{ text: system }], schema: focusSchema(types.map((d) => d.type)), maxTokens: 1500, timeoutMs: 45_000, userId: ctx.user?.id ?? null });
           const a = parseFocusAnswer(String(r?.text ?? ''));
           const checked = a ? validateTiles(a.tiles, reg, env, input.text, { fromModel: true }).tiles : [];

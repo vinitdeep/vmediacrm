@@ -89,7 +89,7 @@ html[data-spatial='1'] :is(.bd-iconbtn, .bd-mic, .bd-send, .bd-grip, .bd-resize,
 html[data-spatial='1'] :is(.bd-back, .bd-more, .bd-row, .bd-kcard) { display: inline-flex; align-items: center; }
 html[data-spatial='1'] .bd-row, html[data-spatial='1'] .bd-kcard { display: flex; }
 
-/* ---- HyperLevel Agent drawer ---- */
+/* ---- V Media CRM Agent drawer ---- */
 html[data-spatial='1'] .agent-panel { width: min(580px, 100vw); background: var(--sp-glass-strong); border-left: 1px solid var(--sp-edge); -webkit-backdrop-filter: blur(26px) saturate(1.25); backdrop-filter: blur(26px) saturate(1.25); }
 html[data-spatial='1'] .agent-panel.full { width: 100vw; }
 html[data-spatial='1'] .agent-model { min-height: var(--sp-hit); display: flex; align-items: center; }

@@ -283,7 +283,7 @@ export function PolicyTab() {
       <div className="card" data-tour="wk-trusted-keys">
         <h3>Signierte Plugins</h3>
         <p className="muted small">
-          Plugin-Pakete können mit Ed25519 signiert sein. Die Schlüssel von HyperLevel sind eingebaut; hier trägst du die öffentlichen Schlüssel weiterer Herausgeber ein, deren Pakete als „signiert“ gelten. Alles ohne gültige Signatur ist „ungeprüft“ und wird nur nach ausdrücklicher Bestätigung installiert. Installieren signierter Plugins ist eine Pro-Funktion <ProMark />.
+          Plugin-Pakete können mit Ed25519 signiert sein. Die Schlüssel von V Media CRM sind eingebaut; hier trägst du die öffentlichen Schlüssel weiterer Herausgeber ein, deren Pakete als „signiert“ gelten. Alles ohne gültige Signatur ist „ungeprüft“ und wird nur nach ausdrücklicher Bestätigung installiert. Installieren signierter Plugins ist eine Pro-Funktion <ProMark />.
         </p>
         {p.trusted_keys.map((k, i) => (
           <div className="row" key={k.id} style={{ alignItems: 'center' }}>

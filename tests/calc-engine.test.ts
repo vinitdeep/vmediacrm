@@ -706,7 +706,7 @@ describe('presets', () => {
     expect(presetInput('nope')).toBeNull();
   });
 
-  it('HyperLevel Staffel: Solo 49 €, Team 99 €, Firma 199 €, Agentur-Stufen 99/249/449 €, mix 50/35/10/5 %', () => {
+  it('V Media CRM Staffel: Solo 49 €, Team 99 €, Firma 199 €, Agentur-Stufen 99/249/449 €, mix 50/35/10/5 %', () => {
     const input = presetInput('gohigh-staffel')!;
     expect(input.pricing.plans.map((p) => [p.name, p.base_price])).toEqual([['Solo', 49], ['Team', 99], ['Firma', 199], ['Agentur Start', 99], ['Agentur Pro', 249], ['Agentur SaaS', 449]]);
     const mix = input.pricing.plans.map((p) => p.mix);
@@ -721,7 +721,7 @@ describe('presets', () => {
     expect(detailOf(input, 300).cell.customers).toBe(300);
   });
 
-  it('HyperLevel Standort-Modell: 49 € incl. 3 locations, +10 €, cap 499 €', () => {
+  it('V Media CRM Standort-Modell: 49 € incl. 3 locations, +10 €, cap 499 €', () => {
     const input = presetInput('gohigh-standort')!;
     expect(input.pricing.plans).toHaveLength(1);
     expect(input.pricing.plans[0]).toMatchObject({ base_price: 49, included_units: 3, unit_price: 10, cap: 499 });

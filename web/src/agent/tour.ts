@@ -1,6 +1,6 @@
 import type { Tour } from '../tour/types';
 
-/** Academy tours: the HyperLevel Agent (panel, confirmations, custom agents) and KI-Anbieter (BYOK). */
+/** Academy tours: the V Media CRM Agent (panel, confirmations, custom agents) and KI-Anbieter (BYOK). */
 export const AGENT_TOURS: Tour[] = [
   {
     id: 'agent',
@@ -44,9 +44,9 @@ export const AGENT_TOURS: Tour[] = [
       { title: 'KI-Anbieter', route: 'settings/ai-providers', target: 'aic-presets', text: 'Hier verbindest du jedes KI-Modell mit deinem eigenen Schlüssel – Text-Modelle für Agent und Assistent, Bild-, Video- und Audio-Anbieter für Medien.' },
       { title: 'Anbieter wählen', target: 'aic-presets', text: 'Klick auf einen Anbieter, trag den Schlüssel ein – fertig. Lokale Modelle (Ollama, LM Studio) und jeder OpenAI-kompatible Server gehen auch.' },
       { title: 'Verbunden', target: 'aic-list', optional: true, text: 'Deine Verbindungen mit Fähigkeiten, Standard-Modellen, Prüf-Status und Kosten dieses Monats. Schlüssel werden nie wieder angezeigt.' },
-      { title: 'Wofür welches Modell?', target: 'aic-routing', text: 'Lege fest, welche Verbindung der KI-Agent, schnelle KI-Texte, Zusammenfassungen, Bilder, Videos oder Sprache nutzen. Ohne Angabe nimmt HyperLevel die erste passende.' },
+      { title: 'Wofür welches Modell?', target: 'aic-routing', text: 'Lege fest, welche Verbindung der KI-Agent, schnelle KI-Texte, Zusammenfassungen, Bilder, Videos oder Sprache nutzen. Ohne Angabe nimmt V Media CRM die erste passende.' },
       { title: 'Denkstufe', target: 'aic-effort', text: 'Wie gründlich die Modelle nachdenken: ein Standard (maximal) und je Bereich eine eigene Stufe. Telefonagent und schnelle Texte dürfen niedriger sein; die Werkstatt fragt nie unter „hoch“ an.' },
-      { title: 'Modell frei wählbar', text: 'Die Modell-Liste lädt HyperLevel live vom Anbieter, wo es eine gibt. Du kannst aber immer jede Modell-ID selbst eintippen – auch ganz neue.' },
+      { title: 'Modell frei wählbar', text: 'Die Modell-Liste lädt V Media CRM live vom Anbieter, wo es eine gibt. Du kannst aber immer jede Modell-ID selbst eintippen – auch ganz neue.' },
     ],
   },
 ];

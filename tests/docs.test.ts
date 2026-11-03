@@ -137,7 +137,7 @@ describe('the repository documentation', () => {
 
   it('the READMEs name every importer of the Umzug assistant', () => {
     const labels = Object.values(SOURCE_LABELS).map((l) => l.replace(/\s*\(.*\)$/, ''));
-    for (const file of ['README.md', 'README.de.md']) {
+    for (const file of ['README.md']) {
       const row = read(file)
         .split('\n')
         .find((l) => /^\| (Switching over|Umzug) /.test(l));
@@ -148,13 +148,13 @@ describe('the repository documentation', () => {
 
   it('the numbers about the Akademie are real (chapters exactly, tours never more than exist)', () => {
     const claims = (file: string, re: RegExp) => [...read(file).matchAll(re)].map((m) => Number(m[1]));
-    for (const file of ['README.de.md', 'docs/academy.de.md', 'docs/handbuch.md']) for (const n of claims(file, /\b(\d+) Kapitel\b/g)) expect(n, `${file}: Kapitel`).toBe(JOURNEY.length);
-    for (const file of ['README.de.md', 'docs/academy.de.md']) for (const n of claims(file, /\b(\d+)\+? Modul-Touren\b/g)) expect(n, `${file}: Modul-Touren`).toBeLessThanOrEqual(MODULE_TOURS.length);
+    for (const file of ['docs/academy.de.md', 'docs/handbuch.md']) for (const n of claims(file, /\b(\d+) Kapitel\b/g)) expect(n, `${file}: Kapitel`).toBe(JOURNEY.length);
+    for (const file of ['docs/academy.de.md']) for (const n of claims(file, /\b(\d+)\+? Modul-Touren\b/g)) expect(n, `${file}: Modul-Touren`).toBeLessThanOrEqual(MODULE_TOURS.length);
   });
 
   it('the appearance and Android numbers are real', () => {
     const widgets = readdirSync(join(ROOT, 'android/app/src/main/res/xml')).filter((f) => /appwidget-provider/.test(readFileSync(join(ROOT, 'android/app/src/main/res/xml', f), 'utf8'))).length;
-    for (const file of ['README.md', 'README.de.md']) {
+    for (const file of ['README.md']) {
       for (const m of read(file).matchAll(/\b(\d+) (?:themes|Themes)\b/g)) expect(Number(m[1]), `${file}: themes`).toBeLessThanOrEqual(THEME_IDS.length);
       for (const m of read(file).matchAll(/\b(\d+) (?:home-screen widgets|Home-Screen-Widgets|widgets)\b/gi)) expect(Number(m[1]), `${file}: widgets`).toBeLessThanOrEqual(widgets);
     }
@@ -169,7 +169,7 @@ describe('what the running app has, against what the docs say', () => {
   });
   afterAll(() => t.close());
 
-  const allDocs = () => [...markdownFiles().filter((f: string) => /^docs\/[^/]+\.md$/.test(f)), 'README.md', 'README.de.md'].map(read).join('\n');
+  const allDocs = () => [...markdownFiles().filter((f: string) => /^docs\/[^/]+\.md$/.test(f)), 'README.md'].map(read).join('\n');
 
   it('the MCP tool count in the READMEs, docs/ai-tools.md and package.json is real', async () => {
     const key = (await t.api.post('/api/agency/api-keys', { name: 'docs', scope: 'read' })).data.key;
@@ -179,14 +179,13 @@ describe('what the running app has, against what the docs say', () => {
     const claimed = (text: string) => [...text.matchAll(/\b(\d{2,4})\+? (?:MCP[- ])?(?:tools|Werkzeuge[n]?)\b/g)].map((m) => Number(m[1]));
     const claims = [
       ...claimed(read('README.md')),
-      ...claimed(read('README.de.md')),
       ...claimed(read('docs/ai-tools.md')),
       ...claimed(JSON.parse(read('package.json')).description),
     ];
     expect(claims.length, 'the READMEs say how many MCP tools there are').toBeGreaterThan(3);
     for (const n of claims) expect(n, 'a number the docs promise').toBeLessThanOrEqual(tools.length);
     // …and it is not stale by more than a fifth either
-    for (const n of [...claimed(read('README.md')), ...claimed(read('README.de.md'))].filter((n) => n >= 100)) expect(n, 'README number is far below the real count – update it').toBeGreaterThan(tools.length * 0.8);
+    for (const n of claimed(read('README.md')).filter((n) => n >= 100)) expect(n, 'README number is far below the real count – update it').toBeGreaterThan(tools.length * 0.8);
   });
 
   it('every route family under /api/ is named in some documentation page', () => {
@@ -200,7 +199,7 @@ describe('what the running app has, against what the docs say', () => {
 
   it('every sub-resource of a route family is named on a page that names the family (/api/x/<sub>)', () => {
     const routes = (t.app.router as any).routes as { pattern: string }[];
-    const pages = [...markdownFiles().filter((f: string) => /^docs\/[^/]+\.md$/.test(f)), 'README.md', 'README.de.md'].map((f: string) => [f, read(f)] as const);
+    const pages = [...markdownFiles().filter((f: string) => /^docs\/[^/]+\.md$/.test(f)), 'README.md'].map((f: string) => [f, read(f)] as const);
     const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const missing = new Set<string>();
     const familyText = new Map<string, string>();
@@ -230,7 +229,6 @@ describe('what the running app has, against what the docs say', () => {
 
 /** The pages written in German – their wording stays German, with one spelling of the product terms. */
 const GERMAN_PAGES = [
-  'README.de.md',
   'docs/academy.de.md',
   'docs/ai-assistant.de.md',
   'docs/android-app.de.md',

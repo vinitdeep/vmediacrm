@@ -163,7 +163,7 @@ function expand(props: Prop[], from: Date, to: Date, tz: string): BusyEvent[] {
 export function icsFeed(name: string, events: { id: string; start_at: string; end_at: string; title: string; description?: string; status?: string }[]): string {
   const fmt = (s: string) => s.replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const esc = (s: string) => s.replace(/[\;,]/g, (m) => '\\' + m).replace(/\n/g, '\\n');
-  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//HyperLevel//DE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', `X-WR-CALNAME:${esc(name)}`];
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//V Media CRM//DE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', `X-WR-CALNAME:${esc(name)}`];
   for (const e of events) {
     lines.push(
       'BEGIN:VEVENT',

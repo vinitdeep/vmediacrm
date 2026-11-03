@@ -12,7 +12,7 @@ import { PRODUCT_ICON } from '../web/src/theme/brand-icon';
 const read = (p: string) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
 describe('brand mark without an own logo', () => {
-  it('is the HyperLevel icon in every brand-mark spot – never an initial, whatever the name (e.g. the demo\'s "HyperLevel Demo")', () => {
+  it('is the V Media CRM icon in every brand-mark spot – never an initial, whatever the name (e.g. the demo\'s "V Media CRM Demo")', () => {
     expect(PRODUCT_ICON).toBe('/icon.svg');
     expect(read('web/public/icon.svg')).toContain('<svg');
     for (const f of ['web/src/theme/Sidebar.tsx', 'web/src/pages/Login.tsx', 'web/src/pages/OAuthConsent.tsx', 'web/src/theme/BrandingLook.tsx']) {
@@ -20,7 +20,7 @@ describe('brand mark without an own logo', () => {
       expect(src, f).toMatch(/PRODUCT_ICON\}/);
       // No letter avatar from the brand name, no name-dependent icon rule, no leftover "G" of the old name.
       expect(src, f).not.toMatch(/(?:b|branding|brand|name)\)?\.slice\(0, 1\)\.toUpperCase\(\)/);
-      expect(src, f).not.toMatch(/name === 'HyperLevel'|\|\| 'G'\)/);
+      expect(src, f).not.toMatch(/name === 'V Media CRM'|\|\| 'G'\)/);
     }
   });
 });
@@ -160,6 +160,10 @@ describe('theme gallery', () => {
     expect(resolveAccent({ theme: 'wald', accent: '', palette: 'harmonic', brandColor: '#d946ef' }, false)).toBe(THEMES.wald.light.accent);
     expect(resolveAccent({ theme: 'wald', accent: '#FF0000', palette: 'harmonic', brandColor: '#d946ef' }, true)).toBe('#ff0000');
     expect(resolveAccent({ theme: 'gohigh', accent: '', palette: 'harmonic', brandColor: '#2563eb' }, true)).toBe(THEMES.gohigh.dark.accent);
+    // V Media Studio is the default standard theme: it takes the agency colour too, and keeps its own crimson when the colour is unset
+    expect(resolveAccent({ theme: 'vmedia', accent: '', palette: 'harmonic', brandColor: '#d946ef' }, false)).toBe('#d946ef');
+    expect(resolveAccent({ theme: 'vmedia', accent: '', palette: 'harmonic', brandColor: '#C8191F' }, true)).toBe(THEMES.vmedia.dark.accent);
+    expect(resolveAccent({ theme: 'vmedia', accent: '', palette: 'harmonic', brandColor: '#2563eb' }, false)).toBe(THEMES.vmedia.light.accent);
   });
 
   it('builds the style sheet: screen only, one mode, every variable', () => {

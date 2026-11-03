@@ -6,11 +6,11 @@
  * - LOAD: waits until the editor has started, then drops the file on its canvas as a synthetic drag & drop (a real `File` in a
  *   `DataTransfer` – exactly what the editor receives when a person drops a file). The PDF editor instead reads `?file=` itself.
  * - SAVE: remembers every Blob the page turns into an object URL and catches the click on the hidden download link the editor
- *   creates when it saves; a file of the editor's own kind goes to HyperLevel (postMessage) instead of the download folder, anything
- *   else (a PDF export of a document …) is downloaded as usual and announced to HyperLevel, which offers to keep it.
- * - "Speichern" in HyperLevel presses Ctrl/Cmd+S in the editor (Ctrl/Cmd+Shift+S – Save As – for the spreadsheet editor, which saves a
+ *   creates when it saves; a file of the editor's own kind goes to V Media CRM (postMessage) instead of the download folder, anything
+ *   else (a PDF export of a document …) is downloaded as usual and announced to V Media CRM, which offers to keep it.
+ * - "Speichern" in V Media CRM presses Ctrl/Cmd+S in the editor (Ctrl/Cmd+Shift+S – Save As – for the spreadsheet editor, which saves a
  *   dropped file only that way) – the editor's own save, caught as above. The presentation editor saves its native format
- *   (.deckcraft); HyperLevel converts it to .pptx with the engine.
+ *   (.deckcraft); V Media CRM converts it to .pptx with the engine.
  *
  * Messages are bound to a channel id the parent puts into the page's #hash, and only exchanged with `window.parent`.
  * Plain ES5 without template literals: the text is served as is (no build step).
@@ -94,7 +94,7 @@ export const BRIDGE_JS = String.raw`(function () {
     post({ type: 'loaded', name: name });
   }
 
-  // --- the editor's own save, pressed from HyperLevel ------------------------------------------------------------------------
+  // --- the editor's own save, pressed from V Media CRM ------------------------------------------------------------------------
   function pressSave() {
     var c = canvas();
     if (!c) return;

@@ -136,7 +136,7 @@ beforeEach(() => {
 });
 
 describe('mapping (pure)', () => {
-  it('builds a Lexware sales voucher with one item per tax rate and the HyperLevel number', () => {
+  it('builds a Lexware sales voucher with one item per tax rate and the V Media CRM number', () => {
     const v = lexVoucher(doc(), { contactId: 'lc-9', categoryId: '8f8664a8-fd86-11e1-a21f-0800200c9a66' });
     expect(v).toMatchObject({ type: 'salesinvoice', voucherNumber: 'RE-2026-0001', voucherDate: '2026-10-05', dueDate: '2026-10-19', taxType: 'net', contactId: 'lc-9', useCollectiveContact: false });
     // 2 × 100,00 at 19 % and 34,90 at 7 %

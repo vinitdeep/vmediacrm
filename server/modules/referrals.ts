@@ -4,7 +4,7 @@ import { now } from '../core/util.js';
 import type { Tool } from './mcp.js';
 
 /**
- * Provider sign-up links ("Konto anlegen") next to every place where HyperLevel asks for a third-party
+ * Provider sign-up links ("Konto anlegen") next to every place where V Media CRM asks for a third-party
  * key or account. A link may be a referral (partner) link of the maintainer – always labelled in
  * the UI, and replaceable or switchable off by every self-hoster:
  *
@@ -32,7 +32,7 @@ const P = (id: string, name: string, category: string, signup: string | null): R
 
 export const REFERRAL_CATEGORIES = ['KI-Modelle', 'KI-Medien', 'Daten & Recherche', 'Automatisierung', 'E-Mail', 'SMS & Telefonie', 'Kanäle', 'Zahlungen & Finanzen', 'Hosting & Daten', 'Produktivität', 'Marketing & Analyse'] as const;
 
-/** Every provider HyperLevel (or a feature branch) asks the user to connect. Ids are stable – UI and links use them. */
+/** Every provider V Media CRM (or a feature branch) asks the user to connect. Ids are stable – UI and links use them. */
 export const REFERRAL_PROVIDERS: ReferralProvider[] = [
   // AI models (KI-Assistent, BYOK presets of the agent)
   P('openai', 'OpenAI', 'KI-Modelle', 'https://platform.openai.com/signup'),

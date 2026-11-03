@@ -252,7 +252,7 @@ function RuleDialog({ s, onClose, onSaved }: { s: Settings; onClose: () => void;
         </Field>
       )}
       <Check checked={f.self} onChange={(v) => setF({ ...f, self: v })} label="Genehmigende dürfen eigene Angebote selbst genehmigen (sonst immer eine zweite Person)" />
-      <p className="jc-hint">Gesendet wird ohne Genehmigung nichts – auch nicht über API-Schlüssel, MCP oder Workflows. Genehmigen geht nur angemeldet in HyperLevel.</p>
+      <p className="jc-hint">Gesendet wird ohne Genehmigung nichts – auch nicht über API-Schlüssel, MCP oder Workflows. Genehmigen geht nur angemeldet in V Media CRM.</p>
     </Modal>
   );
 }

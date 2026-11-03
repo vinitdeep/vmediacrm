@@ -6,7 +6,7 @@ import { HttpError } from '../../core/http.js';
  * ask for a license. A few things around them are marked **Pro** and sit behind `app.services.license.has('pro')`:
  *
  *   marktplatz    publishing to and installing from the Marktplatz (per sub-account, with consent screens)
- *   signed        installing plugins that HyperLevel signed (Ed25519), the curated catalogue
+ *   signed        installing plugins that V Media CRM signed (Ed25519), the curated catalogue
  *   second_opinion  the second review by a different top model before publishing
  *   rollout       the advanced rollout of a feature flag (a percentage of the sub-accounts)
  *
@@ -16,7 +16,7 @@ import { HttpError } from '../../core/http.js';
 
 export const PRO_FEATURES = {
   marktplatz: 'Veröffentlichen und Installieren im Marktplatz',
-  signed: 'Installieren signierter Plugins von HyperLevel',
+  signed: 'Installieren signierter Plugins von V Media CRM',
   second_opinion: 'Zweitmeinung bei der Sicherheitsprüfung',
   rollout: 'Erweiterter Rollout (Prozent der Sub-Accounts)',
 } as const;

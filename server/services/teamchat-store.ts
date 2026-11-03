@@ -222,7 +222,7 @@ export function directChannel(app: App, ctx: Ctx, userIds: string[]): ChannelRow
 export function ensureDefaultChannel(app: App, ctx: Ctx) {
   if (isBot(ctx) || !ctx.user || ctx.scope === 'read') return;
   if (app.db.get(`SELECT 1 AS x FROM teamchat_channels WHERE location_id = ? AND kind IN ('public', 'private')`, ctx.locationId)) return;
-  const ch: ChannelRow = { id: id(), location_id: ctx.locationId, kind: 'public', name: 'allgemein', topic: 'Alles fürs Team', dm_key: null, created_by: null, created_by_name: 'HyperLevel', slack_mirror: 0, archived_at: null, last_message_at: null, created_at: now(), updated_at: now() };
+  const ch: ChannelRow = { id: id(), location_id: ctx.locationId, kind: 'public', name: 'allgemein', topic: 'Alles fürs Team', dm_key: null, created_by: null, created_by_name: 'V Media CRM', slack_mirror: 0, archived_at: null, last_message_at: null, created_at: now(), updated_at: now() };
   app.db.insert('teamchat_channels', ch);
   addMember(app, ch.id, ctx.user.id);
 }

@@ -5,7 +5,7 @@ import { anthropicSse, fakeModel, sse } from './agent-fakes.js';
 import { retry } from '../server/services/agent-llm.js';
 
 /**
- * "/agent" in the Team-Chat: the HyperLevel Agent answers in the channel (everybody sees the answer); whatever it wants to
+ * "/agent" in the Team-Chat: the V Media CRM Agent answers in the channel (everybody sees the answer); whatever it wants to
  * change waits for a click of the person who asked – nobody else can confirm, a click works once, and the chat's
  * agent never runs more freely than "ask before changes".
  */
@@ -75,7 +75,7 @@ describe('/agent in the Team-Chat', () => {
     expect(r.data.command).toBe('agent');
     const [question, placeholder] = r.data.messages;
     expect(question).toMatchObject({ kind: 'user', body: '/agent Wie viele Aufgaben sind offen?', author: { name: 'Chef' } });
-    expect(placeholder).toMatchObject({ kind: 'agent', author: { id: null, name: 'HyperLevel Agent' }, meta: { agent: { status: 'running', asker_name: 'Chef' } } });
+    expect(placeholder).toMatchObject({ kind: 'agent', author: { id: null, name: 'V Media CRM Agent' }, meta: { agent: { status: 'running', asker_name: 'Chef' } } });
     // the finished answer replaced the placeholder – and the others read it
     const m = await agentMessage(vera);
     expect(m.id).toBe(placeholder.id);

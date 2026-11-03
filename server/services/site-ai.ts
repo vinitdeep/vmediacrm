@@ -81,9 +81,9 @@ const GOAL_RULE: Record<Goal, string> = {
 };
 
 export const RULES_COMMON = [
-  'Du baust Seiten für den Website-Baukasten von HyperLevel. Antworte ausschließlich mit EINEM JSON-Objekt, ohne Erklärungen.',
+  'Du baust Seiten für den Website-Baukasten von V Media CRM. Antworte ausschließlich mit EINEM JSON-Objekt, ohne Erklärungen.',
   'Erfinde keine Fakten: keine Preise, Zahlen, Auszeichnungen, Kundennamen oder Zitate, die nicht in der Beschreibung stehen. Fehlt etwas, schreibe einen klar erkennbaren Platzhalter in eckigen Klammern, z. B. „[Preis]“, „[Kundenstimme einfügen]“.',
-  'Keine Rechtstexte (Impressum, Datenschutz, Widerruf, AGB) – die erzeugt HyperLevel selbst aus den Firmendaten.',
+  'Keine Rechtstexte (Impressum, Datenschutz, Widerruf, AGB) – die erzeugt V Media CRM selbst aus den Firmendaten.',
   'Keine Bilder, Videos, HTML oder Skripte. Kurze, konkrete Sätze; Nutzen vor Merkmalen; jede Seite hat genau eine H1 (der Hero oder eine Überschrift mit level 1).',
 ].join('\n');
 
@@ -175,7 +175,7 @@ export function checkPlan(raw: any, brief: Brief): { plan?: Plan; errors: string
     const slug = String(p?.slug ?? '').trim();
     if (!/^[a-z0-9][a-z0-9-]{0,59}$/.test(slug)) return void errors.push(`${at}: slug „${slug}“ – nur Kleinbuchstaben, Ziffern und Bindestriche`);
     if (seen.has(slug)) return void errors.push(`${at}: slug „${slug}“ doppelt`);
-    if (LEGAL.includes(slug)) return void errors.push(`${at}: „${slug}“ ist eine Rechtsseite – die erzeugt HyperLevel selbst, bitte weglassen`);
+    if (LEGAL.includes(slug)) return void errors.push(`${at}: „${slug}“ ist eine Rechtsseite – die erzeugt V Media CRM selbst, bitte weglassen`);
     seen.add(slug);
     const name = clipText(p?.name, 60) || slug;
     const sections = (Array.isArray(p?.sections) ? p.sections : []).map((s: unknown) => String(s));

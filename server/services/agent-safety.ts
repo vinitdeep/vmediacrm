@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
 /**
- * Safety model of the HyperLevel Agent – pure functions, so the rules are easy to test and to read.
+ * Safety model of the V Media CRM Agent – pure functions, so the rules are easy to test and to read.
  *
  * 1. Every tool has a class: `read`, `write`, `sensitive` (outbound or hard to undo: sending
  *    messages, deleting, payments, plans, publishing, social posts …) or `internal` (agent-only:

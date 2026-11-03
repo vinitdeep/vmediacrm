@@ -16,7 +16,7 @@ export interface ReferralLink {
   /** Always the counting redirect /go/<id>. */
   url: string;
   is_referral: boolean;
-  /** Whose partner link: the HyperLevel maintainer's default or one this installation's operator set. */
+  /** Whose partner link: the V Media CRM maintainer's default or one this installation's operator set. */
   sponsor?: 'gohigh' | 'operator';
 }
 export type Referrals = Record<string, ReferralLink>;

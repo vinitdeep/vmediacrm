@@ -43,9 +43,9 @@ export function CogneeAgencySetup() {
     <div className="card" style={{ flex: '1 1 420px' }} data-tour="cognee-agency">
       <h2>Wissensgedächtnis (Cognee)</h2>
       <p className="muted small">
-        Verbindet HyperLevel mit einem selbst gehosteten <a href="https://github.com/topoteretes/cognee" target="_blank" rel="noopener">Cognee</a>-Server (Wissensgraph, Apache-2.0) über dessen REST-Schnittstelle. Jeder Sub-Account entscheidet selbst, ob und welche Daten er teilt – Standard: aus. Jeder Sub-Account bekommt eigene Datasets (<code>gh_&lt;ID&gt;_&lt;Typ&gt;</code>), andere Datasets werden nie gelesen oder beschrieben. Einrichtung, Server-Einstellungen und was gesendet wird: <code>docs/cognee.md</code>
+        Verbindet V Media CRM mit einem selbst gehosteten <a href="https://github.com/topoteretes/cognee" target="_blank" rel="noopener">Cognee</a>-Server (Wissensgraph, Apache-2.0) über dessen REST-Schnittstelle. Jeder Sub-Account entscheidet selbst, ob und welche Daten er teilt – Standard: aus. Jeder Sub-Account bekommt eigene Datasets (<code>gh_&lt;ID&gt;_&lt;Typ&gt;</code>), andere Datasets werden nie gelesen oder beschrieben. Einrichtung, Server-Einstellungen und was gesendet wird: <code>docs/cognee.md</code>
       </p>
-      <Note level="info">Auf dem Cognee-Server muss <code>ENABLE_BACKEND_ACCESS_CONTROL=true</code> gesetzt sein, und HyperLevel sollte einen eigenen Cognee-Nutzer bekommen – so liegt jedes Dataset getrennt.</Note>
+      <Note level="info">Auf dem Cognee-Server muss <code>ENABLE_BACKEND_ACCESS_CONTROL=true</code> gesetzt sein, und V Media CRM sollte einen eigenen Cognee-Nutzer bekommen – so liegt jedes Dataset getrennt.</Note>
       {v.configured && v.posture?.state === 'open' && (
         <Note level="critical">
           Der Cognee-Server antwortet ohne Anmeldung – die Zugriffskontrolle ist aus. Es wird nichts übertragen, bis <code>ENABLE_BACKEND_ACCESS_CONTROL=true</code> gesetzt ist. {v.posture.reason}
@@ -55,7 +55,7 @@ export function CogneeAgencySetup() {
         <Input value={f.base_url} onChange={(x) => set({ base_url: x })} placeholder="https://cognee.example.com" autoComplete="off" />
       </Field>
       <Field label="Anmeldung">
-        <Select value={f.auth_mode} onChange={(x) => set({ auth_mode: x, secret: '' })} options={[['password', 'E-Mail und Passwort (Cognee-Nutzer für HyperLevel)'], ['api_key', 'API-Schlüssel (Cognee → /api/v1/auth/api-keys)']]} />
+        <Select value={f.auth_mode} onChange={(x) => set({ auth_mode: x, secret: '' })} options={[['password', 'E-Mail und Passwort (Cognee-Nutzer für V Media CRM)'], ['api_key', 'API-Schlüssel (Cognee → /api/v1/auth/api-keys)']]} />
       </Field>
       {password && (
         <Field label="E-Mail des Cognee-Nutzers">
@@ -92,7 +92,7 @@ export function CogneeAgencySetup() {
                 setTest(null);
                 void s.reload();
               } catch (e) {
-                if (confirmAsk(`${(e as Error).message}\n\nTrotzdem entfernen? Die Daten bleiben dann auf dem Server und lassen sich über HyperLevel nicht mehr löschen.`)) {
+                if (confirmAsk(`${(e as Error).message}\n\nTrotzdem entfernen? Die Daten bleiben dann auf dem Server und lassen sich über V Media CRM nicht mehr löschen.`)) {
                   await act(() => api.del('/api/agency/cognee?force=1'), 'Entfernt');
                   setF(null);
                   setTest(null);

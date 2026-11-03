@@ -237,7 +237,7 @@ const steps = (): StepDef[] => [
             const ro = plan.recurringOptions;
             const recurring = plan.type !== 'one_shot' && ro ? { interval: interval(ro.interval), count: Number(ro.intervalCount) || 1 } : undefined;
             const label = plans.length > 1 ? `${d.name ?? p.name} – ${plan.name}` : String(d.name ?? p.name);
-            if (recurring && (recurring.count ?? 1) > 1) ctx.warn(`Produkt „${clip(label, 60)}“ wird alle ${recurring.count} ${recurring.interval === 'year' ? 'Jahre' : recurring.interval === 'week' ? 'Wochen' : 'Monate'} abgerechnet – HyperLevel kennt Monat und Jahr; bitte prüfen`);
+            if (recurring && (recurring.count ?? 1) > 1) ctx.warn(`Produkt „${clip(label, 60)}“ wird alle ${recurring.count} ${recurring.interval === 'year' ? 'Jahre' : recurring.interval === 'week' ? 'Wochen' : 'Monate'} abgerechnet – V Media CRM kennt Monat und Jahr; bitte prüfen`);
             if (plan.type === 'limited_subscription') ctx.warn(`Produkt „${clip(label, 60)}“: begrenzt auf ${ro?.limitOfPayments ?? '?'} Zahlungen – die Begrenzung bitte prüfen`);
             if (ro && Number(ro.trialPeriod) > 0) ctx.warn(`Produkt „${clip(label, 60)}“ hatte eine Testphase (${ro.trialPeriod} ${ro.trialInterval}) – bitte nachbauen`);
             records.push({
@@ -395,7 +395,7 @@ const steps = (): StepDef[] => [
     part: 'reference',
     async *run(ctx): AsyncGenerator<Batch> {
       const funnels = await everything(ctx.http, '/funnels', ctx);
-      const lines: string[] = ['# Funnels aus systeme.io', '', `Stand: ${new Date().toISOString().slice(0, 10)}. Diese Liste ist eine **Gedächtnisstütze**: die Funnel-Seiten und ihr Design stellt die systeme.io-API nicht bereit, sie müssen in HyperLevel neu gebaut werden. Namen, Schritte und Adressen stehen hier, damit nichts vergessen geht – und damit Weiterleitungen eingerichtet werden können, bevor das alte Konto gekündigt wird.`, ''];
+      const lines: string[] = ['# Funnels aus systeme.io', '', `Stand: ${new Date().toISOString().slice(0, 10)}. Diese Liste ist eine **Gedächtnisstütze**: die Funnel-Seiten und ihr Design stellt die systeme.io-API nicht bereit, sie müssen in V Media CRM neu gebaut werden. Namen, Schritte und Adressen stehen hier, damit nichts vergessen geht – und damit Weiterleitungen eingerichtet werden können, bevor das alte Konto gekündigt wird.`, ''];
       if (!funnels.length) lines.push('_Im Konto gibt es keine Funnels._');
       for (const f of funnels) {
         lines.push(`## ${cell(f.name) || `Funnel ${f.id}`}${f.isActive === false ? ' (inaktiv)' : ''}`, '');
@@ -429,12 +429,12 @@ export const SYSTEME: SourceDef = {
   howto: [
     'In systeme.io oben rechts auf dein Profilbild → „Einstellungen“ → „MCP & API-Schlüssel“.',
     'Bei „Öffentliche API-Schlüssel“ auf „Erstellen“, einen Namen vergeben und den Schlüssel hier einfügen (pro Konto sind drei möglich).',
-    'Nach dem Umzug löschst du den Schlüssel dort wieder. Gelesen wird nur – in deinem systeme.io-Konto ändert HyperLevel nichts.',
+    'Nach dem Umzug löschst du den Schlüssel dort wieder. Gelesen wird nur – in deinem systeme.io-Konto ändert V Media CRM nichts.',
   ],
   limits: [
     'Funnel-Seiten und ihr Design – die API nennt nur Namen, Schritte und Adressen (sie kommen als Referenzliste ins Wiki)',
     'Die Inhalte der Lektionen (Videos, Texte, Dateien) – die API liefert nur den Aufbau',
-    'Bestellungen, Rechnungen und laufende Abos (bleiben beim Zahlungsanbieter; neue Zahlungen richtest du in HyperLevel ein)',
+    'Bestellungen, Rechnungen und laufende Abos (bleiben beim Zahlungsanbieter; neue Zahlungen richtest du in V Media CRM ein)',
     'Gutscheine, Buchungskalender, SMS-Vorlagen und Newsletter, die im visuellen Editor gebaut wurden (die API liefert kein HTML dafür)',
   ],
   parts: [

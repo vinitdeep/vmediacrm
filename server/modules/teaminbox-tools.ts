@@ -5,7 +5,7 @@ import { PRIORITIES, STATUSES, VIEWS } from '../services/teaminbox-model.js';
 import type { Caller, Tool } from './mcp.js';
 
 /**
- * MCP tools of the Team-Posteingang (HyperLevel Agent, Claude, ChatGPT, Codex) and its endpoints for the native app. Both are thin
+ * MCP tools of the Team-Posteingang (V Media CRM Agent, Claude, ChatGPT, Codex) and its endpoints for the native app. Both are thin
  * relays onto the REST routes of modules/teaminbox.ts: the key's sub-account, the member's areas and the audit log apply.
  */
 

@@ -64,7 +64,7 @@ const UI_ONLY: Rule[] = [
   { re: /\bwindow\s*\.\s*open\b|(?<![.\w])open\s*\(\s*['"`]/, code: 'window-open', message: 'window.open ist nicht erlaubt – nutze gohigh.navigate("contacts/…").' },
   { re: /\b(?:window|document|self|top|parent)\s*\.\s*location\b|(?<!\b(?:const|let|var)\s+)(?<![.\w])location\s*(?:\.\s*(?:href|assign|replace|reload|open)\b|=(?!=))/, code: 'location', message: 'location.* ist nicht erlaubt – nutze gohigh.navigate("contacts/…").' },
   { re: /\b(?:window|self|globalThis)\s*\.\s*(?:top|parent|opener|frameElement)\b|(?<![.\w])(?:opener|frameElement)\b/, code: 'frame-escape', message: 'Zugriff auf top/parent/opener ist nicht erlaubt.' },
-  { re: /\bpostMessage\b|addEventListener\s*\(\s*['"`]message['"`]/, code: 'post-message', message: 'postMessage ist nicht erlaubt – die gohigh-Funktionen übernehmen die Verbindung zu HyperLevel.' },
+  { re: /\bpostMessage\b|addEventListener\s*\(\s*['"`]message['"`]/, code: 'post-message', message: 'postMessage ist nicht erlaubt – die gohigh-Funktionen übernehmen die Verbindung zu V Media CRM.' },
   { re: /\bdocument\s*\.\s*(?:write|writeln|domain)\b/, code: 'document-write', message: 'document.write/domain sind nicht erlaubt.' },
   { re: /\bAtomics\b|\bSharedArrayBuffer\b/, code: 'shared-memory', message: 'Atomics/SharedArrayBuffer sind nicht erlaubt.' },
   { re: /javascript\s*:/i, code: 'js-url', message: 'javascript:-Adressen sind nicht erlaubt.' },

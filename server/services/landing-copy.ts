@@ -110,7 +110,7 @@ const de: Copy = {
     h2: 'Gebaut für KI-Agenten',
     lead: 'Der eingebaute Agent, deine eigenen Agenten und jedes MCP-Programm arbeiten mit denselben Werkzeugen – mit denselben Rechten und demselben Protokoll wie ein Mensch.',
     items: [
-      ['HyperLevel-Agent auf jeder Seite', 'Strg/⌘+J: sucht, fasst zusammen, legt an und ändert mit deinen Rechten. Jeder Schritt als Karte mit Rückgängig; vor dem Senden, Löschen und Bezahlen fragt er.'],
+      ['V Media CRM-Agent auf jeder Seite', 'Strg/⌘+J: sucht, fasst zusammen, legt an und ändert mit deinen Rechten. Jeder Schritt als Karte mit Rückgängig; vor dem Senden, Löschen und Bezahlen fragt er.'],
       ['Eigene KI-Mitarbeiter', 'Rolle, Anweisungen, Werkzeuge, Wissen, Zeitpläne und Auto-Antworten im Postfach – oder beschreib den Agenten und lass ihn von der KI als Entwurf bauen.'],
       ['MCP-Server eingebaut', 'Ein Endpunkt /mcp mit OAuth 2.1 (PKCE) oder API-Schlüssel – für Claude, ChatGPT, Codex, Cursor, Hermes und jedes andere MCP-Programm.'],
       ['KI-Schritte in jedem Workflow', 'Einordnen, Daten auslesen, zusammenfassen, übersetzen, Stimmung erkennen, einen Agenten starten, Bilder, Videos und Sprache erzeugen.'],
@@ -435,7 +435,7 @@ const en: Copy = {
     h2: 'Built for AI agents',
     lead: 'The built-in agent, your own agents and every MCP client work with the same tools – with the same permissions and the same audit log as a person.',
     items: [
-      ['HyperLevel Agent on every page', 'Ctrl/⌘+J: finds, summarises, creates and updates with your rights. Every step as a card with undo; it asks before it sends, deletes or pays.'],
+      ['V Media CRM Agent on every page', 'Ctrl/⌘+J: finds, summarises, creates and updates with your rights. Every step as a card with undo; it asks before it sends, deletes or pays.'],
       ['Your own AI co-workers', 'Role, instructions, tools, knowledge, schedules and inbox auto-replies – or describe the agent and let AI build it as a draft.'],
       ['MCP server built in', 'One endpoint, /mcp, with OAuth 2.1 (PKCE) or API keys – for Claude, ChatGPT, Codex, Cursor, Hermes and any other MCP client.'],
       ['AI steps in every workflow', 'Classify, extract, summarise, translate, detect sentiment, run an agent, generate images, video and speech.'],

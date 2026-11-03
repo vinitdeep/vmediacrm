@@ -532,12 +532,12 @@ describe('signed bundles: HyperLevel-signed = installable with Pro, everything e
     expect(r.data.error).toContain('verändert');
   });
 
-  it('the built-in HyperLevel keys win: "von HyperLevel signiert" – nobody can claim the id through the settings', async () => {
+  it('the built-in V Media CRM keys win: "von V Media CRM signiert" – nobody can claim the id through the settings', async () => {
     const gh = generateKeyPair();
-    GOHIGH_PUBLIC_KEYS.push({ id: 'gohigh-test', label: 'HyperLevel', public_key: gh.public_key, gohigh: true });
+    GOHIGH_PUBLIC_KEYS.push({ id: 'gohigh-test', label: 'V Media CRM', public_key: gh.public_key, gohigh: true });
     try {
       const signed = signBundle(bundle, gh.private_key, 'gohigh-test');
-      expect((await other('POST', '/api/plugins/import/preview', { bundle: signed })).data.signature).toMatchObject({ state: 'signed', gohigh: true, label: 'HyperLevel' });
+      expect((await other('POST', '/api/plugins/import/preview', { bundle: signed })).data.signature).toMatchObject({ state: 'signed', gohigh: true, label: 'V Media CRM' });
       // an admin registers a different key under the same id: the built-in one stays
       const mine = generateKeyPair();
       await policy({ trusted_keys: [{ id: 'gohigh-test', public_key: mine.public_key }] });

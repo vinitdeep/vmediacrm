@@ -75,7 +75,7 @@ export const siteSeoModule: Module = {
       const started = Date.now();
       let res;
       try {
-        res = await safeFetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; HyperLevel-SEO-Check)', accept: 'text/html' }, timeoutMs: 12_000, maxBytes: 3 * 1024 * 1024 });
+        res = await safeFetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; V Media CRM-SEO-Check)', accept: 'text/html' }, timeoutMs: 12_000, maxBytes: 3 * 1024 * 1024 });
       } catch (e) {
         throw bad(`Seite nicht erreichbar: ${(e as Error).message}`);
       }

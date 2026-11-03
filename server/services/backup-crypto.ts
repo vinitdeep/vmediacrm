@@ -115,7 +115,7 @@ export async function decryptFile(src: string, dst: string, keys: BackupKey[]): 
     header = Buffer.alloc(HEADER);
     tag = Buffer.alloc(TAG);
     await fh.read(header, 0, HEADER, 0);
-    if (size < HEADER + TAG || !header.subarray(0, 8).equals(MAGIC)) throw new Error('Keine verschlüsselte Sicherung von HyperLevel (Kennung fehlt)');
+    if (size < HEADER + TAG || !header.subarray(0, 8).equals(MAGIC)) throw new Error('Keine verschlüsselte Sicherung von V Media CRM (Kennung fehlt)');
     await fh.read(tag, 0, TAG, size - TAG);
   } finally {
     await fh.close();

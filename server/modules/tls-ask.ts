@@ -6,7 +6,7 @@ import { domainAlias, normalizeDomain } from '../core/domains.js';
  * Caddy on-demand TLS "ask" endpoint: GET /api/tls/ask?domain=shop.example.com answers 200 when the
  * domain (or its www partner) belongs to this install – the app's own address, a funnel/website domain
  * or an agency/client login domain – and 404 otherwise, so Caddy only requests certificates for
- * domains HyperLevel actually serves (deploy/caddy/Caddyfile). Works for any proxy with the same idea.
+ * domains V Media CRM actually serves (deploy/caddy/Caddyfile). Works for any proxy with the same idea.
  */
 export function knownDomain(domain: string, own: string, wanted: { domain: string; alias?: string }[]): boolean {
   if (!domain) return false;

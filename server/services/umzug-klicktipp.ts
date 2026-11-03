@@ -232,13 +232,13 @@ export const KLICKTIPP: SourceDef = {
   ],
   howto: [
     'Die Schnittstelle ist im Tarif „Premium“ oder höher enthalten. Lege in KlickTipp unter „Konto“ → „Benutzer“ am besten einen eigenen Benutzer für den Umzug an – dann kannst du sein Passwort danach einfach ändern oder den Benutzer löschen.',
-    'Trage hier Benutzername und Passwort dieses Benutzers ein. HyperLevel meldet sich damit an (es entsteht eine Sitzung, die nur im Arbeitsspeicher bleibt) und liest nur – in KlickTipp wird nichts geändert.',
+    'Trage hier Benutzername und Passwort dieses Benutzers ein. V Media CRM meldet sich damit an (es entsteht eine Sitzung, die nur im Arbeitsspeicher bleibt) und liest nur – in KlickTipp wird nichts geändert.',
     'Wer sich abgemeldet hat, steht nicht in der Liste der Schnittstelle. Exportiere diese Kontakte zusätzlich als CSV (Kontakte → „Exportieren“) und lade die Datei bei „Export-Datei hochladen“ hoch – der Status entscheidet dort, wer „Nicht stören“ bekommt.',
   ],
   limits: [
     'Abgemeldete Kontakte (die Schnittstelle liefert nur aktive – nimm dafür den CSV-Export)',
     'Smart-Tags (sie werden aus Regeln berechnet) und Tag-Abfragen mit Bedingungen',
-    'E-Mail-Texte, Newsletter, Kampagnen und Automationen (der Kampagnen-Builder ist nicht lesbar – in HyperLevel als Workflow neu bauen)',
+    'E-Mail-Texte, Newsletter, Kampagnen und Automationen (der Kampagnen-Builder ist nicht lesbar – in V Media CRM als Workflow neu bauen)',
     'Anmeldeprozesse und Formulare, Landingpages und Statistiken',
     'Dezimalfelder (sie kommen als ganze Zahl mal 100) und die Feldtypen: KlickTipp nennt sie nicht, Datumsfelder werden am Wert erkannt',
   ],

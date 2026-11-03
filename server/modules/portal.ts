@@ -219,7 +219,7 @@ export const portalModule: Module = {
         base: `/portal/${encodeURIComponent(row?.slug || loc.id)}`,
         title: s.title || `${name} – Mitgliederbereich`,
         name,
-        color: [s.color, brand.color].find((c) => HEX.test(c ?? '')) ?? '#2563eb',
+        color: [s.color, brand.color].find((c) => HEX.test(c ?? '')) ?? '#c8191f',
         logo: s.logo_url || brand.logo_url || loc.logo_url || '',
         favicon: brand.favicon_url || '',
         welcome: s.welcome || '',

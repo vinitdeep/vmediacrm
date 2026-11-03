@@ -200,7 +200,7 @@ export function icsOf(app: App, w: Webinar, reg: Registration): string {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//HyperLevel//Webinar//DE',
+    'PRODID:-//V Media CRM//Webinar//DE',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',

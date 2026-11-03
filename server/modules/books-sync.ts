@@ -323,7 +323,7 @@ export const booksSyncModule: Module = {
       return n;
     }
 
-    /** Payment status of open linked invoices; what the tool has received more than HyperLevel knows becomes a payment here. */
+    /** Payment status of open linked invoices; what the tool has received more than V Media CRM knows becomes a payment here. */
     async function pullPayments(loc: string, limit = 25): Promise<{ checked: number; updated: number }> {
       const s = settings(loc);
       if (!active(s) || !s.options.pull_payments) return { checked: 0, updated: 0 };

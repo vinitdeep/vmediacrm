@@ -54,9 +54,9 @@ const DOMAIN_WRITES: [path: RegExp, pick: (body: any) => unknown][] = [
 export const DEMO_PAGE_NOTE = 'Demo-Instanz: Alle Daten werden mehrmals täglich gelöscht. Bitte hier keine echten Daten oder Passwörter eingeben.';
 
 /** What a public demo page shows to someone outside the demo (no demo session): a link to it proves nothing and asks for nothing. */
-export const DEMO_OUTSIDE_NOTE = 'Diese Seite gehört zur öffentlichen HyperLevel-Demo und ist nur innerhalb der Demo sichtbar.';
+export const DEMO_OUTSIDE_NOTE = 'Diese Seite gehört zur öffentlichen V Media CRM-Demo und ist nur innerhalb der Demo sichtbar.';
 const demoOutsideHtml = () =>
-  `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>HyperLevel Demo</title></head>` +
+  `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>V Media CRM Demo</title></head>` +
   `<body style="margin:0;min-height:100vh;display:grid;place-items:center;font:16px/1.5 system-ui,sans-serif;background:#f6f7f9;color:#1d2433">` +
   `<main style="max-width:32rem;padding:2rem;text-align:center"><p>${DEMO_OUTSIDE_NOTE}</p><p><a href="/demo" style="color:#2563eb">Demo öffnen</a></p></main></body></html>`;
 const demoNoteHtml = () =>

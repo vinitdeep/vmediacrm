@@ -13,7 +13,7 @@ export const CRM_TOURS: Tour[] = [
     routes: ['dashboard'],
     keywords: 'zahlen kennzahlen übersicht statistik umsatz',
     learned: ['Den Zeitraum wählen', 'Die acht Kennzahlen deuten', 'Termine, Aufgaben und Pipeline im Blick behalten', 'Sehen, woher die Kontakte kommen'],
-    docs: { label: 'Funktionen im Überblick', file: 'README', anchor: 'funktionen' },
+    docs: { label: 'Funktionen im Überblick', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Alles auf einen Blick', route: 'dashboard', target: 'page-head', text: 'Das Dashboard zeigt, wie es im gerade gewählten Sub-Account läuft – ideal als erster Blick am Morgen.' },
       { title: 'Zeitraum', target: 'page-actions', text: 'Oben rechts wählst du, ob du die letzten 7, 30 oder 90 Tage oder das ganze Jahr sehen willst.' },
@@ -106,7 +106,7 @@ export const CRM_TOURS: Tour[] = [
     practice: true,
     keywords: 'termin buchung buchungsseite verfügbarkeit erinnerung kalender iframe',
     learned: ['Anstehende Termine sehen und den Status setzen', 'Einen Kalender mit Buchungsseite anlegen', 'Verfügbarkeit, Bestätigung und Erinnerung einstellen', 'Den Buchungslink teilen oder einbetten'],
-    docs: { label: 'Funktionen: Kalender', file: 'README', anchor: 'funktionen' },
+    docs: { label: 'Funktionen: Kalender', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Termine', route: 'calendars', target: 'tab-appointments', text: 'Hier stehen alle gebuchten Termine, nach Tagen sortiert. Den Status (bestätigt, erschienen, nicht erschienen, abgesagt) setzt du je Termin.' },
       { title: 'Termin von Hand eintragen', target: 'calendars-book', optional: true, text: 'Für Termine, die per Telefon vereinbart wurden – oder um Zeiten zu blockieren.', missing: 'Sobald es einen Kalender gibt, kannst du hier Termine eintragen.' },
@@ -153,7 +153,7 @@ export const CRM_TOURS: Tour[] = [
     practice: true,
     keywords: 'kontakt kunde lead tags smart list import export csv notiz',
     learned: ['Kontakte suchen und nach Tags filtern', 'Einen Kontakt anlegen', 'Tags vergeben und Aktionen vom Kontakt aus starten', 'Verlauf, Notizen und Aufgaben lesen', 'Kontakte importieren und exportieren'],
-    docs: { label: 'Funktionen: Kontakte', file: 'README', anchor: 'funktionen' },
+    docs: { label: 'Funktionen: Kontakte', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Das Herz des CRMs', route: 'contacts', target: 'page-head', text: 'Jede Person mit Kontaktdaten, Tags, Notizen, Aufgaben und ihrem ganzen Verlauf – Nachrichten, Termine, Käufe.' },
       { title: 'Suchen', target: 'contacts-search', kind: 'fill', text: 'Die Suche findet Name, E-Mail, Telefon oder Firma.', do: 'Tippe z. B. „Anna“.', demo: { fill: 'Anna' } },
@@ -182,7 +182,7 @@ export const CRM_TOURS: Tour[] = [
     practice: true,
     keywords: 'pipeline deal opportunity kanban verkauf stufe gewonnen verloren',
     learned: ['Die Pipeline als Kanban lesen', 'Einen Deal anlegen und per Drag & Drop verschieben', 'Gewonnen/verloren setzen', 'Stufen einer Pipeline anpassen'],
-    docs: { label: 'Funktionen: Opportunities', file: 'README', anchor: 'funktionen' },
+    docs: { label: 'Funktionen: Opportunities', file: 'README', anchor: 'at-a-glance' },
     steps: [
       { title: 'Die Pipeline', route: 'opportunities', target: 'opps-board', text: 'Jede Spalte ist eine Stufe deines Verkaufs, jede Karte ein Deal mit Wert. Ziehe Karten mit der Maus in die nächste Stufe.' },
       { title: 'Mehrere Pipelines', target: 'opps-pipeline', text: 'Du kannst mehrere Pipelines haben, z. B. „Vertrieb“ und „Projekte“. Hier wechselst du.' },

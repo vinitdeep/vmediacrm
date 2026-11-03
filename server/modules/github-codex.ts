@@ -40,7 +40,7 @@ export const githubCodexModule: Module = {
         return null;
       }
     };
-    const headers = (tok: string) => ({ authorization: `Bearer ${tok}`, accept: 'application/vnd.github+json', 'x-github-api-version': '2022-11-28', 'user-agent': 'HyperLevel-CRM', 'content-type': 'application/json' });
+    const headers = (tok: string) => ({ authorization: `Bearer ${tok}`, accept: 'application/vnd.github+json', 'x-github-api-version': '2022-11-28', 'user-agent': 'V Media CRM-CRM', 'content-type': 'application/json' });
     const repoOf = (v: unknown, fallback = '') => {
       const r = str(v, 'Repository', { max: 201 }).replace(/^https:\/\/github\.com\//i, '').replace(/\.git$/, '').replace(/\/$/, '') || fallback;
       if (r && !REPO_RE.test(r)) throw bad('Repository bitte als besitzer/name angeben, z. B. acme/website');

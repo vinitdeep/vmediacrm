@@ -166,7 +166,7 @@ export const browserPhoneModule: Module = {
       const s = { ...c.s };
       let secret: string | undefined;
       if (!s.api_key_sid || !c.secret) {
-        const k = await twilioRequest(app, c.tel, 'POST', '/Keys.json', [['FriendlyName', `HyperLevel Browser-Telefon (${loc.name})`.slice(0, 64)]]);
+        const k = await twilioRequest(app, c.tel, 'POST', '/Keys.json', [['FriendlyName', `V Media CRM Browser-Telefon (${loc.name})`.slice(0, 64)]]);
         if (!API_KEY_SID.test(k.sid ?? '') || !k.secret) throw new HttpError(502, 'Twilio hat keinen API-Schlüssel geliefert');
         s.api_key_sid = k.sid;
         secret = k.secret;
@@ -179,7 +179,7 @@ export const browserPhoneModule: Module = {
       ];
       if (s.twiml_app_sid) await twilioRequest(app, c.tel, 'POST', `/Applications/${s.twiml_app_sid}.json`, appParams);
       else {
-        const a = await twilioRequest(app, c.tel, 'POST', '/Applications.json', [['FriendlyName', `HyperLevel – ${loc.name}`.slice(0, 64)], ...appParams]);
+        const a = await twilioRequest(app, c.tel, 'POST', '/Applications.json', [['FriendlyName', `V Media CRM – ${loc.name}`.slice(0, 64)], ...appParams]);
         if (!APP_SID.test(a.sid ?? '')) throw new HttpError(502, 'Twilio hat keine TwiML-App angelegt');
         s.twiml_app_sid = a.sid;
       }

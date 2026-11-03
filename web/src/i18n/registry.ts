@@ -22,10 +22,12 @@ export type Catalog = Record<string, string | PluralForms>;
 /** `intl`: the formatting locale when the browser asks for no regional variant of the language. */
 export const LOCALES = {
   de: { name: 'Deutsch', intl: 'de-DE' },
-  en: { name: 'English', intl: 'en-GB' },
+  en: { name: 'English', intl: 'en-IN' },
 } as const;
 export type Locale = keyof typeof LOCALES;
 export const SOURCE_LOCALE = 'de' satisfies Locale;
+/** The UI language when the browser asks for none we have (V Media CRM: an Indian agency – English, German stays selectable). */
+export const FALLBACK_LOCALE = 'en' satisfies Locale;
 
 /**
  * Namespaces: the texts of a group of files (paths relative to web/src). `complete: true` means every text in those files

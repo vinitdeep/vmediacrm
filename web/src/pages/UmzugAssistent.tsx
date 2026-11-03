@@ -8,7 +8,7 @@ import { EXISTING_LABELS, PART_NAMES, targetLabel, umzugApi, type Conn, type Job
 import './umzug.css';
 
 /**
- * Umzug zu HyperLevel: vom bisherigen Tool (Mailchimp bis sevDesk, die Liste kommt aus der Registry des Servers) hierher –
+ * Umzug zu V Media CRM: vom bisherigen Tool (Mailchimp bis sevDesk, die Liste kommt aus der Registry des Servers) hierher –
  * Quelle wählen → verbinden oder Datei hochladen → Vorschau mit Zuordnung → Probelauf → Import als Hintergrundjob → Bericht und Rückgängig.
  */
 
@@ -44,7 +44,7 @@ export function UmzugAssistent({ embedded }: { embedded?: boolean }) {
   const session = useSession();
   const [target, setTarget] = useState(session.locationId);
   const targetName = session.locations.find((l) => l.id === target)?.name ?? '';
-  const brand = session.branding?.name || 'HyperLevel';
+  const brand = session.branding?.name || 'V Media CRM';
   return (
     <div className="um-page" data-tour="um-page">
       {embedded ? (
@@ -263,7 +263,7 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
             </div>
             {existing.length > 0 && (
               <p className="muted small um-existing">
-                Aus früheren Umzügen kennt HyperLevel schon: {existing.map(([k, n]) => `${n} ${EXISTING_LABELS[k] ?? k}`).join(', ')}. Die werden aktualisiert – nichts wird doppelt angelegt.
+                Aus früheren Umzügen kennt V Media CRM schon: {existing.map(([k, n]) => `${n} ${EXISTING_LABELS[k] ?? k}`).join(', ')}. Die werden aktualisiert – nichts wird doppelt angelegt.
               </p>
             )}
           </div>

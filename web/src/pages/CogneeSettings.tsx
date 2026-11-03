@@ -161,7 +161,7 @@ function Opt({ cfg, status, onSaved }: { cfg: Json; status: Json; onSaved: (r: J
         ))}
       </div>
       <Check checked={d.members_ask} onChange={(x) => setD({ ...d, members_ask: x })} label="Mitglieder (Kunden-Logins) dürfen das Gedächtnis befragen – nur zu Bereichen, auf die sie Zugriff haben" />
-      {d.enabled && personalOn.length > 0 && <Note level="warning">Personenbezogene Daten werden geteilt: {personalOn.map((c) => c.label).join(', ')}. Auftragsverarbeitung und Rechtsgrundlage sollten geklärt sein. Wird eine Person nach DSGVO gelöscht, löscht HyperLevel ihre Daten auch in Cognee.</Note>}
+      {d.enabled && personalOn.length > 0 && <Note level="warning">Personenbezogene Daten werden geteilt: {personalOn.map((c) => c.label).join(', ')}. Auftragsverarbeitung und Rechtsgrundlage sollten geklärt sein. Wird eine Person nach DSGVO gelöscht, löscht V Media CRM ihre Daten auch in Cognee.</Note>}
       <p className="muted small">Das Schwärzen ist eine Sicherung, keine Anonymisierung: Namen und Freitext bleiben. Wer die Schwärzung später ein- oder ausschaltet, schickt alles Betroffene neu und ersetzt die alte Fassung.</p>
       <button
         className="btn"
@@ -276,7 +276,7 @@ function Status({ status, labels, onChange, onPurge }: { status: Json; labels: R
           </button>
         )}
       </div>
-      {status.pending_deletions > 0 && <p className="muted small">{status.pending_deletions} Löschung(en) werden an Cognee gesendet (bei Fehlern wiederholt HyperLevel sie automatisch).</p>}
+      {status.pending_deletions > 0 && <p className="muted small">{status.pending_deletions} Löschung(en) werden an Cognee gesendet (bei Fehlern wiederholt V Media CRM sie automatisch).</p>}
       {leftovers.length > 0 && <p className="muted small">Noch in Cognee, aber nicht mehr freigegeben: {leftovers.map((t) => labels[t.key] ?? t.key).join(', ')}.</p>}
       <h3 style={{ margin: '14px 0 2px' }}>Letzte Vorgänge</h3>
       {(status.audit as Json[]).length === 0 ? (

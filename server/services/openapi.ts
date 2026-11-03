@@ -403,7 +403,7 @@ export function buildOpenApi(baseUrl: string) {
   return {
     openapi: '3.1.0',
     info: {
-      title: 'HyperLevel REST-API',
+      title: 'V Media CRM REST-API',
       version: APP_VERSION,
       description:
         'Öffentliche REST-API und REST-Hooks (Zapier, Make, n8n). Anmeldung mit `Authorization: Bearer <Schlüssel>`: Sub-Account-Schlüssel (`pghl_…`, Einstellungen → API & Webhooks) oder Agentur-Schlüssel (`pghla_…`, Agentur → API & MCP) plus Header `x-location-id`. Alle Antworten JSON, Fehler als `{ "error": "…" }`.',
@@ -474,7 +474,7 @@ function example(baseUrl: string, method: string, path: string, op: any, spec: a
   return `curl -X ${method.toUpperCase()} "${url}"${auth}${data}`;
 }
 
-export function renderDocsHtml(spec: ReturnType<typeof buildOpenApi>, brand = 'HyperLevel'): string {
+export function renderDocsHtml(spec: ReturnType<typeof buildOpenApi>, brand = 'V Media CRM'): string {
   const base = spec.servers[0].url;
   const byTag = new Map<string, { method: string; path: string; op: any }[]>();
   for (const [path, ops] of Object.entries(spec.paths)) for (const [method, op] of Object.entries<any>(ops)) (byTag.get(op.tags[0]) ?? byTag.set(op.tags[0], []).get(op.tags[0])!).push({ method, path, op });

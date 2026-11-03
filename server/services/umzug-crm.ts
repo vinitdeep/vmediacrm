@@ -32,7 +32,7 @@ export function pipelineOf(ext: string, name: string, stages: RStage[], seen: It
 
 /**
  * A document of the old accounting tool (invoice, credit note, quotation …) as an entry in the contact's history: number, date, amount and
- * status as the old tool had them. It is read-only history – NOT an invoice of HyperLevel: it takes no number of the invoice ranges, is not
+ * status as the old tool had them. It is read-only history – NOT an invoice of V Media CRM: it takes no number of the invoice ranges, is not
  * frozen, archived or sent, and changes nothing in the bookkeeping. The original (with its PDF) stays in the old tool.
  */
 export function documentActivity(o: { vendor: string; ext: string; contact: string; label: string; number?: string; date?: string; due?: string; status?: string; total?: number; open?: number; currency?: string; link?: string; contactName?: string }): RActivity {

@@ -24,7 +24,7 @@ const fake = async (input: string, init: RequestInit = {}) => {
     if (auth !== `Bot ${DISCORD_TOKEN}`) return json({ message: '401: Unauthorized', code: 0 }, 401);
     const path = url.slice('https://discord.com/api/v10'.length);
     if (path === '/users/@me') return json({ id: '900000000000000001', username: 'gohigh-bot', bot: true });
-    if (path === '/applications/@me') return json({ id: '900000000000000002', name: 'HyperLevel', verify_key: PUBLIC_HEX });
+    if (path === '/applications/@me') return json({ id: '900000000000000002', name: 'V Media CRM', verify_key: PUBLIC_HEX });
     if (path === '/users/@me/guilds') return json([{ id: '1' }, { id: '2' }]);
     if (path === '/users/@me/channels') return json({ id: '700000000000000001', type: 1 });
     if (path.startsWith('/applications/900000000000000002/commands')) return json(body.map((c: any, i: number) => ({ ...c, id: String(i) })));

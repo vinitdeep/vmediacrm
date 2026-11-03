@@ -8,7 +8,7 @@ import { EXAMPLES } from '../server/services/werkstatt/examples.js';
 import { WERKSTATT_TOOL_NAMES } from '../server/modules/werkstatt-tools.js';
 
 /**
- * Realtime Feature Lifecycle in the HyperLevel Agent chat: the agent recognises a wish, plans it (a card with the plan
+ * Realtime Feature Lifecycle in the V Media CRM Agent chat: the agent recognises a wish, plans it (a card with the plan
  * and the person's own confirm button), the build runs with live steps, the plugin appears with a sandboxed preview,
  * a conversational change makes version 2 with a diff summary, and admins run the lifecycle from the chat. The
  * agent's model is a script (no network); so is the Werkstatt's AI. Nothing is confirmed by the agent itself.

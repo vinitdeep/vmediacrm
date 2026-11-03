@@ -13,7 +13,7 @@ import { build } from 'vite';
  * the test fails at 160 KB so a regression is caught long before the target is touched.
  */
 const JS_BUDGET_GZ = 160 * 1024;
-const CSS_BUDGET_GZ = 40 * 1024;
+const CSS_BUDGET_GZ = 48 * 1024; // V Media: +8 KB for the bundled Inter + Plus Jakarta Sans @font-face rules and the studio theme
 const ROOT = resolve(__dirname, '..');
 
 type Entry = { file: string; src?: string; isEntry?: boolean; isDynamicEntry?: boolean; imports?: string[]; dynamicImports?: string[]; css?: string[] };

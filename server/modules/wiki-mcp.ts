@@ -3,7 +3,7 @@ import { HIT_END, HIT_START } from '../services/collab-fts.js';
 import type { Tool } from './mcp.js';
 
 /**
- * MCP tools for the Wiki – agents (Claude, ChatGPT, the in-app HyperLevel Agent) search, read and write pages.
+ * MCP tools for the Wiki – agents (Claude, ChatGPT, the in-app V Media CRM Agent) search, read and write pages.
  * Like every MCP tool they relay onto the REST API (/api/wiki/…), so the key's sub-account, member rights, the
  * space's team access, version history and the audit log apply; an agent's edits show up in the page history
  * with the key's name.

@@ -782,7 +782,7 @@ export function SettingsTab({ onChange }: { onChange: () => void }) {
       </div>
       <div className="card" data-tour="acc-autopost">
         <h2>Automatisch buchen</h2>
-        <p className="muted small">Was HyperLevel selbst bucht – jede Buchung hat einen eindeutigen Schlüssel und entsteht nie doppelt.</p>
+        <p className="muted small">Was V Media CRM selbst bucht – jede Buchung hat einen eindeutigen Schlüssel und entsteht nie doppelt.</p>
         <Check checked={f.autopost.invoices} onChange={(v) => nest('autopost', 'invoices', v)} label="Rechnungen beim Versand (Forderung, Erlös, Umsatzsteuer; Storno bei stornierten Rechnungen)" />
         <Check checked={f.autopost.payments} onChange={(v) => nest('autopost', 'payments', v)} label="Zahlungen auf Rechnungen (Bank oder Stripe-Verrechnungskonto)" />
         <Check checked={f.autopost.stripe} onChange={(v) => nest('autopost', 'stripe', v)} label="Stripe: Auszahlungen, Gebühren und Rückerstattungen" />

@@ -1,5 +1,5 @@
 // A stand-in for `claude -p --output-format stream-json` in the bridge tests: reads the prompt from
-// stdin, calls the HyperLevel MCP endpoint from --mcp-config like Claude Code would, prints stream-json.
+// stdin, calls the V Media CRM MCP endpoint from --mcp-config like Claude Code would, prints stream-json.
 import { readFileSync } from 'node:fs';
 
 const args = process.argv.slice(2);

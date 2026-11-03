@@ -9,7 +9,7 @@ import type { BoardFull, Catalogue, ComposeResult } from './types';
 const EXAMPLES = ['Zeig mir die offenen Angebote und die heutigen Aufgaben', 'Mach das Umsatz-Diagramm größer und setz es nach oben', 'Füge einen Kalender neben der Pipeline hinzu', 'Entferne die Notizen und nenne das Board „Montag“', 'Färbe das Board violett'];
 
 /**
- * "Sag dem Board, was du sehen willst": text or push-to-talk (the same speech recognition as the HyperLevel Agent) → a checked
+ * "Sag dem Board, was du sehen willst": text or push-to-talk (the same speech recognition as the V Media CRM Agent) → a checked
  * change. Small layout changes can go straight through (setting), everything else waits for "Übernehmen". Spoken wishes
  * never confirm anything themselves.
  */

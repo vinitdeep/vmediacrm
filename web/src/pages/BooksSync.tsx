@@ -48,7 +48,7 @@ export function BooksSync() {
   return (
     <div className="books" data-tour="books-sync">
       <p className="muted">
-        Rechnungen bleiben in HyperLevel – deine Buchhaltung bekommt sie automatisch: festgeschriebene Rechnungen und Gutschriften gehen sofort rüber, Zahlungseingänge kommen zurück und werden hier als Zahlung verbucht. Der API-Schlüssel wird verschlüsselt gespeichert und nie wieder angezeigt.
+        Rechnungen bleiben in V Media CRM – deine Buchhaltung bekommt sie automatisch: festgeschriebene Rechnungen und Gutschriften gehen sofort rüber, Zahlungseingänge kommen zurück und werden hier als Zahlung verbucht. Der API-Schlüssel wird verschlüsselt gespeichert und nie wieder angezeigt.
       </p>
       <div className="books-providers">
         {(s.providers as Json[]).map((p) => {

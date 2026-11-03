@@ -63,7 +63,7 @@ function randomPassword() {
 
 
 function NewClient({ snapshots, onClose, onDone }: { snapshots: any[]; onClose: () => void; onDone: (r: any) => void }) {
-  const [f, setF] = useState<any>({ name: '', timezone: 'Europe/Berlin', email: '', phone: '', website: '', snapshot_id: '', activate_workflows: false });
+  const [f, setF] = useState<any>({ name: '', timezone: 'Asia/Kolkata', email: '', phone: '', website: '', snapshot_id: '', activate_workflows: false });
   const [login, setLogin] = useState(false);
   const [u, setU] = useState<any>({ email: '', name: '', password: randomPassword(), permissions: DEFAULT_CLIENT_PERMS });
   const [busy, setBusy] = useState(false);
@@ -92,7 +92,7 @@ function NewClient({ snapshots, onClose, onDone }: { snapshots: any[]; onClose: 
           <Input value={f.email} onChange={(v) => setF({ ...f, email: v })} />
         </Field>
       </div>
-      <MoreFields id="agency-new-client" values={[f.website, f.timezone !== 'Europe/Berlin' && f.timezone]}>
+      <MoreFields id="agency-new-client" values={[f.website, f.timezone !== 'Asia/Kolkata' && f.timezone]}>
         <div className="grid2">
           <Field label="Zeitzone">
             <Input value={f.timezone} onChange={(v) => setF({ ...f, timezone: v })} />
@@ -441,7 +441,7 @@ function BrandingSettings({ locationId, onSaved }: { locationId?: string; onSave
   if (!b.data || (locationId && !agency.data)) return <Spinner />;
   const v = b.data;
   const fb = agency.data ?? {};
-  const shown = { ...v, name: v.name || fb.name || '', color: v.color || fb.color || '#2563eb', logo_url: v.logo_url || fb.logo_url || '' };
+  const shown = { ...v, name: v.name || fb.name || '', color: v.color || fb.color || '#c8191f', logo_url: v.logo_url || fb.logo_url || '' };
   const set = (p: any) => b.setData({ ...v, ...p });
   // The client's own values over the agency's: what the logins actually see.
   const merged = (locationId ? { ...fb, ...Object.fromEntries(Object.entries(v).filter(([, x]) => x !== '' && x !== undefined && x !== null)) } : v) as Branding;
@@ -512,7 +512,7 @@ function BrandingSettings({ locationId, onSaved }: { locationId?: string; onSave
       <div className="card" style={{ flex: '1 1 260px' }} data-tour="branding-preview">
         <h2>Vorschau</h2>
         <LogoPreview shown={{ ...merged, name: shown.name, color: shown.color }} />
-        <p className="muted small">{locationId ? 'Das sehen die Logins dieses Kunden. Leere Felder = dein Agentur-Branding.' : '„HyperLevel“ taucht danach nirgends mehr auf – auch nicht für Kunden-Logins.'}</p>
+        <p className="muted small">{locationId ? 'Das sehen die Logins dieses Kunden. Leere Felder = dein Agentur-Branding.' : '„V Media CRM“ taucht danach nirgends mehr auf – auch nicht für Kunden-Logins.'}</p>
       </div>
     </div>
     <BrandingLook locationId={locationId} />

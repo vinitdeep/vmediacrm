@@ -152,7 +152,7 @@ function EmployeeData({ employee, defaultState, states, onSaved }: { employee?: 
         </div>
       </Field>
       <div className="grid3">
-        <Field label="HyperLevel-Login" hint="Damit kann die Person Urlaub beantragen und ihre Unterlagen sehen">
+        <Field label="V Media CRM-Login" hint="Damit kann die Person Urlaub beantragen und ihre Unterlagen sehen">
           <Select value={f.user_id} onChange={set('user_id')} placeholder="– ohne Login –" options={userOpts} />
         </Field>
         <Field label="Vorgesetzte/r (genehmigt Anträge)">

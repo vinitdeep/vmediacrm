@@ -7,7 +7,7 @@ import { SCOPES, type Manifest } from './manifest.js';
 import { OPS, opsFor, sampleFor } from './ops.js';
 
 /**
- * The bridge: the only way a plugin reaches HyperLevel data – from its iframe (through the host page's
+ * The bridge: the only way a plugin reaches V Media CRM data – from its iframe (through the host page's
  * postMessage relay) and from its sandboxed server code (through IPC). Every call is checked in this order:
  *   1. the operation exists in the catalogue (ops.ts),
  *   2. its scope is in the manifest of the running version (otherwise "denied", counted for the kill switch),

@@ -6,7 +6,7 @@ import { HttpError } from '../core/http.js';
 import { KINDS, type OfficeCommand, type OfficeKind } from './office-model.js';
 
 /**
- * The adapter between HyperLevel and the optional headless Office engines (one command-line program per kind of file, from
+ * The adapter between V Media CRM and the optional headless Office engines (one command-line program per kind of file, from
  * `PGHL_OFFICE_BIN_DIR` – docs/office.md). Every call works on a temporary copy in its own folder: the program is started
  * directly (never through a shell, arguments as a list), with a minimal environment, a time limit, a cap on what it may print and
  * on the size of what it writes; the folder is removed afterwards. Without the program the call fails with a clear 503 – the rest
@@ -60,7 +60,7 @@ function runProgram(file: string, args: string[], cwd: string, timeoutMs: number
       shell: false,
       windowsHide: true,
       stdio: ['ignore', 'pipe', 'pipe'],
-      // Only what the programs need: no secrets of HyperLevel's environment go along. HOME points into the temp folder (preferences, logs).
+      // Only what the programs need: no secrets of V Media CRM's environment go along. HOME points into the temp folder (preferences, logs).
       env: { PATH: process.env.PATH ?? '/usr/bin:/bin', HOME: cwd, TMPDIR: cwd, LANG: 'C.UTF-8', WORDCRAFT_NO_PREFS: '1', GRIDCRAFT_NO_PREFS: '1', DECKCRAFT_NO_PREFS: '1', PDFCRAFT_NO_PREFS: '1', RUST_LOG: 'warn' },
     });
     const out: Buffer[] = [];

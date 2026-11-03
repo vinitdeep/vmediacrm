@@ -12,7 +12,7 @@ import type { Tool } from './mcp.js';
 import { hiddenUser } from '../core/permissions.js';
 
 /**
- * Personal (HR basics): employee records – HyperLevel users and people without a login – with contract data, documents and a
+ * Personal (HR basics): employee records – V Media CRM users and people without a login – with contract data, documents and a
  * sealed block of sensitive fields (salary, bank account, tax ID, social-security number, birth date).
  *
  * Access, strictly:
@@ -1027,7 +1027,7 @@ export const hrModule: Module = {
           { title: 'Arbeitsvertrag unterschrieben und abgelegt', assignee: 'hr', due_days: -7 },
           { title: 'Personalfragebogen, Steuer-ID und Sozialversicherungsnummer erhalten', assignee: 'employee', due_days: -7 },
           { title: 'Anmeldung zur Sozialversicherung', assignee: 'hr', due_days: 0 },
-          { title: 'Zugänge einrichten (E-Mail, HyperLevel-Login, Tools)', assignee: 'it', due_days: -1 },
+          { title: 'Zugänge einrichten (E-Mail, V Media CRM-Login, Tools)', assignee: 'it', due_days: -1 },
           { title: 'Arbeitsgeräte und Schlüssel übergeben', assignee: 'it', due_days: 0 },
           { title: 'Datenschutz- und Verschwiegenheitsverpflichtung unterschrieben', assignee: 'employee', due_days: 0 },
           { title: 'Einarbeitungsplan und Ansprechperson festgelegt', assignee: 'manager', due_days: 0 },

@@ -7,7 +7,7 @@ const config = loadConfig();
 const instance = createApp(config, MODULES);
 bootstrapAdmin(instance.app, process.env);
 await instance.listen();
-console.log(`HyperLevel läuft auf ${config.baseUrl} (lauscht auf ${config.host}:${config.port}, Daten in ${config.dataDir})`);
+console.log(`V Media CRM läuft auf ${config.baseUrl} (lauscht auf ${config.host}:${config.port}, Daten in ${config.dataDir})`);
 
 for (const sig of ['SIGINT', 'SIGTERM'] as const) {
   process.on(sig, async () => {

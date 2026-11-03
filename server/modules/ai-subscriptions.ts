@@ -35,7 +35,7 @@ import type { Usage } from '../services/anthropic.js';
  *
  * Policy research (October 2026, sources in docs/ai-providers.md#subscription-sign-in):
  *  - OpenAI offers "Sign in with ChatGPT" (ChatGPT plan usage) to open-source and locally hosted apps; paid or remotely hosted
- *    apps need OpenAI's approval. HyperLevel is open source and usually self-hosted, so the feature is on by default there, and it is
+ *    apps need OpenAI's approval. V Media CRM is open source and usually self-hosted, so the feature is on by default there, and it is
  *    OFF on an installation that is run as a hosted service (PGHL_HOSTED=1) until the operator has OpenAI's approval
  *    (PGHL_CHATGPT_SIGNIN_APPROVED=1). An agency admin can switch it off in any case.
  *  - Anthropic does not permit third-party apps to offer Claude.ai login or to route requests through Free/Pro/Max credentials
@@ -93,7 +93,7 @@ const MCP_TOOLS: Tool[] = [
     name: 'ghl_ai_providers',
     title: 'KI-Anbieter und Abo-Anmeldung',
     description:
-      'Übersicht über die KI-Anbieter von HyperLevel: der Katalog (Anbieter, Adresse, Modell-Liste ja/nein, Kennzeichnung „EU-Hosting“, günstig, schnell, lokal), die Verbindungen dieses Sub-Accounts (ohne Schlüssel) mit Status und Modellen, welches Modell wofür gilt, und der Stand der Abo-Anmeldung (Mit ChatGPT anmelden: verfügbar oder ausgeschaltet und warum; Claude: nur über Bridge oder API-Schlüssel). Liefert nie Schlüssel oder Token. filter: eu | cheap | fast | local | gateway; search: Text im Namen.',
+      'Übersicht über die KI-Anbieter von V Media CRM: der Katalog (Anbieter, Adresse, Modell-Liste ja/nein, Kennzeichnung „EU-Hosting“, günstig, schnell, lokal), die Verbindungen dieses Sub-Accounts (ohne Schlüssel) mit Status und Modellen, welches Modell wofür gilt, und der Stand der Abo-Anmeldung (Mit ChatGPT anmelden: verfügbar oder ausgeschaltet und warum; Claude: nur über Bridge oder API-Schlüssel). Liefert nie Schlüssel oder Token. filter: eu | cheap | fast | local | gateway; search: Text im Namen.',
     inputSchema: {
       type: 'object',
       properties: { location_id: { type: 'string', description: 'Sub-Account/Projekt-ID (aus ghl_list_projects)' }, filter: { type: 'string', enum: ['eu', 'cheap', 'fast', 'local', 'gateway'] }, search: { type: 'string' } },
@@ -342,7 +342,7 @@ export const aiSubscriptionsModule: Module = {
         keySource: 'registry' as const,
         connectionId: target.connectionId,
         call: async (input: any) => {
-          const out = await completeText(target, input, fetchFor(target), { baseUrl: app.baseUrl(), name: 'HyperLevel' });
+          const out = await completeText(target, input, fetchFor(target), { baseUrl: app.baseUrl(), name: 'V Media CRM' });
           app.services.aiConnections?.recordUsage(target.connectionId, locationId, out.usage, 0);
           return out;
         },
@@ -373,7 +373,7 @@ export const aiSubscriptionsModule: Module = {
         claude: {
           available: false,
           oauth: false,
-          reason: 'Anthropic erlaubt Drittanbietern keine Claude-Anmeldung in eigenen Apps und keine Anfragen über Free-, Pro- oder Max-Zugangsdaten. HyperLevel bietet deshalb keine „Mit Claude anmelden“-Funktion.',
+          reason: 'Anthropic erlaubt Drittanbietern keine Claude-Anmeldung in eigenen Apps und keine Anfragen über Free-, Pro- oder Max-Zugangsdaten. V Media CRM bietet deshalb keine „Mit Claude anmelden“-Funktion.',
           policy_url: 'https://code.claude.com/docs/en/legal-and-compliance#authentication-and-credential-use',
           paths: ['bridge', 'api_key'],
         },
@@ -411,7 +411,7 @@ export const aiSubscriptionsModule: Module = {
       if (recent >= 12) throw new HttpError(429, 'Zu viele Anmeldeversuche – bitte in einer Stunde noch einmal.');
       let url: string;
       try {
-        url = await buildAuthorizeUrl(http(), { clientId: prev?.client_id || undefined, hostId: hostId(), appName: String(app.services.brandName?.() ?? 'HyperLevel'), pkce, loginHint: prev?.email || undefined, reconsent: prev?.status === 'plan_disabled' });
+        url = await buildAuthorizeUrl(http(), { clientId: prev?.client_id || undefined, hostId: hostId(), appName: String(app.services.brandName?.() ?? 'V Media CRM'), pkce, loginHint: prev?.email || undefined, reconsent: prev?.status === 'plan_disabled' });
       } catch (e) {
         return wrap(e);
       }
@@ -453,7 +453,7 @@ export const aiSubscriptionsModule: Module = {
           // Signed in, but the person did not allow the use of their plan: keep the registration, drop the tokens.
           void revoke(f, clientId, credentials.refreshToken);
           patchRow(rowId, { creds: null, subject: who.subject, email: who.email, name: who.name, status: 'plan_disabled', status_message: 'Du hast dich angemeldet, aber die Nutzung deines ChatGPT-Abos nicht erlaubt.' });
-          throw new OAuthError('Du hast dich angemeldet, aber die Nutzung deines ChatGPT-Abos in HyperLevel nicht erlaubt. Starte die Anmeldung neu und erlaube sie bei der Frage nach den Berechtigungen.', 'plan_not_granted', 400);
+          throw new OAuthError('Du hast dich angemeldet, aber die Nutzung deines ChatGPT-Abos in V Media CRM nicht erlaubt. Starte die Anmeldung neu und erlaube sie bei der Frage nach den Berechtigungen.', 'plan_not_granted', 400);
         }
         let models: { slug: string }[] = [];
         try {

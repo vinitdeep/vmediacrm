@@ -32,7 +32,7 @@ import {
  * Job engine of the KI-Studio: a job is created by a request (studio, builders, workflow, MCP,
  * app), submitted right away in the background, then polled by `app.onTick` (or woken by the
  * provider's callback) until it is done. Results are downloaded (SSRF-guarded, size- and
- * type-checked) into HyperLevel's own storage, so provider URLs may expire; "In Mediathek" copies a
+ * type-checked) into V Media CRM's own storage, so provider URLs may expire; "In Mediathek" copies a
  * result into the media library (uploads). The key is looked up again on every step – revoking
  * a connection stops its jobs.
  */

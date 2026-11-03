@@ -22,7 +22,7 @@ export interface Tool {
   inputSchema: Json;
   annotations: { readOnlyHint?: boolean; destructiveHint?: boolean; idempotentHint?: boolean; openWorldHint?: boolean };
   agencyOnly?: boolean;
-  /** The HyperLevel Agent's class for this call when it depends on the arguments (e.g. plan only vs. build); defaults to the annotations. */
+  /** The V Media CRM Agent's class for this call when it depends on the arguments (e.g. plan only vs. build); defaults to the annotations. */
   klassFor?: (args: Json) => 'read' | 'write' | 'sensitive';
   /** The result is third-party text (messages, notes, search hits): the agent treats it as untrusted data (agent-tools.ts). */
   untrusted?: boolean;
@@ -634,7 +634,7 @@ export const mcpModule: Module = {
               result = {
                 protocolVersion: PROTOCOL_VERSIONS.includes(wanted) ? wanted : PROTOCOL_VERSIONS[0],
                 capabilities: { tools: { listChanged: false } },
-                serverInfo: { name: 'gohigh', title: app.services.brandName?.() ?? 'HyperLevel', version: APP_VERSION },
+                serverInfo: { name: 'gohigh', title: app.services.brandName?.() ?? 'V Media CRM', version: APP_VERSION },
                 instructions: c.agency
                   ? 'Agentur-CRM: Jedes Projekt ist ein Sub-Account (location_id). Starte mit ghl_list_projects. Schreibende Tools wirken sofort und landen im Protokoll. Social-Posts standardmäßig als Entwurf anlegen; ghl_send_message verschickt echt.'
                   : `CRM eines einzelnen Sub-Accounts (location_id ${c.locationId}) – andere Sub-Accounts sind mit dieser Verbindung nicht erreichbar. Starte mit ghl_list_projects. Schreibende Tools wirken sofort und landen im Protokoll. Social-Posts standardmäßig als Entwurf anlegen; ghl_send_message verschickt echt.`,

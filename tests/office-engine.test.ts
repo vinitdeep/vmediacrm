@@ -53,7 +53,7 @@ afterAll(async () => {
 });
 
 describe('without an engine', () => {
-  it('reads plain text with HyperLevel’s own extractor and refuses edits with a clear 503', async () => {
+  it('reads plain text with V Media CRM’s own extractor and refuses edits with a clear 503', async () => {
     delete process.env.PGHL_OFFICE_BIN_DIR;
     const f = (await admin('POST', '/api/office/files', { kind: 'docx', name: 'Brief', text: 'Sehr geehrte Frau Muster,\nvielen Dank.' })).data;
     const r = await admin('GET', `/api/office/files/${f.id}/read`);

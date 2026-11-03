@@ -12,7 +12,7 @@ import { PUSH_KINDS } from './push.js';
 
 /**
  * Office: documents, spreadsheets, presentations and PDFs per sub-account (docs/office.md) – files with immutable versions (each save is a
- * new version with its author: a person, the HyperLevel Agent on behalf of a person, or an API/MCP connection), optionally linked to a
+ * new version with its author: a person, the V Media CRM Agent on behalf of a person, or an API/MCP connection), optionally linked to a
  * contact, deal or project. The browser editors (optional upstream WebAssembly builds from PGHL_OFFICE_DIR) are served here too, the
  * edit lock and comments are in office-collab.ts, the agent's reading/editing through the engines in office-tools.ts.
  * Permission area `office`; every write lands in the audit log (afterWrite).
@@ -332,12 +332,12 @@ export const officeModule: Module = {
       const f = getFile(app, ctx.locationId, ctx.params.id);
       return fileBody(f, readVersion(app, getVersion(app, f, versionParam(ctx))), false);
     });
-    /** The bytes for the editor bridge (not an export: the file stays in HyperLevel). */
+    /** The bytes for the editor bridge (not an export: the file stays in V Media CRM). */
     router.get('/api/office/files/:id/raw', 'location', (ctx) => {
       const f = getFile(app, ctx.locationId, ctx.params.id);
       return fileBody(f, readVersion(app, getVersion(app, f, versionParam(ctx))), true);
     });
-    /** The signed link of the PDF editor (public: the editor runs without HyperLevel's cookies). */
+    /** The signed link of the PDF editor (public: the editor runs without V Media CRM's cookies). */
     router.get('/office/blob/:token/:name', 'public', (ctx) => {
       const t = readBlobToken(app, ctx.params.token);
       if (!t) throw notFound('Link abgelaufen');

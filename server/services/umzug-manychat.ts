@@ -74,7 +74,7 @@ const steps = (): StepDef[] => [
       const body = [
         '# ManyChat-Konto: Flows, Tags und Felder',
         '',
-        `Stand: ${new Date().toISOString().slice(0, 10)}. Diese Liste ist eine **Gedächtnisstütze** zum Nachbauen: ManyChats Schnittstelle liefert die Namen der Flows, nicht ihren Inhalt (Nachrichten, Bedingungen, Schaltflächen). Bau jeden Flow, den du brauchst, in HyperLevel als Workflow oder Chat-Ablauf nach, und prüfe vor dem Kündigen, dass nichts fehlt.`,
+        `Stand: ${new Date().toISOString().slice(0, 10)}. Diese Liste ist eine **Gedächtnisstütze** zum Nachbauen: ManyChats Schnittstelle liefert die Namen der Flows, nicht ihren Inhalt (Nachrichten, Bedingungen, Schaltflächen). Bau jeden Flow, den du brauchst, in V Media CRM als Workflow oder Chat-Ablauf nach, und prüfe vor dem Kündigen, dass nichts fehlt.`,
         '',
         `## Flows (${flows.length})`,
         '',
@@ -106,13 +106,13 @@ export const MANYCHAT: SourceDef = {
   howto: [
     'In ManyChat links unten auf „Settings“ → „API“ → „Generate Your API Key“ (die Schnittstelle gehört zum Pro-Tarif). Den Schlüssel – er beginnt mit der Seiten-Nummer, einem Doppelpunkt und dem Token – hier einfügen.',
     'Die Schnittstelle kann Kontakte nicht auflisten. Exportiere sie deshalb in ManyChat als Datei (Contacts → „Export“ bzw. im Bulk-Menü) und lade die Datei bei „Export-Datei hochladen“ hoch: Namen, E-Mail, Telefon, Tags, eigene Felder und die Opt-in-Spalten kommen mit.',
-    'Mit dem Schlüssel legt HyperLevel die Tags an und schreibt eine Referenzliste deiner Flows ins Wiki. Gelesen wird nur – in ManyChat ändert sich nichts.',
+    'Mit dem Schlüssel legt V Media CRM die Tags an und schreibt eine Referenzliste deiner Flows ins Wiki. Gelesen wird nur – in ManyChat ändert sich nichts.',
   ],
   limits: [
     'Kontakte über die Schnittstelle (ManyChat bietet keine Liste – nimm die Export-Datei)',
     'Der Inhalt der Flows (Nachrichten, Bedingungen, Schaltflächen) – nur Namen und Ordner kommen als Referenzliste ins Wiki',
     'Gesprächsverlauf, Live-Chat-Nachrichten und Broadcast-Statistiken',
-    'Kanal-Verbindungen (Instagram, WhatsApp, Messenger, Telegram) und Vorlagen – die richtest du in HyperLevel neu ein; die Kanal-Kennungen eines Kontakts (z. B. Instagram-ID) gelten nur bei ManyChat',
+    'Kanal-Verbindungen (Instagram, WhatsApp, Messenger, Telegram) und Vorlagen – die richtest du in V Media CRM neu ein; die Kanal-Kennungen eines Kontakts (z. B. Instagram-ID) gelten nur bei ManyChat',
     'Bot-Feld-Werte (sie stehen aus Sicherheitsgründen nicht in der Liste)',
   ],
   parts: [

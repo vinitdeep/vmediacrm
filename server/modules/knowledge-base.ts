@@ -154,7 +154,7 @@ export const knowledgeBaseModule: Module = {
         title: hc.title || `${name} Hilfe-Center`,
         name,
         intro: hc.intro || 'Wie können wir helfen?',
-        color: [hc.color, brand.color].find((c) => /^#[0-9a-f]{6}$/i.test(c ?? '')) ?? '#2563eb',
+        color: [hc.color, brand.color].find((c) => /^#[0-9a-f]{6}$/i.test(c ?? '')) ?? '#c8191f',
         logo: brand.logo_url || l.logo_url || '',
         seoTitle: hc.seo_title,
         seoDescription: hc.seo_description,

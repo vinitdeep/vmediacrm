@@ -5,7 +5,7 @@ import { loadPolicy, mayBuild } from '../services/werkstatt/policy.js';
 import type { Tool } from './mcp.js';
 
 /**
- * MCP tools for the Werkstatt and the Marktplatz (also the HyperLevel Agent's tools, which uses every MCP tool):
+ * MCP tools for the Werkstatt and the Marktplatz (also the V Media CRM Agent's tools, which uses every MCP tool):
  * list and install plugins, build from a wish, ask for the status, change a plugin, discard it, and – for admins –
  * the lifecycle (approve, review, publish, roll back, switch off). They are thin relays onto the REST routes, so
  * the same policy, model gate, approval, budget and consent rules apply as in the app.
@@ -274,7 +274,7 @@ export const werkstattToolsModule: Module = {
   name: 'werkstatt-tools',
   register(app) {
     app.services.mcpTools = [...(app.services.mcpTools ?? []), ...TOOLS];
-    // The HyperLevel Agent offers a build when a request is not covered – only to people who may build.
+    // The V Media CRM Agent offers a build when a request is not covered – only to people who may build.
     app.services.agentPromptExtras = [
       ...(app.services.agentPromptExtras ?? []),
       (i: { user: any; locationId: string; automatic: boolean }) => {

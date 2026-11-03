@@ -39,7 +39,7 @@ interface Overview {
 
 const SOURCE: Record<string, string> = { agency: 'Eigener Link', env: 'PGHL_REFERRALS', default: 'HyperLevel-Partner-Link', signup: 'Anmelde-Seite' };
 /** Whose partner link is active right now. */
-const BY: Record<string, string> = { agency: 'eigener', env: 'Server', default: 'HyperLevel' };
+const BY: Record<string, string> = { agency: 'eigener', env: 'Server', default: 'V Media CRM' };
 const host = (u: string) => {
   try {
     const x = new URL(u);

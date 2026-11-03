@@ -59,7 +59,7 @@ describe('Lexware Office: connect and preview', () => {
     const total = (k: string) => r.data.counts.find((c: any) => c.key === k)?.total;
     expect(total('contacts')).toBe(4);
     expect(total('documents')).toBe(6);
-    expect(r.data.warnings.join(' ')).toContain('nicht als Rechnungen in HyperLevel');
+    expect(r.data.warnings.join(' ')).toContain('nicht als Rechnungen in V Media CRM');
     expect(r.data.warnings.join(' ')).toContain('Aufbewahrungspflicht');
     expect(r.data.fields.map((f: any) => f.ref)).toContain('customer_number');
     expect(r.data.mapping).toMatchObject({ email: 'email', company: 'company', customer_number: 'new:text:Kundennummer', note: 'note' });
@@ -92,7 +92,7 @@ describe('Lexware Office: import', () => {
     const anna = docs('anna@muster.example.com');
     expect(anna.map((a: any) => a.summary.replace(/\u00a0/g, ' '))).toEqual(['Rechnung RE0001 · 1.190,00 € · offen · aus Lexware Office', 'Gutschrift GS0001 · 100,00 € · offen · aus Lexware Office']);
     expect(docs('cleo@example.com').map((a: any) => a.data.number)).toEqual(['RE0002', 'AN0001']);
-    // nothing of this became a HyperLevel invoice, no number was given out, nothing frozen
+    // nothing of this became a V Media CRM invoice, no number was given out, nothing frozen
     expect(h.count('invoices')).toBe(0);
     expect(h.q('SELECT * FROM invoice_counters WHERE location_id = ?')).toHaveLength(0);
     // a voucher for a contact that was not imported, and one without contact, are not written

@@ -15,7 +15,7 @@ import { resolveTtsVoice } from '../services/companion-prefs.js';
 
 /**
  * Stimme: the voice layer on top of the BYOK registry (KI-Anbieter) – settings per sub-account ("Stimme"),
- * per-user preferences of the HyperLevel Agent panel, voices of the provider, "Stimme testen", speech to text for the
+ * per-user preferences of the V Media CRM Agent panel, voices of the provider, "Stimme testen", speech to text for the
  * push-to-talk button (also for the native app) and the latency of phone calls. The phone transports (Media Streams,
  * recorded turns) live in modules/voice-phone.ts; providers in services/voice-adapters.ts and voice-stream-*.ts.
  * Which provider speaks and listens is decided by the registry's routing ("Sprachausgabe", "Transkription") or by the
@@ -274,7 +274,7 @@ export const voiceModule: Module = {
       }
     });
 
-    // --- spoken replies of the HyperLevel Agent -----------------------------------------------------------------------------------
+    // --- spoken replies of the V Media CRM Agent -----------------------------------------------------------------------------------
     const prefsOf = (locId: string, userId: string | undefined): VoiceUserPrefs => {
       if (!userId) return withUserDefaults(null);
       const row = db.get<{ data: string }>('SELECT data FROM voice_user_prefs WHERE user_id = ? AND location_id = ?', userId, locId);

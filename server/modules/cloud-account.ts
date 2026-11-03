@@ -236,7 +236,7 @@ export const cloudAccountModule: Module = {
       if (s.agency_max_clients && ids.length - 1 >= s.agency_max_clients) throw new HttpError(403, `Fair Use: bis ${s.agency_max_clients} Kunden-Accounts sind inklusive – melde dich für mehr beim Support.`);
       const b = ctx.body ?? {};
       const name = str(b.name, 'Name', { required: true, max: 120 });
-      const tz = str(b.timezone, 'Zeitzone') || 'Europe/Berlin';
+      const tz = str(b.timezone, 'Zeitzone') || 'Asia/Kolkata';
       if (!isValidTz(tz)) throw bad('Unbekannte Zeitzone');
       const brand = app.location(t.location_id)?.settings?.branding ?? {};
       const { app_domain: _d, ...look } = brand;

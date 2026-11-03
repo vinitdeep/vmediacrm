@@ -9,7 +9,7 @@ import { startTestApp } from './helpers.js';
 /**
  * The recommended way to use a Claude (or ChatGPT) subscription: the local bridge – Claude Code / Codex CLI on the person's own
  * computer, signed in there, with a one-line setup, a pairing code with QR code, live status and the model of their choice.
- * (Claude has no OAuth sign-in in HyperLevel: Anthropic does not allow it for third-party apps.)
+ * (Claude has no OAuth sign-in in V Media CRM: Anthropic does not allow it for third-party apps.)
  */
 
 const FAKE = fileURLToPath(new URL('./fixtures/fake-claude.mjs', import.meta.url));
@@ -78,7 +78,7 @@ describe('connecting a computer', () => {
     expect(before.devices).toHaveLength(1);
     expect(before.devices[0]).toMatchObject({ name: 'Annas MacBook', cli: 'claude', model: '', clis: ['claude', 'codex'], version: '1.1.0', online: true });
     const id = before.devices[0].id;
-    // model and CLI are set in HyperLevel
+    // model and CLI are set in V Media CRM
     expect((await t.api.patch(`/api/agent/bridge/devices/${id}`, { model: 'claude-sonnet-5-5' })).data).toMatchObject({ model: 'claude-sonnet-5-5', cli: 'claude' });
     expect((await t.api.patch(`/api/agent/bridge/devices/${id}`, { model: 'rm -rf /' })).status).toBe(400);
     expect((await t.api.patch(`/api/agent/bridge/devices/${id}`, { cli: 'gemini' })).status).toBe(400);

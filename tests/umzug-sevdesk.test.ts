@@ -61,7 +61,7 @@ describe('sevDesk: connect and preview', () => {
     expect(total('invoices')).toBe(5);
     expect(total('credit_notes')).toBe(1);
     expect(total('orders')).toBe(2);
-    expect(r.data.warnings.join(' ')).toContain('nicht als Rechnungen in HyperLevel');
+    expect(r.data.warnings.join(' ')).toContain('nicht als Rechnungen in V Media CRM');
     expect(r.data.fields.map((f: any) => f.ref)).toContain('vat_id');
   });
 });

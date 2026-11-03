@@ -2,7 +2,7 @@ import type { Module } from '../core/app.js';
 import type { Tool } from './mcp.js';
 
 /**
- * MCP tools for the Canvas – agents (Claude, ChatGPT, the in-app HyperLevel Agent) read and draw on
+ * MCP tools for the Canvas – agents (Claude, ChatGPT, the in-app V Media CRM Agent) read and draw on
  * boards. Like every MCP tool they relay onto the REST API (/api/canvas/…), so the key's sub-account,
  * member rights, board sharing and the audit log apply; edits appear live for people watching the board,
  * with an agent cursor named after the key/agent.

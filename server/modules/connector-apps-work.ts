@@ -223,7 +223,7 @@ export const connectorAppsWorkModule: Module = {
       fields: [{ key: 'webhook_url', label: 'Webhook-URL', secret: true, required: true, max: 900, pattern: TEAMS, patternHint: 'Teams-Webhook-URL erwartet (…webhook.office.com/… oder Workflows-URL)', placeholder: 'https://…webhook.office.com/…' }],
       steps: ['Teams: Nachricht in Kanal'],
       test: async (a, cfg) => {
-        await teamsPost(a, cfg.webhook_url, 'HyperLevel', 'Verbindung getestet ✓');
+        await teamsPost(a, cfg.webhook_url, 'V Media CRM', 'Verbindung getestet ✓');
         return 'Test-Nachricht gesendet';
       },
       actions: {

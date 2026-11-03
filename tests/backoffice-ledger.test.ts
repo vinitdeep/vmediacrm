@@ -270,7 +270,7 @@ describe('the journal', () => {
 });
 
 describe('invoice auto-posting', () => {
-  it('books issue and payment of HyperLevel invoices, once, with the invoice numbers as document numbers', async () => {
+  it('books issue and payment of V Media CRM invoices, once, with the invoice numbers as document numbers', async () => {
     const mk = (items: any[], extra: any = {}) => createInvoice(t.app, loc, { items, ...extra });
     const a0 = mk([{ name: 'Beratung', qty: 1, price_cents: 100000, tax_rate: 19 }], { issued_at: '2025-06-10T09:00:00Z', title: 'Juni' });
     const b0 = mk([{ name: 'Buch', qty: 2, price_cents: 5000, tax_rate: 7 }, { name: 'Beratung', qty: 1, price_cents: 20000, tax_rate: 19 }], { issued_at: '2025-06-12T09:00:00Z' });

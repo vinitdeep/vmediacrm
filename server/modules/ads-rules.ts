@@ -57,7 +57,7 @@ export const adsRulesModule: Module = {
 
     const outRule = (r: any) => ({ ...r, enabled: !!r.enabled, text: describeRule(r) });
 
-    /** Does this rule apply to the campaign (platform, and HyperLevel id or platform id)? */
+    /** Does this rule apply to the campaign (platform, and V Media CRM id or platform id)? */
     const applies = (loc: string, r: Rule, platform: Platform, campaignId: string) => {
       if (r.platform !== 'all' && r.platform !== platform) return false;
       if (!r.campaign_ref) return true;

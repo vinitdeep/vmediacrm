@@ -267,7 +267,7 @@ export async function publishGoogle(api: GoogleApi, body: { mutateOperations: Re
 
 // --- status & budget -------------------------------------------------------------------------------------------
 
-/** Turns a campaign (and what HyperLevel created below it) on or off. Pausing the campaign alone already stops delivery. */
+/** Turns a campaign (and what V Media CRM created below it) on or off. Pausing the campaign alone already stops delivery. */
 export function statusMutate(ids: { campaign: string; ad_group?: string; ad_group_ad?: string; asset_group?: string }, status: 'ENABLED' | 'PAUSED') {
   const ops: Record<string, any>[] = [{ campaignOperation: { update: { resourceName: ids.campaign, status }, updateMask: 'status' } }];
   // Switching on also switches on the parts that were created paused.

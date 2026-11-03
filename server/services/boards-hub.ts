@@ -2,7 +2,7 @@
  * Living Boards realtime: one Server-Sent-Events stream per open tab and board – the same pattern as the Team-Chat
  * (SSE for the server's news, ordinary requests for everything the client does). Whoever changes a board – the editor,
  * the agent, MCP, an undo – publishes the new version here and every open tab shows it at once. Also who is looking
- * (names, no cursors). In memory: one HyperLevel process serves a board; a tab that reconnects reloads the board.
+ * (names, no cursors). In memory: one V Media CRM process serves a board; a tab that reconnects reloads the board.
  * Streams are re-checked every heartbeat so a person who lost access (board made personal, right removed, user
  * deleted) or whose login ended (signed out, session revoked or expired) is cut off within 20 seconds – signing out and
  * revoking at once (services/stream-login.ts).

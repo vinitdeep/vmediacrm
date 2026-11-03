@@ -287,7 +287,7 @@ describe('analysing conversations', () => {
 
   it('transcribes both sides of a two-channel recording, measures them and analyses the conversation', async () => {
     stt.push('Guten Tag, ich möchte ein Angebot für zwanzig Lizenzen. Das ist leider zu teuer, ein echtes Problem.', 'Gerne, wir schicken das Angebot bis Freitag. Äh, sozusagen sofort. Haben Sie noch Fragen? Ähm, ja?');
-    expect((await settings({ auto_calls: true, glossary: 'HyperLevel, Lizenzen', fillers: ['sofort'] })).status).toBe(200);
+    expect((await settings({ auto_calls: true, glossary: 'V Media CRM, Lizenzen', fillers: ['sofort'] })).status).toBe(200);
     // The call (inbound) comes from the contact's number so the summary lands on their timeline.
     const call = await recordedCall(52, '+491709000001');
     expect(call.contact_id).toBe(contactId);

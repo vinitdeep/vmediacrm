@@ -20,7 +20,7 @@ export interface FocusAnswer {
   source: 'ai' | 'rules';
   /** why the rules answered: rules = asked for, off = no AI here, limit = hourly limit, error / invalid = the model failed */
   note: 'rules' | 'off' | 'limit' | 'error' | 'invalid' | null;
-  /** the person asked for something to be done – Fokus never does it, the HyperLevel Agent can */
+  /** the person asked for something to be done – Fokus never does it, the V Media CRM Agent can */
   action: string | null;
   tiles: FocusTile[];
   at: string;

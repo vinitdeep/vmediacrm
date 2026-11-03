@@ -27,7 +27,7 @@ import { TOOLS } from './mcp.js';
  * Without the flag none of these routes exist and `/` stays the web app.
  *
  * Data: prices from the cloud settings (or the list prices), the product name from the agency branding (the shipped default
- * shows as HyperLevel), counts from the running code, the latest Android APK, the GitHub star count (fetched in the
+ * shows as V Media CRM), counts from the running code, the latest Android APK, the GitHub star count (fetched in the
  * background, cached, hidden when unavailable), the comparison research (competitors.json, replaces.json) and screenshots
  * from web/public/landing/ – each shown only while its file exists, with its real size read from the file.
  * Cloud waitlist mode (modules/cloud-waitlist.ts): the page leads with self-hosting and shows the waitlist form instead of selling
@@ -35,7 +35,7 @@ import { TOOLS } from './mcp.js';
  * Docs: docs/landing.md.
  */
 
-const PRODUCT = 'HyperLevel';
+const PRODUCT = 'V Media CRM';
 const STARS_API = 'https://api.github.com/repos/BAISESYSTEMS/GoHyperLevel';
 const STARS_TTL = 6 * 3600_000;
 /** Screenshots (scripts/landing-assets.mjs makes them): the hero's crossfade and the spotlights' pictures, by key. */
@@ -170,7 +170,7 @@ export const landingModule: Module = {
 
     const brand = () => {
       const n = getBranding(app).name;
-      return n && n !== 'HyperLevel' ? n : PRODUCT;
+      return n && n !== 'V Media CRM' ? n : PRODUCT;
     };
     const prices = () => {
       const s = cloudEnabled(app) ? cloudSettings(app) : defaultSettings({});

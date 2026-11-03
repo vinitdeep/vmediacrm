@@ -4,7 +4,7 @@ import { callRoute, ownLocation, visibleLocations, type Loc } from '../services/
 import type { Tool } from './mcp.js';
 
 /**
- * MCP tools of the webinars (HyperLevel Agent, Claude, ChatGPT, Codex) and the native app's read endpoints. The tools are thin
+ * MCP tools of the webinars (V Media CRM Agent, Claude, ChatGPT, Codex) and the native app's read endpoints. The tools are thin
  * relays onto the REST routes of modules/webinars.ts, so the key's sub-account, member rights and the audit log apply.
  */
 

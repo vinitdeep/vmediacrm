@@ -9,7 +9,7 @@ import { CARD_TOOLS, NAMES, refreshPlugins, usd } from './shared';
 import './safety.css';
 
 /**
- * Cards of the Werkstatt in the HyperLevel Agent chat (the "Realtime Feature Lifecycle"): the plan with the person's own
+ * Cards of the Werkstatt in the V Media CRM Agent chat (the "Realtime Feature Lifecycle"): the plan with the person's own
  * confirm button, live progress with step names, an inline sandboxed preview with Öffnen / Ändern lassen / Verwerfen,
  * and the diff of a new version. The agent only starts things; the card reads the order itself (by the `build_id` in the
  * tool result) and every click is a normal request the signed-in person makes – the agent never confirms for them.

@@ -197,7 +197,7 @@ export const BREVO: SourceDef = {
   howto: [
     'In Brevo oben rechts auf deinen Namen → „SMTP & API“ → Reiter „API-Schlüssel“.',
     'Auf „Neuen API-Schlüssel erstellen“ klicken, einen Namen vergeben (z. B. „Umzug“) und den Schlüssel (beginnt mit xkeysib-) hier einfügen.',
-    'Nach dem Umzug löschst du den Schlüssel dort wieder. Gelesen wird nur – in deinem Brevo-Konto ändert HyperLevel nichts.',
+    'Nach dem Umzug löschst du den Schlüssel dort wieder. Gelesen wird nur – in deinem Brevo-Konto ändert V Media CRM nichts.',
   ],
   limits: [
     'Gesendete Kampagnen, Statistiken und Berichte',

@@ -110,7 +110,7 @@ async function describe(h: VendorHttp, parts: PartKey[]) {
   if (parts.includes('companies')) await count('companies', 'companies', 'Unternehmen', () => totalOf(h, '/companies'));
   if (parts.includes('conversations')) {
     await count('conversations', 'conversations', 'Gespräche (mit allen Nachrichten)', () => totalOf(h, '/conversations'));
-    warnings.push('Zu jedem Gespräch liest HyperLevel die Nachrichten einzeln (eine Anfrage je Gespräch); Intercom erlaubt viele Anfragen pro Minute, bei Tausenden Gesprächen dauert es trotzdem. Der Probelauf liest nur die ersten.');
+    warnings.push('Zu jedem Gespräch liest V Media CRM die Nachrichten einzeln (eine Anfrage je Gespräch); Intercom erlaubt viele Anfragen pro Minute, bei Tausenden Gesprächen dauert es trotzdem. Der Probelauf liest nur die ersten.');
   }
   if (parts.includes('articles')) await count('articles', 'articles', 'Hilfe-Artikel', () => totalOf(h, '/articles'));
   return { counts, fields, warnings };
@@ -231,11 +231,11 @@ export const INTERCOM: SourceDef = {
   howto: [
     'In Intercom: Einstellungen (Zahnrad) → Integrationen → „Developer Hub“ → „Neue App“ (intern). Unter „Authentifizierung“ den Zugriffs-Token kopieren; die App braucht Leserechte für Kontakte, Unternehmen, Gespräche, Tags und Hilfe-Center.',
     'Den Token hier einfügen. Liegt dein Workspace in der EU oder in Australien, trage „eu“ bzw. „au“ als Region ein (sonst „us“).',
-    'Nach dem Umzug löschst du die App im Developer Hub. Gelesen wird nur – in Intercom ändert HyperLevel nichts.',
+    'Nach dem Umzug löschst du die App im Developer Hub. Gelesen wird nur – in Intercom ändert V Media CRM nichts.',
   ],
   limits: [
     'Anhänge und Bilder in Gesprächen und Artikeln (die Dateien bleiben bei Intercom)',
-    'Segmente, Kampagnen, Nachrichten-Serien, Produkt-Touren, Bots und Workflows (nachbauen in HyperLevel)',
+    'Segmente, Kampagnen, Nachrichten-Serien, Produkt-Touren, Bots und Workflows (nachbauen in V Media CRM)',
     'Notizen an Kontakten (nur Notizen aus Gesprächen kommen mit) und Ereignisse/Aktivitäten der App',
     'Helpdesk-Funktionen wie Tickets und SLAs (Gespräche kommen als Verlauf ins Postfach, nicht als Tickets)',
     'Übersetzungen von Artikeln und die Reihenfolge der Sammlungen',

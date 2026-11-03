@@ -8,7 +8,7 @@ import { toIso } from './umzug-text.js';
 /**
  * Lexware Office (formerly lexoffice; public API, https://api.lexware.io/v1, an API key): customers → contacts (a company becomes a company
  * with its contact person as contact), documents (invoices, credit notes, quotations, order confirmations, delivery notes, reminders) →
- * read-only entries in the contact's history: number, date, amount, status. They are NOT invoices of HyperLevel: they take no number of the
+ * read-only entries in the contact's history: number, date, amount, status. They are NOT invoices of V Media CRM: they take no number of the
  * invoice ranges, are not frozen or sent, and change no bookkeeping – the originals (with their PDFs) stay at Lexware. The API allows
  * two requests a second and 25 entries per page; a 429 waits and retries.
  */
@@ -49,7 +49,7 @@ const first = (o: Json | undefined, ...keys: string[]): string | undefined => {
 
 // --- contacts ---------------------------------------------------------------------------------------------------
 
-/** A lexoffice contact as company (when it is one) and the HyperLevel contacts that stand for it. */
+/** A lexoffice contact as company (when it is one) and the V Media CRM contacts that stand for it. */
 export function lexofficeContacts(c: Json): { company?: RCompany; contacts: RContact[] } {
   const addr = c.addresses?.billing?.[0] ?? c.addresses?.shipping?.[0] ?? {};
   const common: Record<string, unknown> = {
@@ -170,7 +170,7 @@ async function describe(h: VendorHttp, parts: PartKey[]) {
   if (parts.includes('contacts')) await count('contacts', 'contacts', 'Kunden (Lieferanten werden nicht übernommen)', () => totalOf('/contacts', { customer: true }));
   if (parts.includes('documents')) {
     await count('documents', 'documents', 'Belege (Rechnungen, Gutschriften, Angebote …, ohne Entwürfe)', () => totalOf('/voucherlist', { voucherType: VOUCHER_TYPES, voucherStatus: VOUCHER_STATUS, archived: false }));
-    warnings.push('Die Belege kommen nur als Eintrag im Verlauf des Kontakts (Nummer, Datum, Betrag, Status) – nicht als Rechnungen in HyperLevel: Sie vergeben keine Rechnungsnummer, werden nicht festgeschrieben und ändern die Buchhaltung nicht. Die Originale mit PDF bleiben bei Lexware – vor dem Kündigen alles exportieren (Aufbewahrungspflicht: 8 bzw. 10 Jahre).');
+    warnings.push('Die Belege kommen nur als Eintrag im Verlauf des Kontakts (Nummer, Datum, Betrag, Status) – nicht als Rechnungen in V Media CRM: Sie vergeben keine Rechnungsnummer, werden nicht festgeschrieben und ändern die Buchhaltung nicht. Die Originale mit PDF bleiben bei Lexware – vor dem Kündigen alles exportieren (Aufbewahrungspflicht: 8 bzw. 10 Jahre).');
   }
   if (parts.includes('contacts') || parts.includes('documents')) warnings.push('Lexware Office erlaubt zwei Anfragen pro Sekunde und 25 Einträge pro Seite – bei vielen Belegen dauert der Umzug entsprechend; er lässt sich pausieren und fortsetzen.');
   return { counts, fields: parts.includes('contacts') ? FIELDS : [], warnings };
@@ -183,11 +183,11 @@ export const LEXOFFICE: SourceDef = {
   credentials: [{ key: 'token', label: 'API-Schlüssel', secret: true, placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', hint: 'Lexware Office → Einstellungen → Öffentliche API (app.lexware.de/addons/public-api) → „Schlüssel erstellen“' }],
   howto: [
     'In Lexware Office (lexoffice) unter app.lexware.de/addons/public-api einen neuen API-Schlüssel erstellen und kopieren.',
-    'Den Schlüssel hier einfügen. HyperLevel liest nur und ändert bei Lexware nichts.',
+    'Den Schlüssel hier einfügen. V Media CRM liest nur und ändert bei Lexware nichts.',
     'Nach dem Umzug den Schlüssel bei Lexware löschen. Wichtig: Rechnungen und Belege müssen gesetzlich 8 bzw. 10 Jahre aufbewahrt werden – exportiere sie (z. B. über den DATEV-Export oder die PDFs) und behalte den Zugang zur Buchhaltung, bevor du kündigst.',
   ],
   limits: [
-    'Rechnungen, Gutschriften und alle anderen Belege kommen NICHT als Rechnungen in HyperLevel, sondern nur als Verlaufseintrag am Kontakt (Nummer, Datum, Betrag, Status) – ohne PDF, ohne Positionen, ohne Rechnungsnummer im Nummernkreis von HyperLevel',
+    'Rechnungen, Gutschriften und alle anderen Belege kommen NICHT als Rechnungen in V Media CRM, sondern nur als Verlaufseintrag am Kontakt (Nummer, Datum, Betrag, Status) – ohne PDF, ohne Positionen, ohne Rechnungsnummer im Nummernkreis von V Media CRM',
     'Die Buchhaltung selbst: Belege der Lieferanten, Buchungen, Zahlungen, Konten, Umsatzsteuer-Voranmeldungen und Kassenbuch',
     'Artikel und Dienstleistungen, Dokumentvorlagen, wiederkehrende Rechnungen und Zahlungsbedingungen',
     'Lieferanten (nur Kunden werden übernommen) und archivierte Kontakte; Entwürfe von Belegen',

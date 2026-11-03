@@ -11,7 +11,7 @@ export interface CalcPreset {
   input: Record<string, any>;
 }
 
-/** Costs and payment settings both HyperLevel presets share (example values, hosted cloud on a small server). */
+/** Costs and payment settings both V Media CRM presets share (example values, hosted cloud on a small server). */
 const GOHIGH_BASE = {
   customers: { churn: 2.5, b2b_share: 80, eu_share: 5, growth: { start: 0, monthly_new: 25, monthly_new_growth: 2, months: 36 } },
   pricing: { annual: { share: 30, discount: 16.7 } },
@@ -38,7 +38,7 @@ const merge = (a: Record<string, any>, b: Record<string, any>): Record<string, a
 export const PRESETS: CalcPreset[] = [
   {
     key: 'gohigh-staffel',
-    name: 'HyperLevel Staffel (Vorschlag)',
+    name: 'V Media CRM Staffel (Vorschlag)',
     description: 'Preisstaffeln nach Teamgröße (Solo 49 €, Team 99 €, Firma 199 €) und Agentur-Stufen (Start 99 €, Pro 249 €, SaaS 449 €), je mit enthaltenen Standorten, Stufenpreis und Deckel. Der Kunden-Mix verteilt auf die Tarife; alle Preise sind frei änderbar.',
     input: merge(GOHIGH_BASE, {
       pricing: {
@@ -57,10 +57,10 @@ export const PRESETS: CalcPreset[] = [
   },
   {
     key: 'gohigh-standort',
-    name: 'HyperLevel Standort-Modell (49 € inkl. 3 Standorte, +10 €, Deckel 499 €)',
+    name: 'V Media CRM Standort-Modell (49 € inkl. 3 Standorte, +10 €, Deckel 499 €)',
     description: '49 € pro Firma und Monat mit 3 Standorten inklusive, jeder weitere Standort 10 €, höchstens 499 €. Die Verteilung der Standorte pro Kunde zeigt, wie der Deckel wirkt.',
     input: merge(GOHIGH_BASE, {
-      pricing: { plans: [{ name: 'HyperLevel Cloud', mix: 100, base_price: 49, included_units: 3, unit_price: 10, cap: 499, users: 4, note: 'pro Firma, unbegrenzt Nutzer' }] },
+      pricing: { plans: [{ name: 'V Media CRM Cloud', mix: 100, base_price: 49, included_units: 3, unit_price: 10, cap: 499, users: 4, note: 'pro Firma, unbegrenzt Nutzer' }] },
       customers: {
         count: 300,
         unit_mix: [
