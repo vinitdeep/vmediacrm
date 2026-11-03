@@ -4,6 +4,8 @@
   "name": "V Media CRM",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
   "hostRequirements": { "cpus": 2, "memory": "4gb" },
+  // lets `gh codespace ssh` reach the container (checks and fixes from a local terminal)
+  "features": { "ghcr.io/devcontainers/features/sshd:1": { "version": "latest" } },
   "postCreateCommand": "npm ci && npm run build && npm run demo:seed -- --data-dir ./demo-data --reset",
   "postStartCommand": "bash .devcontainer/start.sh",
   "forwardPorts": [4700],
