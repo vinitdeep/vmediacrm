@@ -41,8 +41,7 @@ Dev mode: `npm run dev` (api + vite). Deploy options: `docs/deploy/` (needs a VP
 - **Currency** – € is hard-coded in ~100 places; switching to ₹/INR needs its own pass.
 - **GitHub** – pushed to https://github.com/vinitdeep/vmediacrm (PUBLIC repo – fine for AGPL, never commit `.env`/keys).
   History was rewritten with `vmedia-crm-tools\defang.cjs` (splits the upstream test suite's FAKE token literals, e.g.
-  `'sk_' + 'test_…'`) because GitHub push protection blocked them. Branches `i18n-b*` still have the OLD history –
-  (deleted now). Run `node ..media-crm-tools\defang.cjs .` before committing new tests with fake keys.
+  `'sk_' + 'test_…'`) because GitHub push protection blocked them. Run `node ../vmedia-crm-tools/defang.cjs .` before committing new tests that contain fake keys.
 - AGPL: if clients log in to the hosted CRM, the source must be offered to them.
 
 ## Tests – known baseline failures (also fail on untouched upstream, Windows/env related)
