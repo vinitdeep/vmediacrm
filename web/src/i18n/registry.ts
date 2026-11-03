@@ -171,6 +171,8 @@ export const NAMESPACES = {
   // files in the customer portal: the share toggle on a contact's documents and the upload rules (docs/sales.md)
   portalfiles: { complete: true, files: ['pages/PortalFiles.tsx'] },
   gaps: { complete: true, files: ['pages/SiteSeo.tsx', 'pages/SocialExtras.tsx', 'pages/AgencyBanners.tsx', 'pages/RoleTemplates.tsx', 'pages/VideoTestimonials.tsx', 'pages/PromptLab.tsx', 'pages/GoogleLeads.tsx', 'pages/SystemMails.tsx', 'pages/WordPressPlugin.tsx', 'pages/ReviewBulk.tsx', 'pages/CourseAi.tsx'] },
+  // guided-tour data of batch 2 (tour/content/*.ts): keys are the German tour strings, looked up by the tour engine
+  toursB: { complete: false, files: ['tour/content/data.ts', 'tour/content/feedback.ts', 'tour/content/genmedia.ts', 'tour/content/journey.ts', 'tour/content/mailbox.ts', 'tour/content/marketing.ts', 'tour/content/memory.ts', 'tour/content/pm.ts', 'tour/content/revenue.ts'] },
 } as const satisfies Record<string, { complete: boolean; server?: boolean; files: readonly string[] }>;
 export type Namespace = keyof typeof NAMESPACES;
 
@@ -233,5 +235,6 @@ export const CATALOGS: { [L in Exclude<Locale, typeof SOURCE_LOCALE>]: Partial<R
     rentals: () => import('./en/rentals'),
     gaps: () => import('./en/gaps'),
     portalfiles: () => import('./en/portalfiles'),
+    toursB: () => import('./en/toursB'),
   },
 };
