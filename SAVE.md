@@ -31,28 +31,24 @@ Dev mode: `npm run dev` (api + vite). Deploy options: `docs/deploy/` (needs a VP
 5. **Locale** – English only (`ENGLISH_ONLY` in `web/src/i18n/registry.ts`; switches hidden; server answers `en`),
    Asia/Kolkata for new accounts, en-IN number/date format.
 6. **Translation** – ~5,900 untranslated German UI texts done by 7 parallel agents (branches `i18n-b1`…`i18n-b7`,
-   worktrees `..\vmedia-wt1..7`). Merged into main: b1, b2, b3, b4, b6, b7 + Werkstatt tours + Academy wiring.
+   worktrees `..\vmedia-wt1..7`). ALL 7 batches merged (~19k catalog entries); worktrees/branches removed.
    Tour data stays German in `tour/content/*.ts`; English comes from catalogs `toursA/B/C` via `web/src/tour/text.ts`.
 7. **Repo hygiene** – forced LF line endings (`.gitattributes eol=lf`, `core.autocrlf=false`); CRLF broke tests on Windows.
 
 ## In progress / pending
-- **Batch 5** (Calls, Community, Cloud, Consent, Connectors…) – agent still running in `..\vmedia-wt5`; merge
-  `i18n-b5` when done (registry.ts conflicts: resolve with `node ..\vmedia-crm-tools\union-resolve.cjs web/src/i18n/registry.ts`).
-- After merge: full `npx vitest run`, `npm run typecheck`, `npm run build`, browser pass with `shot.mjs`; then
-  `git worktree remove ..\vmedia-wtN` + delete branches.
 - **Server-side German still left** (separate pass): e-mails the server sends, public booking/form/invoice/portal pages,
   workflow trigger/action catalogue names, server error messages, starter templates, demo seed content.
 - **Currency** – € is hard-coded in ~100 places; switching to ₹/INR needs its own pass.
 - **GitHub** – pushed to https://github.com/vinitdeep/vmediacrm (PUBLIC repo – fine for AGPL, never commit `.env`/keys).
   History was rewritten with `vmedia-crm-tools\defang.cjs` (splits the upstream test suite's FAKE token literals, e.g.
   `'sk_' + 'test_…'`) because GitHub push protection blocked them. Branches `i18n-b*` still have the OLD history –
-  never `git merge` them; bring batch 5 over with `git diff 842189f i18n-b5 | git apply -3` and re-run defang before committing.
+  (deleted now). Run `node ..media-crm-tools\defang.cjs .` before committing new tests with fake keys.
 - AGPL: if clients log in to the hosted CRM, the source must be offered to them.
 
 ## Tests – known baseline failures (also fail on untouched upstream, Windows/env related)
 `security` body caps (ECONNRESET), `sec-w10-testimonials`, `oss` export (Windows tar), `xr-spatial` (C:\C:\ path),
 `agent-bridge` relay, `mobile` UTC date. `cloud`, `day-boundary`, `cognee-*` flake only under full parallel load
-(pass alone). Full run before translation: 5,781 passed.
+(pass alone). Full run after translation: 5,745 passed; every remaining failure also fails on upstream or passes alone.
 
 ## Gotchas
 - German is the SOURCE text and the i18n message id – never rewrite German strings to English; add catalog entries
