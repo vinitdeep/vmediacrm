@@ -10,6 +10,7 @@ import { Handover } from '../tour/handover';
 import { createSandbox, deleteSandbox, resetTour, useAcademy } from '../tour/progress';
 import type { Tour, TourProgress } from '../tour/types';
 import { useT } from '../i18n';
+import { useTourText } from '../tour/text';
 
 /**
  * Akademie: guided tours through the whole app – the big journey „Firma übernehmen“ for a
@@ -30,6 +31,7 @@ function Progress({ value, label }: { value: number; label?: string }) {
 
 function TourCard({ t, p }: { t: Tour; p?: TourProgress }) {
   const tt = useT('b4misc');
+  const x = useTourText();
   const at = resumeAt(p);
   return (
     <div className={`card ac-card${p?.done ? ' done' : ''}`}>
@@ -38,14 +40,14 @@ function TourCard({ t, p }: { t: Tour; p?: TourProgress }) {
           <Icon name={t.icon} size={18} />
         </span>
         <div className="grow">
-          <h3>{t.title}</h3>
+          <h3>{x(t.title)}</h3>
           <div className="muted small">
             {t.steps.length} {tt('Schritte · ca.')} {t.minutes} {tt('Min.')}{t.admin ? tt(' · Agentur') : ''}
           </div>
         </div>
       </div>
-      <p className="muted small ac-sum">{t.summary}</p>
-      {p && !p.done && <Progress value={share(p)} label={tt('Fortschritt {title}', { title: t.title })} />}
+      <p className="muted small ac-sum">{x(t.summary)}</p>
+      {p && !p.done && <Progress value={share(p)} label={tt('Fortschritt {title}', { title: x(t.title) })} />}
       <div className="actions">
         {p?.done && <Badge tone="green">{tt('✓ erledigt')}</Badge>}
         <button className={`btn small${p?.done ? ' secondary' : ''}`} onClick={() => startTour(t.id, at)}>
@@ -124,6 +126,7 @@ function SandboxCard() {
 
 function Overview() {
   const tt = useT('b4misc');
+  const x = useTourText();
   const session = useSession();
   const academy = useAcademy();
   const [q, setQ] = useState('');
@@ -187,10 +190,10 @@ function Overview() {
               const cur = nextChapter?.id === c.id;
               return (
                 <li key={c.id} className={`${p?.done ? 'done' : ''}${cur ? ' cur' : ''}`}>
-                  <button onClick={() => startTour(c.id, resumeAt(p))} title={c.summary}>
+                  <button onClick={() => startTour(c.id, resumeAt(p))} title={x(c.summary)}>
                     <span className="ac-num">{p?.done ? '✓' : c.chapter}</span>
                     <span className="grow">
-                      {c.title}
+                      {x(c.title)}
                       <small>
                         {c.steps.length} {tt('Schritte ·')} {c.minutes} {tt('Min.')}{p && !p.done && resumeAt(p) ? tt(' · angefangen') : ''}
                       </small>
@@ -209,7 +212,7 @@ function Overview() {
           <div className="actions">
             {started.map((t) => (
               <button key={t.id} className="btn small secondary" onClick={() => startTour(t.id, resumeAt(progress[t.id]))}>
-                <Icon name={t.icon} size={14} /> {t.title} {tt('· Schritt')} {resumeAt(progress[t.id]) + 1}
+                <Icon name={t.icon} size={14} /> {x(t.title)} {tt('· Schritt')} {resumeAt(progress[t.id]) + 1}
               </button>
             ))}
           </div>
