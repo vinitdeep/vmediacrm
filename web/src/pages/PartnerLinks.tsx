@@ -4,6 +4,7 @@ import { Icon } from '../icons';
 import { PARTNER_HINT, refreshReferrals } from '../referrals';
 import { useSession } from '../session';
 import { Badge, Check, Empty, Spinner, act, confirmAsk, useLoad } from '../ui';
+import { useT } from '../i18n';
 
 /**
  * Agentur → Partner-Links: which „Konto anlegen“ link each provider gets – the maintainer's partner link
@@ -59,30 +60,32 @@ function Ext({ url }: { url: string }) {
 
 /** What applies when there is no own link: env first, then the maintainer default, then the sign-up page. */
 function Fallback({ r }: { r: Row }) {
+  const t = useT('b6saas');
   if (r.env_url !== null)
     return r.env_url ? (
       <>
-        <Ext url={r.env_url} /> <span className="muted small">PGHL_REFERRALS</span>
+        <Ext url={r.env_url} /> <span className="muted small">{t('PGHL_REFERRALS')}</span>
       </>
     ) : (
-      <span className="muted small">Anmelde-Seite (PGHL_REFERRALS)</span>
+      <span className="muted small">{t('Anmelde-Seite (PGHL_REFERRALS)')}</span>
     );
   if (r.default_url)
     return (
       <>
-        <Ext url={r.default_url} /> <span className="muted small">HyperLevel-Partner-Link</span>
+        <Ext url={r.default_url} /> <span className="muted small">{t('HyperLevel-Partner-Link')}</span>
       </>
     );
   return r.signup ? (
     <>
-      <Ext url={r.signup} /> <span className="muted small">kein Partner-Link</span>
+      <Ext url={r.signup} /> <span className="muted small">{t('kein Partner-Link')}</span>
     </>
   ) : (
-    <span className="muted small">kein Link bekannt</span>
+    <span className="muted small">{t('kein Link bekannt')}</span>
   );
 }
 
 export function PartnerLinks() {
+  const t = useT('b6saas');
   const brand = useSession().branding.name;
   const s = useLoad(() => api.get<Overview>('/api/agency/referrals'), []);
   const [links, setLinks] = useState<Record<string, string>>({});
@@ -119,29 +122,29 @@ export function PartnerLinks() {
     <div className="partner-links" data-tour="partner-links">
       <div className="card pl-intro">
         <h2>
-          <Icon name="link" size={18} /> Partner-Links
+          <Icon name="link" size={18} /> {t('Partner-Links')}
         </h2>
         <p>
-          Wo {brand} nach einem Schlüssel oder Konto bei einem Anbieter fragt, steht ein Link <b>„Konto anlegen ↗“</b>. Ist für den Anbieter ein <b>Partner-Link</b> hinterlegt, führt er über dessen Partnerprogramm und trägt das Kennzeichen <span className="partner-chip">Partner-Link</span>. Für dich und deine Kunden ändert sich dadurch nichts.
+          {t('Wo {brand} nach einem Schlüssel oder Konto bei einem Anbieter fragt, steht ein Link', { brand })} <b>{t('„Konto anlegen ↗“')}</b>{t('. Ist für den Anbieter ein')} <b>{t('Partner-Link')}</b> {t('hinterlegt, führt er über dessen Partnerprogramm und trägt das Kennzeichen')} <span className="partner-chip">{t('Partner-Link')}</span>{t('. Für dich und deine Kunden ändert sich dadurch nichts.')}
         </p>
         <p className="muted small">
-          Voreingestellt sind die Partner-Links des HyperLevel-Maintainers; die Kennzeichnung erklärt: „{PARTNER_HINT}“ Du kannst jeden durch einen eigenen Link ersetzen, einzeln oder ganz abschalten – dann erscheint die normale Anmelde-Seite. Gezählt werden nur Klicks je Anbieter über <code>/go/…</code>, keine Personen, IP-Adressen oder Browser-Daten. Server-weit abschalten: <code>PGHL_REFERRALS_DISABLED=1</code>; eigene Links per Umgebung: <code>PGHL_REFERRALS</code> (JSON). Anleitung: <code>docs/referrals.md</code>.
+          {t('Voreingestellt sind die Partner-Links des HyperLevel-Maintainers; die Kennzeichnung erklärt: „{PARTNER_HINT}“ Du kannst jeden durch einen eigenen Link ersetzen, einzeln oder ganz abschalten – dann erscheint die normale Anmelde-Seite. Gezählt werden nur Klicks je Anbieter über', { PARTNER_HINT })} <code>{t('/go/…')}</code>{t(', keine Personen, IP-Adressen oder Browser-Daten. Server-weit abschalten:')} <code>{t('PGHL_REFERRALS_DISABLED=1')}</code>{t('; eigene Links per Umgebung:')} <code>{t('PGHL_REFERRALS')}</code> {t('(JSON). Anleitung:')} <code>docs/referrals.md</code>.
         </p>
         <div className="pl-global" data-tour="partner-links-toggle">
-          <Check checked={v.enabled} onChange={(enabled) => put({ enabled }, enabled ? 'Partner-Links an' : 'Nur noch normale Anmelde-Links')} label={<b>Partner-Links verwenden</b>} />
+          <Check checked={v.enabled} onChange={(enabled) => put({ enabled }, enabled ? t('Partner-Links an') : t('Nur noch normale Anmelde-Links'))} label={<b>{t('Partner-Links verwenden')}</b>} />
           <span className="muted small">
-            {active ? `${partners} von ${v.providers.length} Anbietern mit Partner-Link` : 'Aus – überall die normale Anmelde-Seite'} · {v.total_clicks} Klicks gesamt
+            {active ? t('{partners} von {length} Anbietern mit Partner-Link', { partners, length: v.providers.length }) : t('Aus – überall die normale Anmelde-Seite')} {t('· {total_clicks} Klicks gesamt', { total_clicks: v.total_clicks })}
           </span>
         </div>
-        {v.disabled_by_env && <p className="pl-warn">Auf dem Server ist <code>PGHL_REFERRALS_DISABLED=1</code> gesetzt – es werden nur normale Anmelde-Links gezeigt, egal was hier steht.</p>}
-        {v.env_invalid && <p className="pl-warn"><code>PGHL_REFERRALS</code> ist kein gültiges JSON-Objekt und wird ignoriert.</p>}
+        {v.disabled_by_env && <p className="pl-warn">{t('Auf dem Server ist')} <code>{t('PGHL_REFERRALS_DISABLED=1')}</code> {t('gesetzt – es werden nur normale Anmelde-Links gezeigt, egal was hier steht.')}</p>}
+        {v.env_invalid && <p className="pl-warn"><code>{t('PGHL_REFERRALS')}</code> {t('ist kein gültiges JSON-Objekt und wird ignoriert.')}</p>}
       </div>
 
       <div className="integ-toolbar" data-tour="partner-links-filter">
-        <input type="search" placeholder="Anbieter suchen …" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Anbieter suchen" />
+        <input type="search" placeholder={t('Anbieter suchen …')} value={q} onChange={(e) => setQ(e.target.value)} aria-label={t('Anbieter suchen')} />
         <div className="chips">
           <button className={`chip${cat === '' ? ' on' : ''}`} onClick={() => setCat('')}>
-            Alle
+            {t('Alle')}
           </button>
           {v.categories.map((c) => (
             <button key={c} className={`chip${cat === c ? ' on' : ''}`} onClick={() => setCat(cat === c ? '' : c)}>
@@ -156,12 +159,12 @@ export function PartnerLinks() {
           <table className="t pl-table">
             <thead>
               <tr>
-                <th>Anbieter</th>
-                <th>Standard</th>
-                <th>Eigener Link</th>
-                <th>Partner-Link</th>
-                <th>Ziel jetzt</th>
-                <th className="num">Klicks</th>
+                <th>{t('Anbieter')}</th>
+                <th>{t('Standard')}</th>
+                <th>{t('Eigener Link')}</th>
+                <th>{t('Partner-Link')}</th>
+                <th>{t('Ziel jetzt')}</th>
+                <th className="num">{t('Klicks')}</th>
               </tr>
             </thead>
             <tbody>
@@ -185,27 +188,27 @@ export function PartnerLinks() {
                         inputMode="url"
                         value={own ?? ''}
                         onChange={(e) => setLink(r.id, e.target.value.trim() ? e.target.value : null)}
-                        placeholder="https://… (leer = Standard)"
-                        aria-label={`Eigener Link für ${r.name}`}
+                        placeholder={t('https://… (leer = Standard)')}
+                        aria-label={t('Eigener Link für {name}', { name: r.name })}
                       />
                     </td>
                     <td data-label="Partner-Link">
-                      <Check checked={!plain} onChange={(on) => setLink(r.id, on ? null : '')} label={plain ? 'aus' : offered ? 'an' : 'erlaubt'} />
+                      <Check checked={!plain} onChange={(on) => setLink(r.id, on ? null : '')} label={plain ? t('aus') : offered ? t('an') : 'erlaubt'} />
                     </td>
                     <td data-label="Ziel jetzt" className="pl-target">
                       {r.url ? (
                         <>
-                          {r.is_referral ? <span className="partner-chip">Partner-Link</span> : <Badge>{SOURCE[r.source ?? 'signup']}</Badge>}
-                          {r.is_referral && <span className="muted small"> {BY[r.source!]}</span>}
+                          {r.is_referral ? <span className="partner-chip">{t('Partner-Link')}</span> : <Badge>{t(SOURCE[r.source ?? 'signup'])}</Badge>}
+                          {r.is_referral && <span className="muted small"> {t(BY[r.source!])}</span>}
                         </>
                       ) : (
-                        <span className="muted small">kein Link</span>
+                        <span className="muted small">{t('kein Link')}</span>
                       )}
                     </td>
                     <td data-label="Klicks" className="num">
                       <b>{r.clicks}</b>
-                      {r.partner_clicks > 0 && <div className="muted small">{r.partner_clicks} als Partner-Link</div>}
-                      {r.last_click_on && <div className="muted small">zuletzt {d(r.last_click_on)}</div>}
+                      {r.partner_clicks > 0 && <div className="muted small">{t('{partner_clicks} als Partner-Link', { partner_clicks: r.partner_clicks })}</div>}
+                      {r.last_click_on && <div className="muted small">{t('zuletzt {d}', { d: d(r.last_click_on) })}</div>}
                     </td>
                   </tr>
                 );
@@ -214,21 +217,21 @@ export function PartnerLinks() {
           </table>
         </div>
       ) : (
-        <Empty>Kein Anbieter passt zur Suche.</Empty>
+        <Empty>{t('Kein Anbieter passt zur Suche.')}</Empty>
       )}
 
       <div className="row pl-actions" data-tour="partner-links-save">
-        <button className="btn" disabled={!dirty || busy} onClick={() => put({ links }, 'Partner-Links gespeichert')}>
-          Speichern
+        <button className="btn" disabled={!dirty || busy} onClick={() => put({ links }, t('Partner-Links gespeichert'))}>
+          {t('Speichern')}
         </button>
         {dirty && (
           <button className="btn secondary" onClick={() => setLinks(saved)}>
-            Verwerfen
+            {t('Verwerfen')}
           </button>
         )}
         <span className="grow" />
-        <button className="btn ghost" disabled={!v.total_clicks || busy} onClick={async () => confirmAsk('Alle Klick-Zähler auf 0 setzen?') && (await act(() => api.del<Overview>('/api/agency/referrals/clicks'), 'Zähler zurückgesetzt').then((r) => r && s.setData(r)))}>
-          Zähler zurücksetzen
+        <button className="btn ghost" disabled={!v.total_clicks || busy} onClick={async () => confirmAsk(t('Alle Klick-Zähler auf 0 setzen?')) && (await act(() => api.del<Overview>('/api/agency/referrals/clicks'), t('Zähler zurückgesetzt')).then((r) => r && s.setData(r)))}>
+          {t('Zähler zurücksetzen')}
         </button>
       </div>
     </div>

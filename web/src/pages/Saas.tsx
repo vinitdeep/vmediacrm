@@ -5,6 +5,7 @@ import { Badge, Check, CodeBox, Copy, Empty, Field, Input, Modal, Select, Spinne
 import { MoreFields } from '../areas/fields';
 import { SAAS_STATUS } from './SaasBilling';
 import { SortableGrid } from '../sortable/Sortable';
+import { useT } from '../i18n';
 
 /**
  * Agentur → SaaS: sell sub-accounts to your own customers. Overview (MRR, statuses, churn,
@@ -48,7 +49,8 @@ const EVENT_LABEL: Record<string, string> = {
 };
 
 export function StatusBadge({ status }: { status?: string | null }) {
-  if (!status) return <Badge>kein Tarif</Badge>;
+  const t = useT('b6saas');
+  if (!status) return <Badge>{t('kein Tarif')}</Badge>;
   const [label, tone] = SAAS_STATUS[status] ?? [status, 'gray'];
   return <Badge tone={tone}>{label}</Badge>;
 }
@@ -58,6 +60,7 @@ const euros = (cents: number) => (cents ? String(cents / 100).replace('.', ',') 
 // --- overview -------------------------------------------------------------------------
 
 function Overview({ goSettings }: { goSettings: () => void }) {
+  const t = useT('b6saas');
   const o = useLoad(() => api.get('/api/saas/overview'), []);
   const x = o.data;
   if (!x) return <Spinner />;
@@ -67,29 +70,29 @@ function Overview({ goSettings }: { goSettings: () => void }) {
     <>
       {!x.stripe_connected && (
         <div className="notice-warn">
-          Agentur-Stripe ist noch nicht verbunden – Tarife lassen sich nur ohne Stripe vergeben.{' '}
+          {t('Agentur-Stripe ist noch nicht verbunden – Tarife lassen sich nur ohne Stripe vergeben.')}
           <a href="#" onClick={(e) => (e.preventDefault(), goSettings())}>
-            Jetzt einrichten
+            {t('Jetzt einrichten')}
           </a>
         </div>
       )}
       <SortableGrid id="saas.stats" className="stats">
-        <Stat label="MRR" value={money(x.mrr_cents, cur)} sub={`ARR ${money(x.arr_cents, cur)}`} />
-        <Stat label="Aktive Abos" value={x.counts.active} sub={`${x.new_30d} neu in 30 Tagen`} />
-        <Stat label="Testphase" value={x.counts.trialing} sub="noch ohne Umsatz" />
-        <Stat label="Zahlung offen" value={x.counts.past_due + x.counts.paused} sub={`${x.counts.paused} davon pausiert`} />
-        <Stat label="Churn (30 Tage)" value={`${String(x.churn.rate_percent).replace('.', ',')} %`} sub={`${x.churn.lost_30d} beendet`} />
+        <Stat label={t('MRR')} value={money(x.mrr_cents, cur)} sub={t('ARR {money}', { money: money(x.arr_cents, cur) })} />
+        <Stat label={t('Aktive Abos')} value={x.counts.active} sub={t('{new_30d} neu in 30 Tagen', { new_30d: x.new_30d })} />
+        <Stat label={t('Testphase')} value={x.counts.trialing} sub={t('noch ohne Umsatz')} />
+        <Stat label={t('Zahlung offen')} value={x.counts.past_due + x.counts.paused} sub={t('{paused} davon pausiert', { paused: x.counts.paused })} />
+        <Stat label={t('Churn (30 Tage)')} value={`${String(x.churn.rate_percent).replace('.', ',')} %`} sub={t('{lost_30d} beendet', { lost_30d: x.churn.lost_30d })} />
       </SortableGrid>
       <SortableGrid id="saas.cards" className="grid2 saas-grid">
         <div className="card">
-          <h3 style={{ marginTop: 0 }}>Abos je Tarif</h3>
+          <h3 style={{ marginTop: 0 }}>{t('Abos je Tarif')}</h3>
           {x.plans.length ? (
             <table className="t saas-plan-table">
               <thead>
                 <tr>
-                  <th>Tarif</th>
-                  <th>Accounts</th>
-                  <th>MRR</th>
+                  <th>{t('Tarif')}</th>
+                  <th>{t('Accounts')}</th>
+                  <th>{t('MRR')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -98,10 +101,10 @@ function Overview({ goSettings }: { goSettings: () => void }) {
                     <td>{p.name}</td>
                     <td>
                       {p.count}
-                      {p.trialing ? <span className="muted small"> ({p.trialing} Test)</span> : null}
+                      {p.trialing ? <span className="muted small"> {t('({trialing} Test)', { trialing: p.trialing })}</span> : null}
                     </td>
                     <td style={{ width: '45%' }}>
-                      <div className="saas-mrr" title={`${p.name}: ${money(p.mrr_cents, cur)} pro Monat`}>
+                      <div className="saas-mrr" title={t('{name}: {money} pro Monat', { name: p.name, money: money(p.mrr_cents, cur) })}>
                         <div className="saas-mrr-track">
                           <div className="saas-mrr-bar" style={{ width: `${Math.max(p.mrr_cents ? 3 : 0, Math.round((p.mrr_cents / maxMrr) * 100))}%` }} />
                         </div>
@@ -113,11 +116,11 @@ function Overview({ goSettings }: { goSettings: () => void }) {
               </tbody>
             </table>
           ) : (
-            <Empty>Noch keine Tarife.</Empty>
+            <Empty>{t('Noch keine Tarife.')}</Empty>
           )}
         </div>
         <div className="card">
-          <h3 style={{ marginTop: 0 }}>Anstehende Verlängerungen (30 Tage)</h3>
+          <h3 style={{ marginTop: 0 }}>{t('Anstehende Verlängerungen (30 Tage)')}</h3>
           {x.renewals.length ? (
             <table className="t">
               <tbody>
@@ -127,35 +130,35 @@ function Overview({ goSettings }: { goSettings: () => void }) {
                     <td>
                       {r.name}
                       <div className="muted small">
-                        {r.plan} · {r.interval === 'year' ? 'jährlich' : 'monatlich'}
+                        {r.plan} · {r.interval === 'year' ? t('jährlich') : t('monatlich')}
                       </div>
                     </td>
                     <td className="nowrap">{money(r.amount_cents, r.currency)}</td>
-                    <td>{r.ends ? <Badge tone="yellow">endet</Badge> : <StatusBadge status={r.status} />}</td>
+                    <td>{r.ends ? <Badge tone="yellow">{t('endet')}</Badge> : <StatusBadge status={r.status} />}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
-            <Empty>Keine Verlängerungen in den nächsten 30 Tagen.</Empty>
+            <Empty>{t('Keine Verlängerungen in den nächsten 30 Tagen.')}</Empty>
           )}
         </div>
       </SortableGrid>
       <div className="card" style={{ marginTop: 14 }}>
-        <h3 style={{ marginTop: 0 }}>Letzte Ereignisse</h3>
+        <h3 style={{ marginTop: 0 }}>{t('Letzte Ereignisse')}</h3>
         {x.events.length ? (
           <ul className="saas-events">
             {x.events.map((e: any) => (
               <li key={e.id}>
                 <span className="muted small nowrap">{ago(e.at)}</span>
-                <strong>{EVENT_LABEL[e.type] ?? e.type}</strong>
+                <strong>{t(EVENT_LABEL[e.type] ?? e.type)}</strong>
                 <span>{e.location_name ?? '–'}</span>
                 <span className="muted small">{e.detail}</span>
               </li>
             ))}
           </ul>
         ) : (
-          <Empty>Noch nichts passiert.</Empty>
+          <Empty>{t('Noch nichts passiert.')}</Empty>
         )}
       </div>
     </>
@@ -165,6 +168,7 @@ function Overview({ goSettings }: { goSettings: () => void }) {
 // --- plans ----------------------------------------------------------------------------
 
 function PlanEditor({ plan, settings, onClose, onSaved }: { plan?: any; settings: any; onClose: () => void; onSaved: () => void }) {
+  const t = useT('b6saas');
   const perms = useLoad(() => api.get<Record<string, string>>('/api/permissions'), []);
   const snaps = useLoad(() => api.get<any[]>('/api/snapshots'), []);
   const [f, setF] = useState<any>(() => ({
@@ -186,7 +190,7 @@ function PlanEditor({ plan, settings, onClose, onSaved }: { plan?: any; settings
   const save = async () => {
     setBusy(true);
     const body = { ...f, trial_days: Number(f.trial_days || 0), sort: Number(f.sort || 0), markup_percent: f.markup_percent === '' ? null : Number(f.markup_percent) };
-    const r = await act(() => (plan ? api.patch(`/api/saas/plans/${plan.id}`, body) : api.post('/api/saas/plans', body)), 'Tarif gespeichert');
+    const r = await act(() => (plan ? api.patch(`/api/saas/plans/${plan.id}`, body) : api.post('/api/saas/plans', body)), t('Tarif gespeichert'));
     setBusy(false);
     if (r) onSaved();
   };
@@ -197,73 +201,73 @@ function PlanEditor({ plan, settings, onClose, onSaved }: { plan?: any; settings
   };
   return (
     <Modal
-      title={plan ? `Tarif „${plan.name}“` : 'Neuer Tarif'}
+      title={plan ? t('Tarif „{name}“', { name: plan.name }) : t('Neuer Tarif')}
       onClose={onClose}
       wide
       footer={
         <button className="btn" disabled={busy || !f.name} onClick={save}>
-          Speichern{settings.connected ? ' & mit Stripe abgleichen' : ''}
+          {t('Speichern')}{settings.connected ? t(' & mit Stripe abgleichen') : ''}
         </button>
       }
     >
-      <Field label="Name *">
-        <Input value={f.name} onChange={(v) => setF({ ...f, name: v })} autoFocus placeholder="z. B. Starter" />
+      <Field label={t('Name *')}>
+        <Input value={f.name} onChange={(v) => setF({ ...f, name: v })} autoFocus placeholder={t('z. B. Starter')} />
       </Field>
-      <Field label="Beschreibung" hint="Steht auf der Anmeldeseite unter dem Preis">
+      <Field label={t('Beschreibung')} hint={t('Steht auf der Anmeldeseite unter dem Preis')}>
         <Textarea value={f.description} onChange={(v) => setF({ ...f, description: v })} rows={2} />
       </Field>
       <div className="grid3">
-        <Field label="Preis pro Monat (€)" hint="leer = kein Monatspreis">
+        <Field label={t('Preis pro Monat (€)')} hint={t('leer = kein Monatspreis')}>
           <Input value={f.price_month} onChange={(v) => setF({ ...f, price_month: v })} inputMode="decimal" placeholder="49" />
         </Field>
-        <Field label="Preis pro Jahr (€)" hint="leer = kein Jahrespreis">
+        <Field label={t('Preis pro Jahr (€)')} hint={t('leer = kein Jahrespreis')}>
           <Input value={f.price_year} onChange={(v) => setF({ ...f, price_year: v })} inputMode="decimal" placeholder="490" />
         </Field>
-        <Field label="Testphase (Tage)" hint="0 = sofort zahlen">
+        <Field label={t('Testphase (Tage)')} hint={t('0 = sofort zahlen')}>
           <Input type="number" min={0} max={365} value={f.trial_days} onChange={(v) => setF({ ...f, trial_days: v })} />
         </Field>
       </div>
       <div className="actions">
-        <Check checked={f.public} onChange={(v) => setF({ ...f, public: v })} label="Auf der Anmeldeseite zeigen (sonst nur per Link ?plan=…)" />
-        <Check checked={f.active} onChange={(v) => setF({ ...f, active: v })} label="Aktiv (buchbar)" />
+        <Check checked={f.public} onChange={(v) => setF({ ...f, public: v })} label={t('Auf der Anmeldeseite zeigen (sonst nur per Link ?plan=…)')} />
+        <Check checked={f.active} onChange={(v) => setF({ ...f, active: v })} label={t('Aktiv (buchbar)')} />
       </div>
 
-      <h4>Bereiche im Tarif</h4>
+      <h4>{t('Bereiche im Tarif')}</h4>
       {perms.data ? (
         <div className="grid3">
           {Object.entries(perms.data).map(([k, label]) => (
-            <Check key={k} checked={k === 'settings' || f.features.includes(k)} onChange={(on) => k !== 'settings' && setF({ ...f, features: on ? [...f.features, k] : f.features.filter((x: string) => x !== k) })} label={k === 'settings' ? `${label} (immer)` : label} />
+            <Check key={k} checked={k === 'settings' || f.features.includes(k)} onChange={(on) => k !== 'settings' && setF({ ...f, features: on ? [...f.features, k] : f.features.filter((x: string) => x !== k) })} label={k === 'settings' ? t('{label} (immer)', { label }) : label} />
           ))}
         </div>
       ) : (
         <Spinner />
       )}
 
-      <MoreFields id="saas-plan-limits" label="Snapshot, Limits und Mehrverbrauch" values={[f.snapshot_id, Object.values(f.limits).some((x) => x !== '' && x != null), Object.values(f.overage).includes('bill'), f.markup_percent]}>
-      <Field label="Snapshot für neue Konten" hint="Startpaket (Websites, Formulare, Workflows …); leer = Standard aus den Einstellungen">
-        <Select value={f.snapshot_id} onChange={(v) => setF({ ...f, snapshot_id: v })} options={(snaps.data ?? []).map((s) => [s.id, s.name] as [string, string])} placeholder="Standard" />
+      <MoreFields id="saas-plan-limits" label={t('Snapshot, Limits und Mehrverbrauch')} values={[f.snapshot_id, Object.values(f.limits).some((x) => x !== '' && x != null), Object.values(f.overage).includes('bill'), f.markup_percent]}>
+      <Field label={t('Snapshot für neue Konten')} hint={t('Startpaket (Websites, Formulare, Workflows …); leer = Standard aus den Einstellungen')}>
+        <Select value={f.snapshot_id} onChange={(v) => setF({ ...f, snapshot_id: v })} options={(snaps.data ?? []).map((s) => [s.id, s.name] as [string, string])} placeholder={t('Standard')} />
       </Field>
-      <h4>Limits</h4>
+      <h4>{t('Limits')}</h4>
       <p className="muted small" style={{ marginTop: 0 }}>
-        Leer = unbegrenzt. Kontakte, Nutzer, Funnels und Kurse werden beim Anlegen geprüft; E-Mails, SMS und KI-Aufrufe zählen je Kalendermonat.
+        {t('Leer = unbegrenzt. Kontakte, Nutzer, Funnels und Kurse werden beim Anlegen geprüft; E-Mails, SMS und KI-Aufrufe zählen je Kalendermonat.')}
       </p>
       <div className="grid3">
         {LIMIT_LABELS.map(([k, label]) => (
-          <Field key={k} label={label}>
+          <Field key={k} label={t(label)}>
             <Input type="number" min={0} value={f.limits[k]} onChange={(v) => setF({ ...f, limits: { ...f.limits, [k]: v } })} placeholder="unbegrenzt" />
           </Field>
         ))}
       </div>
 
-      <h4>Mehrverbrauch (E-Mails, SMS, KI)</h4>
+      <h4>{t('Mehrverbrauch (E-Mails, SMS, KI)')}</h4>
       <div className="grid3">
         {USAGE.map(([k, label]) => (
-          <Field key={k} label={`${label} über dem Limit`} hint={f.overage[k] === 'bill' ? `Kunde zahlt ${resale(k)} je Stück` : undefined}>
-            <Select value={f.overage[k]} onChange={(v) => setF({ ...f, overage: { ...f.overage, [k]: v } })} options={[['block', 'sperren'], ['bill', 'weiterberechnen (Stripe)']]} />
+          <Field key={k} label={t('{label} über dem Limit', { label: t(label) })} hint={f.overage[k] === 'bill' ? t('Kunde zahlt {resale} je Stück', { resale: resale(k) }) : undefined}>
+            <Select value={f.overage[k]} onChange={(v) => setF({ ...f, overage: { ...f.overage, [k]: v } })} options={[['block', t('sperren')], ['bill', t('weiterberechnen (Stripe)')]]} />
           </Field>
         ))}
       </div>
-      <Field label="Aufschlag auf deine Kosten (%)" hint={`leer = Standard (${settings.markup_percent} %). Deine Kosten je Stück stehen unter Einstellungen.`}>
+      <Field label={t('Aufschlag auf deine Kosten (%)')} hint={t('leer = Standard ({markup_percent} %). Deine Kosten je Stück stehen unter Einstellungen.', { markup_percent: settings.markup_percent })}>
         <Input type="number" min={0} value={f.markup_percent} onChange={(v) => setF({ ...f, markup_percent: v })} placeholder={String(settings.markup_percent)} />
       </Field>
       </MoreFields>
@@ -272,6 +276,7 @@ function PlanEditor({ plan, settings, onClose, onSaved }: { plan?: any; settings
 }
 
 function Plans({ settings }: { settings: any }) {
+  const t = useT('b6saas');
   const plans = useLoad(() => api.get<any[]>('/api/saas/plans'), []);
   const [edit, setEdit] = useState<any>(null);
   if (!plans.data) return <Spinner />;
@@ -279,10 +284,10 @@ function Plans({ settings }: { settings: any }) {
     <>
       <div className="actions" style={{ justifyContent: 'space-between', marginBottom: 12 }}>
         <p className="muted" style={{ margin: 0 }}>
-          Tarife bestimmen, welche Bereiche ein Kunden-Account sieht und wie viel er nutzen darf. Preise landen als Produkt + Preise in deinem Stripe-Konto.
+          {t('Tarife bestimmen, welche Bereiche ein Kunden-Account sieht und wie viel er nutzen darf. Preise landen als Produkt + Preise in deinem Stripe-Konto.')}
         </p>
         <button className="btn" onClick={() => setEdit({})}>
-          + Neuer Tarif
+          {t('+ Neuer Tarif')}
         </button>
       </div>
       {plans.data.length ? (
@@ -292,52 +297,52 @@ function Plans({ settings }: { settings: any }) {
               <div className="saas-plan-top">
                 <h3>{p.name}</h3>
                 <span>
-                  {!p.active && <Badge>inaktiv</Badge>} {!p.public && <Badge tone="purple">versteckt</Badge>}
+                  {!p.active && <Badge>{t('inaktiv')}</Badge>} {!p.public && <Badge tone="purple">{t('versteckt')}</Badge>}
                 </span>
               </div>
               <div className="saas-price">
-                {p.free ? 'Kostenlos' : p.price_month_cents ? money(p.price_month_cents, p.currency) : money(p.price_year_cents, p.currency)}
-                {!p.free && <span className="muted"> / {p.price_month_cents ? 'Monat' : 'Jahr'}</span>}
+                {p.free ? t('Kostenlos') : p.price_month_cents ? money(p.price_month_cents, p.currency) : money(p.price_year_cents, p.currency)}
+                {!p.free && <span className="muted"> / {p.price_month_cents ? t('Monat') : t('Jahr')}</span>}
               </div>
               <div className="muted small">
-                {p.price_month_cents && p.price_year_cents ? `oder ${money(p.price_year_cents, p.currency)} / Jahr · ` : ''}
-                {p.trial_days ? `${p.trial_days} Tage Test` : 'ohne Testphase'}
+                {p.price_month_cents && p.price_year_cents ? t('oder {money} / Jahr · ', { money: money(p.price_year_cents, p.currency) }) : ''}
+                {p.trial_days ? t('{trial_days} Tage Test', { trial_days: p.trial_days }) : t('ohne Testphase')}
               </div>
               <ul className="saas-limits">
                 {LIMIT_LABELS.filter(([k]) => p.limits?.[k] !== undefined && p.limits?.[k] !== null).map(([k, label]) => (
                   <li key={k}>
-                    {Number(p.limits[k]).toLocaleString('de-DE')} {label}
-                    {USAGE.some(([u]) => u === k) && p.overage?.[k] === 'bill' ? ' (+ Mehrverbrauch)' : ''}
+                    {Number(p.limits[k]).toLocaleString('de-DE')} {t(label)}
+                    {USAGE.some(([u]) => u === k) && p.overage?.[k] === 'bill' ? t(' (+ Mehrverbrauch)') : ''}
                   </li>
                 ))}
-                <li>{p.features.length - 1} Bereiche</li>
+                <li>{t('{n} Bereiche', { n: p.features.length - 1 })}</li>
               </ul>
               <div className="saas-plan-foot">
                 <span className="muted small">
-                  {p.subscribers} {p.subscribers === 1 ? 'Account' : 'Accounts'} ·{' '}
+                  {p.subscribers} {p.subscribers === 1 ? t('Account') : t('Accounts')} ·{' '}
                   {p.sync_error ? (
                     <span title={p.sync_error} style={{ color: 'var(--red)' }}>
-                      Stripe-Fehler
+                      {t('Stripe-Fehler')}
                     </span>
                   ) : p.stripe_product_id ? (
-                    'mit Stripe abgeglichen'
+                    t('mit Stripe abgeglichen')
                   ) : settings.connected ? (
-                    'noch nicht abgeglichen'
+                    t('noch nicht abgeglichen')
                   ) : (
-                    'ohne Stripe'
+                    t('ohne Stripe')
                   )}
                 </span>
                 <span className="actions">
                   {settings.connected && (
-                    <button className="btn small ghost" title="Mit Stripe abgleichen" onClick={() => act(() => api.post(`/api/saas/plans/${p.id}/sync`), 'Abgeglichen').then(() => plans.reload())}>
+                    <button className="btn small ghost" title={t('Mit Stripe abgleichen')} onClick={() => act(() => api.post(`/api/saas/plans/${p.id}/sync`), t('Abgeglichen')).then(() => plans.reload())}>
                       <Icon name="refresh" size={14} />
                     </button>
                   )}
                   <button className="btn small secondary" onClick={() => setEdit(p)}>
-                    Bearbeiten
+                    {t('Bearbeiten')}
                   </button>
                   {!p.subscribers && (
-                    <button className="btn small ghost" title="Löschen" onClick={() => confirmAsk(`Tarif „${p.name}“ löschen?`) && act(() => api.del(`/api/saas/plans/${p.id}`), 'Gelöscht').then(() => plans.reload())}>
+                    <button className="btn small ghost" title={t('Löschen')} onClick={() => confirmAsk(t('Tarif „{name}“ löschen?', { name: p.name })) && act(() => api.del(`/api/saas/plans/${p.id}`), t('Gelöscht')).then(() => plans.reload())}>
                       <Icon name="trash" size={14} />
                     </button>
                   )}
@@ -347,7 +352,7 @@ function Plans({ settings }: { settings: any }) {
           ))}
         </div>
       ) : (
-        <Empty action={<button className="btn" onClick={() => setEdit({})}>Ersten Tarif anlegen</button>}>Noch keine Tarife.</Empty>
+        <Empty action={<button className="btn" onClick={() => setEdit({})}>{t('Ersten Tarif anlegen')}</button>}>{t('Noch keine Tarife.')}</Empty>
       )}
       {edit && (
         <PlanEditor
@@ -367,6 +372,7 @@ function Plans({ settings }: { settings: any }) {
 // --- accounts ---------------------------------------------------------------------------
 
 function AccountEditor({ row, plans, onClose, onSaved }: { row: any; plans: any[]; onClose: () => void; onSaved: () => void }) {
+  const t = useT('b6saas');
   const sub = row.subscription;
   const stripeLive = sub?.billing === 'stripe' && sub.stripe_subscription && sub.status !== 'canceled';
   const [f, setF] = useState({ plan_id: sub?.plan_id ?? plans[0]?.id ?? '', interval: sub?.interval ?? 'month', status: sub?.billing === 'manual' ? sub.status : 'active', mode: 'manual', email: '' });
@@ -383,39 +389,39 @@ function AccountEditor({ row, plans, onClose, onSaved }: { row: any; plans: any[
   const intervals: string[] = plan?.intervals ?? ['month'];
   const iv = intervals.includes(f.interval) ? f.interval : intervals[0];
   return (
-    <Modal title={`Tarif – ${row.name}`} onClose={onClose}>
+    <Modal title={t('Tarif – {name}', { name: row.name })} onClose={onClose}>
       {sub && (
         <p>
-          Jetzt: <strong>{row.plan?.name}</strong> <StatusBadge status={sub.status} /> {sub.billing === 'stripe' ? <Badge tone="blue">Stripe</Badge> : <Badge>ohne Stripe</Badge>}
-          {sub.cancel_at_period_end ? <Badge tone="yellow">endet {d(sub.current_period_end)}</Badge> : null}
+          {t('Jetzt:')} <strong>{row.plan?.name}</strong> <StatusBadge status={sub.status} /> {sub.billing === 'stripe' ? <Badge tone="blue">Stripe</Badge> : <Badge>{t('ohne Stripe')}</Badge>}
+          {sub.cancel_at_period_end ? <Badge tone="yellow">{t('endet {d}', { d: d(sub.current_period_end) })}</Badge> : null}
         </p>
       )}
       <div className="grid2">
-        <Field label="Tarif">
+        <Field label={t('Tarif')}>
           <Select value={f.plan_id} onChange={(v) => setF({ ...f, plan_id: v })} options={plans.map((p) => [p.id, p.name] as [string, string])} />
         </Field>
-        <Field label="Abrechnung">
-          <Select value={iv} onChange={(v) => setF({ ...f, interval: v })} options={intervals.map((i) => [i, i === 'year' ? 'jährlich' : 'monatlich'] as [string, string])} />
+        <Field label={t('Abrechnung')}>
+          <Select value={iv} onChange={(v) => setF({ ...f, interval: v })} options={intervals.map((i) => [i, i === 'year' ? t('jährlich') : t('monatlich')] as [string, string])} />
         </Field>
       </div>
       {stripeLive ? (
         <>
-          <p className="muted small">Läuft über Stripe: eine Tarif-Änderung stellt das Abo bei Stripe um (anteilige Verrechnung). Der Status kommt von Stripe.</p>
+          <p className="muted small">{t('Läuft über Stripe: eine Tarif-Änderung stellt das Abo bei Stripe um (anteilige Verrechnung). Der Status kommt von Stripe.')}</p>
           <div className="actions">
-            <button className="btn" disabled={busy} onClick={() => run(() => api.put(`/api/saas/locations/${row.location_id}`, { plan_id: f.plan_id, interval: iv }), 'Tarif geändert')}>
-              Tarif ändern
+            <button className="btn" disabled={busy} onClick={() => run(() => api.put(`/api/saas/locations/${row.location_id}`, { plan_id: f.plan_id, interval: iv }), t('Tarif geändert'))}>
+              {t('Tarif ändern')}
             </button>
             {sub.cancel_at_period_end ? (
-              <button className="btn secondary" disabled={busy} onClick={() => run(() => api.post(`/api/saas/locations/${row.location_id}/cancel`, { undo: true }), 'Kündigung zurückgenommen')}>
-                Kündigung zurücknehmen
+              <button className="btn secondary" disabled={busy} onClick={() => run(() => api.post(`/api/saas/locations/${row.location_id}/cancel`, { undo: true }), t('Kündigung zurückgenommen'))}>
+                {t('Kündigung zurücknehmen')}
               </button>
             ) : (
-              <button className="btn secondary" disabled={busy} onClick={() => confirmAsk('Zum Ende des Zeitraums kündigen?') && run(() => api.post(`/api/saas/locations/${row.location_id}/cancel`, {}), 'Gekündigt')}>
-                Zum Laufzeitende kündigen
+              <button className="btn secondary" disabled={busy} onClick={() => confirmAsk(t('Zum Ende des Zeitraums kündigen?')) && run(() => api.post(`/api/saas/locations/${row.location_id}/cancel`, {}), t('Gekündigt'))}>
+                {t('Zum Laufzeitende kündigen')}
               </button>
             )}
-            <button className="btn ghost" disabled={busy} onClick={() => confirmAsk('Abo sofort beenden? Das Konto wird nur noch lesbar.') && run(() => api.post(`/api/saas/locations/${row.location_id}/cancel`, { now: true }), 'Beendet')}>
-              Sofort beenden
+            <button className="btn ghost" disabled={busy} onClick={() => confirmAsk(t('Abo sofort beenden? Das Konto wird nur noch lesbar.')) && run(() => api.post(`/api/saas/locations/${row.location_id}/cancel`, { now: true }), t('Beendet'))}>
+              {t('Sofort beenden')}
             </button>
           </div>
         </>
@@ -423,47 +429,47 @@ function AccountEditor({ row, plans, onClose, onSaved }: { row: any; plans: any[
         <>
           <div className="actions" style={{ margin: '4px 0 10px' }}>
             <label className="check">
-              <input type="radio" checked={f.mode === 'manual'} onChange={() => setF({ ...f, mode: 'manual' })} /> Ohne Stripe vergeben
+              <input type="radio" checked={f.mode === 'manual'} onChange={() => setF({ ...f, mode: 'manual' })} /> {t('Ohne Stripe vergeben')}
             </label>
             <label className="check">
-              <input type="radio" checked={f.mode === 'stripe'} onChange={() => setF({ ...f, mode: 'stripe' })} /> Stripe-Bezahllink an den Kunden
+              <input type="radio" checked={f.mode === 'stripe'} onChange={() => setF({ ...f, mode: 'stripe' })} /> {t('Stripe-Bezahllink an den Kunden')}
             </label>
           </div>
           {f.mode === 'manual' ? (
             <>
-              <Field label="Status" hint="z. B. „pausiert“ sperrt das Konto auf nur lesen">
+              <Field label="Status" hint={t('z. B. „pausiert“ sperrt das Konto auf nur lesen')}>
                 <Select value={f.status} onChange={(v) => setF({ ...f, status: v })} options={Object.entries(SAAS_STATUS).map(([k, [l]]) => [k, l] as [string, string])} />
               </Field>
               <div className="actions">
-                <button className="btn" disabled={busy || !f.plan_id} onClick={() => run(() => api.put(`/api/saas/locations/${row.location_id}`, { plan_id: f.plan_id, interval: iv, status: f.status }), 'Tarif gespeichert')}>
-                  Speichern
+                <button className="btn" disabled={busy || !f.plan_id} onClick={() => run(() => api.put(`/api/saas/locations/${row.location_id}`, { plan_id: f.plan_id, interval: iv, status: f.status }), t('Tarif gespeichert'))}>
+                  {t('Speichern')}
                 </button>
                 {sub && (
-                  <button className="btn ghost" disabled={busy} onClick={() => confirmAsk('Tarif entfernen? Dann gelten keine Limits mehr.') && run(() => api.del(`/api/saas/locations/${row.location_id}`), 'Tarif entfernt')}>
-                    Tarif entfernen
+                  <button className="btn ghost" disabled={busy} onClick={() => confirmAsk(t('Tarif entfernen? Dann gelten keine Limits mehr.')) && run(() => api.del(`/api/saas/locations/${row.location_id}`), t('Tarif entfernt'))}>
+                    {t('Tarif entfernen')}
                   </button>
                 )}
               </div>
             </>
           ) : (
             <>
-              <Field label="E-Mail des Kunden" hint="füllt Stripe Checkout vor">
+              <Field label={t('E-Mail des Kunden')} hint={t('füllt Stripe Checkout vor')}>
                 <Input type="email" value={f.email} onChange={(v) => setF({ ...f, email: v })} placeholder="kunde@firma.de" />
               </Field>
               <button
                 className="btn"
                 disabled={busy || !f.plan_id}
                 onClick={async () => {
-                  const r = await run(() => api.post(`/api/saas/locations/${row.location_id}/checkout`, { plan_id: f.plan_id, interval: iv, email: f.email }), 'Link erstellt', false);
+                  const r = await run(() => api.post(`/api/saas/locations/${row.location_id}/checkout`, { plan_id: f.plan_id, interval: iv, email: f.email }), t('Link erstellt'), false);
                   if (r?.url) setLink(r.url);
                 }}
               >
-                Bezahllink erstellen
+                {t('Bezahllink erstellen')}
               </button>
               {link && (
                 <div style={{ marginTop: 10 }}>
                   <CodeBox text={link} />
-                  <p className="muted small">Schick den Link an den Kunden. Sobald er bezahlt hat, läuft das Abo über Stripe und erscheint hier.</p>
+                  <p className="muted small">{t('Schick den Link an den Kunden. Sobald er bezahlt hat, läuft das Abo über Stripe und erscheint hier.')}</p>
                 </div>
               )}
             </>
@@ -475,6 +481,7 @@ function AccountEditor({ row, plans, onClose, onSaved }: { row: any; plans: any[
 }
 
 function Accounts() {
+  const t = useT('b6saas');
   const rows = useLoad(() => api.get<any[]>('/api/saas/locations'), []);
   const plans = useLoad(() => api.get<any[]>('/api/saas/plans'), []);
   const signups = useLoad(() => api.get<any[]>('/api/saas/signups'), []);
@@ -485,21 +492,21 @@ function Accounts() {
   return (
     <>
       <div className="actions" style={{ marginBottom: 12 }}>
-        <Input value={q} onChange={setQ} placeholder="Sub-Account suchen…" style={{ maxWidth: 280 }} />
-        <span className="muted small">Verbrauch: aktueller Monat</span>
+        <Input value={q} onChange={setQ} placeholder={t('Sub-Account suchen…')} style={{ maxWidth: 280 }} />
+        <span className="muted small">{t('Verbrauch: aktueller Monat')}</span>
       </div>
       <div className="table-wrap">
         <table className="t">
           <thead>
             <tr>
-              <th>Sub-Account</th>
-              <th>Tarif</th>
+              <th>{t('Sub-Account')}</th>
+              <th>{t('Tarif')}</th>
               <th>Status</th>
-              <th>Verlängerung</th>
-              <th>E-Mails</th>
+              <th>{t('Verlängerung')}</th>
+              <th>{t('E-Mails')}</th>
               <th>SMS</th>
               <th>KI</th>
-              <th>MRR</th>
+              <th>{t('MRR')}</th>
               <th />
             </tr>
           </thead>
@@ -511,10 +518,10 @@ function Accounts() {
                   <td>{r.name}</td>
                   <td>
                     {r.plan?.name ?? <span className="muted">–</span>}
-                    {r.subscription && <div className="muted small">{r.subscription.billing === 'stripe' ? 'Stripe' : 'ohne Stripe'} · {r.subscription.interval === 'year' ? 'jährlich' : 'monatlich'}</div>}
+                    {r.subscription && <div className="muted small">{r.subscription.billing === 'stripe' ? 'Stripe' : t('ohne Stripe')} · {r.subscription.interval === 'year' ? t('jährlich') : t('monatlich')}</div>}
                   </td>
                   <td>
-                    {r.subscription ? <StatusBadge status={r.subscription.status} /> : <span className="muted">–</span>} {r.subscription?.cancel_at_period_end ? <Badge tone="yellow">gekündigt</Badge> : null}
+                    {r.subscription ? <StatusBadge status={r.subscription.status} /> : <span className="muted">–</span>} {r.subscription?.cancel_at_period_end ? <Badge tone="yellow">{t('gekündigt')}</Badge> : null}
                   </td>
                   <td className="nowrap">{r.subscription?.current_period_end ? d(r.subscription.current_period_end) : '–'}</td>
                   {['emails', 'sms', 'ai'].map((k) => (
@@ -526,7 +533,7 @@ function Accounts() {
                   <td className="nowrap">{r.mrr_cents ? money(r.mrr_cents) : '–'}</td>
                   <td>
                     <button className="btn small secondary" disabled={!plans.data!.length} onClick={() => setEdit(r)}>
-                      Tarif
+                      {t('Tarif')}
                     </button>
                   </td>
                 </tr>
@@ -537,7 +544,7 @@ function Accounts() {
       </div>
       {signups.data && signups.data.length > 0 && (
         <div className="card" style={{ marginTop: 14 }}>
-          <h3 style={{ marginTop: 0 }}>Anmeldungen über die Anmeldeseite</h3>
+          <h3 style={{ marginTop: 0 }}>{t('Anmeldungen über die Anmeldeseite')}</h3>
           <table className="t">
             <tbody>
               {signups.data.slice(0, 20).map((s) => (
@@ -549,7 +556,7 @@ function Accounts() {
                   </td>
                   <td>{s.plan_name}</td>
                   <td>
-                    <Badge tone={s.status === 'done' ? 'green' : s.status === 'failed' ? 'red' : 'gray'}>{s.status === 'done' ? 'angelegt' : s.status === 'failed' ? 'Fehler' : 'wartet auf Zahlung'}</Badge>
+                    <Badge tone={s.status === 'done' ? 'green' : s.status === 'failed' ? 'red' : 'gray'}>{s.status === 'done' ? 'angelegt' : s.status === 'failed' ? t('Fehler') : t('wartet auf Zahlung')}</Badge>
                     {s.error && <div className="muted small">{s.error}</div>}
                   </td>
                   <td>
@@ -557,11 +564,11 @@ function Accounts() {
                       <button
                         className="btn small ghost"
                         onClick={async () => {
-                          const r = await act(() => api.post(`/api/saas/signups/${s.id}/invite`), 'Neue Einladung erstellt');
-                          if (r?.url) window.prompt('Einladungslink (7 Tage gültig):', r.url);
+                          const r = await act(() => api.post(`/api/saas/signups/${s.id}/invite`), t('Neue Einladung erstellt'));
+                          if (r?.url) window.prompt(t('Einladungslink (7 Tage gültig):'), r.url);
                         }}
                       >
-                        Einladung neu
+                        {t('Einladung neu')}
                       </button>
                     )}
                   </td>
@@ -591,13 +598,14 @@ function Accounts() {
 const HOOK_EVENTS = ['checkout.session.completed', 'customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted', 'invoice.paid', 'invoice.payment_failed'];
 
 function Settings({ data, onChange }: { data: any; onChange: (s: any) => void }) {
+  const t = useT('b6saas');
   const snaps = useLoad(() => api.get<any[]>('/api/snapshots'), []);
   const locs = useLoad(() => api.get<any[]>('/api/saas/locations'), []);
   const [keys, setKeys] = useState({ secret_key: '', webhook_secret: '' });
   const [f, setF] = useState<any>(() => ({ ...data, unit_cost: { ...data.unit_cost } }));
   const [busy, setBusy] = useState(false);
   const [check, setCheck] = useState<any>(null);
-  const save = async (body: any, ok = 'Gespeichert') => {
+  const save = async (body: any, ok = t('Gespeichert')) => {
     setBusy(true);
     const r = await act(() => api.put('/api/saas/settings', body), ok);
     setBusy(false);
@@ -611,28 +619,28 @@ function Settings({ data, onChange }: { data: any; onChange: (s: any) => void })
     <>
       <div className="card" style={{ maxWidth: 820 }}>
         <h2 style={{ marginTop: 0 }}>
-          <Icon name="card" /> Agentur-Stripe {data.connected ? <Badge tone="green">verbunden</Badge> : <Badge>nicht verbunden</Badge>} {data.connected && <Badge tone={data.live ? 'blue' : 'yellow'}>{data.live ? 'Live' : 'Testmodus'}</Badge>}
+          <Icon name="card" /> {t('Agentur-Stripe')} {data.connected ? <Badge tone="green">{t('verbunden')}</Badge> : <Badge>{t('nicht verbunden')}</Badge>} {data.connected && <Badge tone={data.live ? 'blue' : 'yellow'}>{data.live ? t('Live') : t('Testmodus')}</Badge>}
         </h2>
         <p className="muted" style={{ marginTop: 0 }}>
-          Dein eigenes Stripe-Konto für die Abos deiner Kunden – getrennt vom Stripe, das ein Sub-Account für seine eigenen Rechnungen nutzt.
+          {t('Dein eigenes Stripe-Konto für die Abos deiner Kunden – getrennt vom Stripe, das ein Sub-Account für seine eigenen Rechnungen nutzt.')}
         </p>
         {data.account && (
           <p>
-            Konto: <strong>{data.account.name}</strong> <span className="muted small">{data.account.id} · {data.key_hint}</span>
+            {t('Konto:')} <strong>{data.account.name}</strong> <span className="muted small">{data.account.id} · {data.key_hint}</span>
           </p>
         )}
-        <Field label="Secret Key" hint="Stripe-Dashboard → Entwickler → API-Schlüssel (zum Ausprobieren sk_test_…)">
-          <Input type="password" value={keys.secret_key} onChange={(v) => setKeys({ ...keys, secret_key: v.trim() })} placeholder={data.key_set ? `gespeichert (${data.key_hint}) – leer lassen zum Behalten` : 'sk_live_… oder sk_test_…'} autoComplete="off" />
+        <Field label={t('Secret Key')} hint={t('Stripe-Dashboard → Entwickler → API-Schlüssel (zum Ausprobieren sk_test_…)')}>
+          <Input type="password" value={keys.secret_key} onChange={(v) => setKeys({ ...keys, secret_key: v.trim() })} placeholder={data.key_set ? t('gespeichert ({key_hint}) – leer lassen zum Behalten', { key_hint: data.key_hint }) : t('sk_live_… oder sk_test_…')} autoComplete="off" />
         </Field>
-        <h3>Webhook {data.webhook_set ? <Badge tone="green">eingerichtet</Badge> : <Badge tone="yellow">fehlt</Badge>}</h3>
-        <MoreFields id="saas-webhook" label="Webhook einrichten" values={[data.key_set && !data.webhook_set]}>
+        <h3>Webhook {data.webhook_set ? <Badge tone="green">{t('eingerichtet')}</Badge> : <Badge tone="yellow">{t('fehlt')}</Badge>}</h3>
+        <MoreFields id="saas-webhook" label={t('Webhook einrichten')} values={[data.key_set && !data.webhook_set]}>
         <ol className="steps small">
-          <li>Stripe → Entwickler → Webhooks → „Endpunkt hinzufügen“</li>
+          <li>{t('Stripe → Entwickler → Webhooks → „Endpunkt hinzufügen“')}</li>
           <li>
-            URL: <CodeBox text={data.webhook_url} />
+            {t('URL:')} <CodeBox text={data.webhook_url} />
           </li>
           <li>
-            Ereignisse:{' '}
+            {t('Ereignisse:')}
             {HOOK_EVENTS.map((e, i) => (
               <span key={e}>
                 {i ? ', ' : ''}
@@ -640,86 +648,86 @@ function Settings({ data, onChange }: { data: any; onChange: (s: any) => void })
               </span>
             ))}
           </li>
-          <li>Signing Secret (whsec_…) hier eintragen</li>
+          <li>{t('Signing Secret (whsec_…) hier eintragen')}</li>
         </ol>
-        <Field label="Webhook Signing Secret">
-          <Input type="password" value={keys.webhook_secret} onChange={(v) => setKeys({ ...keys, webhook_secret: v.trim() })} placeholder={data.webhook_set ? 'gespeichert – leer lassen zum Behalten' : 'whsec_…'} autoComplete="off" />
+        <Field label={t('Webhook Signing Secret')}>
+          <Input type="password" value={keys.webhook_secret} onChange={(v) => setKeys({ ...keys, webhook_secret: v.trim() })} placeholder={data.webhook_set ? t('gespeichert – leer lassen zum Behalten') : 'whsec_…'} autoComplete="off" />
         </Field>
         </MoreFields>
         <div className="actions">
           <button className="btn" disabled={busy || (!keys.secret_key && !keys.webhook_secret)} onClick={() => save(keys).then((r) => r && setKeys({ secret_key: '', webhook_secret: '' }))}>
-            Speichern
+            {t('Speichern')}
           </button>
           <button className="btn secondary" disabled={busy || (!data.key_set && !keys.secret_key)} onClick={async () => setCheck(await act(() => api.post('/api/saas/settings/test', keys.secret_key ? { secret_key: keys.secret_key } : {})))}>
-            Verbindung testen
+            {t('Verbindung testen')}
           </button>
           {data.connected && (
-            <button className="btn ghost" onClick={() => confirmAsk('Agentur-Stripe trennen? Neue Abos und Bezahllinks gehen dann nicht mehr.') && act(() => api.del('/api/saas/settings/stripe'), 'Getrennt').then((r) => r && onChange(r))}>
-              Trennen
+            <button className="btn ghost" onClick={() => confirmAsk(t('Agentur-Stripe trennen? Neue Abos und Bezahllinks gehen dann nicht mehr.')) && act(() => api.del('/api/saas/settings/stripe'), t('Getrennt')).then((r) => r && onChange(r))}>
+              {t('Trennen')}
             </button>
           )}
         </div>
         {check && (
           <p className="small">
-            <Badge tone="green">✓ Verbindung klappt</Badge> {check.account.name} ({check.live ? 'Live' : 'Testmodus'})
+            <Badge tone="green">{t('✓ Verbindung klappt')}</Badge> {check.account.name} ({check.live ? t('Live') : t('Testmodus')})
           </p>
         )}
       </div>
 
       <div className="card" style={{ maxWidth: 820 }}>
-        <h2 style={{ marginTop: 0 }}>Anmeldeseite</h2>
-        <Check checked={!!f.signup_enabled} onChange={(v) => setF({ ...f, signup_enabled: v })} label="Anmeldeseite aktiv – Kunden buchen selbst einen Tarif" />
-        <Field label="Adresse" hint="läuft auch auf deiner App-Domain aus dem White-Label">
+        <h2 style={{ marginTop: 0 }}>{t('Anmeldeseite')}</h2>
+        <Check checked={!!f.signup_enabled} onChange={(v) => setF({ ...f, signup_enabled: v })} label={t('Anmeldeseite aktiv – Kunden buchen selbst einen Tarif')} />
+        <Field label={t('Adresse')} hint={t('läuft auch auf deiner App-Domain aus dem White-Label')}>
           <div className="actions">
             <CodeBox text={data.signup_url} />
             <a className="btn small secondary" href="/signup" target="_blank" rel="noopener">
-              Öffnen
+              {t('Öffnen')}
             </a>
           </div>
         </Field>
-        <Field label="Überschrift">
-          <Input value={f.signup_title} onChange={(v) => setF({ ...f, signup_title: v })} placeholder="Name jetzt starten" />
+        <Field label={t('Überschrift')}>
+          <Input value={f.signup_title} onChange={(v) => setF({ ...f, signup_title: v })} placeholder={t('Name jetzt starten')} />
         </Field>
-        <Field label="Text unter der Überschrift">
+        <Field label={t('Text unter der Überschrift')}>
           <Textarea value={f.signup_text} onChange={(v) => setF({ ...f, signup_text: v })} rows={2} />
         </Field>
         <MoreFields id="saas-signup" values={[f.terms_url, f.default_snapshot_id, f.mail_location_id, f.activate_workflows]}>
-        <Field label="Link zu deinen AGB" hint="dann muss der Kunde sie anhaken">
+        <Field label={t('Link zu deinen AGB')} hint={t('dann muss der Kunde sie anhaken')}>
           <Input value={f.terms_url} onChange={(v) => setF({ ...f, terms_url: v })} placeholder="https://…" />
         </Field>
         <div className="grid2">
-          <Field label="Standard-Snapshot für neue Konten" hint="wenn der Tarif keinen eigenen hat">
-            <Select value={f.default_snapshot_id} onChange={(v) => setF({ ...f, default_snapshot_id: v })} options={(snaps.data ?? []).map((s) => [s.id, s.name] as [string, string])} placeholder="keiner (leeres Konto)" />
+          <Field label={t('Standard-Snapshot für neue Konten')} hint={t('wenn der Tarif keinen eigenen hat')}>
+            <Select value={f.default_snapshot_id} onChange={(v) => setF({ ...f, default_snapshot_id: v })} options={(snaps.data ?? []).map((s) => [s.id, s.name] as [string, string])} placeholder={t('keiner (leeres Konto)')} />
           </Field>
-          <Field label="Einladungs-Mails senden über" hint="dessen E-Mail-Einstellungen (SMTP) werden genutzt">
-            <Select value={f.mail_location_id} onChange={(v) => setF({ ...f, mail_location_id: v })} options={(locs.data ?? []).map((l) => [l.location_id, l.name] as [string, string])} placeholder="den neuen Sub-Account" />
+          <Field label={t('Einladungs-Mails senden über')} hint={t('dessen E-Mail-Einstellungen (SMTP) werden genutzt')}>
+            <Select value={f.mail_location_id} onChange={(v) => setF({ ...f, mail_location_id: v })} options={(locs.data ?? []).map((l) => [l.location_id, l.name] as [string, string])} placeholder={t('den neuen Sub-Account')} />
           </Field>
         </div>
-        <Check checked={!!f.activate_workflows} onChange={(v) => setF({ ...f, activate_workflows: v })} label="Workflows aus dem Snapshot gleich aktivieren (sonst als Entwurf)" />
+        <Check checked={!!f.activate_workflows} onChange={(v) => setF({ ...f, activate_workflows: v })} label={t('Workflows aus dem Snapshot gleich aktivieren (sonst als Entwurf)')} />
         </MoreFields>
       </div>
 
       <div className="card" style={{ maxWidth: 820 }}>
-        <h2 style={{ marginTop: 0 }}>Zahlungsverzug & Weiterberechnung</h2>
+        <h2 style={{ marginTop: 0 }}>{t('Zahlungsverzug & Weiterberechnung')}</h2>
         <div className="grid2">
-          <Field label="Kulanzzeit bei offener Zahlung (Tage)" hint="danach wird das Konto pausiert (nur lesen)">
+          <Field label={t('Kulanzzeit bei offener Zahlung (Tage)')} hint={t('danach wird das Konto pausiert (nur lesen)')}>
             <Input type="number" min={0} max={60} value={f.grace_days} onChange={(v) => setF({ ...f, grace_days: v })} />
           </Field>
         </div>
-        <MoreFields id="saas-costs" label="Aufschlag und deine Kosten">
+        <MoreFields id="saas-costs" label={t('Aufschlag und deine Kosten')}>
         <div className="grid2">
-          <Field label="Standard-Aufschlag (%)" hint="auf deine Kosten für Mehrverbrauch">
+          <Field label={t('Standard-Aufschlag (%)')} hint={t('auf deine Kosten für Mehrverbrauch')}>
             <Input type="number" min={0} value={f.markup_percent} onChange={(v) => setF({ ...f, markup_percent: v })} />
           </Field>
         </div>
         <div className="grid3">
           {USAGE.map(([k, label]) => (
-            <Field key={k} label={`Deine Kosten je ${label === 'E-Mails' ? 'E-Mail' : label === 'KI-Aufrufe' ? 'KI-Aufruf' : 'SMS'} (Cent)`}>
+            <Field key={k} label={t('Deine Kosten je {v} (Cent)', { v: label === 'E-Mails' ? t('E-Mail') : label === 'KI-Aufrufe' ? t('KI-Aufruf') : 'SMS' })}>
               <Input value={String(f.unit_cost?.[k] ?? '').replace('.', ',')} onChange={(v) => setF({ ...f, unit_cost: { ...f.unit_cost, [k]: v } })} inputMode="decimal" />
             </Field>
           ))}
         </div>
-        <p className="muted small">Mehrverbrauch eines Monats geht nach Monatsende als Rechnungsposten an die nächste Stripe-Rechnung des Kunden.</p>
+        <p className="muted small">{t('Mehrverbrauch eines Monats geht nach Monatsende als Rechnungsposten an die nächste Stripe-Rechnung des Kunden.')}</p>
         </MoreFields>
         <button
           className="btn"
@@ -739,7 +747,7 @@ function Settings({ data, onChange }: { data: any; onChange: (s: any) => void })
             })
           }
         >
-          Einstellungen speichern
+          {t('Einstellungen speichern')}
         </button>
       </div>
     </>
@@ -747,6 +755,7 @@ function Settings({ data, onChange }: { data: any; onChange: (s: any) => void })
 }
 
 export function SaasAdmin() {
+  const t = useT('b6saas');
   const [tab, setTab] = useState('overview');
   const settings = useLoad(() => api.get('/api/saas/settings'), []);
   if (!settings.data) return <Spinner />;
@@ -755,15 +764,15 @@ export function SaasAdmin() {
       <div className="saas-subtabs" data-tour="saas-tabs">
         <Tabs
           tabs={[
-            ['overview', 'Übersicht'],
-            ['plans', 'Tarife'],
-            ['accounts', 'Kunden-Abos'],
-            ['settings', 'Einstellungen'],
+            ['overview', t('Übersicht')],
+            ['plans', t('Tarife')],
+            ['accounts', t('Kunden-Abos')],
+            ['settings', t('Einstellungen')],
           ]}
           value={tab}
           onChange={setTab}
         />
-        {settings.data.signup_enabled && <Copy text={settings.data.signup_url} label="Anmelde-Link kopieren" />}
+        {settings.data.signup_enabled && <Copy text={settings.data.signup_url} label={t('Anmelde-Link kopieren')} />}
       </div>
       {tab === 'overview' && <Overview goSettings={() => setTab('settings')} />}
       {tab === 'plans' && <Plans settings={settings.data} />}

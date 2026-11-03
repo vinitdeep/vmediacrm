@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Icon } from '../icons';
 import { api, currentLocation, d, money } from '../api';
 import { Badge, Check, Field, Input, Link, Modal, Select, Spinner, Textarea, act, confirmAsk, navigate, toast, useLoad } from '../ui';
-import { useT } from '../i18n';
+import { tr, useT } from '../i18n';
 
 /**
  * The invoicing parts of the invoice screen that come with the GoBD rules: the lock banner, finalising, Storno, credit notes,
@@ -36,38 +36,37 @@ export function useInvoiceSettings() {
 // --- banner ----------------------------------------------------------------------------------------------------------------------------
 
 export function LockBar({ inv }: { inv: any }) {
+  const t = useT('b6invoices');
   const verify = async () => {
     const r = await act(() => api.get<any>(`/api/invoices/${inv.id}/verify`));
-    if (r) toast(r.ok ? 'Unverändert ✓ – die Prüfsumme (SHA-256) stimmt' : `Achtung: ${r.checks.filter((c: any) => !c.ok).map((c: any) => c.name).join(', ')} weicht von der festgeschriebenen Fassung ab`);
+    if (r) toast(r.ok ? t('Unverändert ✓ – die Prüfsumme (SHA-256) stimmt') : t('Achtung: {join} weicht von der festgeschriebenen Fassung ab', { join: r.checks.filter((c: any) => !c.ok).map((c: any) => c.name).join(', ') }));
   };
-  if (inv.status === 'void' && !inv.locked) return <div className="card notice-card" data-tour="invoice-lock">Dieser Entwurf wurde verworfen – es wurde nie eine Nummer vergeben.</div>;
+  if (inv.status === 'void' && !inv.locked) return <div className="card notice-card" data-tour="invoice-lock">{t('Dieser Entwurf wurde verworfen – es wurde nie eine Nummer vergeben.')}</div>;
   if (!inv.locked) return null;
   return (
     <div className="card notice-card lockbar" data-tour="invoice-lock">
       <Icon name="lock" />
       <div>
-        <strong>{inv.doc_title} {inv.number} festgeschrieben</strong> am {d(inv.finalised_at)}
-        {inv.doc_hash && <span className="muted mono"> · SHA-256 {String(inv.doc_hash).slice(0, 12)}…</span>}
+        <strong>{t('{doc_title} {number} festgeschrieben', { doc_title: inv.doc_title, number: inv.number })}</strong> {t('am {d}', { d: d(inv.finalised_at) })}
+        {inv.doc_hash && <span className="muted mono"> {t('· SHA-256 {slice}…', { slice: String(inv.doc_hash).slice(0, 12) })}</span>}
         <div className="muted small">
-          Positionen, Beträge und Kundendaten sind gesperrt. Änderbar bleiben Hinweistext, Fälligkeit und Zahlungslink.
-          {inv.kind === 'invoice' && inv.status !== 'void' ? ' Eine Korrektur geht nur per Stornorechnung oder Gutschrift.' : ''}
+          {t('Positionen, Beträge und Kundendaten sind gesperrt. Änderbar bleiben Hinweistext, Fälligkeit und Zahlungslink.')}
+          {inv.kind === 'invoice' && inv.status !== 'void' ? t(' Eine Korrektur geht nur per Stornorechnung oder Gutschrift.') : ''}
           {inv.status === 'void' && inv.storno_id && (
             <>
-              {' '}
-              Storniert durch <Link to={`invoices/${inv.storno_id}`}>Stornorechnung</Link>.
+              {t('Storniert durch')} <Link to={`invoices/${inv.storno_id}`}>{t('Stornorechnung')}</Link>.
             </>
           )}
-          {inv.state === 'credited' && ' Vollständig gutgeschrieben – die Rechnung ist geschlossen, die Gutschriften stehen daneben.'}
+          {inv.state === 'credited' && t(' Vollständig gutgeschrieben – die Rechnung ist geschlossen, die Gutschriften stehen daneben.')}
           {inv.ref && (
             <>
-              {' '}
-              Verweis auf <Link to={`invoices/${inv.ref.id}`}>{inv.ref.number}</Link>.
+              {t('Verweis auf')} <Link to={`invoices/${inv.ref.id}`}>{inv.ref.number}</Link>.
             </>
           )}
         </div>
       </div>
       <button className="btn small secondary" onClick={verify}>
-        Prüfsumme prüfen
+        {t('Prüfsumme prüfen')}
       </button>
     </div>
   );
@@ -76,30 +75,31 @@ export function LockBar({ inv }: { inv: any }) {
 // --- finalising --------------------------------------------------------------------------------------------------------------------------
 
 export function FinaliseModal({ inv, onClose, onDone, send, email }: { inv: any; onClose: () => void; onDone: (r: any) => void; send?: boolean; email?: string }) {
+  const t = useT('b6invoices');
   const pre = useLoad(() => api.get<any>(`/api/invoices/${inv.id}/precheck`), [inv.id]);
   const [busy, setBusy] = useState(false);
   const p = pre.data;
   const blocked = !!p && (p.errors.length > 0 || (p.strict && p.warnings.length > 0));
   const go = async () => {
     setBusy(true);
-    const r = await act(() => api.post<any>(send ? `/api/invoices/${inv.id}/send` : `/api/invoices/${inv.id}/finalise`, {}), send ? 'Festgeschrieben und gesendet' : 'Rechnung festgeschrieben');
+    const r = await act(() => api.post<any>(send ? `/api/invoices/${inv.id}/send` : `/api/invoices/${inv.id}/finalise`, {}), send ? t('Festgeschrieben und gesendet') : t('Rechnung festgeschrieben'));
     setBusy(false);
     if (r) {
-      if (r.warnings?.length) toast(`Hinweis: ${r.warnings[0]}`);
+      if (r.warnings?.length) toast(t('Hinweis: {v}', { v: r.warnings[0] }));
       onDone(r);
     }
   };
   return (
     <Modal
-      title={`${inv.kind === 'credit_note' ? 'Gutschrift' : 'Rechnung'} ${send ? 'festschreiben und senden' : 'festschreiben'}`}
+      title={`${inv.kind === 'credit_note' ? t('Gutschrift') : t('Rechnung')} ${send ? t('festschreiben und senden') : 'festschreiben'}`}
       onClose={onClose}
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn" data-tour="invoice-finalise-go" disabled={busy || !p || blocked} onClick={go}>
-            <Icon name={send ? 'send' : 'lock'} /> {send ? 'Festschreiben und senden' : 'Jetzt festschreiben'}
+            <Icon name={send ? 'send' : 'lock'} /> {send ? t('Festschreiben und senden') : t('Jetzt festschreiben')}
           </button>
         </>
       }
@@ -109,23 +109,22 @@ export function FinaliseModal({ inv, onClose, onDone, send, email }: { inv: any;
       ) : (
         <>
           <p style={{ marginTop: 0 }}>
-            Beim Festschreiben bekommt die {inv.kind === 'credit_note' ? 'Gutschrift' : 'Rechnung'} ihre endgültige Nummer
+            {t('Beim Festschreiben bekommt die')} {inv.kind === 'credit_note' ? t('Gutschrift') : t('Rechnung')} {t('ihre endgültige Nummer')}
             {p.next_number ? (
               <>
                 {' '}
                 (<strong>{p.next_number}</strong>)
               </>
-            ) : null}{' '}
-            – fortlaufend und ohne Lücken. {send && email ? <>Danach geht sie per E-Mail an <strong>{email}</strong>. </>: null}Danach gilt:
+            ) : null}{t('– fortlaufend und ohne Lücken.')} {send && email ? <>{t('Danach geht sie per E-Mail an')} <strong>{email}</strong>. </>: null}{t('Danach gilt:')}
           </p>
           <ul className="small" style={{ paddingLeft: 18 }}>
-            <li>Positionen, Beträge, Kundendaten und Steuerbehandlung sind gesperrt (nur Hinweistext und Fälligkeit bleiben änderbar).</li>
-            <li>Eine Prüfsumme (SHA-256) und eine Momentaufnahme halten den Stand fest.</li>
-            <li>Löschen geht nicht mehr – korrigieren kannst du nur mit einer Stornorechnung oder Gutschrift.</li>
+            <li>{t('Positionen, Beträge, Kundendaten und Steuerbehandlung sind gesperrt (nur Hinweistext und Fälligkeit bleiben änderbar).')}</li>
+            <li>{t('Eine Prüfsumme (SHA-256) und eine Momentaufnahme halten den Stand fest.')}</li>
+            <li>{t('Löschen geht nicht mehr – korrigieren kannst du nur mit einer Stornorechnung oder Gutschrift.')}</li>
           </ul>
           {p.errors.length > 0 && (
             <div className="notice-warn">
-              <strong>Das fehlt noch:</strong>
+              <strong>{t('Das fehlt noch:')}</strong>
               <ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
                 {p.errors.map((e: string) => (
                   <li key={e}>{e}</li>
@@ -135,13 +134,13 @@ export function FinaliseModal({ inv, onClose, onDone, send, email }: { inv: any;
           )}
           {p.warnings.length > 0 && (
             <div className="notice-warn">
-              <strong>{p.strict ? 'Pflichtangaben fehlen (strenge Prüfung ist an):' : 'Bitte prüfen:'}</strong>
+              <strong>{p.strict ? t('Pflichtangaben fehlen (strenge Prüfung ist an):') : t('Bitte prüfen:')}</strong>
               <ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
                 {p.warnings.map((e: string) => (
                   <li key={e}>{e}</li>
                 ))}
               </ul>
-              <div className="small">Anschrift und Steuernummer des Absenders ergänzt du unter Einstellungen → Rechnungen.</div>
+              <div className="small">{t('Anschrift und Steuernummer des Absenders ergänzt du unter Einstellungen → Rechnungen.')}</div>
             </div>
           )}
         </>
@@ -153,41 +152,42 @@ export function FinaliseModal({ inv, onClose, onDone, send, email }: { inv: any;
 // --- Storno ------------------------------------------------------------------------------------------------------------------------------
 
 export function StornoModal({ inv, onClose, onDone }: { inv: any; onClose: () => void; onDone: (r: any) => void }) {
+  const t = useT('b6invoices');
   const [reason, setReason] = useState('');
   const [send, setSend] = useState(false);
   const [busy, setBusy] = useState(false);
   const go = async () => {
     setBusy(true);
-    const r = await act(() => api.post<any>(`/api/invoices/${inv.id}/storno`, { reason, send }), 'Stornorechnung erstellt');
+    const r = await act(() => api.post<any>(`/api/invoices/${inv.id}/storno`, { reason, send }), t('Stornorechnung erstellt'));
     setBusy(false);
     if (r) {
-      if (r.send_error) toast(`Stornorechnung erstellt, Versand fehlgeschlagen: ${r.send_error}`);
+      if (r.send_error) toast(t('Stornorechnung erstellt, Versand fehlgeschlagen: {send_error}', { send_error: r.send_error }));
       onDone(r);
     }
   };
   return (
     <Modal
-      title={`Rechnung ${inv.number} stornieren`}
+      title={t('Rechnung {number} stornieren', { number: inv.number })}
       onClose={onClose}
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn danger" disabled={busy} onClick={go}>
-            Stornorechnung erstellen
+            {t('Stornorechnung erstellen')}
           </button>
         </>
       }
     >
       <p style={{ marginTop: 0 }}>
-        Es entsteht eine <strong>Stornorechnung</strong> mit eigener Nummer, Verweis auf {inv.number} und den Beträgen mit umgekehrtem Vorzeichen ({money(-inv.total_cents, inv.currency)}). Die Rechnung gilt danach als storniert, die Buchhaltung wird gegengebucht. Das lässt sich nicht rückgängig machen.
+        {t('Es entsteht eine')} <strong>{t('Stornorechnung')}</strong> {t('mit eigener Nummer, Verweis auf {number} und den Beträgen mit umgekehrtem Vorzeichen ({money}). Die Rechnung gilt danach als storniert, die Buchhaltung wird gegengebucht. Das lässt sich nicht rückgängig machen.', { number: inv.number, money: money(-inv.total_cents, inv.currency) })}
       </p>
-      <Field label="Grund (steht auf dem Beleg)">
-        <Textarea value={reason} onChange={setReason} placeholder="z. B. Falscher Empfänger, Leistung nicht erbracht" />
+      <Field label={t('Grund (steht auf dem Beleg)')}>
+        <Textarea value={reason} onChange={setReason} placeholder={t('z. B. Falscher Empfänger, Leistung nicht erbracht')} />
       </Field>
-      <Check checked={send} onChange={setSend} label="Stornorechnung gleich per E-Mail an den Kunden senden" />
-      {inv.paid_cents > 0 && <p className="notice-warn">Auf diese Rechnung sind {money(inv.paid_cents, inv.currency)} gezahlt – die Erstattung veranlasst du separat.</p>}
+      <Check checked={send} onChange={setSend} label={t('Stornorechnung gleich per E-Mail an den Kunden senden')} />
+      {inv.paid_cents > 0 && <p className="notice-warn">{t('Auf diese Rechnung sind {money} gezahlt – die Erstattung veranlasst du separat.', { money: money(inv.paid_cents, inv.currency) })}</p>}
     </Modal>
   );
 }
@@ -195,6 +195,7 @@ export function StornoModal({ inv, onClose, onDone }: { inv: any; onClose: () =>
 // --- credit note --------------------------------------------------------------------------------------------------------------------------
 
 export function CreditNoteModal({ inv, onClose }: { inv: any; onClose: () => void }) {
+  const t = useT('b6invoices');
   const left = inv.total_cents - (inv.credited_cents ?? 0);
   const [rows, setRows] = useState<any[]>(() => inv.items.map((x: any) => ({ ...x, price: fromCents(x.price_cents), take: false })));
   const [reason, setReason] = useState('');
@@ -206,14 +207,14 @@ export function CreditNoteModal({ inv, onClose }: { inv: any; onClose: () => voi
   const go = async () => {
     setBusy(true);
     const items = picked.map((r) => ({ name: r.name, description: r.description, qty: Number(r.qty), unit: r.unit, price_cents: toCents(r.price), tax_rate: r.tax_rate }));
-    const r = await act(() => api.post<any>(`/api/invoices/${inv.id}/credit-note`, { items, reason }), 'Gutschrift als Entwurf angelegt');
+    const r = await act(() => api.post<any>(`/api/invoices/${inv.id}/credit-note`, { items, reason }), t('Gutschrift als Entwurf angelegt'));
     setBusy(false);
     if (r) navigate(`invoices/${r.id}`);
   };
   // with credit notes there is no Storno any more: the rest is credited as one more credit note (the server makes its lines)
   const rest = async () => {
     setBusy(true);
-    const r = await act(() => api.post<any>(`/api/invoices/${inv.id}/credit-note`, { remainder: true, reason }), 'Gutschrift als Entwurf angelegt');
+    const r = await act(() => api.post<any>(`/api/invoices/${inv.id}/credit-note`, { remainder: true, reason }), t('Gutschrift als Entwurf angelegt'));
     setBusy(false);
     if (r) {
       if (r.warnings?.length) toast(r.warnings[0]);
@@ -223,42 +224,42 @@ export function CreditNoteModal({ inv, onClose }: { inv: any; onClose: () => voi
   return (
     <Modal
       wide
-      title={`Gutschrift zu ${inv.number}`}
+      title={t('Gutschrift zu {number}', { number: inv.number })}
       onClose={onClose}
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           {(inv.credited_cents ?? 0) > 0 && left > 0 && (
             <button className="btn secondary" disabled={busy} onClick={rest}>
-              Restbetrag gutschreiben
+              {t('Restbetrag gutschreiben')}
             </button>
           )}
           <button className="btn" disabled={busy || !picked.length || gross <= 0 || gross > left} onClick={go}>
-            Gutschrift als Entwurf anlegen
+            {t('Gutschrift als Entwurf anlegen')}
           </button>
         </>
       }
     >
       <p className="muted small" style={{ marginTop: 0 }}>
-        Wähle die Positionen, die du gutschreiben willst, und passe Menge und Preis an (positiv eintragen – die Gutschrift macht daraus den Abzug). Du kannst die Gutschrift noch bearbeiten und schreibst sie dann fest. Noch gutschreibbar: {money(left, inv.currency)}.
+        {t('Wähle die Positionen, die du gutschreiben willst, und passe Menge und Preis an (positiv eintragen – die Gutschrift macht daraus den Abzug). Du kannst die Gutschrift noch bearbeiten und schreibst sie dann fest. Noch gutschreibbar: {money}.', { money: money(left, inv.currency) })}
       </p>
       <table className="t">
         <thead>
           <tr>
             <th style={{ width: 36 }}></th>
-            <th>Position</th>
-            <th style={{ width: 90 }}>Menge</th>
-            <th style={{ width: 120 }}>Preis netto (€)</th>
-            <th style={{ width: 100, textAlign: 'right' }}>Netto</th>
+            <th>{t('Position')}</th>
+            <th style={{ width: 90 }}>{t('Menge')}</th>
+            <th style={{ width: 120 }}>{t('Preis netto (€)')}</th>
+            <th style={{ width: 100, textAlign: 'right' }}>{t('Netto')}</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r, i) => (
             <tr key={i}>
               <td>
-                <input type="checkbox" checked={r.take} onChange={(e) => set(i, { take: e.target.checked })} aria-label="gutschreiben" />
+                <input type="checkbox" checked={r.take} onChange={(e) => set(i, { take: e.target.checked })} aria-label={t('gutschreiben')} />
               </td>
               <td>{r.name}</td>
               <td>
@@ -273,11 +274,11 @@ export function CreditNoteModal({ inv, onClose }: { inv: any; onClose: () => voi
         </tbody>
       </table>
       <p style={{ textAlign: 'right' }}>
-        Gutschrift netto {money(net, inv.currency)} · brutto <strong>{money(gross, inv.currency)}</strong>
-        {gross > left && <span className="error"> – mehr als noch gutschreibbar</span>}
+        {t('Gutschrift netto {money} · brutto', { money: money(net, inv.currency) })} <strong>{money(gross, inv.currency)}</strong>
+        {gross > left && <span className="error"> {t('– mehr als noch gutschreibbar')}</span>}
       </p>
-      <Field label="Grund (steht auf dem Beleg)">
-        <Input value={reason} onChange={setReason} placeholder="z. B. Kulanz, Mengenabweichung" />
+      <Field label={t('Grund (steht auf dem Beleg)')}>
+        <Input value={reason} onChange={setReason} placeholder={t('z. B. Kulanz, Mengenabweichung')} />
       </Field>
     </Modal>
   );
@@ -286,6 +287,7 @@ export function CreditNoteModal({ inv, onClose }: { inv: any; onClose: () => voi
 // --- payments --------------------------------------------------------------------------------------------------------------------------------
 
 export function PaymentModal({ inv, onClose, onDone }: { inv: any; onClose: () => void; onDone: (r: any) => void }) {
+  const t = useT('b6invoices');
   const [amount, setAmount] = useState(fromCents(inv.open_cents));
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [method, setMethod] = useState('Überweisung');
@@ -295,64 +297,65 @@ export function PaymentModal({ inv, onClose, onDone }: { inv: any; onClose: () =
   const hasSkonto = !!inv.skonto_percent && !!inv.skonto_days;
   const go = async () => {
     setBusy(true);
-    const r = await act(() => api.post<any>(`/api/invoices/${inv.id}/payments`, { amount_cents: toCents(amount), paid_at: date ? `${date}T12:00:00.000Z` : undefined, method, note, skonto }), 'Zahlung erfasst');
+    const r = await act(() => api.post<any>(`/api/invoices/${inv.id}/payments`, { amount_cents: toCents(amount), paid_at: date ? `${date}T12:00:00.000Z` : undefined, method, note, skonto }), t('Zahlung erfasst'));
     setBusy(false);
     if (r) onDone(r);
   };
   return (
     <Modal
-      title="Zahlung erfassen"
+      title={t('Zahlung erfassen')}
       onClose={onClose}
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn" disabled={busy || toCents(amount) <= 0} onClick={go}>
-            ✓ Zahlung speichern
+            {t('✓ Zahlung speichern')}
           </button>
         </>
       }
     >
       <p className="muted small" style={{ marginTop: 0 }}>
-        Offen: <strong>{money(inv.open_cents, inv.currency)}</strong>. Ein kleinerer Betrag ist eine Teilzahlung – die Rechnung bleibt dann „teilweise bezahlt“.
+        {t('Offen:')} <strong>{money(inv.open_cents, inv.currency)}</strong>{t('. Ein kleinerer Betrag ist eine Teilzahlung – die Rechnung bleibt dann „teilweise bezahlt“.')}
       </p>
       <div className="grid2">
-        <Field label="Betrag (€)">
+        <Field label={t('Betrag (€)')}>
           <Input value={amount} onChange={setAmount} inputMode="decimal" />
         </Field>
-        <Field label="Zahlungsdatum">
+        <Field label={t('Zahlungsdatum')}>
           <Input type="date" value={date} onChange={setDate} />
         </Field>
-        <Field label="Art">
-          <Select value={method} onChange={setMethod} options={['Überweisung', 'Lastschrift', 'Bar', 'PayPal', 'Karte', 'Verrechnung']} />
+        <Field label={t('Art')}>
+          <Select value={method} onChange={setMethod} options={['Überweisung', 'Lastschrift', 'Bar', 'PayPal', 'Karte', 'Verrechnung'].map((m) => [m, t(m)] as [string, string])} />
         </Field>
-        <Field label="Notiz">
+        <Field label={t('Notiz')}>
           <Input value={note} onChange={setNote} />
         </Field>
       </div>
-      {hasSkonto && <Check checked={skonto} onChange={setSkonto} label={`Kunde hat Skonto abgezogen (${String(inv.skonto_percent).replace('.', ',')} % bei Zahlung in ${inv.skonto_days} Tagen) – der Rest gilt als Skonto`} />}
+      {hasSkonto && <Check checked={skonto} onChange={setSkonto} label={t('Kunde hat Skonto abgezogen ({replace} % bei Zahlung in {skonto_days} Tagen) – der Rest gilt als Skonto', { replace: String(inv.skonto_percent).replace('.', ','), skonto_days: inv.skonto_days })} />}
     </Modal>
   );
 }
 
 export function PaymentsBox({ inv, onChanged }: { inv: any; onChanged: (r: any) => void }) {
+  const t = useT('b6invoices');
   const rows: any[] = inv.payments ?? [];
   if (inv.kind !== 'invoice' || (!rows.length && !inv.paid_cents)) return null;
   const reverted = new Set(rows.filter((r) => r.kind === 'reversal').map((r) => r.reverses_id));
   return (
     <div className="stripe-box" data-tour="invoice-payments">
       <strong>
-        <Icon name="card" /> Zahlungen
+        <Icon name="card" /> {t('Zahlungen')}
       </strong>
-      {rows.length === 0 && <p>Bezahlt am {d(inv.paid_at)}.</p>}
+      {rows.length === 0 && <p>{t('Bezahlt am {d}.', { d: d(inv.paid_at) })}</p>}
       <table className="t" style={{ marginTop: 6 }}>
         <tbody>
           {rows.map((r) => (
             <tr key={r.id} style={reverted.has(r.id) ? { opacity: 0.55 } : undefined}>
               <td>{d(r.paid_at)}</td>
               <td>
-                {r.kind === 'skonto' ? 'Skonto' : r.kind === 'reversal' ? 'zurückgenommen' : r.method || 'Zahlung'}
+                {r.kind === 'skonto' ? t('Skonto') : r.kind === 'reversal' ? t('zurückgenommen') : (r.method ? t(r.method) : t('Zahlung'))}
                 {r.note && r.kind !== 'reversal' ? <span className="muted"> · {r.note}</span> : null}
               </td>
               <td style={{ textAlign: 'right' }}>{money(r.amount_cents, inv.currency)}</td>
@@ -360,9 +363,9 @@ export function PaymentsBox({ inv, onChanged }: { inv: any; onChanged: (r: any) 
                 {r.kind === 'payment' && !reverted.has(r.id) && inv.status !== 'void' && (
                   <button
                     className="icon-btn"
-                    title="Zahlung zurücknehmen"
-                    aria-label="Zahlung zurücknehmen"
-                    onClick={async () => confirmAsk('Zahlung zurücknehmen? Die Rechnung ist danach wieder offen (die Zahlung bleibt als Zeile im Protokoll).') && onChanged(await act(() => api.post<any>(`/api/invoices/${inv.id}/payments/${r.id}/revert`, {}), 'Zahlung zurückgenommen'))}
+                    title={t('Zahlung zurücknehmen')}
+                    aria-label={t('Zahlung zurücknehmen')}
+                    onClick={async () => confirmAsk(t('Zahlung zurücknehmen? Die Rechnung ist danach wieder offen (die Zahlung bleibt als Zeile im Protokoll).')) && onChanged(await act(() => api.post<any>(`/api/invoices/${inv.id}/payments/${r.id}/revert`, {}), t('Zahlung zurückgenommen')))}
                   >
                     ↺
                   </button>
@@ -372,7 +375,7 @@ export function PaymentsBox({ inv, onChanged }: { inv: any; onChanged: (r: any) 
           ))}
         </tbody>
       </table>
-      {inv.status === 'sent' && inv.open_cents > 0 && <p className="small">Noch offen: {money(inv.open_cents, inv.currency)}</p>}
+      {inv.status === 'sent' && inv.open_cents > 0 && <p className="small">{t('Noch offen: {money}', { money: money(inv.open_cents, inv.currency) })}</p>}
     </div>
   );
 }
@@ -380,6 +383,7 @@ export function PaymentsBox({ inv, onChanged }: { inv: any; onChanged: (r: any) 
 // --- legal fields ---------------------------------------------------------------------------------------------------------------------------------
 
 export function LegalFields({ inv, set, frozen, settings }: { inv: any; set: (patch: any) => void; frozen: boolean; settings: any }) {
+  const t = useT('b6invoices');
   const modes: any[] = settings?.tax_modes ?? [];
   const mode = modes.find((m) => m.key === inv.tax_mode);
   const [vat, setVat] = useState<any>(null);
@@ -391,51 +395,51 @@ export function LegalFields({ inv, set, frozen, settings }: { inv: any; set: (pa
   };
   return (
     <div className="card" style={{ marginTop: 12 }} data-tour="invoice-legal">
-      <h3 style={{ marginBottom: 8 }}>Rechnungsangaben</h3>
+      <h3 style={{ marginBottom: 8 }}>{t('Rechnungsangaben')}</h3>
       <fieldset disabled={frozen} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
       {isInvoice && (
-        <Field label="Art">
-          <Select value={inv.inv_type ?? 'standard'} onChange={(v) => set({ inv_type: v, ...(v !== 'final' ? { deduct_ids: [] } : {}) })} options={[['standard', 'Rechnung'], ['partial', 'Abschlagsrechnung'], ['final', 'Schlussrechnung (zieht Abschläge ab)']]} />
+        <Field label={t('Art')}>
+          <Select value={inv.inv_type ?? 'standard'} onChange={(v) => set({ inv_type: v, ...(v !== 'final' ? { deduct_ids: [] } : {}) })} options={[['standard', t('Rechnung')], ['partial', t('Abschlagsrechnung')], ['final', t('Schlussrechnung (zieht Abschläge ab)')]]} />
         </Field>
       )}
       {inv.inv_type === 'final' && !frozen && (
-        <Field label="Abschlagsrechnungen abziehen" hint="Nur festgeschriebene Abschlagsrechnungen dieses Kunden, die noch in keiner Schlussrechnung abgezogen wurden.">
+        <Field label={t('Abschlagsrechnungen abziehen')} hint={t('Nur festgeschriebene Abschlagsrechnungen dieses Kunden, die noch in keiner Schlussrechnung abgezogen wurden.')}>
           {candidates.length ? (
             candidates.map((c) => (
               <Check
                 key={c.id}
                 checked={(inv.deduct_ids ?? []).includes(c.id)}
                 onChange={(on) => set({ deduct_ids: on ? [...(inv.deduct_ids ?? []), c.id] : (inv.deduct_ids ?? []).filter((x: string) => x !== c.id) })}
-                label={`${c.number} vom ${d(c.issued_at)} · ${money(c.total_cents, c.currency)}`}
+                label={t('{number} vom {d} · {money}', { number: c.number, d: d(c.issued_at), money: money(c.total_cents, c.currency) })}
               />
             ))
           ) : (
-            <span className="muted">Keine abziehbaren Abschlagsrechnungen gefunden.</span>
+            <span className="muted">{t('Keine abziehbaren Abschlagsrechnungen gefunden.')}</span>
           )}
         </Field>
       )}
       {inv.inv_type === 'final' && frozen && (inv.deductions ?? []).length > 0 && (
         <p className="small">
-          Abgezogen: {(inv.deductions as any[]).map((x) => `${x.number} (${money(x.total_cents, inv.currency)})`).join(', ')} · noch zu zahlen {money(inv.total_cents - inv.deducted_cents, inv.currency)}
+          {t('Abgezogen:')} {(inv.deductions as any[]).map((x) => `${x.number} (${money(x.total_cents, inv.currency)})`).join(', ')} {t('· noch zu zahlen {money}', { money: money(inv.total_cents - inv.deducted_cents, inv.currency) })}
         </p>
       )}
       <div className="grid2">
-        <Field label="Leistungsdatum">
+        <Field label={t('Leistungsdatum')}>
           <Input type="date" value={ymd(inv.supply_from)} onChange={(v) => set({ supply_from: v })} disabled={frozen} />
         </Field>
-        <Field label="… bis (Leistungszeitraum, optional)">
+        <Field label={t('… bis (Leistungszeitraum, optional)')}>
           <Input type="date" value={ymd(inv.supply_to)} onChange={(v) => set({ supply_to: v })} disabled={frozen} />
         </Field>
       </div>
-      {!frozen && !inv.supply_from && <p className="muted small">Ohne Angabe gilt das Rechnungsdatum als Leistungsdatum (steht so auf der Rechnung).</p>}
+      {!frozen && !inv.supply_from && <p className="muted small">{t('Ohne Angabe gilt das Rechnungsdatum als Leistungsdatum (steht so auf der Rechnung).')}</p>}
       {inv.kind === 'credit_note' ? (
         <p className="small" data-tour="invoice-taxmode">
-          Steuerbehandlung: <strong>{mode?.label ?? 'Regelbesteuerung'}</strong> – von der Rechnung übernommen, eine Gutschrift ändert sie nicht.
+          {t('Steuerbehandlung:')} <strong>{mode?.label ?? t('Regelbesteuerung')}</strong> {t('– von der Rechnung übernommen, eine Gutschrift ändert sie nicht.')}
           {inv.tax_note ? <span className="muted"> {inv.tax_note}</span> : null}
         </p>
       ) : (
         <>
-          <Field label="Steuerbehandlung" tour="invoice-taxmode">
+          <Field label={t('Steuerbehandlung')} tour="invoice-taxmode">
             <Select
               value={inv.tax_mode ?? 'standard'}
               onChange={(v) => {
@@ -446,34 +450,34 @@ export function LegalFields({ inv, set, frozen, settings }: { inv: any; set: (pa
             />
           </Field>
           {(inv.tax_mode ?? 'standard') !== 'standard' && (
-            <Field label="Pflichttext auf der Rechnung" hint={mode?.needs_buyer_vat ? 'Pflicht – dazu die USt-IdNr. von dir und vom Kunden.' : 'Pflicht – ohne diesen Hinweis ist die Rechnung nicht zulässig.'}>
+            <Field label={t('Pflichttext auf der Rechnung')} hint={mode?.needs_buyer_vat ? t('Pflicht – dazu die USt-IdNr. von dir und vom Kunden.') : t('Pflicht – ohne diesen Hinweis ist die Rechnung nicht zulässig.')}>
               <Textarea value={inv.tax_note} onChange={(v) => set({ tax_note: v })} disabled={frozen} />
             </Field>
           )}
         </>
       )}
       <div className="grid2">
-        <Field label="USt-IdNr. des Kunden" hint={mode?.needs_buyer_vat ? 'Pflicht bei dieser Steuerbehandlung' : undefined}>
+        <Field label={t('USt-IdNr. des Kunden')} hint={mode?.needs_buyer_vat ? t('Pflicht bei dieser Steuerbehandlung') : undefined}>
           <div style={{ display: 'flex', gap: 6 }}>
-            <Input value={inv.buyer_vat_id} onChange={(v) => set({ buyer_vat_id: v })} disabled={frozen} placeholder="DE123456789" />
+            <Input value={inv.buyer_vat_id} onChange={(v) => set({ buyer_vat_id: v })} disabled={frozen} placeholder={t('DE123456789')} />
             {!frozen && inv.buyer_vat_id && (
               <button className="btn small secondary" type="button" onClick={checkVat}>
-                Prüfen
+                {t('Prüfen')}
               </button>
             )}
           </div>
         </Field>
-        <Field label="Leitweg-ID (Behörden, B2G)" hint="Für XRechnung an öffentliche Auftraggeber">
+        <Field label={t('Leitweg-ID (Behörden, B2G)')} hint={t('Für XRechnung an öffentliche Auftraggeber')}>
           <Input value={inv.leitweg_id} onChange={(v) => set({ leitweg_id: v })} disabled={frozen} placeholder="04011000-1234512345-35" />
         </Field>
-        <Field label="Kundenreferenz / Bestellnummer">
+        <Field label={t('Kundenreferenz / Bestellnummer')}>
           <Input value={inv.buyer_ref} onChange={(v) => set({ buyer_ref: v })} disabled={frozen} />
         </Field>
         {isInvoice && (
-          <Field label="Skonto (Prozent / Tage)">
+          <Field label={t('Skonto (Prozent / Tage)')}>
             <div style={{ display: 'flex', gap: 6 }}>
               <Input value={inv.skonto_percent ?? ''} onChange={(v) => set({ skonto_percent: v === '' ? null : Number(v.replace(',', '.')), skonto_days: v === '' ? null : inv.skonto_days ?? 10 })} disabled={frozen} placeholder="2" />
-              <Input value={inv.skonto_days ?? ''} onChange={(v) => set({ skonto_days: v === '' ? null : Number(v) })} disabled={frozen} placeholder="10 Tage" />
+              <Input value={inv.skonto_days ?? ''} onChange={(v) => set({ skonto_days: v === '' ? null : Number(v) })} disabled={frozen} placeholder={t('10 Tage')} />
             </div>
           </Field>
         )}
@@ -482,21 +486,20 @@ export function LegalFields({ inv, set, frozen, settings }: { inv: any; set: (pa
         <p className="small" style={{ margin: '0 0 8px' }}>
           {vat.format_ok ? (
             <>
-              <Badge tone="green">Format ok</Badge> {vat.vat_id}
+              <Badge tone="green">{t('Format ok')}</Badge> {vat.vat_id}
               {vat.vies?.checked ? (
                 <>
-                  {' '}
-                  · VIES: {vat.vies.valid ? <Badge tone="green">gültig{vat.vies.name ? ` – ${vat.vies.name}` : ''}</Badge> : <Badge tone="red">unbekannt</Badge>}
+                  {t('· VIES:')} {vat.vies.valid ? <Badge tone="green">{t('gültig')}{vat.vies.name ? ` – ${vat.vies.name}` : ''}</Badge> : <Badge tone="red">{t('unbekannt')}</Badge>}
                 </>
               ) : vat.vies_enabled ? (
-                <span className="muted"> · VIES nicht erreichbar</span>
+                <span className="muted"> {t('· VIES nicht erreichbar')}</span>
               ) : (
-                <span className="muted"> · VIES-Abfrage unter Einstellungen → Rechnungen einschaltbar</span>
+                <span className="muted"> {t('· VIES-Abfrage unter Einstellungen → Rechnungen einschaltbar')}</span>
               )}
             </>
           ) : (
             <>
-              <Badge tone="red">ungültig</Badge> {vat.reason}
+              <Badge tone="red">{t('ungültig')}</Badge> {vat.reason}
             </>
           )}
         </p>
@@ -509,6 +512,7 @@ export function LegalFields({ inv, set, frozen, settings }: { inv: any; set: (pa
 // --- downloads and the e-invoice ----------------------------------------------------------------------------------------------------------------------
 
 export function DocsBox({ inv }: { inv: any }) {
+  const t = useT('b6invoices');
   const [check, setCheck] = useState<any>(null);
   const isQuote = inv.kind === 'estimate';
   const base = `/api/invoices/${inv.id}`;
@@ -519,7 +523,7 @@ export function DocsBox({ inv }: { inv: any }) {
   return (
     <div className="stripe-box" data-tour="invoice-docs">
       <strong>
-        <Icon name="download" /> Dokumente
+        <Icon name="download" /> {t('Dokumente')}
       </strong>
       <div className="actions" style={{ marginTop: 8 }}>
         <a className="btn small secondary" href={`${base}/pdf?download=1&locationId=${loc()}`} target="_blank" rel="noreferrer">
@@ -527,48 +531,48 @@ export function DocsBox({ inv }: { inv: any }) {
         </a>
         {!isQuote && inv.locked && (
           <>
-            <a className="btn small secondary" href={`${base}/xrechnung?download=1&syntax=cii&locationId=${loc()}`} title="UN/CEFACT CII – das Format von ZUGFeRD und Factur-X">
-              XRechnung (CII)
+            <a className="btn small secondary" href={`${base}/xrechnung?download=1&syntax=cii&locationId=${loc()}`} title={t('UN/CEFACT CII – das Format von ZUGFeRD und Factur-X')}>
+              {t('XRechnung (CII)')}
             </a>
-            <a className="btn small secondary" href={`${base}/xrechnung?download=1&syntax=ubl&locationId=${loc()}`} title="UBL 2.1">
-              XRechnung (UBL)
+            <a className="btn small secondary" href={`${base}/xrechnung?download=1&syntax=ubl&locationId=${loc()}`} title={t('UBL 2.1')}>
+              {t('XRechnung (UBL)')}
             </a>
-            <a className="btn small secondary" href={`${base}/zugferd?download=1&locationId=${loc()}`} title="ZUGFeRD 2.3 / Factur-X: das PDF mit eingebetteter E-Rechnung (EN 16931)">
-              ZUGFeRD-PDF
+            <a className="btn small secondary" href={`${base}/zugferd?download=1&locationId=${loc()}`} title={t('ZUGFeRD 2.3 / Factur-X: das PDF mit eingebetteter E-Rechnung (EN 16931)')}>
+              {t('ZUGFeRD-PDF')}
             </a>
           </>
         )}
         {!isQuote && (
           <button className="btn small ghost" onClick={() => open('cii')}>
-            E-Rechnung prüfen
+            {t('E-Rechnung prüfen')}
           </button>
         )}
       </div>
-      {!isQuote && !inv.locked && <p className="muted small">XRechnung und ZUGFeRD gibt es ab dem Festschreiben.</p>}
+      {!isQuote && !inv.locked && <p className="muted small">{t('XRechnung und ZUGFeRD gibt es ab dem Festschreiben.')}</p>}
       {(inv.archive ?? []).length > 0 && (
         <p className="small muted" style={{ marginBottom: 0 }}>
-          Archiviert (unveränderlich, Aufbewahrung bis {d(inv.archive[0].retention_until)}):{' '}
+          {t('Archiviert (unveränderlich, Aufbewahrung bis {d}):', { d: d(inv.archive[0].retention_until) })}
           {(inv.archive as any[]).map((a) => (
-            <a key={a.id} href={`${base}/documents/${a.id}/download?locationId=${loc()}`} title={`SHA-256 ${a.sha256}`} style={{ marginRight: 8 }}>
-              {a.kind === 'pdf' ? 'PDF' : a.kind === 'zugferd' ? 'ZUGFeRD' : a.kind === 'xrechnung-ubl' ? 'UBL' : 'CII'} {d(a.created_at)}
+            <a key={a.id} href={`${base}/documents/${a.id}/download?locationId=${loc()}`} title={t('SHA-256 {sha256}', { sha256: a.sha256 })} style={{ marginRight: 8 }}>
+              {a.kind === 'pdf' ? 'PDF' : a.kind === 'zugferd' ? 'ZUGFeRD' : a.kind === 'xrechnung-ubl' ? t('UBL') : t('CII')} {d(a.created_at)}
             </a>
           ))}
         </p>
       )}
       {check && (
-        <Modal title="E-Rechnung prüfen" onClose={() => setCheck(null)}>
+        <Modal title={t('E-Rechnung prüfen')} onClose={() => setCheck(null)}>
           {check.ready ? (
             <p>
-              <Badge tone="green">bereit</Badge> Alle Pflichtangaben sind da, die Regeln der EN 16931 / XRechnung 3.0 (eigene Prüfung) sind erfüllt.
+              <Badge tone="green">{t('bereit')}</Badge> {t('Alle Pflichtangaben sind da, die Regeln der EN 16931 / XRechnung 3.0 (eigene Prüfung) sind erfüllt.')}
             </p>
           ) : (
             <p>
-              <Badge tone="yellow">noch nicht bereit</Badge> {check.final ? '' : 'Der Entwurf wird zuerst festgeschrieben – diese Vorschau zeigt, was dann fehlen würde.'}
+              <Badge tone="yellow">{t('noch nicht bereit')}</Badge> {check.final ? '' : t('Der Entwurf wird zuerst festgeschrieben – diese Vorschau zeigt, was dann fehlen würde.')}
             </p>
           )}
           {check.problems.length > 0 && (
             <>
-              <strong>Es fehlt:</strong>
+              <strong>{t('Es fehlt:')}</strong>
               <ul>
                 {check.problems.map((p: string) => (
                   <li key={p}>{p}</li>
@@ -578,7 +582,7 @@ export function DocsBox({ inv }: { inv: any }) {
           )}
           {check.errors.length > 0 && (
             <>
-              <strong>Regelverstöße:</strong>
+              <strong>{t('Regelverstöße:')}</strong>
               <ul>
                 {check.errors.map((e: any) => (
                   <li key={e.rule + e.message}>
@@ -588,7 +592,7 @@ export function DocsBox({ inv }: { inv: any }) {
               </ul>
             </>
           )}
-          <p className="muted small">Die Prüfung deckt die wichtigsten Regeln ab (Pflichtfelder, Summen, Steueraufschlüsselung, Codes) – sie ersetzt nicht den offiziellen KoSIT-Validator vor dem ersten produktiven Versand.</p>
+          <p className="muted small">{t('Die Prüfung deckt die wichtigsten Regeln ab (Pflichtfelder, Summen, Steueraufschlüsselung, Codes) – sie ersetzt nicht den offiziellen KoSIT-Validator vor dem ersten produktiven Versand.')}</p>
         </Modal>
       )}
     </div>
@@ -596,6 +600,7 @@ export function DocsBox({ inv }: { inv: any }) {
 }
 
 export function AuditBox({ inv }: { inv: any }) {
+  const t = useT('b6invoices');
   const [open, setOpen] = useState(false);
   const log = useLoad(() => (open ? api.get<any[]>(`/api/invoices/${inv.id}/audit`) : Promise.resolve([] as any[])), [inv.id, open, inv.updated_at, inv.status]);
   return (
@@ -607,7 +612,7 @@ export function AuditBox({ inv }: { inv: any }) {
           setOpen(!open);
         }}
       >
-        <strong>{open ? '▾' : '▸'} Protokoll</strong>
+        <strong>{open ? '▾' : '▸'} {t('Protokoll')}</strong>
       </a>
       {open && (
         <table className="t" style={{ marginTop: 6 }}>
@@ -618,7 +623,7 @@ export function AuditBox({ inv }: { inv: any }) {
                   {d(a.at)}
                 </td>
                 <td>
-                  <span className="small">{ACTIONS[a.action] ?? a.action}</span>
+                  <span className="small">{t(ACTIONS[a.action] ?? a.action)}</span>
                   {a.detail && <div className="muted small">{a.detail}</div>}
                 </td>
                 <td className="muted small">{a.actor}</td>
@@ -657,7 +662,7 @@ const ACTIONS: Record<string, string> = {
 
 // --- list helpers ------------------------------------------------------------------------------------------------------------------------------------------
 
-export const numberLabel = (i: any) => (i.number ? i.number : 'Entwurf');
+export const numberLabel = (i: any) => { const t = tr('b6invoices'); return (i.number ? i.number : t('Entwurf')); };
 
 export function StateBadge({ i }: { i: any }) {
   // Shown in the invoice list and editor: translated with them (invoices catalog; STATE_LABEL's texts are its message ids).

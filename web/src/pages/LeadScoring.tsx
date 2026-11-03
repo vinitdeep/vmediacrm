@@ -54,40 +54,42 @@ function useMeta() {
 }
 
 function RuleRow({ r, fields, events, tags, onChange, onRemove }: { r: any; fields: [string, string][]; events: Record<string, string>; tags: string[]; onChange: (r: any) => void; onRemove: () => void }) {
+  const tx = useT('b6sales');
   const pts = (
     <div className="ls-points">
-      <Input type="number" value={r.points} onChange={(v) => onChange({ ...r, points: v === '' ? '' : Number(v) })} aria-label="Punkte" className={Number(r.points) < 0 ? 'neg' : 'pos'} />
-      <span className="muted small">Pkt.</span>
+      <Input type="number" value={r.points} onChange={(v) => onChange({ ...r, points: v === '' ? '' : Number(v) })} aria-label={tx('Punkte')} className={Number(r.points) < 0 ? 'neg' : 'pos'} />
+      <span className="muted small">{tx('Pkt.')}</span>
     </div>
   );
   const del = (
-    <button type="button" className="icon-btn" onClick={onRemove} aria-label="Kriterium entfernen">
+    <button type="button" className="icon-btn" onClick={onRemove} aria-label={tx('Kriterium entfernen')}>
       ✕
     </button>
   );
   if (r.kind === 'event')
     return (
       <div className="ls-rule">
-        <Select value={r.event} onChange={(v) => onChange({ ...r, event: v })} aria="Ereignis" options={Object.entries(events)} />
+        <Select value={r.event} onChange={(v) => onChange({ ...r, event: v })} aria={tx('Ereignis')} options={Object.entries(events)} />
         {pts}
-        <span className="muted small">je Mal, höchstens</span>
-        <Input type="number" value={r.max_points ?? ''} onChange={(v) => onChange({ ...r, max_points: v })} placeholder="∞" aria-label="Höchstpunkte" className="ls-small" />
-        <span className="muted small">in</span>
-        <Input type="number" value={r.within_days ?? ''} onChange={(v) => onChange({ ...r, within_days: v })} placeholder="allen" aria-label="Zeitraum in Tagen" className="ls-small" />
-        <span className="muted small">Tagen</span>
+        <span className="muted small">{tx('je Mal, höchstens')}</span>
+        <Input type="number" value={r.max_points ?? ''} onChange={(v) => onChange({ ...r, max_points: v })} placeholder="∞" aria-label={tx('Höchstpunkte')} className="ls-small" />
+        <span className="muted small">{tx('in')}</span>
+        <Input type="number" value={r.within_days ?? ''} onChange={(v) => onChange({ ...r, within_days: v })} placeholder={tx('allen')} aria-label={tx('Zeitraum in Tagen')} className="ls-small" />
+        <span className="muted small">{tx('Tagen')}</span>
         {del}
       </div>
     );
   const needsValue = !['empty', 'not_empty'].includes(r.op);
+  const ops = OPS.map(([k, l]) => [k, tx(l)] as [string, string]);
   return (
     <div className="ls-rule">
-      <Select value={r.field} aria="Feld" onChange={(v) => onChange({ ...r, field: v, op: v === 'tag' ? 'has' : r.op === 'has' || r.op === 'not_has' ? 'equals' : r.op })} options={fields} />
-      <Select value={r.op} onChange={(v) => onChange({ ...r, op: v })} aria="Bedingung" options={r.field === 'tag' ? OPS.filter(([k]) => k === 'has' || k === 'not_has') : OPS.filter(([k]) => k !== 'has' && k !== 'not_has')} />
+      <Select value={r.field} aria={tx('Feld')} onChange={(v) => onChange({ ...r, field: v, op: v === 'tag' ? 'has' : r.op === 'has' || r.op === 'not_has' ? 'equals' : r.op })} options={fields} />
+      <Select value={r.op} onChange={(v) => onChange({ ...r, op: v })} aria={tx('Bedingung')} options={r.field === 'tag' ? ops.filter(([k]) => k === 'has' || k === 'not_has') : ops.filter(([k]) => k !== 'has' && k !== 'not_has')} />
       {needsValue &&
         (r.field === 'tag' ? (
-          <Select value={r.value} onChange={(v) => onChange({ ...r, value: v })} placeholder="Tag wählen…" options={tags} />
+          <Select value={r.value} onChange={(v) => onChange({ ...r, value: v })} placeholder={tx('Tag wählen…')} options={tags} />
         ) : (
-          <Input value={r.value ?? ''} onChange={(v) => onChange({ ...r, value: v })} placeholder="Wert" aria-label="Wert" />
+          <Input value={r.value ?? ''} onChange={(v) => onChange({ ...r, value: v })} placeholder={tx('Wert')} aria-label={tx('Wert')} />
         ))}
       {pts}
       {del}
@@ -96,15 +98,16 @@ function RuleRow({ r, fields, events, tags, onChange, onRemove }: { r: any; fiel
 }
 
 function ModelEditor({ model, meta, onSaved, onDeleted }: { model: any; meta: any; onSaved: (m: any) => void; onDeleted: () => void }) {
+  const tx = useT('b6sales');
   const [m, setM] = useState<any>(model);
   useEffect(() => setM(model), [model.id, model.updated_at]);
   const fields: [string, string][] = [
-    ...CONTACT_FIELDS,
-    ...meta.custom_fields.map((f: any) => [`custom.${f.key}`, `Feld: ${f.label}`] as [string, string]),
+    ...CONTACT_FIELDS.map(([k, l]) => [k, tx(l)] as [string, string]),
+    ...meta.custom_fields.map((f: any) => [`custom.${f.key}`, tx('Feld: {label}', { label: f.label })] as [string, string]),
     ['tag', 'Tag'],
-    ...COMPANY_FIELDS,
-    ...meta.company_properties.map((p: any) => [`company.custom.${p.key}`, `Firma: ${p.label}`] as [string, string]),
-    ...ATTR_FIELDS,
+    ...COMPANY_FIELDS.map(([k, l]) => [k, tx(l)] as [string, string]),
+    ...meta.company_properties.map((p: any) => [`company.custom.${p.key}`, tx('Firma: {label}', { label: p.label })] as [string, string]),
+    ...ATTR_FIELDS.map(([k, l]) => [k, tx(l)] as [string, string]),
   ];
   const rules: any[] = m.rules ?? [];
   const setRules = (next: any[]) => setM({ ...m, rules: next });
@@ -112,7 +115,7 @@ function ModelEditor({ model, meta, onSaved, onDeleted }: { model: any; meta: an
   const eng = rules.filter((r) => r.kind === 'event');
   const dirty = JSON.stringify({ ...m, stats: undefined }) !== JSON.stringify({ ...model, stats: undefined });
   const save = async () => {
-    const r = await act(() => api.patch(`/api/lead-scoring/models/${m.id}`, { name: m.name, active: m.active, is_primary: m.is_primary, rules: m.rules, thresholds: m.thresholds, decay: m.decay, max_score: m.max_score }), 'Gespeichert und neu berechnet');
+    const r = await act(() => api.patch(`/api/lead-scoring/models/${m.id}`, { name: m.name, active: m.active, is_primary: m.is_primary, rules: m.rules, thresholds: m.thresholds, decay: m.decay, max_score: m.max_score }), tx('Gespeichert und neu berechnet'));
     if (r) onSaved(r);
   };
   const stats = model.stats ?? { scored: 0, average: 0, labels: {}, top: [] };
@@ -123,79 +126,79 @@ function ModelEditor({ model, meta, onSaved, onDeleted }: { model: any; meta: an
         <div className="card" data-tour="ls-model">
           <div className="row" style={{ alignItems: 'center' }}>
             <div className="grow">
-              <Input value={m.name} onChange={(v) => setM({ ...m, name: v })} aria-label="Name des Modells" className="ls-name" />
+              <Input value={m.name} onChange={(v) => setM({ ...m, name: v })} aria-label={tx('Name des Modells')} className="ls-name" />
             </div>
-            <Check checked={m.active} onChange={(v) => setM({ ...m, active: v })} label="Aktiv" />
-            <Check checked={m.is_primary} onChange={(v) => setM({ ...m, is_primary: v || model.is_primary })} label="Haupt-Score (Kontaktliste)" />
+            <Check checked={m.active} onChange={(v) => setM({ ...m, active: v })} label={tx('Aktiv')} />
+            <Check checked={m.is_primary} onChange={(v) => setM({ ...m, is_primary: v || model.is_primary })} label={tx('Haupt-Score (Kontaktliste)')} />
           </div>
           <h3 className="ls-h" data-tour="ls-fit">
-            <Icon name="contact" /> Eigenschaften <span className="muted small">– passt der Kontakt?</span>
+            <Icon name="contact" /> {tx('Eigenschaften')} <span className="muted small">{tx('– passt der Kontakt?')}</span>
           </h3>
           {fit.map((r) => (
             <RuleRow key={r.id} r={r} fields={fields} events={meta.events} tags={meta.tags} onChange={(x) => setRules(rules.map((y) => (y.id === r.id ? x : y)))} onRemove={() => setRules(rules.filter((y) => y.id !== r.id))} />
           ))}
           <button className="btn small secondary" onClick={() => setRules([...rules, { id: newId(), kind: 'property', field: 'source', op: 'equals', value: '', points: 10 }])}>
-            + Eigenschaft
+            {tx('+ Eigenschaft')}
           </button>
           <h3 className="ls-h" data-tour="ls-engagement">
-            <Icon name="activity" /> Aktivität <span className="muted small">– wie engagiert ist er?</span>
+            <Icon name="activity" /> {tx('Aktivität')} <span className="muted small">{tx('– wie engagiert ist er?')}</span>
           </h3>
           {eng.map((r) => (
             <RuleRow key={r.id} r={r} fields={fields} events={meta.events} tags={meta.tags} onChange={(x) => setRules(rules.map((y) => (y.id === r.id ? x : y)))} onRemove={() => setRules(rules.filter((y) => y.id !== r.id))} />
           ))}
           <button className="btn small secondary" onClick={() => setRules([...rules, { id: newId(), kind: 'event', event: 'email.opened', points: 2 }])}>
-            + Aktivität
+            {tx('+ Aktivität')}
           </button>
-          <p className="muted small">Negative Punkte ziehen ab (z. B. Freemail-Adresse, Wettbewerber-Domain). Der Score fällt nie unter 0.</p>
+          <p className="muted small">{tx('Negative Punkte ziehen ab (z. B. Freemail-Adresse, Wettbewerber-Domain). Der Score fällt nie unter 0.')}</p>
           <div className="actions" style={{ justifyContent: 'flex-end' }}>
-            <button className="btn danger" onClick={async () => confirmAsk(`Modell „${model.name}“ löschen? Alle Scores und der Verlauf gehen verloren.`) && (await act(() => api.del(`/api/lead-scoring/models/${model.id}`), 'Gelöscht')) && onDeleted()}>
-              Löschen
+            <button className="btn danger" onClick={async () => confirmAsk(tx('Modell „{name}“ löschen? Alle Scores und der Verlauf gehen verloren.', { name: model.name })) && (await act(() => api.del(`/api/lead-scoring/models/${model.id}`), tx('Gelöscht'))) && onDeleted()}>
+              {tx('Löschen')}
             </button>
-            <button className="btn secondary" onClick={() => act(() => api.post(`/api/lead-scoring/models/${model.id}/recalculate`), 'Neu berechnet').then((r) => r && onSaved({ ...model, stats: r }))}>
-              <Icon name="refresh" /> Neu berechnen
+            <button className="btn secondary" onClick={() => act(() => api.post(`/api/lead-scoring/models/${model.id}/recalculate`), tx('Neu berechnet')).then((r) => r && onSaved({ ...model, stats: r }))}>
+              <Icon name="refresh" /> {tx('Neu berechnen')}
             </button>
             <button className="btn" data-tour="ls-save" disabled={!dirty} onClick={save}>
-              {dirty ? 'Speichern' : 'Gespeichert ✓'}
+              {dirty ? tx('Speichern') : tx('Gespeichert ✓')}
             </button>
           </div>
         </div>
       </div>
       <div className="ls-side">
         <div className="card" data-tour="ls-thresholds">
-          <h2>Schwellen</h2>
+          <h2>{tx('Schwellen')}</h2>
           {(m.thresholds ?? []).map((th: any, i: number) => (
             <div key={i} className="ls-th">
-              <Input value={th.label} onChange={(v) => setM({ ...m, thresholds: m.thresholds.map((x: any, j: number) => (j === i ? { ...x, label: v } : x)) })} aria-label="Name der Schwelle" />
-              <span className="muted">ab</span>
-              <Input type="number" value={th.min} onChange={(v) => setM({ ...m, thresholds: m.thresholds.map((x: any, j: number) => (j === i ? { ...x, min: Number(v) } : x)) })} aria-label="Mindestpunkte" className="ls-small" />
-              <button className="icon-btn" onClick={() => setM({ ...m, thresholds: m.thresholds.filter((_: any, j: number) => j !== i) })} aria-label="Schwelle entfernen">
+              <Input value={th.label} onChange={(v) => setM({ ...m, thresholds: m.thresholds.map((x: any, j: number) => (j === i ? { ...x, label: v } : x)) })} aria-label={tx('Name der Schwelle')} />
+              <span className="muted">{tx('ab')}</span>
+              <Input type="number" value={th.min} onChange={(v) => setM({ ...m, thresholds: m.thresholds.map((x: any, j: number) => (j === i ? { ...x, min: Number(v) } : x)) })} aria-label={tx('Mindestpunkte')} className="ls-small" />
+              <button className="icon-btn" onClick={() => setM({ ...m, thresholds: m.thresholds.filter((_: any, j: number) => j !== i) })} aria-label={tx('Schwelle entfernen')}>
                 ✕
               </button>
             </div>
           ))}
           <button className="btn small secondary" onClick={() => setM({ ...m, thresholds: [...(m.thresholds ?? []), { label: '', min: 0 }] })}>
-            + Schwelle
+            {tx('+ Schwelle')}
           </button>
-          <p className="muted small">Erreicht ein Kontakt eine Schwelle, startet der Workflow-Auslöser „Lead-Score erreicht Schwelle“.</p>
+          <p className="muted small">{tx('Erreicht ein Kontakt eine Schwelle, startet der Workflow-Auslöser „Lead-Score erreicht Schwelle“.')}</p>
         </div>
         <div className="card" data-tour="ls-decay">
-          <h2>Zerfall & Grenze</h2>
+          <h2>{tx('Zerfall & Grenze')}</h2>
           <div className="ls-th">
             <span className="muted">−</span>
-            <Input type="number" value={m.decay?.percent ?? 0} onChange={(v) => setM({ ...m, decay: { ...m.decay, percent: Number(v) } })} aria-label="Prozent" className="ls-small" />
-            <span className="muted">% je</span>
-            <Input type="number" value={m.decay?.days ?? 30} onChange={(v) => setM({ ...m, decay: { ...m.decay, days: Number(v) } })} aria-label="Tage" className="ls-small" />
-            <span className="muted">Tage ohne Aktivität</span>
+            <Input type="number" value={m.decay?.percent ?? 0} onChange={(v) => setM({ ...m, decay: { ...m.decay, percent: Number(v) } })} aria-label={tx('Prozent')} className="ls-small" />
+            <span className="muted">{tx('% je')}</span>
+            <Input type="number" value={m.decay?.days ?? 30} onChange={(v) => setM({ ...m, decay: { ...m.decay, days: Number(v) } })} aria-label={tx('Tage')} className="ls-small" />
+            <span className="muted">{tx('Tage ohne Aktivität')}</span>
           </div>
-          <Field label="Höchstwert (leer = keiner)">
-            <Input type="number" value={m.max_score ?? ''} onChange={(v) => setM({ ...m, max_score: v === '' ? null : Number(v) })} placeholder="z. B. 100" />
+          <Field label={tx('Höchstwert (leer = keiner)')}>
+            <Input type="number" value={m.max_score ?? ''} onChange={(v) => setM({ ...m, max_score: v === '' ? null : Number(v) })} placeholder={tx('z. B. 100')} />
           </Field>
-          <p className="muted small">Jede Nacht neu berechnet (Zerfall, Zeiträume), sonst sofort bei neuen Ereignissen.</p>
+          <p className="muted small">{tx('Jede Nacht neu berechnet (Zerfall, Zeiträume), sonst sofort bei neuen Ereignissen.')}</p>
         </div>
         <div className="card" data-tour="ls-dist">
-          <h2>Verteilung</h2>
+          <h2>{tx('Verteilung')}</h2>
           <p className="muted small" style={{ marginTop: 0 }}>
-            {stats.scored} Kontakte bewertet · Ø {stats.average} Punkte {model.calculated_at ? `· berechnet ${dt(model.calculated_at)}` : ''}
+            {tx('{scored} Kontakte bewertet · Ø {average} Punkte', { scored: stats.scored, average: stats.average })} {model.calculated_at ? tx('· berechnet {dt}', { dt: dt(model.calculated_at) }) : ''}
           </p>
           {[...(model.thresholds ?? [])].reverse().map((th: any) => (
             <div key={th.label} className="ls-dist">
@@ -207,7 +210,7 @@ function ModelEditor({ model, meta, onSaved, onDeleted }: { model: any; meta: an
             </div>
           ))}
           <div className="ls-dist">
-            <span className="muted">darunter</span>
+            <span className="muted">{tx('darunter')}</span>
             <div className="bar">
               <div style={{ width: `${((stats.labels[''] ?? 0) / maxCount) * 100}%`, opacity: 0.45 }} />
             </div>
@@ -215,7 +218,7 @@ function ModelEditor({ model, meta, onSaved, onDeleted }: { model: any; meta: an
           </div>
           {stats.top.length > 0 && (
             <>
-              <div className="prop-group">Top-Leads</div>
+              <div className="prop-group">{tx('Top-Leads')}</div>
               {stats.top.map((c: any) => (
                 <div key={c.contact_id} className="ls-top">
                   <Link to={`contacts/${c.contact_id}`}>{name(c)}</Link>
@@ -233,6 +236,7 @@ function ModelEditor({ model, meta, onSaved, onDeleted }: { model: any; meta: an
 }
 
 export function LeadScoring() {
+  const tx = useT('b6sales');
   const meta = useMeta();
   const list = useLoad(() => api.get<any[]>('/api/lead-scoring/models'), []);
   const [sel, setSel] = useState('');
@@ -242,7 +246,7 @@ export function LeadScoring() {
     const m = await act(
       () =>
         api.post('/api/lead-scoring/models', {
-          name: models.length ? `Modell ${models.length + 1}` : 'Lead-Score',
+          name: models.length ? tx('Modell {n}', { n: models.length + 1 }) : tx('Lead-Score'),
           rules: [
             { kind: 'event', event: 'form.submitted', points: 10, max_points: 30 },
             { kind: 'event', event: 'email.clicked', points: 5, max_points: 25 },
@@ -252,28 +256,28 @@ export function LeadScoring() {
           decay: { percent: 10, days: 30 },
           max_score: 100,
         }),
-      'Modell angelegt',
+      tx('Modell angelegt'),
     );
     if (m) (await list.reload(), setSel(m.id));
   };
   return (
     <>
-      <PageHead title="Lead-Scoring" sub="Punkte für passende Eigenschaften und Aktivität – Schwellen wie MQL und SQL starten Workflows">
+      <PageHead title="Lead-Scoring" sub={tx('Punkte für passende Eigenschaften und Aktivität – Schwellen wie MQL und SQL starten Workflows')}>
         <button className="btn" data-tour="ls-new" onClick={create}>
-          + Modell
+          {tx('+ Modell')}
         </button>
       </PageHead>
       {!list.data || !meta.data ? (
         <Spinner />
       ) : !cur ? (
-        <Empty tour="ls-empty" action={<button className="btn" onClick={create}>Erstes Scoring-Modell anlegen</button>}>Noch kein Lead-Scoring. Wir starten mit einer Vorlage (Formulare, Klicks, Termine), die du anpasst.</Empty>
+        <Empty tour="ls-empty" action={<button className="btn" onClick={create}>{tx('Erstes Scoring-Modell anlegen')}</button>}>{tx('Noch kein Lead-Scoring. Wir starten mit einer Vorlage (Formulare, Klicks, Termine), die du anpasst.')}</Empty>
       ) : (
         <>
           {models.length > 1 && (
             <div className="views-bar">
               {models.map((m) => (
                 <button key={m.id} className={`chip${m.id === cur.id ? ' on' : ''}`} onClick={() => setSel(m.id)}>
-                  {m.is_primary && <Icon name="crown" size={13} />} {m.name} {!m.active && <span className="muted small">(pausiert)</span>}
+                  {m.is_primary && <Icon name="crown" size={13} />} {m.name} {!m.active && <span className="muted small">{tx('(pausiert)')}</span>}
                 </button>
               ))}
             </div>
@@ -299,6 +303,7 @@ export function ScoreBadge({ score, label }: { score: number; label?: string }) 
 
 /** Contact page: score(s) with breakdown and history. */
 export function ContactLeadScore({ contactId }: { contactId: string }) {
+  const tx = useT('b6sales');
   const s = useLoad(() => api.get<any>(`/api/lead-scoring/contacts/${contactId}`), [contactId]);
   const [open, setOpen] = useState(false);
   if (!s.data || !s.data.scores.length) return null;
@@ -306,9 +311,9 @@ export function ContactLeadScore({ contactId }: { contactId: string }) {
     <div className="card lead-score-card" data-tour="contact-lead-score">
       <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: 0 }}>
-          <Icon name="gauge" /> Lead-Score
+          <Icon name="gauge" /> {tx('Lead-Score')}
         </h2>
-        <button className="icon-btn" title="Neu berechnen" aria-label="Neu berechnen" onClick={() => act(() => api.post(`/api/lead-scoring/contacts/${contactId}/recalculate`)).then((r) => r && s.setData(r))}>
+        <button className="icon-btn" title={tx('Neu berechnen')} aria-label={tx('Neu berechnen')} onClick={() => act(() => api.post(`/api/lead-scoring/contacts/${contactId}/recalculate`)).then((r) => r && s.setData(r))}>
           <Icon name="refresh" size={15} />
         </button>
       </div>
@@ -329,14 +334,14 @@ export function ContactLeadScore({ contactId }: { contactId: string }) {
                 <b className={b.points < 0 ? 'neg' : 'pos'}>{b.points > 0 ? `+${b.points}` : b.points}</b>
               </div>
             ))}
-            {!sc.breakdown.length && <span className="muted small">Noch keine Punkte.</span>}
+            {!sc.breakdown.length && <span className="muted small">{tx('Noch keine Punkte.')}</span>}
           </div>
         </div>
       ))}
       {s.data.history.length > 0 && (
         <>
           <button className="th-sort small ls-hist-toggle" onClick={() => setOpen(!open)} aria-expanded={open}>
-            {open ? '▾' : '▸'} Verlauf ({s.data.history.length})
+            {open ? '▾' : '▸'} {tx('Verlauf ({length})', { length: s.data.history.length })}
           </button>
           {open && (
             <div className="ls-history">
@@ -406,30 +411,31 @@ export function LeadScoreFilter({ value, onChange }: { value: ScoreFilterValue; 
 
 /** Workflow trigger filters for lead_score.* */
 export function LeadScoreTriggerFilter({ type, config, set }: { type: string; config: any; set: (p: any) => void }) {
+  const tx = useT('b6sales');
   const models = useLoad(() => api.get<any[]>('/api/lead-scoring/models'), []);
   const model = (models.data ?? []).find((m) => m.id === config.model_id) ?? (models.data ?? []).find((m) => m.is_primary);
-  if (models.data && !models.data.length) return <p className="muted small">Erst unter <Link to="lead-scoring">Lead-Scoring</Link> ein Modell anlegen.</p>;
+  if (models.data && !models.data.length) return <p className="muted small">{tx('Erst unter')} <Link to="lead-scoring">Lead-Scoring</Link> {tx('ein Modell anlegen.')}</p>;
   return (
     <>
-      <Field label="Modell">
-        <Select value={config.model_id} onChange={(v) => set({ model_id: v, threshold: '' })} placeholder="jedes" options={(models.data ?? []).map((m) => [m.id, m.name] as [string, string])} />
+      <Field label={tx('Modell')}>
+        <Select value={config.model_id} onChange={(v) => set({ model_id: v, threshold: '' })} placeholder={tx('jedes')} options={(models.data ?? []).map((m) => [m.id, m.name] as [string, string])} />
       </Field>
       {type === 'lead_score.threshold_reached' && (
-        <Field label="Schwelle">
-          <Select value={config.threshold} onChange={(v) => set({ threshold: v })} placeholder="jede" options={(model?.thresholds ?? []).map((t: any) => [t.label, `${t.label} (ab ${t.min})`] as [string, string])} />
+        <Field label={tx('Schwelle')}>
+          <Select value={config.threshold} onChange={(v) => set({ threshold: v })} placeholder={tx('jede')} options={(model?.thresholds ?? []).map((t: any) => [t.label, tx('{label} (ab {min})', { label: t.label, min: t.min })] as [string, string])} />
         </Field>
       )}
       {type === 'lead_score.changed' && (
         <div className="grid2">
-          <Field label="Richtung">
-            <Select value={config.direction} onChange={(v) => set({ direction: v })} placeholder="beide" options={[['up', 'gestiegen'], ['down', 'gefallen']]} />
+          <Field label={tx('Richtung')}>
+            <Select value={config.direction} onChange={(v) => set({ direction: v })} placeholder={tx('beide')} options={[['up', tx('gestiegen')], ['down', tx('gefallen')]]} />
           </Field>
-          <Field label="Neuer Score mindestens">
+          <Field label={tx('Neuer Score mindestens')}>
             <Input type="number" value={config.min} onChange={(v) => set({ min: v })} placeholder="–" />
           </Field>
         </div>
       )}
-      <p className="muted small">Platzhalter: {'{{event.score}}'}, {'{{event.label}}'}, {'{{event.previous}}'}.</p>
+      <p className="muted small">{tx('Platzhalter:')} {'{{event.score}}'}, {'{{event.label}}'}, {'{{event.previous}}'}.</p>
     </>
   );
 }

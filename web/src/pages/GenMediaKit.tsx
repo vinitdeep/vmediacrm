@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { api, currentLocation } from '../api';
 import { Icon } from '../icons';
 import { Field, Input, Link, MergeHint, Modal, Select, Spinner, Textarea, act, useLoad } from '../ui';
+import { useT, tr } from '../i18n';
 
 /**
  * Shared pieces of the KI-Studio (AI media generation with the sub-account's own provider keys):
@@ -60,11 +61,12 @@ export function costText(c: GenJob['cost']): string {
 
 export const connsFor = (meta: GenMeta | undefined, cap: Capability) => (meta?.connections ?? []).filter((c) => c.capabilities.includes(cap));
 export const modelsFor = (meta: GenMeta | undefined, conn: GenConn | undefined, cap: Capability): ModelHint[] => {
+  const tx = tr('b6studio');
   const p = meta?.providers.find((x) => x.id === conn?.provider);
   const list = [...(p?.models[cap] ?? [])];
   // The connection's default model first – when it belongs to this kind of media (or nothing is suggested).
   const def = conn?.model;
-  if (def && !list.length) return [{ id: def, label: 'Standard der Verbindung' }];
+  if (def && !list.length) return [{ id: def, label: tx('Standard der Verbindung') }];
   const i = def ? list.findIndex((m) => m.id === def) : -1;
   if (i > 0) list.unshift(...list.splice(i, 1));
   return list;
@@ -72,14 +74,15 @@ export const modelsFor = (meta: GenMeta | undefined, conn: GenConn | undefined, 
 
 /** Raw upload of a reference or audio file (up to 25 MB, the server checks the type from the bytes). */
 export async function uploadInput(file: File): Promise<{ file: string; name: string; mime: string; size: number; url: string } | undefined> {
+  const tx = tr('b6studio');
   if (file.size > 25 * 1024 * 1024) {
-    await act(() => Promise.reject(new Error('Datei größer als 25 MB')));
+    await act(() => Promise.reject(new Error(tx('Datei größer als 25 MB'))));
     return undefined;
   }
   return act(async () => {
     const r = await fetch(`/api/genmedia/inputs?name=${encodeURIComponent(file.name)}`, { method: 'POST', headers: { 'x-pghl': '1', 'x-location-id': currentLocation(), 'content-type': file.type || 'application/octet-stream' }, body: file, credentials: 'same-origin' });
     const data = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(data.error || `Fehler ${r.status}`);
+    if (!r.ok) throw new Error(data.error || tx('Fehler {status}', { status: r.status }));
     return data;
   });
 }
@@ -100,13 +103,14 @@ export function useJob(initial: GenJob | null) {
 }
 
 export function ByokNotice({ message }: { message?: string | null }) {
+  const tx = useT('b6studio');
   return (
     <div className="gm-byok" data-tour="gm-byok">
       <Icon name="key" size={18} />
       <div>
-        <strong>{message || BYOK_TEXT}</strong>
+        <strong>{message || tx(BYOK_TEXT)}</strong>
         <p className="muted small" style={{ margin: '4px 0 0' }}>
-          Mit eigenem Schlüssel (BYOK) nutzt du fal.ai, kie.ai, Replicate, OpenAI, Google Gemini, Stability, ElevenLabs, Runway, Luma oder jeden anderen Dienst per HTTP-Vorlage. Abgerechnet wird direkt bei deinem Anbieter. <Link to="settings">Zu den Einstellungen</Link>
+          {tx('Mit eigenem Schlüssel (BYOK) nutzt du fal.ai, kie.ai, Replicate, OpenAI, Google Gemini, Stability, ElevenLabs, Runway, Luma oder jeden anderen Dienst per HTTP-Vorlage. Abgerechnet wird direkt bei deinem Anbieter.')} <Link to="settings">{tx('Zu den Einstellungen')}</Link>
         </p>
       </div>
     </div>
@@ -125,12 +129,13 @@ export function ResultPreview({ r, alt = '' }: { r: GenResult; alt?: string }) {
 export interface PickedUpload { id: string; url: string; name: string; mime: string; size: number }
 
 /** Button + modal: prompt → image → into the media library → `onPick(upload)`. */
-export function GenImageButton({ onPick, label = 'KI-Bild generieren', small = true, aspect }: { onPick: (u: PickedUpload) => void; label?: string; small?: boolean; aspect?: string }) {
+export function GenImageButton({ onPick, label, small = true, aspect }: { onPick: (u: PickedUpload) => void; label?: string; small?: boolean; aspect?: string }) {
+  const tx = useT('b6studio');
   const [open, setOpen] = useState(false);
   return (
     <>
       <button type="button" className={`btn secondary${small ? ' small' : ''} gm-gen-btn`} onClick={() => setOpen(true)} data-tour="gm-gen-button">
-        <Icon name="sparkles" size={14} /> {label}
+        <Icon name="sparkles" size={14} /> {label ?? tx('KI-Bild generieren')}
       </button>
       {open && (
         <GenImageModal
@@ -147,6 +152,7 @@ export function GenImageButton({ onPick, label = 'KI-Bild generieren', small = t
 }
 
 export function GenImageModal({ onPick, onClose, aspect }: { onPick: (u: PickedUpload) => void; onClose: () => void; aspect?: string }) {
+  const tx = useT('b6studio');
   const meta = useLoad(() => api.get<GenMeta>('/api/genmedia/meta'), []);
   const conns = connsFor(meta.data, 'image');
   const [connId, setConnId] = useState('');
@@ -168,20 +174,20 @@ export function GenImageModal({ onPick, onClose, aspect }: { onPick: (u: PickedU
   const take = async (i: number) => {
     if (!job) return;
     setBusy(true);
-    const r = await act(() => api.post<{ uploads: PickedUpload[] }>(`/api/genmedia/jobs/${job.id}/library`, { index: i }), 'In der Mediathek gespeichert');
+    const r = await act(() => api.post<{ uploads: PickedUpload[] }>(`/api/genmedia/jobs/${job.id}/library`, { index: i }), tx('In der Mediathek gespeichert'));
     setBusy(false);
     if (r?.uploads[0]) onPick(r.uploads[0]);
   };
   const running = !!job && ACTIVE.includes(job.status);
   return (
     <Modal
-      title="KI-Bild generieren"
+      title={tx('KI-Bild generieren')}
       onClose={onClose}
       wide
       footer={
         conns.length ? (
           <button className="btn" disabled={busy || running || !prompt.trim()} onClick={start} data-tour="gm-modal-generate">
-            <Icon name="sparkles" size={14} /> {job ? 'Neu generieren' : 'Generieren'}
+            <Icon name="sparkles" size={14} /> {job ? tx('Neu generieren') : tx('Generieren')}
           </button>
         ) : undefined
       }
@@ -193,11 +199,11 @@ export function GenImageModal({ onPick, onClose, aspect }: { onPick: (u: PickedU
       ) : (
         <>
           <div className="grid2">
-            <Field label="Anbieter">
+            <Field label={tx('Anbieter')}>
               <Select value={conn?.id ?? ''} onChange={(v) => (setConnId(v), setModel(''))} options={conns.map((c) => [c.id, `${c.label} (${c.provider})`])} />
             </Field>
-            <Field label="Modell" hint="Vorschlag wählen oder beliebige Modell-ID eintragen">
-              <input list={listId} value={model} onChange={(e) => setModel(e.target.value)} placeholder={models[0]?.id ?? conn?.model ?? 'Modell-ID'} />
+            <Field label={tx('Modell')} hint={tx('Vorschlag wählen oder beliebige Modell-ID eintragen')}>
+              <input list={listId} value={model} onChange={(e) => setModel(e.target.value)} placeholder={models[0]?.id ?? conn?.model ?? tx('Modell-ID')} />
               <datalist id={listId}>
                 {models.map((m) => (
                   <option key={m.id} value={m.id}>
@@ -207,31 +213,31 @@ export function GenImageModal({ onPick, onClose, aspect }: { onPick: (u: PickedU
               </datalist>
             </Field>
           </div>
-          <Field label="Was soll auf dem Bild sein?">
-            <Textarea value={prompt} onChange={setPrompt} rows={3} placeholder="z. B. Helles Büro mit Pflanzen, freundliches Team, Fotostil, natürliche Farben" autoFocus />
+          <Field label={tx('Was soll auf dem Bild sein?')}>
+            <Textarea value={prompt} onChange={setPrompt} rows={3} placeholder={tx('z. B. Helles Büro mit Pflanzen, freundliches Team, Fotostil, natürliche Farben')} autoFocus />
           </Field>
-          <Field label="Seitenverhältnis">
+          <Field label={tx('Seitenverhältnis')}>
             <Select value={ratio} onChange={setRatio} options={(meta.data?.aspects ?? ['1:1', '16:9', '9:16']).map((a) => [a, a])} />
           </Field>
           {job && (
             <div className="gm-modal-result">
               {running && (
                 <p className="muted">
-                  <span className="gm-dot" /> Wird erzeugt … {job.progress ? `${job.progress} %` : ''}
+                  <span className="gm-dot" /> {tx('Wird erzeugt …')} {job.progress ? `${job.progress} %` : ''}
                 </p>
               )}
               {job.status === 'failed' && <p style={{ color: 'var(--red)' }}>{job.error}</p>}
               {job.status === 'succeeded' && (
                 <div className="gm-pick">
                   {job.results.map((r, i) => (
-                    <button key={r.url} type="button" className="gm-pick-item" onClick={() => take(i)} disabled={busy} title="Übernehmen">
+                    <button key={r.url} type="button" className="gm-pick-item" onClick={() => take(i)} disabled={busy} title={tx('Übernehmen')}>
                       <img src={r.url} alt="" />
-                      <span className="btn small">Übernehmen</span>
+                      <span className="btn small">{tx('Übernehmen')}</span>
                     </button>
                   ))}
                 </div>
               )}
-              {costText(job.cost) && <p className="muted small">Kosten laut Anbieter: {costText(job.cost)}</p>}
+              {costText(job.cost) && <p className="muted small">{tx('Kosten laut Anbieter: {costText}', { costText: costText(job.cost) })}</p>}
             </div>
           )}
         </>
@@ -245,6 +251,7 @@ export function GenImageModal({ onPick, onClose, aspect }: { onPick: (u: PickedU
 const STEP_CAP: Record<string, Capability> = { genmedia_image: 'image', genmedia_video: 'video', genmedia_tts: 'audio_tts' };
 
 export function GenMediaStep({ type, step, set, customFields }: { type: string; step: any; set: (p: any) => void; customFields: any[] }) {
+  const tx = useT('b6studio');
   const cap = STEP_CAP[type] ?? 'image';
   const meta = useLoad(() => api.get<GenMeta>('/api/genmedia/meta').catch(() => null), []);
   const social = useLoad(() => (step.target === 'social_draft' ? api.get<any>('/api/social').catch(() => null) : Promise.resolve(null)), [step.target]);
@@ -257,11 +264,11 @@ export function GenMediaStep({ type, step, set, customFields }: { type: string; 
     <>
       {meta.data && !conns.length && <ByokNotice message={meta.data.message} />}
       <div className="grid2">
-        <Field label="KI-Verbindung">
-          <Select value={step.connection_id ?? ''} onChange={(v) => set({ connection_id: v || undefined })} options={[['', 'Standard des Sub-Accounts'], ...conns.map((c) => [c.id, `${c.label} (${c.provider})`] as [string, string])]} />
+        <Field label={tx('KI-Verbindung')}>
+          <Select value={step.connection_id ?? ''} onChange={(v) => set({ connection_id: v || undefined })} options={[['', tx('Standard des Sub-Accounts')], ...conns.map((c) => [c.id, `${c.label} (${c.provider})`] as [string, string])]} />
         </Field>
-        <Field label="Modell (optional)">
-          <input list={listId} value={step.model ?? ''} onChange={(e) => set({ model: e.target.value })} placeholder={models[0]?.id ?? 'Standard'} />
+        <Field label={tx('Modell (optional)')}>
+          <input list={listId} value={step.model ?? ''} onChange={(e) => set({ model: e.target.value })} placeholder={models[0]?.id ?? tx('Standard')} />
           <datalist id={listId}>
             {models.map((m) => (
               <option key={m.id} value={m.id}>
@@ -273,41 +280,41 @@ export function GenMediaStep({ type, step, set, customFields }: { type: string; 
       </div>
       {cap === 'audio_tts' ? (
         <>
-          <Field label="Text (Platzhalter erlaubt)">
-            <Textarea value={step.text} onChange={(v) => set({ text: v })} rows={4} placeholder="Hallo {{contact.first_name}}, schön, dass du da bist!" />
+          <Field label={tx('Text (Platzhalter erlaubt)')}>
+            <Textarea value={step.text} onChange={(v) => set({ text: v })} rows={4} placeholder={tx('Hallo {{contact.first_name}}, schön, dass du da bist!')} />
           </Field>
-          <Field label="Stimme (ID)" hint="z. B. nova (OpenAI), Kore (Gemini) oder die Voice-ID von ElevenLabs">
+          <Field label={tx('Stimme (ID)')} hint={tx('z. B. nova (OpenAI), Kore (Gemini) oder die Voice-ID von ElevenLabs')}>
             <Input value={step.voice} onChange={(v) => set({ voice: v })} />
           </Field>
         </>
       ) : (
         <>
-          <Field label="Prompt (Platzhalter erlaubt)">
-            <Textarea value={step.prompt} onChange={(v) => set({ prompt: v })} rows={4} placeholder={cap === 'video' ? 'Kurzer Clip: {{contact.company}} Produkt auf einem Tisch, sanfte Kamerafahrt' : 'Willkommensbild für {{contact.first_name}}, freundlich, hell'} />
+          <Field label={tx('Prompt (Platzhalter erlaubt)')}>
+            <Textarea value={step.prompt} onChange={(v) => set({ prompt: v })} rows={4} placeholder={cap === 'video' ? tx('Kurzer Clip: {{contact.company}} Produkt auf einem Tisch, sanfte Kamerafahrt') : tx('Willkommensbild für {{contact.first_name}}, freundlich, hell')} />
           </Field>
           <div className="grid2">
-            <Field label="Seitenverhältnis">
-              <Select value={step.aspect_ratio ?? ''} onChange={(v) => set({ aspect_ratio: v || undefined })} options={[['', 'Standard'], ...(cap === 'video' ? ['16:9', '9:16', '1:1'] : ['1:1', '16:9', '9:16', '4:3', '3:4']).map((a) => [a, a] as [string, string])]} />
+            <Field label={tx('Seitenverhältnis')}>
+              <Select value={step.aspect_ratio ?? ''} onChange={(v) => set({ aspect_ratio: v || undefined })} options={[['', tx('Standard')], ...(cap === 'video' ? ['16:9', '9:16', '1:1'] : ['1:1', '16:9', '9:16', '4:3', '3:4']).map((a) => [a, a] as [string, string])]} />
             </Field>
             {cap === 'video' && (
-              <Field label="Dauer (Sekunden)">
+              <Field label={tx('Dauer (Sekunden)')}>
                 <Input type="number" value={step.duration ?? ''} onChange={(v) => set({ duration: v ? Number(v) : undefined })} min={1} max={60} />
               </Field>
             )}
           </div>
         </>
       )}
-      <Field label="Ergebnis">
-        <Select value={step.target ?? 'none'} onChange={(v) => set({ target: v })} options={[['none', 'Nur im KI-Studio'], ['field', 'In ein eigenes Feld des Kontakts (Link)'], ['note', 'Als Notiz mit Anhang am Kontakt'], ...(cap !== 'audio_tts' ? [['social_draft', 'Als Social-Post-Entwurf'] as [string, string]] : [])]} />
+      <Field label={tx('Ergebnis')}>
+        <Select value={step.target ?? 'none'} onChange={(v) => set({ target: v })} options={[['none', tx('Nur im KI-Studio')], ['field', tx('In ein eigenes Feld des Kontakts (Link)')], ['note', tx('Als Notiz mit Anhang am Kontakt')], ...(cap !== 'audio_tts' ? [['social_draft', tx('Als Social-Post-Entwurf')] as [string, string]] : [])]} />
       </Field>
       {step.target === 'field' && (
-        <Field label="Feld">
-          <Select value={step.field ?? ''} onChange={(v) => set({ field: v })} placeholder="Feld wählen…" options={fields} />
+        <Field label={tx('Feld')}>
+          <Select value={step.field ?? ''} onChange={(v) => set({ field: v })} placeholder={tx('Feld wählen…')} options={fields} />
         </Field>
       )}
       {step.target === 'social_draft' && (
         <>
-          <Field label="Kanäle">
+          <Field label={tx('Kanäle')}>
             <div className="social-pick">
               {(social.data?.channels ?? []).filter((c: any) => (cap === 'video' ? c.video : c.supported) && !c.disabled).map((c: any) => {
                 const on = (step.integration_ids ?? []).includes(c.id);
@@ -317,15 +324,15 @@ export function GenMediaStep({ type, step, set, customFields }: { type: string; 
                   </button>
                 );
               })}
-              {social.data && !social.data.channels?.length && <span className="muted small">Keine Kanäle verbunden (Social Planner)</span>}
+              {social.data && !social.data.channels?.length && <span className="muted small">{tx('Keine Kanäle verbunden (Social Planner)')}</span>}
             </div>
           </Field>
-          <Field label="Post-Text">
+          <Field label={tx('Post-Text')}>
             <Textarea value={step.social_text} onChange={(v) => set({ social_text: v })} rows={3} />
           </Field>
         </>
       )}
-      <p className="muted small">Läuft im Hintergrund mit dem Schlüssel des Sub-Accounts. Ist das Ergebnis fertig, landet es in der Mediathek und am gewählten Ziel; danach startet der Auslöser „KI-Medium fertig“ für denselben Kontakt.</p>
+      <p className="muted small">{tx('Läuft im Hintergrund mit dem Schlüssel des Sub-Accounts. Ist das Ergebnis fertig, landet es in der Mediathek und am gewählten Ziel; danach startet der Auslöser „KI-Medium fertig“ für denselben Kontakt.')}</p>
       <MergeHint />
     </>
   );

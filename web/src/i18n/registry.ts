@@ -171,6 +171,18 @@ export const NAMESPACES = {
   // files in the customer portal: the share toggle on a contact's documents and the upload rules (docs/sales.md)
   portalfiles: { complete: true, files: ['pages/PortalFiles.tsx'] },
   gaps: { complete: true, files: ['pages/SiteSeo.tsx', 'pages/SocialExtras.tsx', 'pages/AgencyBanners.tsx', 'pages/RoleTemplates.tsx', 'pages/VideoTestimonials.tsx', 'pages/PromptLab.tsx', 'pages/GoogleLeads.tsx', 'pages/SystemMails.tsx', 'pages/WordPressPlugin.tsx', 'pages/ReviewBulk.tsx', 'pages/CourseAi.tsx'] },
+  // batch 6 (i18n-b6): objects, sales, mail, invoices extras, inventory, HR, SaaS, reviews, phone, integrations, studios
+  b6objects: { complete: true, files: ['pages/Objects.tsx', 'pages/ObjectKit.tsx#TYPE_LABELS,LIFECYCLE,objIcon,usersCache,usersLoc,useUsers,eur,PropValue,toLocalInput,PropInput,ViewsBar,RecordTable,Pager,CsvImportModal,typesCache,useAssocTypes,refreshAssocTypes,AssociationsPanel,useLabels,AssocAdd,AssocEdit,Timeline,Notes,PropertyCard,COMPANY_FILTERS,companyQs,pickCompany,DealProperties', 'pages/Properties.tsx'] },
+  b6sales: { complete: true, files: ['pages/SalesAccess.tsx', 'pages/SalesDeal.tsx', 'pages/SalesDupes.tsx', 'pages/SalesKit.tsx', 'pages/SalesQuotas.tsx', 'pages/SalesQuotes.tsx', 'pages/SalesSequences.tsx', 'pages/LeadScoring.tsx#OPS,CONTACT_FIELDS,COMPANY_FIELDS,ATTR_FIELDS,newId,useMeta,RuleRow,ModelEditor,LeadScoring,ScoreBadge,ContactLeadScore,modelsCache,usePrimaryModel,useLeadScores,scoreQs,pickScore,LeadScoreTriggerFilter', 'pages/HealthScore.tsx#BAND,useHealthScores,FACES,ContactService', 'pages/HubSpotImport.tsx'] },
+  b6mail: { complete: true, files: ['pages/Mailboxes.tsx', 'pages/MetaInbox.tsx#META_CHANNELS,CHANNEL_LABELS,ChannelIcon,FILTERS,MessageMedia,useMetaComposer,left,WindowState,fill,TemplatePreview,TemplateSlots,MetaComposerPanel', 'pages/MetaChannels.tsx', 'pages/KnowledgeBase.tsx', 'pages/Project.tsx'] },
+  b6invoices: { complete: true, files: ['pages/InvoiceLegal.tsx#toCents,fromCents,loc,ymd,STATE_LABEL,TYPE_LABEL,useInvoiceSettings,LockBar,FinaliseModal,StornoModal,CreditNoteModal,PaymentModal,PaymentsBox,LegalFields,DocsBox,AuditBox,ACTIONS,numberLabel', 'pages/InvoiceSettings.tsx', 'pages/PaymentPlans.tsx', 'pages/QuoteApproval.tsx', 'pages/Sepa.tsx', 'pages/SepaRuns.tsx'] },
+  b6inventory: { complete: true, files: ['pages/Inventory.tsx'] },
+  b6hr: { complete: true, files: ['pages/Hr.tsx', 'pages/HrAdmin.tsx'] },
+  b6saas: { complete: true, files: ['pages/Saas.tsx', 'pages/SaasBilling.tsx', 'pages/PartnerLinks.tsx'] },
+  b6reviews: { complete: true, files: ['pages/GoogleReviews.tsx', 'pages/GoogleBusiness.tsx', 'pages/Reviews.tsx', 'pages/ReviewReplies.tsx', 'pages/QuizReviews.tsx', 'pages/Quizzes.tsx', 'pages/FeedbackAdmin.tsx'] },
+  b6phone: { complete: true, files: ['pages/Phone.tsx', 'pages/PhoneTools.tsx', 'pages/MobileApp.tsx#mb,ApkUpload'] },
+  b6integ: { complete: true, files: ['pages/Integrations.tsx', 'pages/InboundWebhook.tsx', 'pages/Nango.tsx', 'pages/McpServers.tsx', 'pages/OAuthConnect.tsx#LABEL,CAL_LABEL,useOAuthReturn,startOAuth,OAuthApps', 'pages/OAuthConsent.tsx', 'pages/RestHooks.tsx', 'pages/LoginSettings.tsx'] },
+  b6studio: { complete: true, files: ['pages/KiStudio.tsx', 'pages/GenMediaKit.tsx'] },
 } as const satisfies Record<string, { complete: boolean; server?: boolean; files: readonly string[] }>;
 export type Namespace = keyof typeof NAMESPACES;
 
@@ -233,5 +245,16 @@ export const CATALOGS: { [L in Exclude<Locale, typeof SOURCE_LOCALE>]: Partial<R
     rentals: () => import('./en/rentals'),
     gaps: () => import('./en/gaps'),
     portalfiles: () => import('./en/portalfiles'),
+    b6objects: () => import('./en/b6objects'),
+    b6sales: () => import('./en/b6sales'),
+    b6mail: () => import('./en/b6mail'),
+    b6invoices: () => import('./en/b6invoices'),
+    b6inventory: () => import('./en/b6inventory'),
+    b6hr: () => import('./en/b6hr'),
+    b6saas: () => import('./en/b6saas'),
+    b6reviews: () => import('./en/b6reviews'),
+    b6phone: () => import('./en/b6phone'),
+    b6integ: () => import('./en/b6integ'),
+    b6studio: () => import('./en/b6studio'),
   },
 };

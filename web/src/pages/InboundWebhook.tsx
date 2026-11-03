@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { api, dt } from '../api';
 import { Icon } from '../icons';
 import { Badge, Check, CodeBox, Field, Input, Select, Spinner, TagInput, act, confirmAsk, useLoad } from '../ui';
+import { useT } from '../i18n';
 
 /** Workflow trigger "Webhook empfangen": secret URL, test data, field mapping, signature, rate limit. */
 
@@ -41,6 +42,7 @@ export function guessTarget(path: string): string | undefined {
 }
 
 export function InboundWebhookTrigger({ workflowId }: { workflowId: string }) {
+  const tx = useT('b6integ');
   const cfg = useLoad(() => api.get<any>(`/api/inbound-webhooks/${workflowId}`), [workflowId]);
   const [mapping, setMapping] = useState<{ from: string; to: string }[] | null>(null);
   const [tags, setTags] = useState<string[] | null>(null);
@@ -70,8 +72,8 @@ export function InboundWebhookTrigger({ workflowId }: { workflowId: string }) {
   if (!c || !mapping || !tags) return <Spinner />;
   const cap = c.captures[Math.min(capture, c.captures.length - 1)];
   const fields: { path: string; sample: string }[] = cap?.fields ?? [];
-  const targets: [string, string][] = [...TARGETS, ...c.custom_fields.map((f: any) => [`custom.${f.key}`, `Eigenes Feld: ${f.label}`] as [string, string])];
-  const save = async (patch: any, ok = 'Gespeichert') => {
+  const targets: [string, string][] = [...TARGETS.map(([k, l]) => [k, tx(l)] as [string, string]), ...c.custom_fields.map((f: any) => [`custom.${f.key}`, tx('Eigenes Feld: {label}', { label: f.label })] as [string, string])];
+  const save = async (patch: any, ok = tx('Gespeichert')) => {
     const r = await act(() => api.put(`/api/inbound-webhooks/${workflowId}`, patch), ok);
     if (r) cfg.setData(r);
     return r;
@@ -84,29 +86,29 @@ export function InboundWebhookTrigger({ workflowId }: { workflowId: string }) {
   const dirty = JSON.stringify(mapping) !== JSON.stringify(c.mapping) || JSON.stringify(tags) !== JSON.stringify(c.tags);
   return (
     <div className="inbound">
-      <Field label="Webhook-URL (POST mit JSON)" tour="inbound-url">
+      <Field label={tx('Webhook-URL (POST mit JSON)')} tour="inbound-url">
         <CodeBox text={c.url} />
       </Field>
       <div className="row inbound-meta">
         <span className="muted small">
-          {c.hits ? `${c.hits} ${c.hits === 1 ? 'Aufruf' : 'Aufrufe'} · zuletzt ${dt(c.last_at)}: ${c.last_status}` : 'Noch nicht aufgerufen'}
+          {c.hits ? tx('{hits} {v} · zuletzt {dt}: {last_status}', { hits: c.hits, v: c.hits === 1 ? tx('Aufruf') : tx('Aufrufe'), dt: dt(c.last_at), last_status: c.last_status }) : tx('Noch nicht aufgerufen')}
         </span>
-        <button className="btn small ghost" onClick={() => confirmAsk('Neue URL erzeugen? Die alte funktioniert dann nicht mehr.') && act(() => api.post(`/api/inbound-webhooks/${workflowId}/rotate`, {}), 'Neue URL').then((r) => r && cfg.setData(r))}>
-          Neue URL
+        <button className="btn small ghost" onClick={() => confirmAsk(tx('Neue URL erzeugen? Die alte funktioniert dann nicht mehr.')) && act(() => api.post(`/api/inbound-webhooks/${workflowId}/rotate`, {}), tx('Neue URL')).then((r) => r && cfg.setData(r))}>
+          {tx('Neue URL')}
         </button>
       </div>
-      {!c.active && <p className="inbound-warn small">Der Workflow ist nicht aktiv: Anfragen werden nur als Test-Daten gespeichert (Antwort 409).</p>}
-      <Check checked={c.capture} onChange={(v) => save({ capture: v }, v ? 'Testmodus an' : 'Testmodus aus')} label="Testmodus – nur Test-Daten speichern, Workflow nicht starten" />
+      {!c.active && <p className="inbound-warn small">{tx('Der Workflow ist nicht aktiv: Anfragen werden nur als Test-Daten gespeichert (Antwort 409).')}</p>}
+      <Check checked={c.capture} onChange={(v) => save({ capture: v }, v ? tx('Testmodus an') : tx('Testmodus aus'))} label={tx('Testmodus – nur Test-Daten speichern, Workflow nicht starten')} />
 
       <div className="inbound-box" data-tour="inbound-test">
         <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          <strong>Test-Daten</strong>
+          <strong>{tx('Test-Daten')}</strong>
           <div className="row" style={{ gap: 6 }}>
             <button className="btn small secondary" disabled={waiting} onClick={() => setWaiting(true)}>
-              {waiting ? 'Warte auf Anfrage …' : 'Auf Test-Daten warten'}
+              {waiting ? tx('Warte auf Anfrage …') : tx('Auf Test-Daten warten')}
             </button>
             {c.captures.length > 0 && (
-              <button className="btn small ghost" aria-label="Test-Daten löschen" onClick={() => act(() => api.del(`/api/inbound-webhooks/${workflowId}/captures`)).then((r) => r && cfg.setData(r))}>
+              <button className="btn small ghost" aria-label={tx('Test-Daten löschen')} onClick={() => act(() => api.del(`/api/inbound-webhooks/${workflowId}/captures`)).then((r) => r && cfg.setData(r))}>
                 <Icon name="trash" />
               </button>
             )}
@@ -120,20 +122,20 @@ export function InboundWebhookTrigger({ workflowId }: { workflowId: string }) {
             <pre className="hook-pre inbound-pre">{JSON.stringify(cap.payload, null, 2)}</pre>
           </>
         ) : (
-          <p className="muted small">Schick eine Anfrage an die URL – die letzten fünf erscheinen hier und liefern die Felder für die Zuordnung.</p>
+          <p className="muted small">{tx('Schick eine Anfrage an die URL – die letzten fünf erscheinen hier und liefern die Felder für die Zuordnung.')}</p>
         )}
       </div>
 
       <div className="inbound-box" data-tour="inbound-map">
         <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          <strong>Feldzuordnung</strong>
+          <strong>{tx('Feldzuordnung')}</strong>
           {fields.length > 0 && (
             <button className="btn small secondary" onClick={auto}>
-              Automatisch zuordnen
+              {tx('Automatisch zuordnen')}
             </button>
           )}
         </div>
-        <p className="muted small">Ohne Zuordnung werden email, phone, first_name, last_name, name, company … und tags direkt aus dem JSON (oder aus „contact“) gelesen.</p>
+        <p className="muted small">{tx('Ohne Zuordnung werden email, phone, first_name, last_name, name, company … und tags direkt aus dem JSON (oder aus „contact“) gelesen.')}</p>
         <datalist id={`inbound-paths-${workflowId}`}>
           {fields.map((f) => (
             <option key={f.path} value={f.path}>
@@ -143,71 +145,71 @@ export function InboundWebhookTrigger({ workflowId }: { workflowId: string }) {
         </datalist>
         {mapping.map((m, i) => (
           <div key={i} className="inbound-map">
-            <Input value={m.from} onChange={(v) => setMapping(mapping.map((x, j) => (j === i ? { ...x, from: v } : x)))} placeholder="Feld im JSON, z. B. customer.email" list={`inbound-paths-${workflowId}`} aria-label="Feld im JSON" />
-            <Select value={m.to} onChange={(v) => setMapping(mapping.map((x, j) => (j === i ? { ...x, to: v } : x)))} placeholder="Zielfeld wählen" options={targets} />
-            <button className="btn small ghost" aria-label="Zuordnung entfernen" onClick={() => setMapping(mapping.filter((_, j) => j !== i))}>
+            <Input value={m.from} onChange={(v) => setMapping(mapping.map((x, j) => (j === i ? { ...x, from: v } : x)))} placeholder={tx('Feld im JSON, z. B. customer.email')} list={`inbound-paths-${workflowId}`} aria-label={tx('Feld im JSON')} />
+            <Select value={m.to} onChange={(v) => setMapping(mapping.map((x, j) => (j === i ? { ...x, to: v } : x)))} placeholder={tx('Zielfeld wählen')} options={targets} />
+            <button className="btn small ghost" aria-label={tx('Zuordnung entfernen')} onClick={() => setMapping(mapping.filter((_, j) => j !== i))}>
               ✕
             </button>
           </div>
         ))}
         <button className="btn small ghost" onClick={() => setMapping([...mapping, { from: '', to: '' }])}>
-          + Zuordnung
+          {tx('+ Zuordnung')}
         </button>
-        <Field label="Zusätzliche Tags für jeden Kontakt">
+        <Field label={tx('Zusätzliche Tags für jeden Kontakt')}>
           <TagInput value={tags} onChange={setTags} />
         </Field>
         <div className="row" style={{ gap: 6 }}>
           <button className="btn small" disabled={!dirty} onClick={() => save({ mapping: mapping.filter((m) => m.from && m.to), tags })}>
-            Zuordnung speichern
+            {tx('Zuordnung speichern')}
           </button>
           <button
             className="btn small secondary"
             disabled={!c.captures.length}
             onClick={async () => setPreview(await act(() => api.post(`/api/inbound-webhooks/${workflowId}/preview`, { capture_id: cap?.id, mapping: mapping.filter((m) => m.from && m.to) })))}
           >
-            Vorschau
+            {tx('Vorschau')}
           </button>
         </div>
         {preview && (
           <div className="inbound-preview">
-            {preview.ok ? <Badge tone="green">Kontakt wird angelegt/aktualisiert</Badge> : <Badge tone="red">Keine E-Mail, Telefon oder Name – Anfrage würde abgelehnt</Badge>}
+            {preview.ok ? <Badge tone="green">{tx('Kontakt wird angelegt/aktualisiert')}</Badge> : <Badge tone="red">{tx('Keine E-Mail, Telefon oder Name – Anfrage würde abgelehnt')}</Badge>}
             <pre className="hook-pre">{JSON.stringify({ ...preview.contact, tags: preview.tags }, null, 2)}</pre>
           </div>
         )}
       </div>
 
       <div className="inbound-box" data-tour="inbound-security">
-        <strong>Sicherheit</strong>
+        <strong>{tx('Sicherheit')}</strong>
         <div className="grid2" style={{ marginTop: 8 }}>
-          <Field label="Max. Anfragen pro Minute">
+          <Field label={tx('Max. Anfragen pro Minute')}>
             <Input type="number" min={1} max={600} value={c.rate_limit} onChange={(v) => cfg.setData({ ...c, rate_limit: v })} onBlur={() => save({ rate_limit: Number(c.rate_limit) || 60 })} />
           </Field>
-          <Field label="HMAC-Signatur">
+          <Field label={tx('HMAC-Signatur')}>
             {c.signature.enabled ? (
               <div>
-                <Badge tone="green">verlangt</Badge> <small className="muted">Secret {c.signature.hint}</small>
+                <Badge tone="green">{tx('verlangt')}</Badge> <small className="muted">Secret {c.signature.hint}</small>
               </div>
             ) : (
-              <div className="muted small">aus – jeder mit der URL darf senden</div>
+              <div className="muted small">{tx('aus – jeder mit der URL darf senden')}</div>
             )}
           </Field>
         </div>
         {secret && (
           <>
-            <p className="small">Nur jetzt sichtbar – im sendenden Tool als Signatur-Secret eintragen:</p>
+            <p className="small">{tx('Nur jetzt sichtbar – im sendenden Tool als Signatur-Secret eintragen:')}</p>
             <CodeBox text={secret} />
           </>
         )}
         <p className="muted small">
-          Header <code>X-Signature-256: sha256=&lt;HMAC-SHA256 des Rohtexts als Hex&gt;</code> (auch <code>X-Hub-Signature-256</code> oder <code>X-Pghl-Hmac</code>).
+          {tx('Header')} <code>{tx('X-Signature-256: sha256=<HMAC-SHA256 des Rohtexts als Hex>')}</code> {tx('(auch')} <code>{tx('X-Hub-Signature-256')}</code> {tx('oder')} <code>{tx('X-Pghl-Hmac')}</code>).
         </p>
         <div className="row" style={{ gap: 6 }}>
-          <button className="btn small secondary" onClick={() => act(() => api.post(`/api/inbound-webhooks/${workflowId}/secret`, {}), 'Secret erzeugt').then((r) => r && (setSecret(r.secret), cfg.setData(r)))}>
-            {c.signature.enabled ? 'Neues Secret' : 'Signatur verlangen'}
+          <button className="btn small secondary" onClick={() => act(() => api.post(`/api/inbound-webhooks/${workflowId}/secret`, {}), tx('Secret erzeugt')).then((r) => r && (setSecret(r.secret), cfg.setData(r)))}>
+            {c.signature.enabled ? tx('Neues Secret') : tx('Signatur verlangen')}
           </button>
           {c.signature.enabled && (
-            <button className="btn small ghost" onClick={() => act(() => api.post(`/api/inbound-webhooks/${workflowId}/secret`, { enabled: false }), 'Signatur aus').then((r) => r && (setSecret(''), cfg.setData(r)))}>
-              Signatur abschalten
+            <button className="btn small ghost" onClick={() => act(() => api.post(`/api/inbound-webhooks/${workflowId}/secret`, { enabled: false }), tx('Signatur aus')).then((r) => r && (setSecret(''), cfg.setData(r)))}>
+              {tx('Signatur abschalten')}
             </button>
           )}
         </div>

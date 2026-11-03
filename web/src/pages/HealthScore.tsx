@@ -55,6 +55,7 @@ export function useHealthScores(ids: string[]) {
 const FACES = ['😞', '🙁', '😐', '🙂', '😄'];
 
 export function ContactService({ contactId }: { contactId: string }) {
+  const tx = useT('b6sales');
   const { data, error } = useLoad(() => api.get(`/api/contacts/${contactId}/service`), [contactId]);
   const [open, setOpen] = useState(false);
   if (error || !data) return null;
@@ -63,7 +64,7 @@ export function ContactService({ contactId }: { contactId: string }) {
     <div className="card contact-service" data-tour="contact-service">
       <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: 0 }}>
-          <Icon name="service" size={16} /> Service
+          <Icon name="service" size={16} /> {tx('Service')}
         </h2>
         {h && <HealthBadge score={h.score} band={h.band} />}
       </div>
@@ -73,7 +74,7 @@ export function ContactService({ contactId }: { contactId: string }) {
             <div className={BAND[h.band]?.[1]} style={{ width: `${h.score}%` }} />
           </div>
           <button className="linkbtn small" onClick={() => setOpen(!open)}>
-            {open ? 'Signale ausblenden' : 'Wie entsteht der Wert?'}
+            {open ? tx('Signale ausblenden') : tx('Wie entsteht der Wert?')}
           </button>
           {open && (
             <table className="t health-signals">
@@ -83,7 +84,7 @@ export function ContactService({ contactId }: { contactId: string }) {
                   .map((s: any) => (
                     <tr key={s.key}>
                       <td>{s.label}</td>
-                      <td style={{ textAlign: 'right' }}>{s.score === null ? <span className="muted">keine Daten</span> : s.score}</td>
+                      <td style={{ textAlign: 'right' }}>{s.score === null ? <span className="muted">{tx('keine Daten')}</span> : s.score}</td>
                       <td className="muted small" style={{ textAlign: 'right' }}>
                         ×{s.weight}
                       </td>
@@ -95,7 +96,7 @@ export function ContactService({ contactId }: { contactId: string }) {
         </>
       )}
       <h3 className="cs-sub">
-        Tickets {data.open ? <span className="muted">({data.open} offen)</span> : null}
+        Tickets {data.open ? <span className="muted">{tx('({open} offen)', { open: data.open })}</span> : null}
       </h3>
       {data.tickets.length ? (
         data.tickets.slice(0, 5).map((t: any) => (
@@ -110,20 +111,20 @@ export function ContactService({ contactId }: { contactId: string }) {
         ))
       ) : (
         <p className="muted" style={{ margin: 0 }}>
-          Keine Tickets.
+          {tx('Keine Tickets.')}
         </p>
       )}
       {(data.surveys.csat.length > 0 || data.surveys.nps.length > 0) && (
         <>
-          <h3 className="cs-sub">Umfragen</h3>
+          <h3 className="cs-sub">{tx('Umfragen')}</h3>
           {data.surveys.csat.slice(0, 3).map((c: any) => (
             <div key={c.id} className="small">
-              {FACES[c.csat_score - 1]} CSAT {c.csat_score}/5 · #{c.number} <span className="muted">{d(c.csat_at)}</span>
+              {tx('{FACES} CSAT {csat_score}/5 · #{number}', { FACES: FACES[c.csat_score - 1], csat_score: c.csat_score, number: c.number })} <span className="muted">{d(c.csat_at)}</span>
             </div>
           ))}
           {data.surveys.nps.slice(0, 3).map((n: any, i: number) => (
             <div key={i} className="small">
-              NPS {n.score}/10 · {n.campaign} <span className="muted">{d(n.updated_at)}</span>
+              {tx('NPS {score}/10 · {campaign}', { score: n.score, campaign: n.campaign })} <span className="muted">{d(n.updated_at)}</span>
             </div>
           ))}
         </>

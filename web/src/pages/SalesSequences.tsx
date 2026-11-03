@@ -5,6 +5,7 @@ import { Choice, Section } from './SalesKit';
 import { MoreFields } from '../areas/fields';
 import { sequenceMoreValues } from '../areas/marketing-fields';
 import { SortableGrid } from '../sortable/Sortable';
+import { useT, tr } from '../i18n';
 
 /**
  * Sequenzen: mehrstufige Ansprache aus dem eigenen Postfach (E-Mail, Aufgabe, Anruf, LinkedIn) mit Wartezeiten innerhalb der
@@ -24,6 +25,7 @@ const rate = (n: number) => `${n.toLocaleString('de-DE', { maximumFractionDigits
 
 /** The message fields with the personalisation buttons: clicking one puts the placeholder where the cursor was. */
 function useTokenInsert() {
+  const tx = tr('b6sales');
   const last = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
   const track = (e: { target: EventTarget }) => {
     const el = e.target as HTMLInputElement | HTMLTextAreaElement;
@@ -32,7 +34,7 @@ function useTokenInsert() {
   };
   const insert = (token: string) => {
     const el = last.current;
-    if (!el) return toast('Erst in ein Textfeld klicken, dann den Platzhalter wählen');
+    if (!el) return toast(tx('Erst in ein Textfeld klicken, dann den Platzhalter wählen'));
     el.focus();
     el.setRangeText(token, el.selectionStart ?? el.value.length, el.selectionEnd ?? el.value.length, 'end');
     el.dispatchEvent(new Event('input', { bubbles: true }));
@@ -41,10 +43,11 @@ function useTokenInsert() {
 }
 
 function Tokens({ tokens, insert }: { tokens: string[]; insert: (t: string) => void }) {
+  const tx = useT('b6sales');
   return (
-    <div className="tokens" aria-label="Platzhalter einfügen">
+    <div className="tokens" aria-label={tx('Platzhalter einfügen')}>
       {tokens.map((t) => (
-        <button type="button" key={t} onClick={() => insert(t.replace('<feld>', 'feld'))} title="An der Cursor-Position einfügen">
+        <button type="button" key={t} onClick={() => insert(t.replace('<feld>', 'feld'))} title={tx('An der Cursor-Position einfügen')}>
           {t}
         </button>
       ))}
@@ -53,6 +56,7 @@ function Tokens({ tokens, insert }: { tokens: string[]; insert: (t: string) => v
 }
 
 function StepEditor({ step, index, count, onChange, onRemove, onMove }: { step: any; index: number; count: number; onChange: (s: any) => void; onRemove: () => void; onMove: (dir: number) => void }) {
+  const tx = useT('b6sales');
   const set = (patch: any) => onChange({ ...step, ...patch });
   const isMail = step.type === 'email';
   const setVariant = (i: number, patch: any) => set({ variants: step.variants.map((v: any, j: number) => (j === i ? { ...v, ...patch } : v)) });
@@ -61,70 +65,70 @@ function StepEditor({ step, index, count, onChange, onRemove, onMove }: { step: 
       <div className="step-head">
         <span className="num">{index + 1}</span>
         <div style={{ width: 170 }}>
-          <Select value={step.type} onChange={(v) => set({ type: v, wait: v !== 'email' })} options={STEP_TYPES} />
+          <Select value={step.type} onChange={(v) => set({ type: v, wait: v !== 'email' })} options={STEP_TYPES.map(([k, l]) => [k, tx(l)] as [string, string])} />
         </div>
         <label className="row" style={{ alignItems: 'center', gap: 6, margin: 0 }}>
-          <span className="muted small">{index === 0 ? 'Start nach' : 'Warten'}</span>
-          <input type="number" min={0} max={120} value={step.delay_days} onChange={(e) => set({ delay_days: Number(e.target.value) })} style={{ width: 72 }} aria-label="Tage" />
-          <span className="muted small">Tagen</span>
-          <input type="number" min={0} max={23} value={step.delay_hours} onChange={(e) => set({ delay_hours: Number(e.target.value) })} style={{ width: 72 }} aria-label="Stunden" />
-          <span className="muted small">Std.</span>
+          <span className="muted small">{index === 0 ? tx('Start nach') : tx('Warten')}</span>
+          <input type="number" min={0} max={120} value={step.delay_days} onChange={(e) => set({ delay_days: Number(e.target.value) })} style={{ width: 72 }} aria-label={tx('Tage')} />
+          <span className="muted small">{tx('Tagen')}</span>
+          <input type="number" min={0} max={23} value={step.delay_hours} onChange={(e) => set({ delay_hours: Number(e.target.value) })} style={{ width: 72 }} aria-label={tx('Stunden')} />
+          <span className="muted small">{tx('Std.')}</span>
         </label>
         <span className="grow" />
-        <button type="button" className="icon-btn" disabled={!index} onClick={() => onMove(-1)} aria-label="Schritt nach oben">
+        <button type="button" className="icon-btn" disabled={!index} onClick={() => onMove(-1)} aria-label={tx('Schritt nach oben')}>
           ↑
         </button>
-        <button type="button" className="icon-btn" disabled={index === count - 1} onClick={() => onMove(1)} aria-label="Schritt nach unten">
+        <button type="button" className="icon-btn" disabled={index === count - 1} onClick={() => onMove(1)} aria-label={tx('Schritt nach unten')}>
           ↓
         </button>
-        <button type="button" className="icon-btn" disabled={count < 2} onClick={onRemove} aria-label="Schritt entfernen">
+        <button type="button" className="icon-btn" disabled={count < 2} onClick={onRemove} aria-label={tx('Schritt entfernen')}>
           ✕
         </button>
       </div>
       {isMail ? (
         <>
-          {index > 0 && <Check checked={step.reply_in_thread} onChange={(v) => set({ reply_in_thread: v })} label="Als Antwort im selben Gespräch senden (ohne neuen Betreff)" />}
+          {index > 0 && <Check checked={step.reply_in_thread} onChange={(v) => set({ reply_in_thread: v })} label={tx('Als Antwort im selben Gespräch senden (ohne neuen Betreff)')} />}
           {!step.reply_in_thread && (
-            <Field label="Betreff">
-              <Input value={step.subject} onChange={(v) => set({ subject: v })} maxLength={300} placeholder="Kurze Frage zu {{contact.company}}" />
+            <Field label={tx('Betreff')}>
+              <Input value={step.subject} onChange={(v) => set({ subject: v })} maxLength={300} placeholder={tx('Kurze Frage zu {{contact.company}}')} />
             </Field>
           )}
-          <Field label="Text">
-            <Textarea value={step.body} onChange={(v) => set({ body: v })} rows={6} placeholder={'Hallo {{contact.first_name|}},\n\n…\n\nViele Grüße\n{{user.first_name}}'} />
+          <Field label={tx('Text')}>
+            <Textarea value={step.body} onChange={(v) => set({ body: v })} rows={6} placeholder={tx('Hallo {{contact.first_name|}},\n\n…\n\nViele Grüße\n{{user.first_name}}')} />
           </Field>
           {step.variants.map((v: any, i: number) => (
             <div className="variant" key={v.id ?? i}>
               <div className="row" style={{ alignItems: 'center' }}>
-                <b>Variante {String.fromCharCode(66 + i)}</b>
-                <span className="muted small">Die Hälfte der Personen bekommt diese Fassung; leere Felder übernehmen den Haupttext.</span>
+                <b>{tx('Variante {fromCharCode}', { fromCharCode: String.fromCharCode(66 + i) })}</b>
+                <span className="muted small">{tx('Die Hälfte der Personen bekommt diese Fassung; leere Felder übernehmen den Haupttext.')}</span>
                 <button type="button" className="btn small secondary" onClick={() => set({ variants: step.variants.filter((_: any, j: number) => j !== i) })}>
-                  Entfernen
+                  {tx('Entfernen')}
                 </button>
               </div>
-              <Input value={v.subject} onChange={(x) => setVariant(i, { subject: x })} placeholder="Anderer Betreff" aria-label="Betreff der Variante" />
-              <Textarea value={v.body} onChange={(x) => setVariant(i, { body: x })} rows={4} placeholder="Anderer Text (optional)" />
+              <Input value={v.subject} onChange={(x) => setVariant(i, { subject: x })} placeholder={tx('Anderer Betreff')} aria-label={tx('Betreff der Variante')} />
+              <Textarea value={v.body} onChange={(x) => setVariant(i, { body: x })} rows={4} placeholder={tx('Anderer Text (optional)')} />
             </div>
           ))}
           {step.variants.length < 3 && (
             <button type="button" className="btn small secondary" style={{ marginTop: 8 }} onClick={() => set({ variants: [...step.variants, { label: '', subject: '', body: '' }] })} data-tour="seq-variant">
-              + A/B-Variante
+              {tx('+ A/B-Variante')}
             </button>
           )}
         </>
       ) : (
         <>
-          <Field label={step.type === 'call' ? 'Anruf-Aufgabe' : step.type === 'linkedin' ? 'LinkedIn-Aufgabe' : 'Aufgabe'}>
-            <Input value={step.title} onChange={(v) => set({ title: v })} maxLength={200} placeholder={step.type === 'call' ? 'Kurz anrufen: {{contact.first_name}}' : step.type === 'linkedin' ? 'Auf LinkedIn vernetzen' : 'Karte schicken'} />
+          <Field label={step.type === 'call' ? tx('Anruf-Aufgabe') : step.type === 'linkedin' ? tx('LinkedIn-Aufgabe') : tx('Aufgabe')}>
+            <Input value={step.title} onChange={(v) => set({ title: v })} maxLength={200} placeholder={step.type === 'call' ? tx('Kurz anrufen: {{contact.first_name}}') : step.type === 'linkedin' ? tx('Auf LinkedIn vernetzen') : tx('Karte schicken')} />
           </Field>
-          <Field label="Notiz für den Zuständigen">
+          <Field label={tx('Notiz für den Zuständigen')}>
             <Textarea value={step.note} onChange={(v) => set({ note: v })} rows={3} />
           </Field>
-          <Check checked={step.wait} onChange={(v) => set({ wait: v })} label="Die Sequenz wartet, bis die Aufgabe erledigt ist" />
+          <Check checked={step.wait} onChange={(v) => set({ wait: v })} label={tx('Die Sequenz wartet, bis die Aufgabe erledigt ist')} />
           {step.wait && (
             <label className="row" style={{ alignItems: 'center', gap: 6 }}>
-              <span className="muted small">…längstens</span>
-              <input type="number" min={1} max={60} value={step.max_wait_days} onChange={(e) => set({ max_wait_days: Number(e.target.value) })} style={{ width: 72 }} aria-label="Höchstens Tage warten" />
-              <span className="muted small">Tage</span>
+              <span className="muted small">{tx('…längstens')}</span>
+              <input type="number" min={1} max={60} value={step.max_wait_days} onChange={(e) => set({ max_wait_days: Number(e.target.value) })} style={{ width: 72 }} aria-label={tx('Höchstens Tage warten')} />
+              <span className="muted small">{tx('Tage')}</span>
             </label>
           )}
         </>
@@ -134,6 +138,7 @@ function StepEditor({ step, index, count, onChange, onRemove, onMove }: { step: 
 }
 
 function SequenceEditor({ seq, tokens, onClose, onSaved }: { seq?: any; tokens: string[]; onClose: () => void; onSaved: (s: any) => void }) {
+  const tx = useT('b6sales');
   const [s, setS] = useState<any>(() => (seq ? { ...seq, legal_ack: false, steps: seq.steps.map((x: any) => ({ ...x, variants: x.variants ?? [] })) } : blankSeq()));
   const tk = useTokenInsert();
   const win = s.settings.window;
@@ -143,51 +148,51 @@ function SequenceEditor({ seq, tokens, onClose, onSaved }: { seq?: any; tokens: 
   const alreadyAcked = seq?.mode === 'individual' && !!seq?.legal_ack_at;
   const save = async () => {
     const body = { name: s.name, description: s.description, mode: s.mode, ...(s.mode === 'individual' && !alreadyAcked ? { legal_ack: s.legal_ack } : {}), steps: s.steps, settings: s.settings };
-    const r = await act(() => (seq ? api.patch(`/api/sequences/${seq.id}`, body) : api.post('/api/sequences', body)), 'Sequenz gespeichert');
+    const r = await act(() => (seq ? api.patch(`/api/sequences/${seq.id}`, body) : api.post('/api/sequences', body)), tx('Sequenz gespeichert'));
     if (r) onSaved(r);
   };
   return (
     <Modal
-      title={seq ? `Sequenz bearbeiten: ${seq.name}` : 'Neue Sequenz'}
+      title={seq ? tx('Sequenz bearbeiten: {name}', { name: seq.name }) : tx('Neue Sequenz')}
       wide
       className="sales-modal"
       onClose={onClose}
       footer={
         <button className="btn" onClick={save} data-tour="seq-save">
-          Speichern
+          {tx('Speichern')}
         </button>
       }
     >
       <div onFocusCapture={tk.track}>
         <Field label="Name">
-          <Input value={s.name} onChange={(v) => setS({ ...s, name: v })} maxLength={120} placeholder="Neukunden nach Messe" />
+          <Input value={s.name} onChange={(v) => setS({ ...s, name: v })} maxLength={120} placeholder={tx('Neukunden nach Messe')} />
         </Field>
 
         {hasMail && (
-          <Section title="Art der Nachrichten" tour="seq-mode">
+          <Section title={tx('Art der Nachrichten')} tour="seq-mode">
             <Choice
               name="mode"
               value={s.mode}
               onChange={(v) => setS({ ...s, mode: v })}
               options={[
-                { value: 'marketing', label: 'Werbung (mit Einwilligung)', text: 'Läuft durch die Einwilligungsprüfung: wer nicht eingewilligt hat, wird nicht aufgenommen. Jede Mail hat einen Abmeldelink.' },
-                { value: 'individual', label: 'Einzelkorrespondenz', text: 'Persönliche 1:1-Mails an Menschen, mit denen du bereits in Kontakt bist – wie von Hand geschrieben.' },
+                { value: 'marketing', label: tx('Werbung (mit Einwilligung)'), text: tx('Läuft durch die Einwilligungsprüfung: wer nicht eingewilligt hat, wird nicht aufgenommen. Jede Mail hat einen Abmeldelink.') },
+                { value: 'individual', label: tx('Einzelkorrespondenz'), text: tx('Persönliche 1:1-Mails an Menschen, mit denen du bereits in Kontakt bist – wie von Hand geschrieben.') },
               ]}
             />
             {s.mode === 'individual' && (
               <div className="legal-note" role="note">
-                <b>Rechtlicher Hinweis.</b> Einzelkorrespondenz geht ohne Einwilligungsprüfung raus. Das ist nur zulässig, wenn die Mails wirklich persönliche Korrespondenz sind: ein bestehender Geschäftskontakt, ein konkreter Anlass, ein auf die Person zugeschnittener Text. Massenhaft versendete, gleichlautende Werbung fällt auch dann unter das Wettbewerbs- und Datenschutzrecht (UWG, DSGVO). „Nicht stören“, Abmeldungen und der Abmeldelink gelten weiterhin. Du trägst die Verantwortung für diese Einstufung – sie wird mit deinem Namen festgehalten. Das ist keine Rechtsberatung.
+                <b>{tx('Rechtlicher Hinweis.')}</b> {tx('Einzelkorrespondenz geht ohne Einwilligungsprüfung raus. Das ist nur zulässig, wenn die Mails wirklich persönliche Korrespondenz sind: ein bestehender Geschäftskontakt, ein konkreter Anlass, ein auf die Person zugeschnittener Text. Massenhaft versendete, gleichlautende Werbung fällt auch dann unter das Wettbewerbs- und Datenschutzrecht (UWG, DSGVO). „Nicht stören“, Abmeldungen und der Abmeldelink gelten weiterhin. Du trägst die Verantwortung für diese Einstufung – sie wird mit deinem Namen festgehalten. Das ist keine Rechtsberatung.')}
                 {alreadyAcked ? (
-                  <p className="muted small">Bestätigt am {d(seq.legal_ack_at)}.</p>
+                  <p className="muted small">{tx('Bestätigt am {d}.', { d: d(seq.legal_ack_at) })}</p>
                 ) : (
-                  <Check checked={s.legal_ack} onChange={(v) => setS({ ...s, legal_ack: v })} label="Ich bestätige: Diese Mails sind persönliche 1:1-Korrespondenz und ich verantworte die Einstufung." />
+                  <Check checked={s.legal_ack} onChange={(v) => setS({ ...s, legal_ack: v })} label={tx('Ich bestätige: Diese Mails sind persönliche 1:1-Korrespondenz und ich verantworte die Einstufung.')} />
                 )}
               </div>
             )}
           </Section>
         )}
 
-        <Section title="Schritte" tour="seq-steps">
+        <Section title={tx('Schritte')} tour="seq-steps">
           <Tokens tokens={tokens} insert={tk.insert} />
           <div className="steps">
             {s.steps.map((st: any, i: number) => (
@@ -210,7 +215,7 @@ function SequenceEditor({ seq, tokens, onClose, onSaved }: { seq?: any; tokens: 
             <div className="sales-bar" style={{ marginTop: 10 }}>
               {STEP_TYPES.map(([k, l]) => (
                 <button type="button" key={k} className="btn secondary" onClick={() => setS({ ...s, steps: [...s.steps, blankStep(k)] })}>
-                  + {l}
+                  + {tx(l)}
                 </button>
               ))}
             </div>
@@ -218,51 +223,51 @@ function SequenceEditor({ seq, tokens, onClose, onSaved }: { seq?: any; tokens: 
         </Section>
 
         {/* Einfach-Modus: description, send window and stop rules keep their good defaults behind one toggle */}
-        <MoreFields id="seq-settings" label="Beschreibung, Sendezeiten & Ende der Sequenz" values={sequenceMoreValues(s)}>
-          <Field label="Beschreibung (optional)">
+        <MoreFields id="seq-settings" label={tx('Beschreibung, Sendezeiten & Ende der Sequenz')} values={sequenceMoreValues(s)}>
+          <Field label={tx('Beschreibung (optional)')}>
             <Input value={s.description} onChange={(v) => setS({ ...s, description: v })} maxLength={500} />
           </Field>
-          <Section title="Sendezeiten" tour="seq-window">
-            <Check checked={win.enabled} onChange={(v) => setWin({ enabled: v })} label="Nur innerhalb dieser Zeiten senden (außerhalb wartet der Schritt bis zum nächsten Fenster)" />
+          <Section title={tx('Sendezeiten')} tour="seq-window">
+            <Check checked={win.enabled} onChange={(v) => setWin({ enabled: v })} label={tx('Nur innerhalb dieser Zeiten senden (außerhalb wartet der Schritt bis zum nächsten Fenster)')} />
             {win.enabled && (
               <>
-                <div className="days" role="group" aria-label="Wochentage">
+                <div className="days" role="group" aria-label={tx('Wochentage')}>
                   {DAYS.map(([k, l]) => (
                     <label key={k} className={win.days.includes(k) ? 'on' : ''}>
                       <input type="checkbox" checked={win.days.includes(k)} onChange={(e) => setWin({ days: e.target.checked ? [...win.days, k] : win.days.filter((x: string) => x !== k) })} />
-                      {l}
+                      {tx(l)}
                     </label>
                   ))}
                 </div>
                 <div className="grid2" style={{ marginTop: 8 }}>
-                  <Field label="Von">
+                  <Field label={tx('Von')}>
                     <Input type="time" value={win.from} onChange={(v) => setWin({ from: v })} />
                   </Field>
-                  <Field label="Bis">
+                  <Field label={tx('Bis')}>
                     <Input type="time" value={win.to} onChange={(v) => setWin({ to: v })} />
                   </Field>
                 </div>
-                <Field label="Zeitzone (leer = die des Sub-Accounts)">
-                  <Input value={win.tz} onChange={(v) => setWin({ tz: v })} placeholder="Europe/Berlin" />
+                <Field label={tx('Zeitzone (leer = die des Sub-Accounts)')}>
+                  <Input value={win.tz} onChange={(v) => setWin({ tz: v })} placeholder={tx('Europe/Berlin')} />
                 </Field>
               </>
             )}
           </Section>
 
-          <Section title="Wann endet die Sequenz für eine Person?" tour="seq-stop">
-            <Check checked={s.settings.stop_on.reply} onChange={(v) => setStop({ reply: v })} label="Sie antwortet" />
-            <Check checked={s.settings.stop_on.meeting} onChange={(v) => setStop({ meeting: v })} label="Sie bucht einen Termin" />
-            <Check checked={s.settings.stop_on.stage_change} onChange={(v) => setStop({ stage_change: v })} label="Ein Deal der Person wechselt die Phase" />
-            <Check checked={s.settings.stop_on.deal_closed} onChange={(v) => setStop({ deal_closed: v })} label="Ein Deal der Person wird gewonnen oder verloren" />
-            <p className="muted small">Abmeldung, „Nicht stören“ und widerrufene Einwilligung beenden die Sequenz immer.</p>
+          <Section title={tx('Wann endet die Sequenz für eine Person?')} tour="seq-stop">
+            <Check checked={s.settings.stop_on.reply} onChange={(v) => setStop({ reply: v })} label={tx('Sie antwortet')} />
+            <Check checked={s.settings.stop_on.meeting} onChange={(v) => setStop({ meeting: v })} label={tx('Sie bucht einen Termin')} />
+            <Check checked={s.settings.stop_on.stage_change} onChange={(v) => setStop({ stage_change: v })} label={tx('Ein Deal der Person wechselt die Phase')} />
+            <Check checked={s.settings.stop_on.deal_closed} onChange={(v) => setStop({ deal_closed: v })} label={tx('Ein Deal der Person wird gewonnen oder verloren')} />
+            <p className="muted small">{tx('Abmeldung, „Nicht stören“ und widerrufene Einwilligung beenden die Sequenz immer.')}</p>
             {hasMail && (
               <>
                 {s.mode === 'marketing' ? (
-                  <p className="muted small">Eine Serie setzt den Abmeldelink immer unter jede Mail. Nur „Einzelkorrespondenz“ darf ihn weglassen.</p>
+                  <p className="muted small">{tx('Eine Serie setzt den Abmeldelink immer unter jede Mail. Nur „Einzelkorrespondenz“ darf ihn weglassen.')}</p>
                 ) : (
-                  <Check checked={s.settings.footer} onChange={(v) => setS({ ...s, settings: { ...s.settings, footer: v } })} label="Abmeldelink unter jede Mail setzen" />
+                  <Check checked={s.settings.footer} onChange={(v) => setS({ ...s, settings: { ...s.settings, footer: v } })} label={tx('Abmeldelink unter jede Mail setzen')} />
                 )}
-                <Check checked={s.settings.shared_mailbox} onChange={(v) => setS({ ...s, settings: { ...s.settings, shared_mailbox: v } })} label="Ohne eigenes Postfach aus dem gemeinsamen Postfach des Sub-Accounts senden" />
+                <Check checked={s.settings.shared_mailbox} onChange={(v) => setS({ ...s, settings: { ...s.settings, shared_mailbox: v } })} label={tx('Ohne eigenes Postfach aus dem gemeinsamen Postfach des Sub-Accounts senden')} />
               </>
             )}
           </Section>
@@ -273,6 +278,7 @@ function SequenceEditor({ seq, tokens, onClose, onSaved }: { seq?: any; tokens: 
 }
 
 function EnrollDialog({ seq, onClose, onDone }: { seq: any; onClose: () => void; onDone: () => void }) {
+  const tx = useT('b6sales');
   const tags = useLoad(() => api.get<any[]>('/api/tags'), []);
   const lists = useLoad(() => api.get<any[]>('/api/smart-lists'), []);
   const [by, setBy] = useState<'tag' | 'list'>('tag');
@@ -280,21 +286,21 @@ function EnrollDialog({ seq, onClose, onDone }: { seq: any; onClose: () => void;
   const [list, setList] = useState('');
   const [res, setRes] = useState<any>();
   const go = async () => {
-    const r = await act(() => api.post(`/api/sequences/${seq.id}/enroll`, by === 'tag' ? { tag, source: `Tag ${tag}` } : { smart_list_id: list, source: 'Liste' }));
+    const r = await act(() => api.post(`/api/sequences/${seq.id}/enroll`, by === 'tag' ? { tag, source: tx('Tag {tag}', { tag }) } : { smart_list_id: list, source: tx('Liste') }));
     if (r) setRes(r);
   };
   return (
-    <Modal title={`Kontakte aufnehmen: ${seq.name}`} className="sales-modal" onClose={onClose} footer={res ? <button className="btn" onClick={onDone}>Fertig</button> : <button className="btn" disabled={by === 'tag' ? !tag : !list} onClick={go}>Aufnehmen</button>}>
+    <Modal title={tx('Kontakte aufnehmen: {name}', { name: seq.name })} className="sales-modal" onClose={onClose} footer={res ? <button className="btn" onClick={onDone}>{tx('Fertig')}</button> : <button className="btn" disabled={by === 'tag' ? !tag : !list} onClick={go}>{tx('Aufnehmen')}</button>}>
       {!res ? (
         <>
-          <p className="muted">Die Mails gehen aus deinem Postfach, in deinen Sendezeiten. Kontakte ohne E-Mail-Adresse, mit „Nicht stören“ oder (bei Werbung) ohne Einwilligung werden übersprungen und genannt.</p>
-          <Select value={by} onChange={(v) => setBy(v as 'tag' | 'list')} options={[['tag', 'Kontakte mit einem Tag'], ['list', 'Gespeicherte Liste']]} />
-          {by === 'tag' ? <Select value={tag} onChange={setTag} placeholder="Tag wählen…" options={(tags.data ?? []).map((t: any) => t.name)} /> : <Select value={list} onChange={setList} placeholder="Liste wählen…" options={(lists.data ?? []).map((l: any) => [l.id, l.name] as [string, string])} />}
+          <p className="muted">{tx('Die Mails gehen aus deinem Postfach, in deinen Sendezeiten. Kontakte ohne E-Mail-Adresse, mit „Nicht stören“ oder (bei Werbung) ohne Einwilligung werden übersprungen und genannt.')}</p>
+          <Select value={by} onChange={(v) => setBy(v as 'tag' | 'list')} options={[['tag', tx('Kontakte mit einem Tag')], ['list', tx('Gespeicherte Liste')]]} />
+          {by === 'tag' ? <Select value={tag} onChange={setTag} placeholder={tx('Tag wählen…')} options={(tags.data ?? []).map((t: any) => t.name)} /> : <Select value={list} onChange={setList} placeholder={tx('Liste wählen…')} options={(lists.data ?? []).map((l: any) => [l.id, l.name] as [string, string])} />}
         </>
       ) : (
         <>
           <p>
-            <b>{res.enrolled}</b> aufgenommen{res.skipped?.length ? `, ${res.skipped.length} übersprungen` : ''}.
+            <b>{res.enrolled}</b> {tx('aufgenommen')}{res.skipped?.length ? tx(', {length} übersprungen', { length: res.skipped.length }) : ''}.
           </p>
           {res.skipped?.slice(0, 20).map((x: any) => (
             <div key={x.contact_id} className="small muted">
@@ -308,15 +314,16 @@ function EnrollDialog({ seq, onClose, onDone }: { seq: any; onClose: () => void;
 }
 
 function StepStats({ seq }: { seq: any }) {
+  const tx = useT('b6sales');
   return (
     <div className="table-wrap">
       <table className="sales-table">
         <thead>
           <tr>
-            <th>Schritt</th>
-            <th className="r">Gesendet</th>
-            <th className="r">Geöffnet</th>
-            <th className="r">Antworten</th>
+            <th>{tx('Schritt')}</th>
+            <th className="r">{tx('Gesendet')}</th>
+            <th className="r">{tx('Geöffnet')}</th>
+            <th className="r">{tx('Antworten')}</th>
           </tr>
         </thead>
         <tbody>
@@ -326,10 +333,10 @@ function StepStats({ seq }: { seq: any }) {
               <Fragment key={st.id}>
                 <tr>
                   <td>
-                    {i + 1}. {STEP_TYPES.find(([k]) => k === st.type)?.[1]}
-                    <div className="muted small">{def?.subject || def?.title || '(Antwort im Gespräch)'}</div>
+                    {i + 1}. {tx(STEP_TYPES.find(([k]) => k === st.type)?.[1] ?? '')}
+                    <div className="muted small">{def?.subject || def?.title || tx('(Antwort im Gespräch)')}</div>
                   </td>
-                  <td className="r">{st.type === 'email' ? st.sent : `${st.tasks} Aufgaben`}</td>
+                  <td className="r">{st.type === 'email' ? st.sent : tx('{tasks} Aufgaben', { tasks: st.tasks })}</td>
                   <td className="r">{st.type === 'email' ? st.opened : '–'}</td>
                   <td className="r">{st.type === 'email' ? st.replied : '–'}</td>
                 </tr>
@@ -358,18 +365,19 @@ function StepStats({ seq }: { seq: any }) {
 }
 
 function SequenceDetail({ id, tokens, onClose, onChanged }: { id: string; tokens: string[]; onClose: () => void; onChanged: () => void }) {
+  const tx = useT('b6sales');
   const seq = useLoad(() => api.get<any>(`/api/sequences/${id}`), [id]);
   const [status, setStatus] = useState('');
   const enr = useLoad(() => api.get<any[]>(`/api/sequences/${id}/enrollments${status ? `?status=${status}` : ''}`), [id, status]);
   const [edit, setEdit] = useState(false);
   const [enroll, setEnroll] = useState(false);
   const s = seq.data;
-  if (!s) return <Modal title="Sequenz" className="sales-modal" onClose={onClose}>{seq.error ? <p className="error">{seq.error}</p> : <Spinner />}</Modal>;
+  if (!s) return <Modal title={tx('Sequenz')} className="sales-modal" onClose={onClose}>{seq.error ? <p className="error">{seq.error}</p> : <Spinner />}</Modal>;
   if (edit) return <SequenceEditor seq={s} tokens={tokens} onClose={() => setEdit(false)} onSaved={() => (setEdit(false), seq.reload(), onChanged())} />;
   if (enroll) return <EnrollDialog seq={s} onClose={() => setEnroll(false)} onDone={() => (setEnroll(false), seq.reload(), enr.reload(), onChanged())} />;
   const st = s.stats;
   const [label, tone] = STATUS[s.status] ?? ['', 'gray'];
-  const setState = async (next: string) => (await act(() => api.patch(`/api/sequences/${id}`, { status: next }), next === 'active' ? 'Sequenz ist aktiv' : 'Sequenz pausiert')) && (seq.reload(), onChanged());
+  const setState = async (next: string) => (await act(() => api.patch(`/api/sequences/${id}`, { status: next }), next === 'active' ? tx('Sequenz ist aktiv') : tx('Sequenz pausiert'))) && (seq.reload(), onChanged());
   return (
     <Modal
       title={s.name}
@@ -378,69 +386,69 @@ function SequenceDetail({ id, tokens, onClose, onChanged }: { id: string; tokens
       onClose={onClose}
       footer={
         <>
-          <button className="btn danger" onClick={async () => confirmAsk('Sequenz mit allen Aufnahmen und Zahlen löschen?') && (await act(() => api.del(`/api/sequences/${id}`), 'Gelöscht')) && (onChanged(), onClose())}>
-            Löschen
+          <button className="btn danger" onClick={async () => confirmAsk(tx('Sequenz mit allen Aufnahmen und Zahlen löschen?')) && (await act(() => api.del(`/api/sequences/${id}`), tx('Gelöscht'))) && (onChanged(), onClose())}>
+            {tx('Löschen')}
           </button>
           <button className="btn secondary" onClick={() => setEdit(true)}>
-            Bearbeiten
+            {tx('Bearbeiten')}
           </button>
           <button className="btn secondary" disabled={s.status !== 'active'} onClick={() => setEnroll(true)} data-tour="seq-enroll">
-            Kontakte aufnehmen
+            {tx('Kontakte aufnehmen')}
           </button>
           {s.status === 'active' ? (
             <button className="btn" onClick={() => setState('paused')}>
-              Pausieren
+              {tx('Pausieren')}
             </button>
           ) : (
             <button className="btn" onClick={() => setState('active')} data-tour="seq-activate">
-              Aktivieren
+              {tx('Aktivieren')}
             </button>
           )}
         </>
       }
     >
       <div className="sales-bar">
-        <Badge tone={tone}>{label}</Badge>
-        <Badge tone={s.mode === 'individual' ? 'purple' : 'blue'}>{s.mode === 'individual' ? 'Einzelkorrespondenz' : 'Werbung'}</Badge>
-        {s.mode === 'individual' && s.legal_ack_at && <span className="muted small">bestätigt am {d(s.legal_ack_at)}</span>}
+        <Badge tone={tone}>{tx(label)}</Badge>
+        <Badge tone={s.mode === 'individual' ? 'purple' : 'blue'}>{s.mode === 'individual' ? tx('Einzelkorrespondenz') : tx('Werbung')}</Badge>
+        {s.mode === 'individual' && s.legal_ack_at && <span className="muted small">{tx('bestätigt am {d}', { d: d(s.legal_ack_at) })}</span>}
       </div>
       <SortableGrid id="seq-stats" className="sales-stats" data-tour="seq-stats">
-        <div><b>{st.enrolled}</b><span>Aufgenommen · {st.active + st.waiting} aktiv</span></div>
-        <div><b>{st.sent}</b><span>E-Mails gesendet</span></div>
-        <div><b>{rate(st.open_rate)}</b><span>Öffnungen (nur echte Personen)</span></div>
-        <div><b>{rate(st.reply_rate)}</b><span>Antworten · {st.replied}</span></div>
-        <div><b>{rate(st.meeting_rate)}</b><span>Termine · {st.meetings}</span></div>
+        <div><b>{st.enrolled}</b><span>{tx('Aufgenommen · {n} aktiv', { n: st.active + st.waiting })}</span></div>
+        <div><b>{st.sent}</b><span>{tx('E-Mails gesendet')}</span></div>
+        <div><b>{rate(st.open_rate)}</b><span>{tx('Öffnungen (nur echte Personen)')}</span></div>
+        <div><b>{rate(st.reply_rate)}</b><span>{tx('Antworten · {replied}', { replied: st.replied })}</span></div>
+        <div><b>{rate(st.meeting_rate)}</b><span>{tx('Termine · {meetings}', { meetings: st.meetings })}</span></div>
       </SortableGrid>
-      {st.sent > 0 && st.open_tracking.on < st.open_tracking.senders && <p className="note-box warn">Öffnungen werden nur gezählt, wenn im Postfach der Absender „Öffnungen und Klicks verfolgen“ eingeschaltet ist (Einstellungen → E-Mail &amp; SMS).</p>}
+      {st.sent > 0 && st.open_tracking.on < st.open_tracking.senders && <p className="note-box warn">{tx('Öffnungen werden nur gezählt, wenn im Postfach der Absender „Öffnungen und Klicks verfolgen“ eingeschaltet ist (Einstellungen → E-Mail & SMS).')}</p>}
       {Object.keys(st.stopped_by).length > 0 && (
         <p className="muted small">
-          Beendet wegen: {Object.entries(st.stopped_by).map(([k, n]) => `${s.stop_labels[k] ?? k} (${n})`).join(' · ')}
+          {tx('Beendet wegen:')} {Object.entries(st.stopped_by).map(([k, n]) => `${s.stop_labels[k] ?? k} (${n})`).join(' · ')}
         </p>
       )}
-      <Section title="Schritte">
+      <Section title={tx('Schritte')}>
         <StepStats seq={s} />
       </Section>
       <Section
-        title="Aufnahmen"
+        title={tx('Aufnahmen')}
         actions={
           <div style={{ width: 200 }}>
-            <Select value={status} onChange={setStatus} placeholder="Alle" options={Object.entries(ENROLL_LABEL)} />
+            <Select value={status} onChange={setStatus} placeholder={tx('Alle')} options={Object.entries(ENROLL_LABEL).map(([k, l]) => [k, tx(l)] as [string, string])} />
           </div>
         }
       >
         {!enr.data ? (
           <Spinner />
         ) : enr.data.length === 0 ? (
-          <Empty>Noch niemand in dieser Sequenz.</Empty>
+          <Empty>{tx('Noch niemand in dieser Sequenz.')}</Empty>
         ) : (
           <div className="table-wrap">
             <table className="sales-table stack">
               <thead>
                 <tr>
-                  <th>Kontakt</th>
+                  <th>{tx('Kontakt')}</th>
                   <th>Status</th>
-                  <th>Nächster Schritt</th>
-                  <th>Absender</th>
+                  <th>{tx('Nächster Schritt')}</th>
+                  <th>{tx('Absender')}</th>
                   <th />
                 </tr>
               </thead>
@@ -452,15 +460,15 @@ function SequenceDetail({ id, tokens, onClose, onChanged }: { id: string; tokens
                       <div className="muted small">{e.email}</div>
                     </td>
                     <td data-label="Status">
-                      <Badge tone={ENROLL_TONE[e.status]}>{ENROLL_LABEL[e.status]}</Badge>
+                      <Badge tone={ENROLL_TONE[e.status]}>{tx(ENROLL_LABEL[e.status])}</Badge>
                       {e.stop_label && <div className="muted small">{e.stop_label}</div>}
                     </td>
-                    <td data-label="Nächster Schritt">{e.status === 'active' ? `Schritt ${e.step_index + 1} von ${e.step_total} · ${dt(e.next_at)}` : e.status === 'waiting' ? e.note : '–'}</td>
+                    <td data-label="Nächster Schritt">{e.status === 'active' ? tx('Schritt {n} von {step_total} · {dt}', { n: e.step_index + 1, step_total: e.step_total, dt: dt(e.next_at) }) : e.status === 'waiting' ? e.note : '–'}</td>
                     <td data-label="Absender">{e.user_name ?? '–'}</td>
                     <td className="r">
                       {(e.status === 'active' || e.status === 'waiting') && (
-                        <button className="btn small secondary" onClick={async () => (await act(() => api.post(`/api/sequence-enrollments/${e.id}/stop`, {}), 'Beendet')) && (enr.reload(), seq.reload())}>
-                          Beenden
+                        <button className="btn small secondary" onClick={async () => (await act(() => api.post(`/api/sequence-enrollments/${e.id}/stop`, {}), tx('Beendet'))) && (enr.reload(), seq.reload())}>
+                          {tx('Beenden')}
                         </button>
                       )}
                     </td>
@@ -476,6 +484,7 @@ function SequenceDetail({ id, tokens, onClose, onChanged }: { id: string; tokens
 }
 
 export function SalesSequences() {
+  const tx = useT('b6sales');
   const list = useLoad(() => api.get<any[]>('/api/sequences'), []);
   const cfg = useLoad(() => api.get<any>('/api/sequence-settings'), []);
   const [open, setOpen] = useState<string | null>(null);
@@ -490,47 +499,47 @@ export function SalesSequences() {
           <span className="muted">
             {mb.connected ? (
               <>
-                Dein Postfach: <b>{mb.address}</b> {mb.tracking ? '· Öffnungen werden gezählt' : '· Öffnungs-Verfolgung aus'}
+                {tx('Dein Postfach:')} <b>{mb.address}</b> {mb.tracking ? tx('· Öffnungen werden gezählt') : tx('· Öffnungs-Verfolgung aus')}
               </>
             ) : (
               <>
-                Du hast noch kein Postfach verbunden – <a href="/app/settings">Einstellungen → E-Mail &amp; SMS</a>. Sequenzen mit E-Mails senden aus deinem eigenen Postfach.
+                {tx('Du hast noch kein Postfach verbunden –')} <a href="/app/settings">{tx('Einstellungen → E-Mail & SMS')}</a>{tx('. Sequenzen mit E-Mails senden aus deinem eigenen Postfach.')}
               </>
             )}
           </span>
         )}
         <span className="grow" />
         <button className="btn" onClick={() => setCreate(true)} data-tour="seq-new">
-          + Neue Sequenz
+          {tx('+ Neue Sequenz')}
         </button>
       </div>
       {cfg.data?.can_configure && (
         <div className="sales-bar">
           <label className="row" style={{ alignItems: 'center', gap: 8, margin: 0 }}>
-            <span className="muted">Tageslimit je Person (E-Mails aus Sequenzen):</span>
-            <input type="number" min={0} max={cfg.data.max_daily_limit} value={limit === '' ? cfg.data.daily_limit : limit} onChange={(e) => setLimit(e.target.value)} style={{ width: 96 }} aria-label="Tageslimit" />
+            <span className="muted">{tx('Tageslimit je Person (E-Mails aus Sequenzen):')}</span>
+            <input type="number" min={0} max={cfg.data.max_daily_limit} value={limit === '' ? cfg.data.daily_limit : limit} onChange={(e) => setLimit(e.target.value)} style={{ width: 96 }} aria-label={tx('Tageslimit')} />
           </label>
-          <button className="btn secondary" disabled={limit === ''} onClick={async () => (await act(() => api.put('/api/sequence-settings', { daily_limit: Number(limit) }), 'Tageslimit gespeichert')) && (setLimit(''), cfg.reload())}>
-            Speichern
+          <button className="btn secondary" disabled={limit === ''} onClick={async () => (await act(() => api.put('/api/sequence-settings', { daily_limit: Number(limit) }), tx('Tageslimit gespeichert'))) && (setLimit(''), cfg.reload())}>
+            {tx('Speichern')}
           </button>
         </div>
       )}
       {!list.data ? (
         <Spinner />
       ) : list.data.length === 0 ? (
-        <Empty action={<button className="btn" onClick={() => setCreate(true)}>Erste Sequenz anlegen</button>}>Mit Sequenzen sprichst du neue Kontakte in mehreren Schritten an – E-Mail, Anruf, LinkedIn – und hörst automatisch auf, sobald jemand antwortet.</Empty>
+        <Empty action={<button className="btn" onClick={() => setCreate(true)}>{tx('Erste Sequenz anlegen')}</button>}>{tx('Mit Sequenzen sprichst du neue Kontakte in mehreren Schritten an – E-Mail, Anruf, LinkedIn – und hörst automatisch auf, sobald jemand antwortet.')}</Empty>
       ) : (
         <div className="table-wrap">
           <table className="sales-table stack">
             <thead>
               <tr>
-                <th>Sequenz</th>
+                <th>{tx('Sequenz')}</th>
                 <th>Status</th>
-                <th className="r">Schritte</th>
-                <th className="r">Aufgenommen</th>
-                <th className="r">Gesendet</th>
-                <th className="r">Antworten</th>
-                <th className="r">Termine</th>
+                <th className="r">{tx('Schritte')}</th>
+                <th className="r">{tx('Aufgenommen')}</th>
+                <th className="r">{tx('Gesendet')}</th>
+                <th className="r">{tx('Antworten')}</th>
+                <th className="r">{tx('Termine')}</th>
               </tr>
             </thead>
             <tbody>
@@ -538,14 +547,14 @@ export function SalesSequences() {
                 <tr key={s.id} className="click" onClick={() => setOpen(s.id)} tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setOpen(s.id)}>
                   <td data-label="Sequenz">
                     <b>{s.name}</b>
-                    {s.mode === 'individual' && <span className="muted small"> · Einzelkorrespondenz</span>}
+                    {s.mode === 'individual' && <span className="muted small"> {tx('· Einzelkorrespondenz')}</span>}
                   </td>
                   <td data-label="Status">
-                    <Badge tone={STATUS[s.status]?.[1] ?? 'gray'}>{STATUS[s.status]?.[0]}</Badge>
+                    <Badge tone={STATUS[s.status]?.[1] ?? 'gray'}>{tx(STATUS[s.status]?.[0] ?? '')}</Badge>
                   </td>
                   <td className="r" data-label="Schritte">{s.steps}</td>
                   <td className="r" data-label="Aufgenommen">
-                    {s.enrolled} <span className="muted small">({s.active} aktiv)</span>
+                    {s.enrolled} <span className="muted small">{tx('({active} aktiv)', { active: s.active })}</span>
                   </td>
                   <td className="r" data-label="Gesendet">{s.sent}</td>
                   <td className="r" data-label="Antworten">{s.replied}</td>
@@ -564,19 +573,20 @@ export function SalesSequences() {
 
 /** For the contact page: put this person into a running sequence. */
 export function EnrollContact({ contactId, onClose, onDone }: { contactId: string; onClose: () => void; onDone: () => void }) {
+  const tx = useT('b6sales');
   const list = useLoad(() => api.get<any[]>('/api/sequences'), []);
   const [sid, setSid] = useState('');
   const active = (list.data ?? []).filter((s) => s.status === 'active');
   const go = async () => {
-    const r = await act(() => api.post(`/api/sequences/${sid}/enroll`, { contact_ids: [contactId], source: 'Kontaktseite' }));
+    const r = await act(() => api.post(`/api/sequences/${sid}/enroll`, { contact_ids: [contactId], source: tx('Kontaktseite') }));
     if (!r) return;
-    if (r.enrolled) toast('In die Sequenz aufgenommen');
-    else toast(`Nicht aufgenommen: ${r.skipped?.[0]?.reason ?? 'unbekannt'}`);
+    if (r.enrolled) toast(tx('In die Sequenz aufgenommen'));
+    else toast(tx('Nicht aufgenommen: {n}', { n: r.skipped?.[0]?.reason ?? 'unbekannt' }));
     onDone();
   };
   return (
-    <Modal title="In Sequenz aufnehmen" className="sales-modal" onClose={onClose} footer={<button className="btn" disabled={!sid} onClick={go}>Aufnehmen</button>}>
-      {!list.data ? <Spinner /> : active.length === 0 ? <p className="muted">Es gibt noch keine aktive Sequenz. Lege unter Vertrieb → Sequenzen eine an und aktiviere sie.</p> : <Select value={sid} onChange={setSid} placeholder="Sequenz wählen…" options={active.map((s) => [s.id, s.name] as [string, string])} />}
+    <Modal title={tx('In Sequenz aufnehmen')} className="sales-modal" onClose={onClose} footer={<button className="btn" disabled={!sid} onClick={go}>{tx('Aufnehmen')}</button>}>
+      {!list.data ? <Spinner /> : active.length === 0 ? <p className="muted">{tx('Es gibt noch keine aktive Sequenz. Lege unter Vertrieb → Sequenzen eine an und aktiviere sie.')}</p> : <Select value={sid} onChange={setSid} placeholder={tx('Sequenz wählen…')} options={active.map((s) => [s.id, s.name] as [string, string])} />}
     </Modal>
   );
 }

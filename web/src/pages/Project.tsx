@@ -8,6 +8,7 @@ import { ProjectDocs } from './Docs';
 import { Slot } from '../slots';
 import { SortableGrid } from '../sortable/Sortable';
 import './projects.css';
+import { useT } from '../i18n';
 
 export const STATUS: Record<string, [string, any]> = {
   idee: ['Idee', 'gray'],
@@ -19,10 +20,11 @@ export const STATUS: Record<string, [string, any]> = {
 };
 
 export function UptimeDot({ uptime }: { uptime: any }) {
+  const t = useT('b6mail');
   const last = uptime?.last;
-  if (!last) return <span className="muted small">nicht geprüft</span>;
+  if (!last) return <span className="muted small">{t('nicht geprüft')}</span>;
   return (
-    <span className="small" title={`HTTP ${last.status || '–'} · ${last.ms} ms · ${ago(last.at)}`}>
+    <span className="small" title={t('HTTP {n} · {ms} ms · {ago}', { n: last.status || '–', ms: last.ms, ago: ago(last.at) })}>
       <span className={`dot ${last.ok ? 'up' : 'down'}`} />
       {last.ok ? 'online' : 'offline'}
       {uptime.week_pct !== null ? ` · ${String(uptime.week_pct).replace('.', ',')} % (7 T.)` : ''}
@@ -31,6 +33,7 @@ export function UptimeDot({ uptime }: { uptime: any }) {
 }
 
 function ListEditor({ items, onChange, fields }: { items: any[]; onChange: (v: any[]) => void; fields: [string, string][] }) {
+  const t = useT('b6mail');
   return (
     <div>
       {items.map((it, i) => (
@@ -38,19 +41,20 @@ function ListEditor({ items, onChange, fields }: { items: any[]; onChange: (v: a
           {fields.map(([k, ph]) => (
             <Input key={k} value={typeof it === 'string' ? it : it[k]} onChange={(v) => onChange(items.map((x, j) => (j === i ? (fields.length === 1 && typeof x === 'string' ? v : { ...x, [k]: v }) : x)))} placeholder={ph} />
           ))}
-          <button className="btn small ghost" aria-label="Entfernen" onClick={() => onChange(items.filter((_, j) => j !== i))}>
+          <button className="btn small ghost" aria-label={t('Entfernen')} onClick={() => onChange(items.filter((_, j) => j !== i))}>
             ✕
           </button>
         </div>
       ))}
       <button className="btn small secondary" onClick={() => onChange([...items, fields.length === 1 && fields[0][0] === '' ? '' : Object.fromEntries(fields.map(([k]) => [k, '']))])}>
-        + Hinzufügen
+        {t('+ Hinzufügen')}
       </button>
     </div>
   );
 }
 
 export function Project() {
+  const t = useT('b6mail');
   const session = useSession();
   const p = useLoad(() => api.get<any>('/api/project'), [session.locationId]);
   const [v, setV] = useState<any>(null);
@@ -62,51 +66,51 @@ export function Project() {
   const loc = session.locations.find((l) => l.id === session.locationId);
   return (
     <>
-      <PageHead title={loc?.name ?? 'Projekt'} sub={v.tagline || 'Projekt-Steckbrief'}>
-        <Badge tone={STATUS[v.status]?.[1]}>{STATUS[v.status]?.[0] ?? v.status}</Badge>
+      <PageHead title={loc?.name ?? t('Projekt')} sub={v.tagline || t('Projekt-Steckbrief')}>
+        <Badge tone={STATUS[v.status]?.[1]}>{t(STATUS[v.status]?.[0] ?? v.status)}</Badge>
         <ClaudeButton sessions={p.data.claude_sessions} />
         <CodexButton sessions={p.data.codex_sessions} />
         {v.website && (
           <a className="btn secondary" href={v.website} target="_blank" rel="noreferrer">
-            Website öffnen
+            {t('Website öffnen')}
           </a>
         )}
         {edit && (
-          <button className="btn" data-tour="project-save" onClick={async () => (await act(() => api.put('/api/project', v), 'Gespeichert')) && (p.reload(), void refreshProjects(session))}>
-            Speichern
+          <button className="btn" data-tour="project-save" onClick={async () => (await act(() => api.put('/api/project', v), t('Gespeichert'))) && (p.reload(), void refreshProjects(session))}>
+            {t('Speichern')}
           </button>
         )}
       </PageHead>
       <SortableGrid id="project.stats" className="stats" data-tour="project-stats">
-        <Stat key="contacts" label="Kontakte" value={s.contacts} />
-        <Stat key="deals" label="Offene Deals" value={s.open_opportunities} sub={euro(s.open_value)} />
-        <Stat key="tasks" label="Aufgaben offen" value={s.open_tasks} sub={s.overdue_tasks ? `${s.overdue_tasks} überfällig` : undefined} />
-        <Stat key="inbox" label="Ungelesen / Entwürfe" value={`${s.unread} / ${s.drafts}`} />
-        <Stat key="website" tour="project-uptime" label="Website" value={<UptimeDot uptime={p.data.uptime} />} sub={s.last_activity ? `Aktiv ${ago(s.last_activity)}` : undefined} />
+        <Stat key="contacts" label={t('Kontakte')} value={s.contacts} />
+        <Stat key="deals" label={t('Offene Deals')} value={s.open_opportunities} sub={euro(s.open_value)} />
+        <Stat key="tasks" label={t('Aufgaben offen')} value={s.open_tasks} sub={s.overdue_tasks ? t('{overdue_tasks} überfällig', { overdue_tasks: s.overdue_tasks }) : undefined} />
+        <Stat key="inbox" label={t('Ungelesen / Entwürfe')} value={`${s.unread} / ${s.drafts}`} />
+        <Stat key="website" tour="project-uptime" label={t('Website')} value={<UptimeDot uptime={p.data.uptime} />} sub={s.last_activity ? t('Aktiv {ago}', { ago: ago(s.last_activity) }) : undefined} />
       </SortableGrid>
       <div className="row" style={{ alignItems: 'flex-start' }}>
         <div className="card" style={{ flex: '2 1 460px' }}>
           <div className="grid2">
             <Field label="Status" tour="project-status">
-              <Select value={v.status} onChange={(x) => set({ status: x })} options={Object.entries(STATUS).map(([k, [l]]) => [k, l])} />
+              <Select value={v.status} onChange={(x) => set({ status: x })} options={Object.entries(STATUS).map(([k, [l]]) => [k, t(l)])} />
             </Field>
-            <Field label="Kategorie">
-              <Input value={v.category} onChange={(x) => set({ category: x })} placeholder="z. B. App, Spiel, Marktplatz" />
+            <Field label={t('Kategorie')}>
+              <Input value={v.category} onChange={(x) => set({ category: x })} placeholder={t('z. B. App, Spiel, Marktplatz')} />
             </Field>
           </div>
-          <Field label="Kurzbeschreibung">
+          <Field label={t('Kurzbeschreibung')}>
             <Input value={v.tagline} onChange={(x) => set({ tagline: x })} />
           </Field>
-          <Field label="Website" hint="Wird alle 10 Minuten auf Erreichbarkeit geprüft." tour="project-website">
+          <Field label={t('Website')} hint={t('Wird alle 10 Minuten auf Erreichbarkeit geprüft.')} tour="project-website">
             <Input value={v.website} onChange={(x) => set({ website: x })} placeholder="https://…" />
           </Field>
-          <Field label="Beschreibung">
+          <Field label={t('Beschreibung')}>
             <Textarea value={v.description} onChange={(x) => set({ description: x })} rows={5} />
           </Field>
-          <Field label="Ziele" tour="project-goals">
-            <Textarea value={v.goals} onChange={(x) => set({ goals: x })} rows={4} placeholder="Was soll bis wann erreicht sein?" />
+          <Field label={t('Ziele')} tour="project-goals">
+            <Textarea value={v.goals} onChange={(x) => set({ goals: x })} rows={4} placeholder={t('Was soll bis wann erreicht sein?')} />
           </Field>
-          <Field label="Notizen">
+          <Field label={t('Notizen')}>
             <Textarea value={v.notes} onChange={(x) => set({ notes: x })} rows={6} />
           </Field>
         </div>
@@ -114,11 +118,11 @@ export function Project() {
           <ProjectDocs />
           <Slot name="project.files" />
           <div className="card" data-tour="project-kpis">
-            <h2>Kennzahlen</h2>
-            <ListEditor items={v.kpis} onChange={(kpis) => set({ kpis })} fields={[['label', 'Kennzahl'], ['value', 'Ist'], ['target', 'Ziel']]} />
+            <h2>{t('Kennzahlen')}</h2>
+            <ListEditor items={v.kpis} onChange={(kpis) => set({ kpis })} fields={[['label', t('Kennzahl')], ['value', t('Ist')], ['target', t('Ziel')]]} />
           </div>
           <div className="card">
-            <h2>Links</h2>
+            <h2>{t('Links')}</h2>
             <ListEditor items={v.links} onChange={(links) => set({ links })} fields={[['label', 'Name'], ['url', 'https://…']]} />
             {v.links.length > 0 && (
               <p className="small">
@@ -131,22 +135,22 @@ export function Project() {
             )}
           </div>
           <div className="card" data-tour="project-claude">
-            <h2>Claude-Sitzungen</h2>
-            <p className="muted small" style={{ marginTop: -4 }}>Link aus claude.ai/code einfügen – dann springst du von überall mit einem Klick in die Sitzung zum Projekt.</p>
+            <h2>{t('Claude-Sitzungen')}</h2>
+            <p className="muted small" style={{ marginTop: -4 }}>{t('Link aus claude.ai/code einfügen – dann springst du von überall mit einem Klick in die Sitzung zum Projekt.')}</p>
             <ListEditor items={v.claude_sessions ?? []} onChange={(claude_sessions) => set({ claude_sessions })} fields={[['label', 'z. B. Go-to-Market'], ['url', 'https://claude.ai/code/session_…']]} />
           </div>
           <div className="card" data-tour="project-codex">
-            <h2>Codex-Aufgaben</h2>
-            <p className="muted small" style={{ marginTop: -4 }}>Link aus chatgpt.com/codex einfügen (Aufgabe oder Umgebung) – der Codex-Knopf öffnet sie von überall, auch über Strg+K.</p>
+            <h2>{t('Codex-Aufgaben')}</h2>
+            <p className="muted small" style={{ marginTop: -4 }}>{t('Link aus chatgpt.com/codex einfügen (Aufgabe oder Umgebung) – der Codex-Knopf öffnet sie von überall, auch über Strg+K.')}</p>
             <ListEditor items={v.codex_sessions ?? []} onChange={(codex_sessions) => set({ codex_sessions })} fields={[['label', 'z. B. Checkout-Bug'], ['url', 'https://chatgpt.com/codex/tasks/task_e_…']]} />
           </div>
           <div className="card" data-tour="project-servers">
-            <h2>Code & Server</h2>
-            <Field label="Repositories">
+            <h2>{t('Code & Server')}</h2>
+            <Field label={t('Repositories')}>
               <ListEditor items={v.repos} onChange={(repos) => set({ repos })} fields={[['', 'owner/repo']]} />
             </Field>
-            <Field label="Server / Deployments">
-              <ListEditor items={v.servers} onChange={(servers) => set({ servers })} fields={[['name', 'z. B. KVM 8'], ['detail', 'Docker-Projekt, Port …']]} />
+            <Field label={t('Server / Deployments')}>
+              <ListEditor items={v.servers} onChange={(servers) => set({ servers })} fields={[['name', 'z. B. KVM 8'], ['detail', t('Docker-Projekt, Port …')]]} />
             </Field>
           </div>
         </div>
@@ -156,17 +160,18 @@ export function Project() {
 }
 
 export function ProjectsOverview() {
+  const t = useT('b6mail');
   const session = useSession();
   const list = useLoad(() => api.get<any[]>('/api/agency/projects'), []);
   const [filter, setFilter] = useState('');
   if (!list.data) return <Spinner />;
   // Archived projects only show up when asked for.
   const shown = list.data.filter((l) => (filter ? l.profile.status === filter : l.profile.status !== 'archiviert')).sort((a, b) => (b.profile.priority ?? 0) - (a.profile.priority ?? 0) || a.name.localeCompare(b.name));
-  if (!list.data.length) return <Empty>Noch keine Projekte.</Empty>;
+  if (!list.data.length) return <Empty>{t('Noch keine Projekte.')}</Empty>;
   return (
     <>
       <div className="row" style={{ marginBottom: 12, maxWidth: 360 }}>
-        <Select value={filter} onChange={setFilter} placeholder="Alle Status" options={Object.entries(STATUS).map(([k, [l]]) => [k, l])} />
+        <Select value={filter} onChange={setFilter} placeholder={t('Alle Status')} options={Object.entries(STATUS).map(([k, [l]]) => [k, t(l)])} />
       </div>
       {/* in the order the person dragged them into (web/src/sortable); new projects join at the end, a status filter keeps the rest's order */}
       <SortableGrid id="agency.projects" className="proj-grid" data-tour="agency-projects">
@@ -181,7 +186,7 @@ export function ProjectsOverview() {
               <span className="actions">
                 <ClaudeButton sessions={l.profile.claude_sessions} compact />
                 <CodexButton sessions={l.profile.codex_sessions} compact />
-                <Badge tone={STATUS[l.profile.status]?.[1]}>{STATUS[l.profile.status]?.[0]}</Badge>
+                <Badge tone={STATUS[l.profile.status]?.[1]}>{t(STATUS[l.profile.status]?.[0] ?? '')}</Badge>
               </span>
             </div>
             {l.profile.tagline && <div className="muted small">{l.profile.tagline}</div>}
@@ -191,25 +196,25 @@ export function ProjectsOverview() {
                   {displayHost(l.profile.website)}
                 </a>
               ) : (
-                <span className="muted">keine Website</span>
+                <span className="muted">{t('keine Website')}</span>
               )}
               <UptimeDot uptime={l.profile.uptime} />
             </div>
             <div className="proj-kpis">
               <div>
                 <b>{l.stats.open_opportunities}</b>
-                <span>offene Deals</span>
+                <span>{t('offene Deals')}</span>
               </div>
               <div className={l.stats.overdue_tasks ? 'is-late' : undefined}>
                 <b>{l.stats.open_tasks}</b>
-                <span>Aufgaben{l.stats.overdue_tasks ? ` (${l.stats.overdue_tasks} überf.)` : ''}</span>
+                <span>{t('Aufgaben')}{l.stats.overdue_tasks ? t(' ({overdue_tasks} überf.)', { overdue_tasks: l.stats.overdue_tasks }) : ''}</span>
               </div>
               <div>
                 <b>{l.stats.unread + l.stats.drafts}</b>
-                <span>Post & Entwürfe</span>
+                <span>{t('Post & Entwürfe')}</span>
               </div>
             </div>
-            <div className="muted small proj-foot">{l.stats.contacts} Kontakte · {l.stats.last_activity ? `aktiv ${ago(l.stats.last_activity)}` : 'noch keine Aktivität'}</div>
+            <div className="muted small proj-foot">{t('{contacts} Kontakte ·', { contacts: l.stats.contacts })} {l.stats.last_activity ? t('aktiv {ago}', { ago: ago(l.stats.last_activity) }) : t('noch keine Aktivität')}</div>
           </div>
         ))}
       </SortableGrid>
