@@ -177,6 +177,13 @@ export const NAMESPACES = {
 
   // guided-tour data of batch 2 (tour/content/*.ts): keys are the German tour strings, looked up by the tour engine
   toursB: { complete: false, files: ['tour/content/data.ts', 'tour/content/feedback.ts', 'tour/content/genmedia.ts', 'tour/content/journey.ts', 'tour/content/mailbox.ts', 'tour/content/marketing.ts', 'tour/content/memory.ts', 'tour/content/pm.ts', 'tour/content/revenue.ts'] },
+
+  // guided tours (batch 3 wiring): the tour data catalogs (toursA/B/C, keys = the exact German strings, merged from three agents; read via tour/text.ts) and the UI of the tour layer
+  // complete:false = nothing is enforced; the files are listed only so the check sees the German strings as "used" (the catalog's keys)
+  toursC: { complete: false, files: ['tour/content/sales.ts', 'tour/content/sepa.ts', 'tour/content/service.ts', 'tour/content/settings.ts', 'tour/content/sites.ts', 'tour/content/start.ts', 'tour/content/teamtools.ts', 'tour/content/umzug.ts', 'tour/content/undo.ts', 'tour/content/voice.ts', 'tour/content/webinars.ts', 'tour/content/workflow-tools.ts', 'tour/content/xr.ts', 'tour/catalog.ts'] },
+  b3tour: { complete: true, files: ['tour/engine.tsx', 'tour/learn.tsx', 'tour/welcome.tsx', 'tour/help.tsx', 'tour/docs.tsx'] },
+  b3tourbook: { complete: true, files: ['tour/handbook.ts'] },
+  b3tourhandover: { complete: true, files: ['tour/handover.tsx'] },
 } as const satisfies Record<string, { complete: boolean; server?: boolean; files: readonly string[] }>;
 export type Namespace = keyof typeof NAMESPACES;
 
@@ -243,5 +250,10 @@ export const CATALOGS: { [L in Exclude<Locale, typeof SOURCE_LOCALE>]: Partial<R
     toursA: () => import('./en/toursA'),
 
     toursB: () => import('./en/toursB'),
+
+    toursC: () => import('./en/toursC'),
+    b3tour: () => import('./en/b3tour'),
+    b3tourbook: () => import('./en/b3tourbook'),
+    b3tourhandover: () => import('./en/b3tourhandover'),
   },
 };
