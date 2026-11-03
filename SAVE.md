@@ -1,16 +1,18 @@
 # V Media CRM – SAVE (handoff notes)
 
-_Last updated: 2026-11-03_
+_Last updated: 2026-11-04_
 
 ## What this is
 V Media Production's CRM, rebuilt on **GoHyperLevel** (https://github.com/BAISESYSTEMS/GoHyperLevel, AGPL-3.0 –
 a free open-source GoHighLevel alternative; NOT the paid GoHighLevel). Node 22+ server + SQLite + React 19/Vite web.
 Fresh git history: first commit `e8095af` is the untouched upstream import, everything after is ours.
 
-- Folder: `Documents\Claude\Projects\vmedia-crm` (branch `main`, no remote yet)
+- Folder: `Documents\Claude\Projects\vmedia-crm` (branch `main`, remote https://github.com/vinitdeep/vmediacrm)
 - Old CRM backup: `Projects\vmedia-crm-snapshots\` (old keys: `legacy-keys-2026-11-03\legacy.env`)
 - Helper tools (outside the repo): `Projects\vmedia-crm-tools\` – `shot.mjs` (Playwright screenshots, logs in as the demo
-  user), `demo-data-pristine\`, translation brief + batch lists, agents' codemods.
+  user), `qa-all.mjs` (feature crawl: every page + Settings/Agency section, clicks Save, logs errors → `qaN/results.json`),
+  `scan-all.mjs` (German-text scan over every .tsx), `wrap-german.mjs` (wraps reported German JSX in the in-scope
+  translator), `demo-data-pristine\`, translation brief + batch lists, agents' codemods.
 
 ## Run it
 ```bash
@@ -39,11 +41,23 @@ Dev mode: `npm run dev` (api + vite). Deploy options: `docs/deploy/` (needs a VP
    Web: `web/src/currency.ts` (`accountCurrency()`, set from /api/me); rupees format en-IN (₹1,23,456.00); English labels
    write `¤` for the account symbol ("Price (¤)" → "Price (₹)"). Tests run with `PGHL_CURRENCY=EUR` (vitest.config.ts) so the
    upstream suite stays valid; `tests/currency.test.ts` covers INR. Existing records are never converted.
-8. **Repo hygiene** – forced LF line endings (`.gitattributes eol=lf`, `core.autocrlf=false`); CRLF broke tests on Windows.
+8. **Feature QA (2026-11-04)** – `qa-all.mjs`: all 60 pages, 27 Settings and 21 Agency sections load without errors;
+   every Save returns 200. ~150 German labels that were hard-wired in JSX ("Speichern", mobile `data-label` column titles…)
+   now go through translators. `i18n-check` closed its loophole: a catalog key no longer excuses German written directly
+   into JSX text/attributes, and `data-label` is checked. Commit `463d3da`.
+9. **Repo hygiene** – forced LF line endings (`.gitattributes eol=lf`, `core.autocrlf=false`); CRLF broke tests on Windows.
 
 ## In progress / pending
 - **Server-side German still left** (separate pass): e-mails the server sends, public booking/form/invoice/portal pages,
-  workflow trigger/action catalogue names, server error messages, starter templates, demo seed content.
+  workflow trigger/action catalogue names, server error messages, starter templates, demo seed content, the Apps /
+  Integrations catalogue (`server/modules/integrations-catalog.ts`), AI model + voice names, deliverability checklist,
+  SEPA messages, board templates.
+- **Needs real keys to test end-to-end** (settings save fine): email/SMS sending, Stripe, Twilio calls, WhatsApp/Meta,
+  AI providers.
+- **Concurrent work** – another session has uncommitted theme work in this folder (atelier theme, FontPicker,
+  `Appearance.tsx`, `themes.ts`, `ui.tsx`, `main.tsx`, `styles.css`, `Office.*`, CRLF line endings). Never `git add -A`;
+  stage only your own files. Its working-copy `Appearance.tsx` still has 3 bare German labels (fixed in HEAD) – wrap them
+  in `tt()` before committing it. `styles.css` was accidentally reset once on 2026-11-04 and restored from a git blob ~1 h old.
 - **GitHub** – pushed to https://github.com/vinitdeep/vmediacrm (PUBLIC repo – fine for AGPL, never commit `.env`/keys).
   History was rewritten with `vmedia-crm-tools\defang.cjs` (splits the upstream test suite's FAKE token literals, e.g.
   `'sk_' + 'test_…'`) because GitHub push protection blocked them. Run `node ../vmedia-crm-tools/defang.cjs .` before committing new tests that contain fake keys.
@@ -53,7 +67,8 @@ Dev mode: `npm run dev` (api + vite). Deploy options: `docs/deploy/` (needs a VP
 `security` body caps (ECONNRESET), `sec-w10-testimonials`, `oss` export (Windows tar), `xr-spatial` (C:\C:\ path),
 `agent-bridge` relay, `mobile` UTC date. On Windows `record-access-leaks`, `tenant-isolation`, `cloud-isolation` exhaust local ports
 (EADDRINUSE, ~16k TIME_WAIT) – they fail on untouched code too. `cloud`, `day-boundary`, `cognee-*` flake only under full parallel load
-(pass alone). Full run after translation: 5,745 passed; every remaining failure also fails on upstream or passes alone.
+(pass alone). `location-erase` (hr-docs) also fails on pre-currency code. Latest full run (2026-11-04): 5,815 passed;
+every remaining failure also fails on older code or passes alone.
 
 ## Gotchas
 - German is the SOURCE text and the i18n message id – never rewrite German strings to English; add catalog entries
