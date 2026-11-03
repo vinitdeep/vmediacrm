@@ -1,0 +1,13 @@
+{
+  // GitHub Codespaces: builds V Media CRM, loads the fictional demo data and starts it on port 4700.
+  // Open: https://codespaces.new/vinitdeep/vmediacrm  ·  login demo@example.com / demo1234
+  "name": "V Media CRM",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "hostRequirements": { "cpus": 2, "memory": "4gb" },
+  "postCreateCommand": "npm ci && npm run build && npm run demo:seed -- --data-dir ./demo-data --reset",
+  "postStartCommand": "bash .devcontainer/start.sh",
+  "forwardPorts": [4700],
+  "portsAttributes": {
+    "4700": { "label": "V Media CRM", "onAutoForward": "openBrowser" }
+  }
+}
