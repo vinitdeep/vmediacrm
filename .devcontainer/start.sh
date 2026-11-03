@@ -7,5 +7,7 @@ if [ -n "$CODESPACE_NAME" ]; then
 fi
 export PGHL_DATA_DIR=./demo-data
 [ -d dist-server ] || npm run build
-nohup npm start > /tmp/vmedia-crm.log 2>&1 &
+# setsid: a plain background job is killed when the postStartCommand shell exits
+setsid nohup npm start > /tmp/vmedia-crm.log 2>&1 < /dev/null &
+sleep 2
 echo "V Media CRM starting on port 4700 – log: /tmp/vmedia-crm.log"
