@@ -415,4 +415,5 @@ export default {
   'verbunden': 'connected',
   'zuletzt': 'last',
   'schreibt': 'typing',
+  Tag: 'Day',
 } satisfies Catalog;

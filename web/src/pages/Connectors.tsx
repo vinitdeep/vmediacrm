@@ -216,7 +216,7 @@ export function ChatNotifyStep({ step, set }: { step: Json; set: (p: Json) => vo
         <Input value={step.title} onChange={(v) => set({ title: v })} placeholder={t('Neuer Lead')} />
       </Field>
       <Field label={t('Text')}>
-        <Textarea value={step.text} onChange={(v) => set({ text: v })} rows={4} placeholder="{{contact.name}} ({{contact.email}}) hat das Formular ausgefüllt." />
+        <Textarea value={step.text} onChange={(v) => set({ text: v })} rows={4} placeholder="{{contact.name}} ({{contact.email}}) filled in the form." />
       </Field>
       <MergeHint />
       <Field label={t('Anderer Kanal (optional)')} hint={t('Eine weitere Webhook-URL desselben Dienstes – sie steht dann im Workflow.')}>

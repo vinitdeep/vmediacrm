@@ -90,7 +90,7 @@ export function NumberField({ label, value, onChange, hint, min, max, placeholde
 
 export const toneOf = (status: string): 'green' | 'yellow' | 'red' | 'gray' | 'blue' =>
   ({ active: 'green', trialing: 'blue', pending: 'yellow', awaiting_payment: 'yellow', past_due: 'red', canceled: 'gray', rejected: 'gray' } as const)[status as 'active'] ?? 'gray';
-export const statusText: Record<string, string> = { active: 'Aktiv', trialing: 'Testphase', pending: 'Wartet auf Freigabe', awaiting_payment: 'Wartet auf Zahlung', past_due: 'Zahlung offen', canceled: 'Beendet', rejected: 'Abgelehnt' };
+export const statusText: Record<string, string> = { active: 'Active', trialing: 'Trial', pending: 'Awaiting approval', awaiting_payment: 'Awaiting payment', past_due: 'Payment overdue', canceled: 'Ended', rejected: 'Rejected' };
 
 export function StatusBadge({ status }: { status: string }) {
   return <Badge tone={toneOf(status)}>{statusText[status] ?? status}</Badge>;
@@ -103,7 +103,7 @@ export function MemberPick({ group, onPick }: { group: any; onPick: (m: any) => 
   return (
     <>
       <Field label="Mitglied suchen">
-        <Input value={q} onChange={setQ} placeholder="Name oder E-Mail (mindestens 2 Zeichen)" autoFocus />
+        <Input value={q} onChange={setQ} placeholder="Name or email (at least 2 characters)" autoFocus />
       </Field>
       <ul className="cma-list">
         {(list.data ?? []).slice(0, 8).map((m) => (
@@ -113,7 +113,7 @@ export function MemberPick({ group, onPick }: { group: any; onPick: (m: any) => 
               <div className="muted small">{m.email}</div>
             </div>
             <button className="btn small" onClick={() => onPick(m)}>
-              Auswählen
+              Select
             </button>
           </li>
         ))}

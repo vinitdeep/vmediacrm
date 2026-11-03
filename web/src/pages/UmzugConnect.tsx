@@ -133,7 +133,7 @@ export function UmzugConnect({
                   </button>
                   {reconnect && (
                     <button className="btn ghost" type="button" onClick={() => setReconnect(false)}>
-                      Abbrechen
+                      {t('Abbrechen')}
                     </button>
                   )}
                 </div>
@@ -193,7 +193,7 @@ export function UmzugConnect({
                       ))}
                     </select>
                     <button className="btn small ghost" onClick={() => void remove(f)} aria-label={t('{name} löschen', { name: f.name })}>
-                      Löschen
+                      {t('Löschen')}
                     </button>
                   </div>
                 ))}

@@ -54,7 +54,7 @@ export function WerkstattNav() {
     <div className="nav-sub" data-tour="wk-nav-notes">
       {pending > 0 && (
         <Link to="werkstatt/approvals">
-          <Icon name="ok" size={15} /> {pending} zur Freigabe
+          <Icon name="ok" size={15} /> {pending} awaiting approval
         </Link>
       )}
       {unread > 0 && (

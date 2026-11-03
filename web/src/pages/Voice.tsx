@@ -217,7 +217,7 @@ function Latency({ l }: { l: any }) {
               <th>{tt('Erkennen')}</th>
               <th>KI</th>
               <th>{tt('Stimme')}</th>
-              <th>Gesamt</th>
+              <th>{tt('Gesamt')}</th>
             </tr>
           </thead>
           <tbody>
@@ -282,7 +282,7 @@ export function VoiceSettingsPage() {
           <Field label={tt('Anbieter')} hint={tt('Automatisch nimmt die Zuordnung „Sprachausgabe“ unter KI-Anbieter.')}>
             <ConnSelect value={s.tts.connection_id} onChange={(v) => set('tts', { connection_id: v })} list={tts} routed={d.routed.tts} />
           </Field>
-          <Field label="Sprache">
+          <Field label={tt('Sprache')}>
             <Select value={s.tts.language} onChange={(v) => set('tts', { language: v })} options={langOptions(s.tts.language).map(([k, l]) => [k, tt(l)] as [string, string])} />
           </Field>
         </div>
@@ -314,7 +314,7 @@ export function VoiceSettingsPage() {
           <Field label={tt('Anbieter')} hint={tt('Automatisch nimmt die Zuordnung „Transkription“ unter KI-Anbieter.')}>
             <ConnSelect value={s.stt.connection_id} onChange={(v) => set('stt', { connection_id: v })} list={stt} routed={d.routed.stt} />
           </Field>
-          <Field label="Sprache">
+          <Field label={tt('Sprache')}>
             <Select value={s.stt.language} onChange={(v) => set('stt', { language: v })} options={langOptions(s.stt.language).map(([k, l]) => [k, tt(l)] as [string, string])} />
           </Field>
         </div>
@@ -429,7 +429,7 @@ export function VoiceSettingsPage() {
 
       <div className="row voice-save">
         <button className="btn" onClick={save}>
-          Speichern
+          {tt('Speichern')}
         </button>
       </div>
     </div>

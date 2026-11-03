@@ -118,7 +118,7 @@ function WishList() {
   return (
     <>
       <div className="wish-filters" data-tour="wish-filters">
-        <Input value={q} onChange={setQ} placeholder={tt('Wünsche durchsuchen…')} aria-label="Suchen" />
+        <Input value={q} onChange={setQ} placeholder={tt('Wünsche durchsuchen…')} aria-label={tt('Suchen')} />
         <Select value={area} onChange={setArea} placeholder={tt('Alle Bereiche')} options={me?.areas ?? []} />
         <Select value={status} onChange={setStatus} placeholder={tt('Jeder Status')} options={me?.board ?? []} />
         <Select

@@ -173,7 +173,7 @@ export function VoiceAiSettings() {
       )}
       <p>
         <button className="btn" onClick={save}>
-          Speichern
+          {t('Speichern')}
         </button>
       </p>
     </div>

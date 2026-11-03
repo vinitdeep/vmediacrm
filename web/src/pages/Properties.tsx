@@ -115,7 +115,7 @@ function AssocLabels({ object, objects }: { object: string; objects: any[] }) {
       {!mine.length && <p className="muted small">{tx('Noch keine Labels.')}</p>}
       <div className="row" style={{ marginTop: 8 }}>
         <div style={{ width: 130 }}>
-          <Select value={other} onChange={setOther} placeholder="mit…" options={types.filter((t) => t.type !== 'task').map((t) => [t.type, t.label] as [string, string])} />
+          <Select value={other} onChange={setOther} placeholder="with…" options={types.filter((t) => t.type !== 'task').map((t) => [t.type, t.label] as [string, string])} />
         </div>
         <div className="grow">
           <Input value={name} onChange={setName} placeholder={tx('Label, z. B. Entscheider')} />

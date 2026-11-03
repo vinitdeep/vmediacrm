@@ -32,7 +32,7 @@ export function AiEffort({ agency = false }: { agency?: boolean }) {
           </div>
         )}
       </div>
-      <p className="muted small">Wie gründlich die Modelle nachdenken. {d.note} Kann ein Modell die Stufe nicht, nimmt es seine höchste unterstützte – das steht dann im Protokoll („xhigh → high, vom Modell nicht unterstützt“).</p>
+      <p className="muted small">How thoroughly the models think. {d.note} If a model doesn’t support the level, it uses its highest supported one – the log then says so (“xhigh → high, not supported by the model”).</p>
       <div className="row" style={{ alignItems: 'center', gap: 10, marginBottom: 8 }}>
         <label htmlFor="effort-default" style={{ minWidth: 190 }}>
           <strong>Denkstufe (Standard)</strong>

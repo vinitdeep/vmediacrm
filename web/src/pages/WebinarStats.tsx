@@ -84,7 +84,7 @@ export function StatsTab({ form, w }: TabProps) {
           <table className="t">
             <thead>
               <tr>
-                <th>Termin</th>
+                <th>{tt('Termin')}</th>
                 <th className="num">{tt('Anmeldungen')}</th>
                 <th className="num">{tt('Teilgenommen')}</th>
                 <th className="num">{tt('Show-up')}</th>
@@ -141,7 +141,7 @@ export function StatsTab({ form, w }: TabProps) {
       <h3>{tt('Angemeldete')}</h3>
       <div className="actions" style={{ marginBottom: 10 }}>
         <Select value={session} onChange={setSession} placeholder={tt('Alle Termine')} options={sessionOptions} />
-        <Select value={filter} onChange={setFilter} placeholder="Alle" options={[['yes', tt('Nur Teilnehmende')], ['no', tt('Nur Nicht-Erschienene')]]} />
+        <Select value={filter} onChange={setFilter} placeholder={tt('Alle')} options={[['yes', tt('Nur Teilnehmende')], ['no', tt('Nur Nicht-Erschienene')]]} />
         <span className="muted small">{regs.data ? tt('{total} Einträge', { total: regs.data.total }) : ''}</span>
       </div>
       {regs.data?.registrations.length ? (
@@ -149,8 +149,8 @@ export function StatsTab({ form, w }: TabProps) {
           <table className="t">
             <thead>
               <tr>
-                <th>Kontakt</th>
-                <th>Termin</th>
+                <th>{tt('Kontakt')}</th>
+                <th>{tt('Termin')}</th>
                 <th>Status</th>
                 <th className="num">{tt('Gesehen')}</th>
                 <th>{tt('Angebot')}</th>

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { setAccountCurrency } from '../web/src/currency';
 import { fmtDuration, fmtSession, getIn, parseDuration, parseMoment, percent, setIn, videoLabel, euros } from '../web/src/pages/webinar-format';
 import { WEBINAR_TOURS } from '../web/src/tour/content/webinars';
 import { MODULE_IDS } from '../server/services/appearance-model';
@@ -60,7 +61,11 @@ describe('labels and numbers', () => {
     expect(percent(0.255)).toBe('25,5 %');
     expect(percent(null)).toBe('–');
     expect(percent(1)).toBe('100 %');
+    // amounts are in the account's currency: rupees (V Media CRM's default) in Indian format, euros as before
+    expect(euros(49000)).toBe('₹490.00');
+    setAccountCurrency('EUR');
     expect(euros(49000).replace(/\s/g, ' ')).toBe('490,00 €');
+    setAccountCurrency('INR');
     const s = fmtSession('2026-11-09T18:00:00.000Z', 'Europe/Berlin');
     expect(s).toContain('19:00');
     expect(s).toContain('9');

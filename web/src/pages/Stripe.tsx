@@ -111,7 +111,7 @@ export function StripeSettings() {
       )}
       <div className="actions" style={{ marginTop: 12 }}>
         <button className="btn" disabled={busy || (!f.secret_key && !f.webhook_secret)} onClick={save}>
-          Speichern
+          {tt('Speichern')}
         </button>
         <button className="btn secondary" disabled={busy || (!s.key_set && !f.secret_key)} onClick={test}>
           {tt('Verbindung testen')}
@@ -235,11 +235,11 @@ export function ProductBuyLink({ product, links }: { product: any; links: Return
         <Icon name="settings" size={14} />
       </button>
       {edit && (
-        <Modal title={tt('Kauf-Link: {name}', { name: product.name })} wide onClose={() => setEdit(null)} footer={<button className="btn" onClick={save}>Speichern</button>}>
+        <Modal title={tt('Kauf-Link: {name}', { name: product.name })} wide onClose={() => setEdit(null)} footer={<button className="btn" onClick={save}>{tt('Speichern')}</button>}>
           <p className="muted small" style={{ marginTop: 0 }}>
             {tt('Öffentliche Seite mit „Jetzt kaufen“ → Stripe Checkout. Nach der Zahlung: Kontakt (per E-Mail erkannt), bezahlte Rechnung, Tag und der Workflow-Auslöser „Produkt gekauft“.')}
           </p>
-          <Field label="Link">
+          <Field label={tt('Link')}>
             <ShareLink url={l.url} title={tt('Kauf-Link {name}', { name: product.name })} />
           </Field>
           <Field label={tt('Kurzname im Link (optional)')} hint={tt('z. B. „online-kurs“ → /buy/online-kurs')}>

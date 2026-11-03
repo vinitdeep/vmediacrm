@@ -148,7 +148,7 @@ export default function XrViewer({ kind, id, name, onClose }: { kind: 'board' | 
             <Icon name="reset" size={16} /> {tt('Ansicht')}
           </button>
         </div>
-        <button type="button" className="icon-btn xr-close" onClick={onClose} aria-label="Schließen">
+        <button type="button" className="icon-btn xr-close" onClick={onClose} aria-label={tt('Schließen')}>
           ✕
         </button>
       </header>

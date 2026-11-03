@@ -14,7 +14,7 @@ export function PermissionPicker({ value, onChange }: { value: string[] | null; 
   const all = value === null;
   return (
     <>
-      <Check checked={all} onChange={(v) => onChange(v ? null : DEFAULT_CLIENT_PERMS)} label="Alle Bereiche" />
+      <Check checked={all} onChange={(v) => onChange(v ? null : DEFAULT_CLIENT_PERMS)} label="All areas" />
       {!all && (
         <div className="grid2">
           {Object.entries(perms.data).map(([k, label]) => (

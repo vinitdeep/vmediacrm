@@ -319,7 +319,7 @@ function NewJob({ studio, onCreated }: { studio: Studio; onCreated: () => void }
       <h2>{tt('Neue Shorts')}</h2>
       <div className="vs-seg" role="tablist">
         <button type="button" className={mode === 'url' ? 'on' : ''} onClick={() => setMode('url')}>
-          <Icon name="link" /> Link
+          <Icon name="link" /> {tt('Link')}
         </button>
         <button type="button" className={mode === 'file' ? 'on' : ''} onClick={() => setMode('file')}>
           <Icon name="upload" /> {tt('Datei')}
@@ -465,7 +465,7 @@ function JobDetail({ id, studio }: { id: string; studio: Studio }) {
             </button>
           )}
           <button className="btn small ghost" onClick={remove}>
-            <Icon name="trash" /> Löschen
+            <Icon name="trash" /> {tt('Löschen')}
           </button>
         </div>
       </div>
@@ -535,7 +535,7 @@ function ClipCard({ c, focus, studio, onEdit, onPlan, onChange }: { c: any; focu
           <Icon name="schedule" /> {tt('Einplanen')}
         </button>
         <button className="btn small secondary" onClick={onEdit} disabled={busy}>
-          <Icon name="edit" /> Bearbeiten
+          <Icon name="edit" /> {tt('Bearbeiten')}
         </button>
         <a className="btn small secondary" href={mediaSrc(c.video_url, '&download=1')} download title={tt('Herunterladen')} aria-label={tt('Herunterladen')}>
           <Icon name="download" />
@@ -582,10 +582,10 @@ function EditClip({ clip, job, studio, onClose, onSaved }: { clip: any; job: any
           <video src={mediaSrc(clip.video_url, `&v=${encodeURIComponent(clip.updated_at)}`)} controls preload="metadata" playsInline />
         </div>
         <div className="vs-edit-form">
-          <Field label="Titel" hint={tt('{length}/100 Zeichen für YouTube', { length: title.length })}>
+          <Field label={tt('Titel')} hint={tt('{length}/100 Zeichen für YouTube', { length: title.length })}>
             <Input value={title} onChange={setTitle} maxLength={200} />
           </Field>
-          <Field label="Beschreibung">
+          <Field label={tt('Beschreibung')}>
             <Textarea value={desc} onChange={setDesc} rows={4} />
           </Field>
           <Field label={tt('Hashtags')} hint={tt('mit Leerzeichen trennen')}>
@@ -697,7 +697,7 @@ function PlanClip({ clip, studio, onClose, onDone }: { clip: any; studio: Studio
               <Input value={title} onChange={setTitle} maxLength={100} />
             </Field>
           )}
-          <Field label="Text" hint={<span className={tooLong ? 'vs-error-text' : undefined}>{caption.length}{Number.isFinite(limit.limit) ? tt(' / {limit} Zeichen ({label})', { limit: limit.limit, label: limit.label }) : tt(' Zeichen')}</span>}>
+          <Field label={tt('Text')} hint={<span className={tooLong ? 'vs-error-text' : undefined}>{caption.length}{Number.isFinite(limit.limit) ? tt(' / {limit} Zeichen ({label})', { limit: limit.limit, label: limit.label }) : tt(' Zeichen')}</span>}>
             <Textarea value={caption} onChange={setCaption} rows={5} />
           </Field>
           <div className="grid2">
@@ -746,7 +746,7 @@ function SourcePicker({ studio, onStart, label }: { studio: Studio; onStart: (sr
     <>
       <div className="vs-seg">
         <button type="button" className={mode === 'url' ? 'on' : ''} onClick={() => setMode('url')}>
-          <Icon name="link" /> Link
+          <Icon name="link" /> {tt('Link')}
         </button>
         <button type="button" className={mode === 'file' ? 'on' : ''} onClick={() => setMode('file')}>
           <Icon name="upload" /> {tt('Datei')}
@@ -835,7 +835,7 @@ function YoutubeTask({ t, studio, reload }: { t: any; studio: Studio; reload: ()
       <>
         <p className="vs-error-text">{t.error || tt('Fehlgeschlagen')}</p>
         <button className="btn small ghost" onClick={del}>
-          <Icon name="trash" /> Löschen
+          <Icon name="trash" /> {tt('Löschen')}
         </button>
       </>
     );
@@ -856,7 +856,7 @@ function YoutubeTask({ t, studio, reload }: { t: any; studio: Studio; reload: ()
       )}
       {t.error && <p className="vs-error-text">{t.error}</p>}
       {t.busy && <Progress value={60} label={{ titles: tt('Neue Titel …'), description: tt('Beschreibung wird geschrieben …'), thumbnails: tt('Thumbnails werden gemalt …') }[t.busy as string] ?? tt('Arbeitet …')} />}
-      <h3>Titel</h3>
+      <h3>{tt('Titel')}</h3>
       <div className="vs-titles">
         {(r.titles ?? []).map((x: string) => (
           <label key={x} className={`vs-title-opt${title === x ? ' on' : ''}`}>
@@ -955,7 +955,7 @@ function UgcStudio({ studio }: { studio: Studio }) {
           <Textarea value={f.description} onChange={(v) => setF({ ...f, description: v })} rows={3} placeholder={tt('Was ihr anbietet, für wen, was es besonders macht')} />
         </Field>
         <div className="grid2">
-          <Field label="Sprache">
+          <Field label={tt('Sprache')}>
             <Select value={f.language} onChange={(v) => setF({ ...f, language: v })} options={[['en', tt('Englisch')], ['es', tt('Spanisch')]]} />
           </Field>
           <Field label={tt('Stil')}>
@@ -1102,7 +1102,7 @@ export function OpenShortsSetup() {
           <Input type="password" value={key} onChange={setKey} placeholder={v.key_set ? tt('•••••••• {key_hint} (gespeichert)', { key_hint: v.key_hint }) : ''} autoComplete="off" />
           {v.key_set && v.key_hint !== 'Umgebung' && (
             <button className="btn small ghost" onClick={() => clear('api_key')}>
-              Entfernen
+              {tt('Entfernen')}
             </button>
           )}
         </div>
@@ -1115,7 +1115,7 @@ export function OpenShortsSetup() {
             <Input type="password" value={eleven} onChange={setEleven} placeholder={v.elevenlabs_set ? tt('•••••••• {elevenlabs_hint} (gespeichert)', { elevenlabs_hint: v.elevenlabs_hint }) : ''} autoComplete="off" />
             {v.elevenlabs_set && (
               <button className="btn small ghost" onClick={() => clear('elevenlabs_key')}>
-                Entfernen
+                {tt('Entfernen')}
               </button>
             )}
           </div>
@@ -1125,7 +1125,7 @@ export function OpenShortsSetup() {
             <Input type="password" value={fal} onChange={setFal} placeholder={v.fal_set ? tt('•••••••• {fal_hint} (gespeichert)', { fal_hint: v.fal_hint }) : ''} autoComplete="off" />
             {v.fal_set && (
               <button className="btn small ghost" onClick={() => clear('fal_key')}>
-                Entfernen
+                {tt('Entfernen')}
               </button>
             )}
           </div>

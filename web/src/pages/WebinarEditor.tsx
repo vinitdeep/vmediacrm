@@ -125,7 +125,7 @@ export function WebinarEditor({ id, tab = 'basics' }: { id: string; tab?: string
         <div className="wb-savebar" role="status">
           <span>{tt('Ungespeicherte Änderungen')}</span>
           <button className="btn" disabled={busy} onClick={() => save()}>
-            Speichern
+            {tt('Speichern')}
           </button>
         </div>
       )}

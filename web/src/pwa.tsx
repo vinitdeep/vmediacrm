@@ -163,7 +163,7 @@ export function InstallHint() {
       <button className="btn small" onClick={async () => ((await promptInstall()) ? setHidden(true) : close())}>
         {t('Installieren')}
       </button>
-      <button className="icon-btn" onClick={close} aria-label="Schließen">
+      <button className="icon-btn" onClick={close} aria-label={t('Schließen')}>
         ✕
       </button>
     </div>

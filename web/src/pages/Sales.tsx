@@ -23,7 +23,7 @@ export function Sales({ tab }: { tab?: string }) {
   const cur = TABS.some(([k]) => k === tab) ? tab! : 'sequenzen';
   return (
     <div className="sales" data-tour="sales-page">
-      <PageHead title="Vertrieb" sub="Sequenzen, Angebote, Quoten, Dubletten und wer welche Datensätze sieht" />
+      <PageHead title="Sales" sub="Sequences, quotes, quotas, duplicates and who sees which records" />
       <Tabs tabs={TABS} value={cur} onChange={(v) => navigate(`sales/${v}`)} />
       <div style={{ marginTop: 14 }}>
         {cur === 'sequenzen' && <SalesSequences />}

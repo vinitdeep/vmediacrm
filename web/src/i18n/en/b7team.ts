@@ -303,4 +303,5 @@ export default {
   'Berichte': 'Reports',
   ': Quellen „Team-Posteingang: Konversationen“ und „Team-Posteingang: Antworten“.': ': sources "Team inbox: conversations" and "Team inbox: replies".',
   'Aktuell {n} Personen': { one: 'Currently {n} person', other: 'Currently {n} people' },
+  Tag: 'Day',
 } satisfies Catalog;

@@ -16,7 +16,7 @@ const mod = () => modKey(navigator.platform ?? '', navigator.userAgent);
 function ShortcutSheet({ onClose }: { onClose: () => void }) {
   const m = mod();
   return (
-    <Modal title="Tastaturkürzel" onClose={onClose} className="kb-sheet">
+    <Modal title="Keyboard shortcuts" onClose={onClose} className="kb-sheet">
       <table className="kb-table" data-tour="shortcuts-sheet">
         <tbody>
           {shortcutRows(m).map((g) => (

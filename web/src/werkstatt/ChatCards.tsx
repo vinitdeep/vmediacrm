@@ -91,6 +91,7 @@ function BuildCard({ buildId, cardId, onNavigate }: { buildId: string; cardId: s
     window.dispatchEvent(new Event('pghl:agent-grew'));
   }, [b?.status, b?.progress?.label, b?.log?.length, b?.plugin_id]);
   const [nested, setNested] = useState<string>();
+  const tc = useT('b7werk');
   if (!b) return <div className="wk-chat">{build.error ? <span className="muted small">{build.error}</span> : <Spinner />}</div>;
   if (!mine)
     return (
@@ -98,7 +99,7 @@ function BuildCard({ buildId, cardId, onNavigate }: { buildId: string; cardId: s
         <div className="head">
           <strong>{b.plan?.title ?? b.title}</strong> <StatusBadge b={b} />
           <button className="btn ghost small" onClick={() => onNavigate(`werkstatt/${b.id}`)}>
-            Öffnen
+            {tc('Öffnen')}
           </button>
         </div>
       </div>
@@ -208,7 +209,7 @@ function Done({ b, reload, onNavigate, onNested }: { b: Build; reload: () => voi
         <>
           {(b.created ?? []).length > 0 && (
             <>
-              <h4>Angelegt</h4>
+              <h4>{tt('Angelegt')}</h4>
               <ul>
                 {b.created!.map((c, i) => (
                   <li key={i} style={c.undone ? { textDecoration: 'line-through' } : undefined}>
@@ -220,7 +221,7 @@ function Done({ b, reload, onNavigate, onNested }: { b: Build; reload: () => voi
           )}
           <div className="actions">
             <button className="btn secondary small" onClick={() => onNavigate(`werkstatt/${b.id}`)}>
-              Öffnen
+              {tt('Öffnen')}
             </button>
             {b.undoable && (
               <button className="btn ghost small" onClick={async () => (await act(() => api.post(`/api/werkstatt/builds/${b.id}/undo`), tt('Rückgängig gemacht'))) && reload()}>
@@ -310,7 +311,7 @@ function PluginPreview({ pluginId, onNavigate, onNested, onChanged, showBadges }
       )}
       <div className="actions" data-tour="agent-wk-actions">
         <button className="btn small" onClick={open}>
-          <Icon name="play" size={14} /> Öffnen
+          <Icon name="play" size={14} /> {tt('Öffnen')}
         </button>
         {p.can_manage && p.status === 'active' && (
           <button className="btn secondary small" aria-expanded={change} onClick={() => setChange(!change)}>
@@ -337,7 +338,7 @@ function PluginPreview({ pluginId, onNavigate, onNested, onChanged, showBadges }
               <Icon name="hammer" size={14} /> {tt('Neue Version bauen')}
             </button>
             <button className="btn ghost small" onClick={() => setChange(false)}>
-              Abbrechen
+              {tt('Abbrechen')}
             </button>
           </div>
         </div>

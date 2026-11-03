@@ -26,7 +26,7 @@ function Confirm({ ask, onClose, onDone }: { ask: NonNullable<Ask>; onClose: () 
       footer={
         <>
           <button className="btn secondary undo-big" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button
             className="btn danger undo-big"
@@ -158,7 +158,7 @@ export function Trash() {
           <input id="undo-days" type="number" min={1} max={365} value={edit} onChange={(e) => setEdit(e.target.value)} />
           <span>{t('Tage')}</span>
           <button className="btn secondary undo-big" disabled={Number(edit) === days}>
-            Speichern
+            {t('Speichern')}
           </button>
         </form>
       )}

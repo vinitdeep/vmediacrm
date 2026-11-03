@@ -88,7 +88,7 @@ export function RoomTab({ form, set, w }: TabProps) {
                 <MomentInput label={tt('Zeitpunkt')} value={m.at_s} max={dur} onChange={(s) => set(`settings.room.scripted.${i}.at_s`, s)} />
                 <input value={m.name} placeholder="Name" aria-label="Name" style={{ width: 120 }} onChange={(e) => set(`settings.room.scripted.${i}.name`, e.target.value)} />
                 <input className="grow" value={m.text} placeholder={tt('Nachricht')} aria-label={tt('Nachricht')} onChange={(e) => set(`settings.room.scripted.${i}.text`, e.target.value)} />
-                <button type="button" className="icon-btn" aria-label="Entfernen" onClick={() => set('settings.room.scripted', room.scripted.filter((_: any, j: number) => j !== i))}>
+                <button type="button" className="icon-btn" aria-label={tt('Entfernen')} onClick={() => set('settings.room.scripted', room.scripted.filter((_: any, j: number) => j !== i))}>
                   ✕
                 </button>
               </div>
@@ -138,10 +138,10 @@ export function RoomTab({ form, set, w }: TabProps) {
                 <Input value={offer.button_text} onChange={(v) => set('settings.offer.button_text', v)} />
               </Field>
             </div>
-            <Field label="Titel">
+            <Field label={tt('Titel')}>
               <Input value={offer.title} onChange={(v) => set('settings.offer.title', v)} />
             </Field>
-            <Field label="Beschreibung">
+            <Field label={tt('Beschreibung')}>
               <Textarea value={offer.text} onChange={(v) => set('settings.offer.text', v)} rows={2} />
             </Field>
             <div className="grid2">
@@ -191,7 +191,7 @@ export function RemindersTab({ form, set }: TabProps) {
         <Field label={tt('Betreff')}>
           <Input value={rem.confirmation_subject} onChange={(v) => set('settings.reminders.confirmation_subject', v)} />
         </Field>
-        <Field label="Text">
+        <Field label={tt('Text')}>
           <Textarea value={rem.confirmation_body} rows={10} onChange={(v) => set('settings.reminders.confirmation_body', v)} />
         </Field>
       </Section>

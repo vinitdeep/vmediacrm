@@ -18,7 +18,7 @@ export interface MoveTarget {
   icon?: string;
 }
 
-export function MoveMenu({ what, targets, current, onMove, title = 'Verschieben nach …' }: { what: string; targets: MoveTarget[]; current?: string; onMove: (id: string) => void | Promise<unknown>; title?: string }) {
+export function MoveMenu({ what, targets, current, onMove, title = 'Move to …' }: { what: string; targets: MoveTarget[]; current?: string; onMove: (id: string) => void | Promise<unknown>; title?: string }) {
   const spatial = useSpatial();
   const [open, setOpen] = useState(false);
   if (!spatial) return null;

@@ -112,7 +112,7 @@ export function CancelModal({ a, onClose, onDone }: { a: any; onClose: () => voi
       footer={
         <>
           <button className="tx-btn" onClick={onClose}>
-            Zurück
+            {tt('Zurück')}
           </button>
           <button className="tx-btn danger" disabled={busy} onClick={go}>
             {tt('Termin absagen')}
@@ -161,7 +161,7 @@ export function MoveModal({ a, onClose, onDone }: { a: any; onClose: () => void;
         <br />
         <span className="muted">{tt('Jetzt: {v1}', { v1: when(a.start_at) })}</span>
       </p>
-      <Field label="Tag" hint={tz ? tt('Zeiten in {tz}', { tz }) : undefined}>
+      <Field label={tt('Tag')} hint={tz ? tt('Zeiten in {tz}', { tz }) : undefined}>
         <input type="date" value={day} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDay(e.target.value)} />
       </Field>
       {slots.loading && !slots.data ? (

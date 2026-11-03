@@ -153,6 +153,6 @@ describe('open items of the crawl (fix/polish)', () => {
     // A <Field> label around the editor names its first toolbar button, not the text area.
     expect(read('pages/ContentKit.tsx')).toMatch(/className="md-area" aria-label=\{label\}/);
     expect(read('pages/ContentKit.tsx')).toMatch(/label = 'Text \(Markdown\)'/);
-    expect(read('pages/CommunityJoin.tsx')).toMatch(/<MarkdownEditor value=\{f\.about\}.* label="Über uns \(Markdown\)" \/>/);
+    expect(read('pages/CommunityJoin.tsx')).toMatch(/<MarkdownEditor value=\{f\.about\}.* label=\{tt\('Über uns \(Markdown\)'\)\} \/>/);
   });
 });

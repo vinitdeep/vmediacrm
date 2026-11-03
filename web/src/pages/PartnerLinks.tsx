@@ -175,14 +175,14 @@ export function PartnerLinks() {
                 const offered = !!own || (r.env_url === null ? !!r.default_url : !!r.env_url);
                 return (
                   <tr key={r.id}>
-                    <td data-label="Anbieter">
+                    <td data-label={t('Anbieter')}>
                       <b>{r.name}</b>
                       <div className="muted small">{r.category}</div>
                     </td>
-                    <td data-label="Standard" className="pl-default">
+                    <td data-label={t('Standard')} className="pl-default">
                       <Fallback r={r} />
                     </td>
-                    <td data-label="Eigener Link">
+                    <td data-label={t('Eigener Link')}>
                       <input
                         type="url"
                         inputMode="url"
@@ -192,10 +192,10 @@ export function PartnerLinks() {
                         aria-label={t('Eigener Link für {name}', { name: r.name })}
                       />
                     </td>
-                    <td data-label="Partner-Link">
+                    <td data-label={t('Partner-Link')}>
                       <Check checked={!plain} onChange={(on) => setLink(r.id, on ? null : '')} label={plain ? t('aus') : offered ? t('an') : 'erlaubt'} />
                     </td>
-                    <td data-label="Ziel jetzt" className="pl-target">
+                    <td data-label={t('Ziel jetzt')} className="pl-target">
                       {r.url ? (
                         <>
                           {r.is_referral ? <span className="partner-chip">{t('Partner-Link')}</span> : <Badge>{t(SOURCE[r.source ?? 'signup'])}</Badge>}
@@ -205,7 +205,7 @@ export function PartnerLinks() {
                         <span className="muted small">{t('kein Link')}</span>
                       )}
                     </td>
-                    <td data-label="Klicks" className="num">
+                    <td data-label={t('Klicks')} className="num">
                       <b>{r.clicks}</b>
                       {r.partner_clicks > 0 && <div className="muted small">{t('{partner_clicks} als Partner-Link', { partner_clicks: r.partner_clicks })}</div>}
                       {r.last_click_on && <div className="muted small">{t('zuletzt {d}', { d: d(r.last_click_on) })}</div>}

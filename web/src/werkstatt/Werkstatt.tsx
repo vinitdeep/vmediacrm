@@ -282,7 +282,7 @@ function DecideModal({ b, what, onClose, onDone }: { b: Build; what: 'approve' |
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {tt('Abbrechen')}
           </button>
           <button className={`btn${what === 'reject' ? ' danger' : ''}`} disabled={busy} onClick={go}>
             {what === 'approve' ? tt('Freigeben und bauen') : tt('Ablehnen')}

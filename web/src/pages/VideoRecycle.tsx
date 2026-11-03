@@ -208,13 +208,13 @@ function RecycleItem({ item, data, focus, onEdit, onChange, onRegenerate }: { it
       {(item.status === 'ready' || item.status === 'applied') && <Apply item={item} data={data} onDone={onChange} />}
       <div className="vr-item-actions">
         <button className="btn small secondary" onClick={onEdit} disabled={busy}>
-          <Icon name="edit" /> Bearbeiten
+          <Icon name="edit" /> {tt('Bearbeiten')}
         </button>
         {item.text && <Copy text={item.text} />}
         <button className="btn small ghost" onClick={regen} disabled={busy || !!data.ai}>
           <Icon name="refresh" /> {tt('Neu erzeugen')}
         </button>
-        <button className="btn small ghost" onClick={del} disabled={busy} title="Entfernen" aria-label="Entfernen">
+        <button className="btn small ghost" onClick={del} disabled={busy} title={tt('Entfernen')} aria-label={tt('Entfernen')}>
           <Icon name="trash" />
         </button>
       </div>
@@ -352,7 +352,7 @@ function Apply({ item, data, onDone }: { item: Item; data: RecycleData; onDone: 
       {again && (
         <p className="vr-done">
           <Icon name="ok" /> {item.applied_label} · {ago(item.applied_at)}
-          {item.applied_url && <Link to={item.applied_url}>Öffnen</Link>}
+          {item.applied_url && <Link to={item.applied_url}>{tt('Öffnen')}</Link>}
           {!more && (
             <button type="button" className="btn small ghost vr-again" onClick={() => setMore(true)}>
               {tt('Nochmal übernehmen')}
@@ -519,7 +519,7 @@ function EditItem({ item, onClose, onSaved }: { item: Item; onClose: () => void;
       onClose={onClose}
       footer={
         <button className="btn" onClick={save}>
-          Speichern
+          {tt('Speichern')}
         </button>
       }
     >
@@ -752,7 +752,7 @@ export function Autopilot({ publicBase, layouts, subtitles }: { publicBase: bool
         </div>
         <div className="vs-inline vr-ap-actions">
           <button className="btn" disabled={busy} onClick={() => save()}>
-            Speichern
+            {tt('Speichern')}
           </button>
           <button className="btn secondary" disabled={busy || !ap.data.settings.enabled} onClick={check}>
             <Icon name="refresh" /> {tt('Jetzt prüfen')}

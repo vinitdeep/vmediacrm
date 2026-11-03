@@ -21,10 +21,10 @@ export function PluginActionStep({ step, set }: { step: any; set: (p: any) => vo
     <>
       {l.data && !actions.length && (
         <p className="muted small">
-          Noch kein Plugin mit Automations-Schritt ist für den ganzen Sub-Account aktiv. In der <Link to="werkstatt">{NAMES.werkstatt}</Link> oder im <Link to="marktplatz">{NAMES.marktplatz}</Link> findest du welche.
+          No plugin with an automation step is active for the whole sub-account yet. You can find some in the <Link to="werkstatt">{NAMES.werkstatt}</Link> or the <Link to="marktplatz">{NAMES.marktplatz}</Link>.
         </p>
       )}
-      <Field label="Plugin-Aktion" hint="Es laufen nur Plugins, die für den ganzen Sub-Account eingerichtet sind – nie private.">
+      <Field label="Plugin-Aktion" hint="Only plugins set up for the whole sub-account run – never private ones.">
         <Select
           value={key}
           onChange={(v) => {
@@ -32,7 +32,7 @@ export function PluginActionStep({ step, set }: { step: any; set: (p: any) => vo
             set({ plugin, action, input: {} });
           }}
           options={actions.map((a) => [`${a.plugin}::${a.action}`, `${a.plugin_name}: ${a.label}`] as [string, string])}
-          placeholder="Aktion wählen"
+          placeholder="Choose action"
         />
       </Field>
       {cur?.fields.map((f) => (

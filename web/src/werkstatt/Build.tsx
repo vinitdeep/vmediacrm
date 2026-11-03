@@ -250,7 +250,7 @@ export function ResultView({ b, onChange }: { b: Build; onChange: () => void }) 
       {b.status === 'awaiting_approval' && <div className="card notice-card">{tt('Wartet auf die Freigabe eines Admins. Du bekommst Bescheid, sobald es losgeht.')}</div>}
       {(b.created ?? []).length > 0 && (
         <>
-          <h4>Angelegt</h4>
+          <h4>{tt('Angelegt')}</h4>
           <ul className="wk-created">
             {b.created!.map((c, i) => (
               <li key={i} className={c.undone ? 'undone' : ''}>
@@ -356,7 +356,7 @@ function BuildModal({ init, onClose }: { init: { wishId?: string; title?: string
               {tt('In der {werkstatt} öffnen', { werkstatt: NAMES.werkstatt })}
             </button>
             <button className="btn" onClick={onClose}>
-              Schließen
+              {tt('Schließen')}
             </button>
           </>
         ) : (

@@ -141,7 +141,7 @@ function SetupModal({ d, providers, onClose, onSaved }: { d: DomainBrief; provid
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button
             className="btn"
@@ -218,7 +218,7 @@ function DomainCard({ d, providers, onChanged }: { d: DomainBrief; providers: Ov
             {t('Anbieter')}
           </button>
           <button className="btn ghost" onClick={() => void remove()}>
-            Entfernen
+            {t('Entfernen')}
           </button>
         </div>
       </div>

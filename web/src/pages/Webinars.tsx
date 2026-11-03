@@ -33,10 +33,10 @@ function NewWebinar({ onClose }: { onClose: () => void }) {
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn" disabled={!title.trim() || busy} onClick={create}>
-            Anlegen
+            {t('Anlegen')}
           </button>
         </>
       }
@@ -120,7 +120,7 @@ function WebinarList() {
                     </Link>
                     <div className="muted small">{w.presenter_name || '–'}</div>
                   </td>
-                  <td>{w.status === 'published' ? <Badge tone="green">{t('Veröffentlicht')}</Badge> : <Badge>Entwurf</Badge>}</td>
+                  <td>{w.status === 'published' ? <Badge tone="green">{t('Veröffentlicht')}</Badge> : <Badge>{t('Entwurf')}</Badge>}</td>
                   <td>{w.next_session ? fmtSession(w.next_session, '') : w.status === 'published' ? t('Sofort / Just in time') : '–'}</td>
                   <td className="num">
                     {w.registrations}
@@ -130,9 +130,9 @@ function WebinarList() {
                   <td className="muted small">{dt(w.updated_at)}</td>
                   <td onClick={(e) => e.stopPropagation()}>
                     <div className="actions">
-                      {w.status === 'published' && <Copy text={w.url} label="Link" />}
+                      {w.status === 'published' && <Copy text={w.url} label={t('Link')} />}
                       <button className="btn small secondary" onClick={() => duplicate(w)}>
-                        Kopieren
+                        {t('Kopieren')}
                       </button>
                       <button className="icon-btn" aria-label={t('{title} löschen', { title: w.title })} onClick={() => remove(w)}>
                         <Icon name="trash" size={15} />

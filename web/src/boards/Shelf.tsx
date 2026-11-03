@@ -17,7 +17,7 @@ export function BoardShelf() {
           <Icon name="boards" size={16} /> Board-Vorlagen <span className="bd-badge">{list.length}</span>
         </h3>
         <Link to="boards/vorlagen" className="btn ghost small">
-          Alle ansehen
+          View all
         </Link>
       </header>
       <div className="bd-shelf-row">

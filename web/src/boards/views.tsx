@@ -45,7 +45,7 @@ function NumberView({ v }: { v: Extract<View, { kind: 'number' }> }) {
         <b>{show(v.value, v.format)}</b>
         {v.label && <span className="bd-num-label">{v.label}</span>}
         {d !== null && d !== undefined && (
-          <span className={`bd-delta ${d > 0 ? 'up' : d < 0 ? 'down' : ''}`} title="Veränderung zur Vorperiode">
+          <span className={`bd-delta ${d > 0 ? 'up' : d < 0 ? 'down' : ''}`} title="Change vs. previous period">
             {d > 0 ? '▲' : d < 0 ? '▼' : '='} {Math.abs(d).toLocaleString('de-DE', { maximumFractionDigits: 1 })} %
           </span>
         )}
@@ -121,7 +121,7 @@ function ListView({ v }: { v: Extract<View, { kind: 'list' }> }) {
       </ul>
       {v.total !== undefined && v.total > v.rows.length && (
         <Go url={v.url} className="bd-more">
-          Alle {v.total.toLocaleString('de-DE')} ansehen
+          View all {v.total.toLocaleString()}
         </Go>
       )}
     </div>
@@ -156,7 +156,7 @@ function TableView({ v }: { v: Extract<View, { kind: 'table' }> }) {
       </table>
       {v.total !== undefined && v.total > v.rows.length && (
         <Go url={v.url} className="bd-more">
-          Alle {v.total.toLocaleString('de-DE')} ansehen
+          View all {v.total.toLocaleString()}
         </Go>
       )}
     </div>
@@ -164,7 +164,7 @@ function TableView({ v }: { v: Extract<View, { kind: 'table' }> }) {
 }
 
 function KanbanView({ v }: { v: Extract<View, { kind: 'kanban' }> }) {
-  if (!v.columns.length) return <Quiet text={v.empty ?? 'Keine Phasen.'} />;
+  if (!v.columns.length) return <Quiet text={v.empty ?? 'No stages.'} />;
   return (
     <div className="bd-kanban">
       {v.columns.map((c) => (
@@ -191,7 +191,7 @@ function KanbanView({ v }: { v: Extract<View, { kind: 'kanban' }> }) {
 }
 
 function AgendaView({ v }: { v: Extract<View, { kind: 'agenda' }> }) {
-  if (!v.days.length) return <Quiet text={v.empty ?? 'Keine Termine.'} />;
+  if (!v.days.length) return <Quiet text={v.empty ?? 'No appointments.'} />;
   return (
     <div className="bd-agenda">
       {v.days.map((d) => (
@@ -264,7 +264,7 @@ export function ViewBody({ view, title, height, onChanged }: { view: View; title
           <AgentMarkdown text={view.text} />
         </div>
       ) : (
-        <Quiet text="Die Notiz ist noch leer. Öffne die Einstellungen, um Text zu schreiben." />
+        <Quiet text="This note is still empty. Open its settings to write something." />
       );
     case 'embed':
       return <Embed url={view.url} title={title} />;
@@ -286,7 +286,7 @@ export function ViewBody({ view, title, height, onChanged }: { view: View; title
     case 'locked':
       return <Quiet text={view.reason} icon="lock" />;
     default:
-      return <Quiet text="Dieses Widget lässt sich hier nicht darstellen." />;
+      return <Quiet text="This widget can’t be shown here." />;
   }
 }
 

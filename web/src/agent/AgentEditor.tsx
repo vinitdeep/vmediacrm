@@ -283,7 +283,7 @@ export function AgentEditor({ agent, onClose, onSaved }: { agent: any; onClose: 
                   <Input type="time" value={s.time} onChange={(v) => up({ time: v })} />
                 </Field>
                 {s.cadence === 'weekly' ? (
-                  <Field label="Tag">
+                  <Field label={tt('Tag')}>
                     <Select value={String(s.weekday ?? 0)} onChange={(v) => up({ weekday: Number(v) })} options={WEEKDAYS.map(([k, l]) => [k, tt(l)] as [string, string])} />
                   </Field>
                 ) : s.cadence === 'monthly' ? (

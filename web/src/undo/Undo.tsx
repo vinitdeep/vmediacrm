@@ -108,7 +108,7 @@ function ConflictDialog({ c, onClose }: { c: UndoConflict; onClose: () => void }
       footer={
         <>
           <button className="btn secondary undo-big" onClick={onClose} data-tour="undo-conflict-cancel">
-            Abbrechen
+            {tt('Abbrechen')}
           </button>
           <button
             className="btn undo-big"

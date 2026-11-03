@@ -455,7 +455,7 @@ function SequenceDetail({ id, tokens, onClose, onChanged }: { id: string; tokens
               <tbody>
                 {enr.data.map((e: any) => (
                   <tr key={e.id}>
-                    <td data-label="Kontakt">
+                    <td data-label={tx('Kontakt')}>
                       <a href={`/app/contacts/${e.contact_id}`}>{name(e)}</a>
                       <div className="muted small">{e.email}</div>
                     </td>
@@ -463,8 +463,8 @@ function SequenceDetail({ id, tokens, onClose, onChanged }: { id: string; tokens
                       <Badge tone={ENROLL_TONE[e.status]}>{tx(ENROLL_LABEL[e.status])}</Badge>
                       {e.stop_label && <div className="muted small">{e.stop_label}</div>}
                     </td>
-                    <td data-label="Nächster Schritt">{e.status === 'active' ? tx('Schritt {n} von {step_total} · {dt}', { n: e.step_index + 1, step_total: e.step_total, dt: dt(e.next_at) }) : e.status === 'waiting' ? e.note : '–'}</td>
-                    <td data-label="Absender">{e.user_name ?? '–'}</td>
+                    <td data-label={tx('Nächster Schritt')}>{e.status === 'active' ? tx('Schritt {n} von {step_total} · {dt}', { n: e.step_index + 1, step_total: e.step_total, dt: dt(e.next_at) }) : e.status === 'waiting' ? e.note : '–'}</td>
+                    <td data-label={tx('Absender')}>{e.user_name ?? '–'}</td>
                     <td className="r">
                       {(e.status === 'active' || e.status === 'waiting') && (
                         <button className="btn small secondary" onClick={async () => (await act(() => api.post(`/api/sequence-enrollments/${e.id}/stop`, {}), tx('Beendet'))) && (enr.reload(), seq.reload())}>
@@ -545,20 +545,20 @@ export function SalesSequences() {
             <tbody>
               {list.data.map((s) => (
                 <tr key={s.id} className="click" onClick={() => setOpen(s.id)} tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setOpen(s.id)}>
-                  <td data-label="Sequenz">
+                  <td data-label={tx('Sequenz')}>
                     <b>{s.name}</b>
                     {s.mode === 'individual' && <span className="muted small"> {tx('· Einzelkorrespondenz')}</span>}
                   </td>
                   <td data-label="Status">
                     <Badge tone={STATUS[s.status]?.[1] ?? 'gray'}>{tx(STATUS[s.status]?.[0] ?? '')}</Badge>
                   </td>
-                  <td className="r" data-label="Schritte">{s.steps}</td>
-                  <td className="r" data-label="Aufgenommen">
+                  <td className="r" data-label={tx('Schritte')}>{s.steps}</td>
+                  <td className="r" data-label={tx('Aufgenommen')}>
                     {s.enrolled} <span className="muted small">{tx('({active} aktiv)', { active: s.active })}</span>
                   </td>
-                  <td className="r" data-label="Gesendet">{s.sent}</td>
-                  <td className="r" data-label="Antworten">{s.replied}</td>
-                  <td className="r" data-label="Termine">{s.meetings}</td>
+                  <td className="r" data-label={tx('Gesendet')}>{s.sent}</td>
+                  <td className="r" data-label={tx('Antworten')}>{s.replied}</td>
+                  <td className="r" data-label={tx('Termine')}>{s.meetings}</td>
                 </tr>
               ))}
             </tbody>

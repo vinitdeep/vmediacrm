@@ -58,7 +58,7 @@ export function SpatialSuggest() {
       <button type="button" className="btn secondary small" onClick={close}>
         {t('Nein danke')}
       </button>
-      <button type="button" className="icon-btn" onClick={close} aria-label="Schließen">
+      <button type="button" className="icon-btn" onClick={close} aria-label={t('Schließen')}>
         ✕
       </button>
     </div>

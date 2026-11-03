@@ -295,7 +295,7 @@ export function PolicyTab() {
               <strong>{k.label}</strong> <code className="small">{k.id}</code>
             </span>
             <button className="btn ghost small" onClick={() => set({ trusted_keys: p.trusted_keys.filter((_, j) => j !== i) })}>
-              Entfernen
+              {t('Entfernen')}
             </button>
           </div>
         ))}
@@ -317,7 +317,7 @@ export function PolicyTab() {
       </div>
       <div className="actions" style={{ margin: '14px 0' }}>
         <button className="btn" disabled={busy} onClick={save}>
-          Speichern
+          {t('Speichern')}
         </button>
       </div>
       <SandboxCard s={l.data.sandbox} />
@@ -420,7 +420,7 @@ export function FlagsTab() {
                   <td>{f.on_for_me ? <Badge tone="green">an</Badge> : <Badge tone="gray">aus</Badge>}</td>
                   <td>
                     <button className="btn secondary small" onClick={() => setEdit(f)}>
-                      Bearbeiten
+                      {t('Bearbeiten')}
                     </button>
                   </td>
                 </tr>
@@ -471,14 +471,14 @@ function FlagModal({ flag, data, onClose, onDone }: { flag?: Flag; data: FlagDat
         <>
           {flag && (
             <button className="btn danger" style={{ marginRight: 'auto' }} onClick={() => confirmAsk(t('Flag löschen? Die Funktion gilt danach als ausgeschaltet.')) && act(() => api.del(`/api/flags/${flag.name}`), 'Gelöscht').then((x) => x && onDone())}>
-              Löschen
+              {t('Löschen')}
             </button>
           )}
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn" onClick={save}>
-            Speichern
+            {t('Speichern')}
           </button>
         </>
       }
@@ -488,7 +488,7 @@ function FlagModal({ flag, data, onClose, onDone }: { flag?: Flag; data: FlagDat
           <Input value={name} onChange={setName} placeholder="core.mein-feature" />
         </Field>
       )}
-      <Field label="Beschreibung">
+      <Field label={t('Beschreibung')}>
         <Input value={desc} onChange={setDesc} />
       </Field>
       <Field label={t('Stufe')} hint={t('Jede Stufe schließt die davor ein.')}>
@@ -614,7 +614,7 @@ function CoreCard({ r, onChange }: { r: CoreRow; onChange: () => void }) {
             <Select value={action} onChange={setAction} options={[['migrate', 'Plugin ausschalten, Daten behalten'], ['retire', t('Plugin und Installationen entfernen')]]} />
           </Field>
           <button className="btn secondary small" onClick={() => run(() => api.put(`/api/werkstatt/core/${r.id}`, { target_version: target, core_action: action }), 'Gespeichert')}>
-            Speichern
+            {t('Speichern')}
           </button>
         </div>
       )}
@@ -643,7 +643,7 @@ function CoreCard({ r, onChange }: { r: CoreRow; onChange: () => void }) {
           </button>
         )}
         <button className="btn ghost small" onClick={() => confirmAsk(t('Vorschlag entfernen?')) && run(() => api.del(`/api/werkstatt/core/${r.id}`), t('Entfernt'))}>
-          Entfernen
+          {t('Entfernen')}
         </button>
       </div>
       {ship && <ShipModal r={r} action={action} onClose={() => setShip(false)} onDone={() => (setShip(false), onChange())} />}
@@ -661,7 +661,7 @@ function ShipModal({ r, action, onClose, onDone }: { r: CoreRow; action: string;
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn" disabled={!/^\d+\.\d+\.\d+$/.test(version)} onClick={async () => (await act(() => api.post(`/api/werkstatt/core/${r.id}/ship`, { version, action }), t('Als „im Kern enthalten“ markiert'))) && onDone()}>
             {t('Bestätigen')}
@@ -708,7 +708,7 @@ export function CoreProposalModal({ plugin, onClose, onDone }: { plugin: { id: s
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn" disabled={busy} onClick={go}>
             <Icon name="rocket" size={14} /> {busy ? t('Spezifikation wird erstellt …') : t('Vorschlagen')}

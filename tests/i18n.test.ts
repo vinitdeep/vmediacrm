@@ -175,8 +175,9 @@ describe('the check (npm run i18n:check)', () => {
     const r = scanSource('a.tsx', src);
     expect(r.calls.map((c: any) => c.key)).toEqual(['Gespeichert', '{n} ausgewählt', '{n} Dateien']);
     expect(r.untranslated.map((u: any) => u.text).sort()).toEqual(['Eigene Ansicht', 'In Bearbeitung', 'Noch nichts da.'].sort());
-    // a catalog entry makes a dynamically shown text (menu labels, states) count as translated
-    expect(scanSource('a.tsx', src, { catalogKeys: new Set(['In Bearbeitung', 'Eigene Ansicht', 'Noch nichts da.']) }).untranslated).toEqual([]);
+    // a catalog entry makes a dynamically shown text (menu labels, states) count as translated – but not text written
+    // straight into JSX or an attribute: that is rendered as it is, so it stays German whatever the catalogs say
+    expect(scanSource('a.tsx', src, { catalogKeys: new Set(['In Bearbeitung', 'Eigene Ansicht', 'Noch nichts da.']) }).untranslated.map((u: any) => u.text).sort()).toEqual(['Eigene Ansicht', 'Noch nichts da.']);
     // part of a file: only the named components are checked
     expect(scanSource('a.tsx', src, { only: new Set(['B']) }).untranslated.map((u: any) => u.text)).toEqual([]);
   });

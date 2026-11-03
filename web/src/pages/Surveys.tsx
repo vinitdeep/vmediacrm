@@ -58,9 +58,9 @@ function Csat() {
               <tr>
                 <th>{t('Bewertung')}</th>
                 <th>{t('Ticket')}</th>
-                <th>Kontakt</th>
+                <th>{t('Kontakt')}</th>
                 <th>{t('Zuständig')}</th>
-                <th>Datum</th>
+                <th>{t('Datum')}</th>
               </tr>
             </thead>
             <tbody>
@@ -109,7 +109,7 @@ function CampaignModal({ c, onClose, onSaved }: { c?: any; onClose: () => void; 
     if (await act(() => (c ? api.patch(`/api/surveys/nps/${c.id}`, body) : api.post('/api/surveys/nps', body)), 'Gespeichert')) onSaved();
   };
   return (
-    <Modal title={c ? t('NPS-Umfrage bearbeiten') : t('Neue NPS-Umfrage')} onClose={onClose} wide footer={<button className="btn" onClick={save}>Speichern</button>}>
+    <Modal title={c ? t('NPS-Umfrage bearbeiten') : t('Neue NPS-Umfrage')} onClose={onClose} wide footer={<button className="btn" onClick={save}>{t('Speichern')}</button>}>
       <div className="grid2">
         <Field label={t('Name (intern)')}>
           <Input value={f.name} onChange={(v) => setF({ ...f, name: v })} placeholder={t('NPS Herbst')} autoFocus />
@@ -126,7 +126,7 @@ function CampaignModal({ c, onClose, onSaved }: { c?: any; onClose: () => void; 
           <Input value={f.subject} onChange={(v) => setF({ ...f, subject: v })} />
         </Field>
       )}
-      <Field label={t('Nachricht')} hint="{{nps_link}} wird zum persönlichen Umfrage-Link; außerdem {{contact.first_name}}, {{location.name}}. Kontakte mit „Nicht stören“ bekommen nichts.">
+      <Field label={t('Nachricht')} hint="{{nps_link}} becomes the personal survey link; also {{contact.first_name}}, {{location.name}}. Contacts with “Do not disturb” get nothing.">
         <Textarea value={f.body} onChange={(v) => setF({ ...f, body: v })} rows={7} />
       </Field>
       <MoreFields id="nps-campaign" values={[f.question !== t(NPS_QUESTION) && f.question, f.smart_list_id]}>
@@ -230,10 +230,10 @@ function Nps() {
                   {t('Antworten')}
                 </button>
                 <button className="btn small secondary" onClick={() => setModal({ kind: 'edit', c })}>
-                  Bearbeiten
+                  {t('Bearbeiten')}
                 </button>
                 <button className="btn small ghost" onClick={async () => confirmAsk(t('„{name}“ samt Antworten löschen?', { name: c.name })) && (await act(() => api.del(`/api/surveys/nps/${c.id}`))) && list.reload()}>
-                  Löschen
+                  {t('Löschen')}
                 </button>
               </div>
             </div>

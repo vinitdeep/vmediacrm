@@ -54,7 +54,7 @@ export function ConsentModal({ title, intro, scopes, confirm, busy, onConfirm, o
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn" data-tour="wk-consent-ok" disabled={!ok || busy} onClick={onConfirm}>
             {confirm}

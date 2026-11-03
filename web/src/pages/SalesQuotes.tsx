@@ -368,7 +368,7 @@ export function SalesQuotes() {
             <tbody>
               {list.data.map((x) => (
                 <tr key={x.id} className="click" tabIndex={0} onClick={() => setOpen(x.id)} onKeyDown={(e) => e.key === 'Enter' && setOpen(x.id)}>
-                  <td data-label="Angebot">
+                  <td data-label={tx('Angebot')}>
                     <b>{x.number || tx('Entwurf')}</b> {x.title}
                     <div className="muted small">{tx('Deal „{name}“', { name: x.deal?.name })}{x.revision > 1 ? tx(' · Version {revision}', { revision: x.revision }) : ''}</div>
                   </td>
@@ -376,9 +376,9 @@ export function SalesQuotes() {
                     <StatusBadge status={x.status} label={x.expired && x.status !== 'expired' ? tx('Abgelaufen') : x.status_label} />
                     {x.paid_at && <Badge tone="green">{tx('bezahlt')}</Badge>}
                   </td>
-                  <td data-label="Kontakt">{x.contact?.name ?? '–'}</td>
-                  <td className="r" data-label="Summe">{eur(x.total_cents, x.currency)}</td>
-                  <td data-label="Gültig bis">{x.valid_until ? d(`${x.valid_until}T12:00:00`) : '–'}</td>
+                  <td data-label={tx('Kontakt')}>{x.contact?.name ?? '–'}</td>
+                  <td className="r" data-label={tx('Summe')}>{eur(x.total_cents, x.currency)}</td>
+                  <td data-label={tx('Gültig bis')}>{x.valid_until ? d(`${x.valid_until}T12:00:00`) : '–'}</td>
                 </tr>
               ))}
             </tbody>

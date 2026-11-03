@@ -153,10 +153,10 @@ function AccentPicker({ p, lock }: { p: Prefs; lock: boolean }) {
       </div>
       <div className="ap-accent-preview" data-tour="appearance-accent-preview">
         <button className="btn" type="button">
-          Speichern
+          {tt('Speichern')}
         </button>
         <button className="btn secondary" type="button">
-          Abbrechen
+          {tt('Abbrechen')}
         </button>
         <a href="#" onClick={(e) => e.preventDefault()}>
           {tt('Ein Link')}
@@ -255,7 +255,7 @@ function Modules({ p, lock }: { p: Prefs; lock: boolean }) {
               {tt('„{label}“ übernehmen', { label: pick.label })}
             </button>
             <button className="btn secondary" onClick={() => setPick(null)}>
-              Abbrechen
+              {tt('Abbrechen')}
             </button>
           </div>
         </div>

@@ -286,7 +286,7 @@ function ImportModal({ onClose, onDone }: { onClose: () => void; onDone: (id: st
         pv ? (
           <>
             <button className="btn secondary" onClick={() => setPv(undefined)}>
-              Zurück
+              {t('Zurück')}
             </button>
             <button className="btn" disabled={!ok || busy || pv.signature.state === 'invalid' || pv.pro_required || (pv.signature.state !== 'signed' && !unverified)} onClick={run}>
               {t('Importieren')}
@@ -369,7 +369,7 @@ export function PluginDetail({ id }: { id: string }) {
       <PageHead title={p.name} sub={p.description}>
         {p.active_here && p.enabled_here && mf?.entries.page && (
           <Link to={`plugin/${p.id}`} className="btn">
-            <Icon name="play" size={14} /> Öffnen
+            <Icon name="play" size={14} /> {t('Öffnen')}
           </Link>
         )}
         {manage && p.status === 'active' && (
@@ -594,7 +594,7 @@ export function PluginDetail({ id }: { id: string }) {
         )}
         {manage && (
           <button className="btn danger small" onClick={() => confirmAsk(t('„{name}“ mit allen Versionen endgültig löschen?', { name: p.name })) && act(() => api.del(`/api/plugins/${p.id}`), 'Gelöscht').then((x) => x && (void refreshPlugins(), navigate('werkstatt/plugins')))}>
-            Löschen
+            {t('Löschen')}
           </button>
         )}
         {p.wish && (
@@ -642,7 +642,7 @@ function ChangeModal({ p, onClose }: { p: PluginFull; onClose: () => void }) {
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn" disabled={busy || text.trim().length < 5} onClick={go}>
             <Icon name="hammer" size={14} /> {t('Neue Version bauen')}
@@ -683,7 +683,7 @@ function UninstallModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => 
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn danger" disabled={busy} onClick={go}>
             {t('Deinstallieren')}
@@ -707,7 +707,7 @@ function KillModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => void;
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn danger" onClick={async () => (await act(() => api.post(`/api/plugins/${p.id}/kill`, { reason }), t('Abgeschaltet'))) && onDone()}>
             {t('Sofort abschalten')}
@@ -747,7 +747,7 @@ function RollbackModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => v
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn" data-tour="wk-rollback-ok" disabled={busy || !target} onClick={go}>
             <Icon name="undo" size={14} /> {t('Zurückrollen')}

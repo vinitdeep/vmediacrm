@@ -245,7 +245,7 @@ function Rules({ tab }: { tab: string }) {
       )}
       <div className="tx-savebar">
         <button type="button" className="tx-btn primary" disabled={!dirty} onClick={save} data-tour="inbox-save">
-          Speichern
+          {tt('Speichern')}
         </button>
         {dirty && <span className="muted small">{tt('Ungespeicherte Änderungen')}</span>}
       </div>
@@ -315,7 +315,7 @@ function People() {
                 <Badge tone={tone}>{text}</Badge>
                 {!p.me && mayEditOthers && (
                   <button type="button" className="tx-btn" onClick={() => setEdit(p.id)}>
-                    Bearbeiten
+                    {tt('Bearbeiten')}
                   </button>
                 )}
               </div>
@@ -383,7 +383,7 @@ function Availability({ userId, onChanged }: { userId: string; onChanged: () => 
                 if (await act(() => api.del(`/api/team-people/away/${a.id}`))) (av.reload(), onChanged());
               }}
             >
-              Entfernen
+              {tt('Entfernen')}
             </button>
           )}
         </div>

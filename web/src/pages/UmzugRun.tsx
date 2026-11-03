@@ -48,7 +48,7 @@ function UndoModal({ job, onClose, onConfirm }: { job: Job; onClose: () => void;
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn danger" onClick={onConfirm} data-tour="um-undo-confirm">
             {t('Rückgängig machen')}
@@ -257,7 +257,7 @@ export function UmzugHistory({ jobs, onOpen }: { jobs: Job[]; onOpen: (j: Job) =
           <thead>
             <tr>
               <th>{t('Wann')}</th>
-              <th>Quelle</th>
+              <th>{t('Quelle')}</th>
               <th>{t('Art')}</th>
               <th>Status</th>
               <th>{t('Ergebnis')}</th>
@@ -279,7 +279,7 @@ export function UmzugHistory({ jobs, onOpen }: { jobs: Job[]; onOpen: (j: Job) =
                   <td className="muted small">{j.report.length ? t('{total} Datensätze', { total }) : j.error ? t('Fehler') : '–'}</td>
                   <td>
                     <button className="btn small secondary" onClick={() => onOpen(j)}>
-                      Öffnen
+                      {t('Öffnen')}
                     </button>
                   </td>
                 </tr>

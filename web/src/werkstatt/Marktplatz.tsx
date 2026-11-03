@@ -116,7 +116,7 @@ function MarktList() {
       </div>
       <div className="chips" data-tour="mk-categories" style={{ marginBottom: 14 }}>
         <button className={`chip${cat === '' ? ' on' : ''}`} onClick={() => setCat('')}>
-          Alle
+          {tt('Alle')}
         </button>
         {(d?.categories ?? []).map((c) => (
           <button key={c.key} className={`chip${cat === c.key ? ' on' : ''}`} onClick={() => setCat(c.key)} disabled={!c.count && cat !== c.key}>
@@ -399,7 +399,7 @@ function UpdateModal({ p, onClose, onDone }: { p: Detail; onClose: () => void; o
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {tt('Abbrechen')}
           </button>
           <button className="btn" disabled={busy} onClick={go}>
             {tt('Aktualisieren')}
@@ -423,10 +423,10 @@ function ShotModal({ id, onClose, onDone }: { id: string; onClose: () => void; o
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {tt('Abbrechen')}
           </button>
           <button className="btn" disabled={!img} onClick={async () => (await act(() => api.post(`/api/marktplatz/${id}/screenshots`, { image: img }), tt('Bild gespeichert'))) && onDone()}>
-            Speichern
+            {tt('Speichern')}
           </button>
         </>
       }
@@ -500,7 +500,7 @@ function ReviewsCard({ p, reviews, admin, onChange }: { p: Detail; reviews: Revi
             </button>
             {p.my_review && (
               <button className="btn ghost small" onClick={async () => (await act(() => api.del(`/api/marktplatz/${p.id}/reviews`), tt('Bewertung gelöscht'))) && (setRating(0), setText(''), onChange())}>
-                Löschen
+                {tt('Löschen')}
               </button>
             )}
           </div>
@@ -517,7 +517,7 @@ function ReviewsCard({ p, reviews, admin, onChange }: { p: Detail; reviews: Revi
               <Stars value={x.rating} /> <span className="muted small">{x.author || tt('Jemand')} · {ago(x.updated_at)}</span>
               {admin && !x.mine && (
                 <button className="btn ghost small" onClick={() => confirmAsk(tt('Bewertung löschen?')) && act(() => api.del(`/api/marktplatz/${p.id}/reviews?review=${x.id}`)).then((r) => r && onChange())}>
-                  Löschen
+                  {tt('Löschen')}
                 </button>
               )}
               {x.body && <p>{x.body}</p>}
@@ -681,7 +681,7 @@ export function PublishModal({ plugin, onClose, onDone }: { plugin: { id: string
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {tt('Abbrechen')}
           </button>
           {review && (
             <button className="btn secondary" disabled={busy} onClick={run}>

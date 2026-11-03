@@ -105,14 +105,14 @@ export function SalesQuotas() {
           {list.map((r) => (
             <tr key={`${r.scope}${r.subject_id}`}>
               <td data-label="Name"><b>{r.name}</b></td>
-              <td className="r" data-label="Ziel">{fmt(r.target)}</td>
-              <td className="r" data-label="Erreicht">{fmt(r.achieved)}</td>
-              <td data-label="Erreichung">
+              <td className="r" data-label={tx('Ziel')}>{fmt(r.target)}</td>
+              <td className="r" data-label={tx('Erreicht')}>{fmt(r.achieved)}</td>
+              <td data-label={tx('Erreichung')}>
                 <Bar pct={r.attainment_pct} tone={BAR_TONE[r.pace]} /> <span className="small" style={{ whiteSpace: 'nowrap' }}>{r.attainment_pct === null ? '–' : `${r.attainment_pct} %`}</span>
               </td>
-              <td data-label="Stand"><Badge tone={PACE_TONE[r.pace]}>{r.pace_label}</Badge></td>
+              <td data-label={tx('Stand')}><Badge tone={PACE_TONE[r.pace]}>{r.pace_label}</Badge></td>
               <td className="r" data-label="Pipeline">{money ? eur(r.weighted_pipeline * 100, data.currency) : '–'}</td>
-              <td className="r" data-label="Fehlt noch">{r.gap === null ? '–' : fmt(r.gap)}</td>
+              <td className="r" data-label={tx('Fehlt noch')}>{r.gap === null ? '–' : fmt(r.gap)}</td>
             </tr>
           ))}
         </tbody>

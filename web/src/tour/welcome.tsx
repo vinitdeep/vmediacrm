@@ -32,7 +32,7 @@ export function AcademyWelcome({ compact, onStart }: { compact?: boolean; onStar
     learn(FIRST_TOUR);
   };
   return (
-    <div className={`academy-welcome${compact ? ' compact' : ''}`} role="region" aria-label="Academy" data-tour="academy-welcome">
+    <div className={`academy-welcome${compact ? ' compact' : ''}`} role="region" aria-label={t('Academy')} data-tour="academy-welcome">
       <Icon name="academy" size={compact ? 20 : 26} />
       <div className="grow">
         <strong>{t('In 10 Minuten startklar – Academy starten')}</strong>

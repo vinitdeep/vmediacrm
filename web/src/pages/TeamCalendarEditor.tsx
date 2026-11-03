@@ -391,7 +391,7 @@ function Waitlist({ calId }: { calId: string }) {
               if (await act(() => api.del(`/api/team-calendars/waitlist/${w.id}`))) void list.reload();
             }}
           >
-            Entfernen
+            {tt('Entfernen')}
           </button>
         </div>
       ))}
@@ -517,13 +517,13 @@ export function RoutingForms({ calendars }: { calendars: any[] }) {
                   {tt('Öffnen ↗')}
                 </a>
                 <button className="tx-btn" onClick={() => setEdit(r)}>
-                  Bearbeiten
+                  {tt('Bearbeiten')}
                 </button>
                 <button className="tx-btn" onClick={() => act(() => api.patch(`/api/team-routing/${r.id}`, { active: !r.active })).then(list.reload)}>
                   {r.active ? tt('Deaktivieren') : tt('Aktivieren')}
                 </button>
                 <button className="tx-btn danger" onClick={() => confirmAsk(tt('„{name}“ löschen?', { name: r.name })) && act(() => api.del(`/api/team-routing/${r.id}`)).then(list.reload)}>
-                  Löschen
+                  {tt('Löschen')}
                 </button>
               </div>
             </div>
@@ -559,7 +559,7 @@ function RouteEditor({ route, calendars, onClose, onSaved }: { route: any; calen
       onClose={onClose}
       footer={
         <button className="tx-btn primary" onClick={save}>
-          Speichern
+          {tt('Speichern')}
         </button>
       }
     >
@@ -568,7 +568,7 @@ function RouteEditor({ route, calendars, onClose, onSaved }: { route: any; calen
           <Field label={tt('Name (nur für dich)')}>
             <Input value={r.name} onChange={(v) => setR({ ...r, name: v })} placeholder={tt('Anliegen')} />
           </Field>
-          <Field label="Farbe">
+          <Field label={tt('Farbe')}>
             <input type="color" value={r.color} onChange={(e) => setR({ ...r, color: e.target.value })} />
           </Field>
         </div>

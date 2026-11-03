@@ -105,7 +105,7 @@ export function readCatalog(rel, root = repoRoot) {
   return out;
 }
 
-const UI_ATTRS = new Set(['title', 'placeholder', 'aria-label', 'alt', 'label', 'hint', 'sub', 'empty', 'text', 'message', 'tooltip', 'heading', 'description', 'caption', 'aria-description', 'aria-valuetext', 'confirm', 'aria']);
+const UI_ATTRS = new Set(['title', 'data-label', 'placeholder', 'aria-label', 'alt', 'label', 'hint', 'sub', 'empty', 'text', 'message', 'tooltip', 'heading', 'description', 'caption', 'aria-description', 'aria-valuetext', 'confirm', 'aria']);
 const CODE_ATTRS = /^(className|class|key|tour|href|to|src|type|id|name|role|rel|target|autoComplete|inputMode|htmlFor|method|icon|tone|kind|size|variant|mode|align|value|defaultValue|lang|dept|accept|pattern|d|viewBox|fill|stroke|xmlns|loading|style|width|height|min|max|step|form|data-.*|aria-(hidden|current|live|expanded|haspopup|controls|selected|pressed|busy|modal|checked|orientation))$/;
 const UI_CALLS = new Set(['toast', 'confirmAsk', 'confirm', 'alert', 'prompt', 'setErr', 'setError', 'setMsg', 'setWaiting', 'Error']);
 const CODE_CALLS = /^(console\.\w+|api\.\w+|navigate|fetch|addEventListener|removeEventListener|dispatchEvent|Event|CustomEvent|querySelector(All)?|getElementById|matchMedia|setItem|getItem|removeItem|setAttribute|getAttribute|Intl\.\w+|RegExp|require|import|preload|whenIdle|lazyPages|useT|tr|setLocation|history\.\w+|split|join|replace|includes|startsWith|endsWith|indexOf|test|match|toLocaleString|toLocaleDateString|toLocaleTimeString|announce|report|add)$/;
@@ -150,12 +150,14 @@ export function scanSource(rel, src, { catalogKeys = new Set(), scan = true, onl
     if (ts.isVariableStatement(n)) return n.declarationList.declarations.map((d) => (ts.isIdentifier(d.name) ? d.name.text : '')).join(',');
     return '';
   };
-  const report = (node, text, why) => {
+  const report = (node, text, why, direct = false) => {
     if (!inScope(node)) return;
     const s = text.replace(/\s+/g, ' ').trim();
     // merge tags ({{contact.first_name}}) and placeholders are code, not words
     const words = s.replace(/\{\{[^}]*\}\}|\{\w+\}/g, ' ');
-    if (!/\p{L}.*\p{L}/u.test(words) || ALLOW.has(s) || catalogKeys.has(s) || ignored(node)) return;
+    // A catalog entry only helps text that goes through a translator: JSX text and attributes are rendered as they are,
+    // so a German label there stays German even when some catalog knows it ("Speichern" in a <button>).
+    if (!/\p{L}.*\p{L}/u.test(words) || ALLOW.has(s) || (catalogKeys.has(s) && !direct) || ignored(node)) return;
     // examples and code-like values: import-2026, smtp.example.com, +49…, https://…
     if (/^[a-z0-9._@:/+#=?&%~…-]+$/.test(s) || /^<[a-z][\s\S]*>$/i.test(s) || /^[{[]["{[]/.test(s)) return;
     untranslated.push({ line: lineOf(sf, node), text: s, why });
@@ -206,16 +208,16 @@ export function scanSource(rel, src, { catalogKeys = new Set(), scan = true, onl
       // the message id itself (and plural forms) are what the catalogs translate
       n.forEachChild((c) => void keyNodes.add(c));
     } else if (scan) {
-      if (ts.isJsxText(n)) report(n, n.text, 'JSX text');
+      if (ts.isJsxText(n)) report(n, n.text, 'JSX text', true);
       const s = textOf(n);
       if (s !== undefined || ts.isTemplateExpression(n)) {
         const text = s ?? [n.head.text, ...n.templateSpans.map((x) => x.literal.text)].join('…');
         if (!(ts.isTemplateExpression(n.parent) || ts.isTemplateSpan(n.parent))) {
           const c = context(n);
           if (c.kind === 'attr') {
-            if (UI_ATTRS.has(c.name)) report(n, text, `attribute ${c.name}`);
+            if (UI_ATTRS.has(c.name)) report(n, text, `attribute ${c.name}`, ts.isStringLiteral(n) && ts.isJsxAttribute(n.parent));
             else if (!CODE_ATTRS.test(c.name) && GERMAN.test(text)) report(n, text, `attribute ${c.name}`);
-          } else if (c.kind === 'jsx' || c.kind === 'ui') report(n, text, c.kind === 'jsx' ? 'rendered text' : 'message');
+          } else if (c.kind === 'jsx' || c.kind === 'ui') report(n, text, c.kind === 'jsx' ? 'rendered text' : 'message', c.kind === 'jsx' && ts.isJsxExpression(n.parent));
           else if (c.kind !== 'code' && (GERMAN.test(text) || (c.kind === 'data' && NOUN.test(text.trim())))) report(n, text, 'German text');
         }
       }

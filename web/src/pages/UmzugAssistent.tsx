@@ -321,7 +321,7 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
 
           <div className="um-actions um-sticky">
             <button className="btn ghost" onClick={() => setStep('connect')}>
-              Zurück
+              {t('Zurück')}
             </button>
             <button className="btn secondary" disabled={!parts.length || !!busy} onClick={() => void launch('dry-run')} data-tour="um-dryrun">
               {busy === 'dry-run' ? t('Startet …') : t('Probelauf starten')}
@@ -357,7 +357,7 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
           footer={
             <>
               <button className="btn secondary" onClick={() => setConfirm(false)}>
-                Abbrechen
+                {t('Abbrechen')}
               </button>
               <button className="btn" disabled={!!busy} onClick={() => void launch('jobs')} data-tour="um-confirm-start">
                 {busy === 'jobs' ? t('Startet …') : t('Umzug starten')}

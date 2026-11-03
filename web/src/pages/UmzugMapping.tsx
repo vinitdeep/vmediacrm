@@ -34,7 +34,7 @@ function NewFieldModal({ field, initial, onSave, onClose }: { field: SourceField
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {tt('Abbrechen')}
           </button>
           <button className="btn" disabled={!ok} onClick={() => onSave({ label: label.trim().replace(/:/g, ' ').slice(0, 100), type })} data-tour="um-newfield-save">
             {tt('Übernehmen')}
@@ -123,7 +123,7 @@ export function UmzugMapping({ fields, mapping, custom, onChange, disabled }: { 
                     </select>
                     {isNew && !disabled && (
                       <button className="btn small ghost" onClick={() => setEditing(f)}>
-                        Bearbeiten
+                        {tt('Bearbeiten')}
                       </button>
                     )}
                   </td>

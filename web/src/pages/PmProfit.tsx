@@ -168,23 +168,23 @@ function Overview() {
                         {x.revenue_retainer_open_hours > 0 && <div className="jc-hint">{hoursText(x.revenue_retainer_open_hours)} {t('im laufenden Retainer')}</div>}
                         {x.missing_cost_rate && <div className="jc-hint">{t('Kostensatz fehlt')}</div>}
                       </td>
-                      <td className="r" data-label="Stunden">
+                      <td className="r" data-label={t('Stunden')}>
                         {hoursText(x.hours)}
                       </td>
-                      <td className="r" data-label="Umsatz abgerechnet">
+                      <td className="r" data-label={t('Umsatz abgerechnet')}>
                         {money(x.revenue_invoiced_cents)}
                       </td>
-                      <td className="r" data-label="Umsatz offen">
+                      <td className="r" data-label={t('Umsatz offen')}>
                         {money(x.revenue_unbilled_cents)}
                       </td>
-                      <td className="r" data-label="Kosten">
+                      <td className="r" data-label={t('Kosten')}>
                         {money(x.cost_cents)}
                         {x.external_cost_cents > 0 && <div className="jc-hint">{t('davon Fremdkosten')} {money(x.external_cost_cents)}</div>}
                       </td>
-                      <td className={`r${x.margin_cents < 0 ? ' jc-neg' : ''}`} data-label="Marge">
+                      <td className={`r${x.margin_cents < 0 ? ' jc-neg' : ''}`} data-label={t('Marge')}>
                         {money(x.margin_cents)}
                       </td>
-                      <td className={`r${(x.margin_percent ?? 0) < 0 ? ' jc-neg' : ''}`} data-label="Marge %">
+                      <td className={`r${(x.margin_percent ?? 0) < 0 ? ' jc-neg' : ''}`} data-label={t('Marge %')}>
                         {pct(x.margin_percent)}
                       </td>
                     </tr>
@@ -446,20 +446,20 @@ function RetainerModal({ id, manager, onClose, onEdit, onChanged }: { id: string
                 <tbody>
                   {x.periods.map((p: any) => (
                     <tr key={p.id}>
-                      <td data-label="Monat">{p.label}</td>
-                      <td className="r" data-label="Verfügbar">
+                      <td data-label={t('Monat')}>{p.label}</td>
+                      <td className="r" data-label={t('Verfügbar')}>
                         {hoursText(p.available_hours)}
                       </td>
-                      <td className="r" data-label="Genutzt">
+                      <td className="r" data-label={t('Genutzt')}>
                         {hoursText(p.used_hours)}
                       </td>
-                      <td className="r" data-label="Mehrstunden">
+                      <td className="r" data-label={t('Mehrstunden')}>
                         {hoursText(p.overage_hours)}
                       </td>
-                      <td className="r" data-label="Übertrag">
+                      <td className="r" data-label={t('Übertrag')}>
                         {hoursText(p.carry_out_hours)}
                       </td>
-                      <td data-label="Rechnung">
+                      <td data-label={t('Rechnung')}>
                         {p.void ? (
                           <span className="jc-state over">{t('storniert – erneut abschließbar')}</span>
                         ) : p.invoice ? (

@@ -111,8 +111,8 @@ function PageForm({ group, data, onSaved }: { group: any; data: any; onSaved: ()
         <Field label={tt('Video (YouTube, Vimeo, Loom oder MP4-Link)')}>
           <Input value={f.video_url} onChange={(v) => set({ video_url: v })} placeholder="https://www.youtube.com/watch?v=…" />
         </Field>
-        <Field label="Über uns (Markdown)">
-          <MarkdownEditor value={f.about} onChange={(v) => set({ about: v })} rows={10} label="Über uns (Markdown)" />
+        <Field label={tt('Über uns (Markdown)')}>
+          <MarkdownEditor value={f.about} onChange={(v) => set({ about: v })} rows={10} label={tt('Über uns (Markdown)')} />
         </Field>
         <div className="cma-actions">
           <button className="btn" onClick={save}>{tt('Speichern')}</button>

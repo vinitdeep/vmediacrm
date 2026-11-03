@@ -115,7 +115,7 @@ export function BasicsTab({ form, set, w, reload }: TabProps & { reload: () => v
         <Field label={tt('Titel *')} tour="webinar-title">
           <Input value={form.title} onChange={(v) => set('title', v)} maxLength={160} />
         </Field>
-        <Field label="Beschreibung" hint={tt('Erscheint auf der Anmeldeseite. Leerzeilen trennen Absätze.')}>
+        <Field label={tt('Beschreibung')} hint={tt('Erscheint auf der Anmeldeseite. Leerzeilen trennen Absätze.')}>
           <Textarea value={form.description} onChange={(v) => set('description', v)} rows={5} />
         </Field>
         <Field label={tt('Vortragende:r')}>
@@ -171,12 +171,13 @@ function WeekdayChips({ value, onChange }: { value: string[]; onChange: (v: stri
 }
 
 function ListEditor({ items, onChange, render, blank, add }: { items: string[]; onChange: (v: string[]) => void; render: (v: string, set: (x: string) => void) => React.ReactNode; blank: string; add: string }) {
+  const tt = useT('b7webinar');
   return (
     <div className="wb-list">
       {items.map((it, i) => (
         <div className="wb-line" key={i}>
           {render(it, (x) => onChange(items.map((y, j) => (j === i ? x : y))))}
-          <button type="button" className="icon-btn" aria-label="Entfernen" onClick={() => onChange(items.filter((_, j) => j !== i))}>
+          <button type="button" className="icon-btn" aria-label={tt('Entfernen')} onClick={() => onChange(items.filter((_, j) => j !== i))}>
             ✕
           </button>
         </div>
@@ -381,7 +382,7 @@ export function RegistrationTab({ form, set, w }: TabProps) {
         )}
       </Section>
       <Section title={tt('Einbinden')} hint={tt('Die Anmeldeseite lässt sich direkt verlinken oder als Block „HTML“ in eine Funnel-Seite einbetten – sie passt ihre Höhe selbst an.')}>
-        <Field label="Link">
+        <Field label={tt('Link')}>
           <CodeBox text={w.urls?.page ?? ''} />
         </Field>
         <Field label={tt('Einbettungs-Code für eine Funnel-Seite')}>
