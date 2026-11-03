@@ -1,4 +1,5 @@
 import { api } from '../api';
+import { ENGLISH_ONLY } from './registry';
 import { browserLocale, isLocale, setLocale, storedLocale, type Locale, type Namespace } from './index';
 
 /**
@@ -14,6 +15,7 @@ let pickedSignedOut: Locale | null = null;
 const save = (lang: Locale | null) => api.put('/api/me/language', { lang }).catch(() => undefined);
 
 export async function startSignedIn(user: { lang?: unknown }, also: Namespace[] = []): Promise<void> {
+  if (ENGLISH_ONLY) return setLocale('en', { remember: false, also });
   const saved = isLocale(user.lang) ? user.lang : null;
   // A choice made on this device before signing in (login screen) wins and becomes the profile's language.
   const local = pickedSignedOut ?? (saved ? null : storedLocale());
@@ -24,6 +26,7 @@ export async function startSignedIn(user: { lang?: unknown }, also: Namespace[] 
 }
 
 export async function startSignedOut(also: Namespace[] = []): Promise<void> {
+  if (ENGLISH_ONLY) return setLocale('en', { remember: false, also });
   const lang = storedLocale() ?? (await api.get<{ lang?: string }>('/api/language').then((r) => (isLocale(r?.lang) ? r.lang : browserLocale()), () => browserLocale()));
   await setLocale(lang, { remember: false, also });
 }

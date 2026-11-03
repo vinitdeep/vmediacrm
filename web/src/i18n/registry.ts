@@ -28,6 +28,8 @@ export type Locale = keyof typeof LOCALES;
 export const SOURCE_LOCALE = 'de' satisfies Locale;
 /** The UI language when the browser asks for none we have (V Media CRM: an Indian agency – English, German stays selectable). */
 export const FALLBACK_LOCALE = 'en' satisfies Locale;
+/** V Media CRM runs in English only: every person, every device, no language switch. German stays the source text. */
+export const ENGLISH_ONLY = true;
 
 /**
  * Namespaces: the texts of a group of files (paths relative to web/src). `complete: true` means every text in those files

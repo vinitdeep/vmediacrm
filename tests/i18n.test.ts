@@ -116,18 +116,19 @@ describe('the language preference on the server', () => {
   });
   afterAll(() => t.close());
 
-  it('reads Accept-Language with weights for the login page', async () => {
+  it('answers English whatever the browser asks for (V Media CRM is English only)', async () => {
     expect(serverPick('en-US,en;q=0.9,de;q=0.8')).toBe('en');
     expect(serverPick('de-CH;q=0.5, en;q=0.8')).toBe('en');
     expect(serverPick('fr-FR,fr;q=0.9')).toBe('en');
     expect(serverPick('hi-IN,hi;q=0.9')).toBe('en');
-    expect(serverPick('en;q=0, de')).toBe('de');
+    expect(serverPick('en;q=0, de')).toBe('en');
+    expect(serverPick('de-DE,de;q=0.9')).toBe('en');
     expect(serverPick(undefined)).toBe('en');
     const r = await (await t.api.raw('/api/language', { headers: { 'accept-language': 'en-GB,en;q=0.9' } })).json();
-    expect(r).toEqual({ lang: 'en', locales: ['de', 'en'] });
+    expect(r).toEqual({ lang: 'en', locales: ['en'] });
     const none = await (await t.api.raw('/api/language')).json();
     expect(none.lang).toBe('en');
-    expect((await (await t.api.raw('/api/language', { headers: { 'accept-language': 'de-DE,de;q=0.9' } })).json()).lang).toBe('de');
+    expect((await (await t.api.raw('/api/language', { headers: { 'accept-language': 'de-DE,de;q=0.9' } })).json()).lang).toBe('en');
   });
 
   it('keeps each person’s choice on the user and hands it to the app with /api/me', async () => {

@@ -23,6 +23,7 @@ export function LanguageMenu({ className = 'side-iconbtn', tip }: { className?: 
     window.addEventListener('keydown', esc);
     return () => (document.removeEventListener('mousedown', off), window.removeEventListener('keydown', esc));
   }, [pos]);
+  const one = localeNames().length < 2;
   const current = localeNames().find((l) => l.id === locale)?.name ?? locale;
   const label = t('Sprache: {name}', { name: current });
   const pick = async (l: Locale) => {
@@ -32,6 +33,7 @@ export function LanguageMenu({ className = 'side-iconbtn', tip }: { className?: 
     setPos(null);
     button.current?.focus();
   };
+  if (one) return null;
   return (
     <span className="lang-menu" ref={box}>
       <button
@@ -67,6 +69,7 @@ export function LanguageMenu({ className = 'side-iconbtn', tip }: { className?: 
 /** Login, setup and consent screens: the languages side by side – a bilingual name, so it is found whatever is on screen. */
 export function LanguageLinks() {
   const locale = useLocale();
+  if (localeNames().length < 2) return null;
   return (
     <nav className="lang-links" aria-label="Sprache · Language" /* i18n-ignore (bilingual on purpose) */>
       {localeNames().map(({ id, name }) => (
@@ -82,6 +85,7 @@ export function LanguageLinks() {
 export function LanguageField() {
   const t = useT('core');
   const locale = useLocale();
+  if (localeNames().length < 2) return null;
   return (
     <Field label={t('Sprache')} tour="account-language" hint={t('Gilt für dich auf allen Geräten. Bereiche, die noch nicht übersetzt sind, bleiben vorerst Deutsch.')}>
       <Select value={locale} onChange={(v) => isLocale(v) && void chooseLocale(v, true)} options={localeNames().map((l) => [l.id, l.name] as [string, string])} />

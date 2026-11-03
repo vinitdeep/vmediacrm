@@ -1,5 +1,5 @@
 import { use, useSyncExternalStore } from 'react';
-import { CATALOGS, FALLBACK_LOCALE, LOCALES, SOURCE_LOCALE, type Catalog, type Locale, type Namespace, type PluralForms } from './registry';
+import { CATALOGS, ENGLISH_ONLY, FALLBACK_LOCALE, LOCALES, SOURCE_LOCALE, type Catalog, type Locale, type Namespace, type PluralForms } from './registry';
 
 /**
  * The language layer of the app – no library, about 1.5 KB gzip in the first download (docs/translating.md):
@@ -27,7 +27,7 @@ export interface TFn {
 const STORAGE_KEY = 'pghl.lang';
 const has = (o: object, k: string) => Object.prototype.hasOwnProperty.call(o, k);
 export const isLocale = (v: unknown): v is Locale => typeof v === 'string' && has(LOCALES, v);
-export const localeNames = () => (Object.keys(LOCALES) as Locale[]).map((id) => ({ id, name: LOCALES[id].name }));
+export const localeNames = () => (ENGLISH_ONLY ? (['en'] as Locale[]) : (Object.keys(LOCALES) as Locale[])).map((id) => ({ id, name: LOCALES[id].name }));
 
 let current: Locale = SOURCE_LOCALE;
 const catalogs = new Map<string, Catalog>();

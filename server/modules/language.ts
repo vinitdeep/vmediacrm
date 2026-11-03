@@ -13,7 +13,8 @@ import { bad } from '../core/http.js';
  * Die Texte selbst liegen in der App (web/src/i18n); der Server antwortet weiter auf Deutsch.
  */
 
-export const UI_LOCALES = ['de', 'en'] as const;
+/** V Media CRM: English only (German is still the source text of the code). */
+export const UI_LOCALES = ['en'] as const;
 export type UiLocale = (typeof UI_LOCALES)[number];
 const DEFAULT: UiLocale = 'en';
 const isUiLocale = (v: unknown): v is UiLocale => typeof v === 'string' && (UI_LOCALES as readonly string[]).includes(v);
