@@ -1,3 +1,4 @@
+import { tr } from '../i18n';
 import type { IconName } from '../icons';
 import type { Tour, TourGroup, TourProgress, TourStep } from './types';
 import { JOURNEY } from './content/journey';
@@ -82,17 +83,17 @@ export const MODULE_TOURS: Tour[] = [
 export const TOURS: Tour[] = [...JOURNEY, ...MODULE_TOURS];
 
 export const GROUPS: { id: TourGroup; label: string; icon: IconName }[] = [
-  { id: 'start', label: 'Erste Schritte', icon: 'academy' },
-  { id: 'company', label: 'Kurs: Deine Firma führen', icon: 'trophy' },
-  { id: 'crm', label: 'Kunden & Tagesgeschäft', icon: 'contacts' },
-  { id: 'marketing', label: 'Marketing', icon: 'campaigns' },
-  { id: 'sites', label: 'Websites, Kurse & Community', icon: 'website' },
-  { id: 'revenue', label: 'Umsatz', icon: 'invoices' },
-  { id: 'reputation', label: 'Reputation', icon: 'reviews' },
-  { id: 'service', label: 'Service & Support', icon: 'service' },
-  { id: 'ai', label: 'KI', icon: 'ai' },
-  { id: 'settings', label: 'Einstellungen & Kanäle', icon: 'settings' },
-  { id: 'agency', label: 'Agentur & Betrieb', icon: 'agency' },
+  { id: 'start', get label() { return tr('b1tour')('Erste Schritte'); }, icon: 'academy' },
+  { id: 'company', get label() { return tr('b1tour')('Kurs: Deine Firma führen'); }, icon: 'trophy' },
+  { id: 'crm', get label() { return tr('b1tour')('Kunden & Tagesgeschäft'); }, icon: 'contacts' },
+  { id: 'marketing', get label() { return tr('b1tour')('Marketing'); }, icon: 'campaigns' },
+  { id: 'sites', get label() { return tr('b1tour')('Websites, Kurse & Community'); }, icon: 'website' },
+  { id: 'revenue', get label() { return tr('b1tour')('Umsatz'); }, icon: 'invoices' },
+  { id: 'reputation', get label() { return tr('b1tour')('Reputation'); }, icon: 'reviews' },
+  { id: 'service', get label() { return tr('b1tour')('Service & Support'); }, icon: 'service' },
+  { id: 'ai', get label() { return tr('b1tour')('KI'); }, icon: 'ai' },
+  { id: 'settings', get label() { return tr('b1tour')('Einstellungen & Kanäle'); }, icon: 'settings' },
+  { id: 'agency', get label() { return tr('b1tour')('Agentur & Betrieb'); }, icon: 'agency' },
 ];
 
 export const tourById = (id: string) => TOURS.find((t) => t.id === id);
@@ -150,23 +151,24 @@ export function badges(progress: Record<string, TourProgress>, a: Access): Badge
   const mods = visibleTours(a, MODULE_TOURS);
   const group = (g: TourGroup) => mods.filter((t) => t.group === g);
   const all = (list: Tour[]) => list.length > 0 && list.every(done);
+  const t = tr('b1tour');
   const out: Badge[] = [
-    { id: 'first', label: 'Erste Tour', hint: 'Eine Tour bis zum Ende gemacht', icon: 'flag', earned: visibleTours(a).some(done) },
-    { id: 'start', label: 'Orientiert', hint: 'Alle Touren unter „Erste Schritte“', icon: 'academy', earned: all(group('start')) },
-    { id: 'company', label: 'Firma im Griff', hint: 'Alle Lektionen des Kurses „Deine Firma führen“', icon: 'trophy', earned: all(group('company')) },
-    { id: 'crm', label: 'CRM-Profi', hint: 'Alle Touren zu Kunden & Tagesgeschäft', icon: 'contacts', earned: all(group('crm')) },
-    { id: 'marketing', label: 'Marketing-Profi', hint: 'Alle Marketing-Touren', icon: 'campaigns', earned: all(group('marketing')) },
-    { id: 'sites', label: 'Seiten-Baumeister', hint: 'Alle Touren zu Websites, Kursen & Community', icon: 'website', earned: all(group('sites')) },
-    { id: 'revenue', label: 'Umsatz-Profi', hint: 'Alle Umsatz-Touren', icon: 'invoices', earned: all(group('revenue')) },
-    { id: 'reputation', label: 'Gut bewertet', hint: 'Alle Touren zu Bewertungen und Google', icon: 'reviews', earned: all(group('reputation')) },
-    { id: 'service', label: 'Service-Held', hint: 'Alle Touren zu Service & Support', icon: 'service', earned: all(group('service')) },
-    { id: 'ai', label: 'KI-Pionier', hint: 'Alle KI-Touren', icon: 'ai', earned: all(group('ai')) },
-    { id: 'settings', label: 'Einstellungs-Kenner', hint: 'Alle Touren zu Einstellungen & Kanälen', icon: 'settings', earned: all(group('settings')) },
+    { id: 'first', label: t('Erste Tour'), hint: t('Eine Tour bis zum Ende gemacht'), icon: 'flag', earned: visibleTours(a).some(done) },
+    { id: 'start', label: t('Orientiert'), hint: t('Alle Touren unter „Erste Schritte“'), icon: 'academy', earned: all(group('start')) },
+    { id: 'company', label: t('Firma im Griff'), hint: t('Alle Lektionen des Kurses „Deine Firma führen“'), icon: 'trophy', earned: all(group('company')) },
+    { id: 'crm', label: t('CRM-Profi'), hint: t('Alle Touren zu Kunden & Tagesgeschäft'), icon: 'contacts', earned: all(group('crm')) },
+    { id: 'marketing', label: t('Marketing-Profi'), hint: t('Alle Marketing-Touren'), icon: 'campaigns', earned: all(group('marketing')) },
+    { id: 'sites', label: t('Seiten-Baumeister'), hint: t('Alle Touren zu Websites, Kursen & Community'), icon: 'website', earned: all(group('sites')) },
+    { id: 'revenue', label: t('Umsatz-Profi'), hint: t('Alle Umsatz-Touren'), icon: 'invoices', earned: all(group('revenue')) },
+    { id: 'reputation', label: t('Gut bewertet'), hint: t('Alle Touren zu Bewertungen und Google'), icon: 'reviews', earned: all(group('reputation')) },
+    { id: 'service', label: t('Service-Held'), hint: t('Alle Touren zu Service & Support'), icon: 'service', earned: all(group('service')) },
+    { id: 'ai', label: t('KI-Pionier'), hint: t('Alle KI-Touren'), icon: 'ai', earned: all(group('ai')) },
+    { id: 'settings', label: t('Einstellungs-Kenner'), hint: t('Alle Touren zu Einstellungen & Kanälen'), icon: 'settings', earned: all(group('settings')) },
   ];
-  if (a.admin) out.push({ id: 'agency', label: 'Agentur-Chef', hint: 'Alle Agentur-Touren', icon: 'agency', earned: all(group('agency')) });
+  if (a.admin) out.push({ id: 'agency', label: t('Agentur-Chef'), hint: t('Alle Agentur-Touren'), icon: 'agency', earned: all(group('agency')) });
   const j = visibleTours(a, JOURNEY);
-  out.push({ id: 'journey', label: 'Firma übernommen', hint: 'Alle Kapitel von „Firma übernehmen“', icon: 'trophy', earned: all(j) });
-  out.push({ id: 'all', label: 'Absolvent', hint: 'Wirklich alle Touren der Akademie', icon: 'award', earned: all(visibleTours(a)) });
+  out.push({ id: 'journey', label: t('Firma übernommen'), hint: t('Alle Kapitel von „Firma übernehmen“'), icon: 'trophy', earned: all(j) });
+  out.push({ id: 'all', label: t('Absolvent'), hint: t('Wirklich alle Touren der Akademie'), icon: 'award', earned: all(visibleTours(a)) });
   // Groups this person cannot see at all give no badge.
   return out.filter((b) => !(['start', 'company', 'crm', 'marketing', 'sites', 'revenue', 'reputation', 'service', 'ai', 'settings', 'agency'] as string[]).includes(b.id) || group(b.id as TourGroup).length > 0);
 }
@@ -188,8 +190,9 @@ export function composeSteps(tour: Tour, a: Access): RunStep[] {
       if (s.kind === 'click' || s.kind === 'navigate' || s.kind === 'wait') page = undefined;
       return out;
     });
-  const intro: RunStep[] = tour.practice && a.admin ? [{ special: 'context', title: 'Wo möchtest du üben?', text: 'In dieser Tour legst du selbst etwas an. Am besten übst du in der **Übungs-Firma** – dort sind alle Kunden erfunden und nichts wird verschickt.' }] : [];
-  return [...intro, ...steps, { special: 'outro', title: tour.chapter ? `Kapitel ${tour.chapter} geschafft!` : 'Geschafft!', text: 'Das hast du gelernt:' }];
+  const t = tr('b1tour');
+  const intro: RunStep[] = tour.practice && a.admin ? [{ special: 'context', title: t('Wo möchtest du üben?'), text: t('In dieser Tour legst du selbst etwas an. Am besten übst du in der **Übungs-Firma** – dort sind alle Kunden erfunden und nichts wird verschickt.') }] : [];
+  return [...intro, ...steps, { special: 'outro', title: tour.chapter ? t('Kapitel {n} geschafft!', { n: tour.chapter }) : t('Geschafft!'), text: t('Das hast du gelernt:') }];
 }
 
 /** Where a resumed tour starts: the step itself, or the last one before it that opens its own page. */
