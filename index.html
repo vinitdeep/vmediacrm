@@ -7,48 +7,29 @@
 <meta name="description" content="V Media CRM – leads, productions, clients and automations for V Media Production in one place." />
 <link rel="icon" href="icon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
+<!-- The CRM runs in a GitHub Codespace (GitHub Pages cannot run its server): go straight to its dashboard. -->
+<meta http-equiv="refresh" content="0; url=https://effective-computing-machine-g5x7q94vjrpfv9w9-4700.app.github.dev/app/dashboard" />
+<script>location.replace('https://effective-computing-machine-g5x7q94vjrpfv9w9-4700.app.github.dev/app/dashboard');</script>
 <style>
   :root { --bg: #0d0c0c; --panel: #171515; --text: #f3efeb; --muted: #a8a19a; --line: #2b2726; --accent: #d91c24; }
   * { box-sizing: border-box; }
   body { margin: 0; min-height: 100vh; background: radial-gradient(1200px 600px at 80% -10%, #3a0d10 0%, transparent 60%), var(--bg); color: var(--text); font: 16px/1.55 Inter, system-ui, sans-serif; display: grid; place-items: center; padding: 24px 16px; }
-  main { width: 100%; max-width: 560px; }
-  .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
-  .brand img { width: 44px; height: 44px; border-radius: 12px; }
-  .brand span { font: 700 20px 'Plus Jakarta Sans', sans-serif; letter-spacing: -.01em; }
-  h1 { font: 800 clamp(34px, 7vw, 52px)/1.05 'Plus Jakarta Sans', sans-serif; letter-spacing: -.03em; margin: 0 0 16px; }
-  p.lead { color: var(--muted); font-size: 18px; margin: 0 0 32px; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
-  .btn { display: block; text-align: center; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; padding: 14px 20px; border-radius: 10px; font-size: 17px; }
-  .btn:hover { filter: brightness(1.1); }
-  .login { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 20px 0 0; font-size: 15px; }
-  .login dt { color: var(--muted); }
-  .login dd { margin: 0; font-family: ui-monospace, Consolas, monospace; }
-  .notes { color: var(--muted); font-size: 14px; margin: 24px 0 0; padding-left: 18px; }
-  .notes li { margin: 6px 0; }
-  footer { color: var(--muted); font-size: 13px; margin-top: 40px; }
-  footer a { color: var(--text); }
+  main { width: 100%; max-width: 520px; text-align: center; }
+  img { width: 56px; height: 56px; border-radius: 14px; }
+  h1 { font: 800 28px/1.2 system-ui, sans-serif; margin: 16px 0 8px; }
+  p { color: var(--muted); margin: 0 0 24px; }
+  a.btn { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; padding: 12px 22px; border-radius: 10px; }
+  .login { margin-top: 20px; font-size: 14px; color: var(--muted); }
+  code { color: var(--text); }
 </style>
 </head>
 <body>
 <main>
-  <div class="brand"><img src="icon.svg" alt="" /><span>V Media CRM</span></div>
-  <h1>From first lead to final cut.</h1>
-  <p class="lead">Leads, productions, clients and automations – V Media Production’s whole workflow in one place.</p>
-  <div class="card">
-    <a class="btn" id="open" href="https://effective-computing-machine-g5x7q94vjrpfv9w9-4700.app.github.dev/">Open the live CRM</a>
-    <dl class="login">
-      <dt>Email</dt><dd>demo@example.com</dd>
-      <dt>Password</dt><dd>demo1234</dd>
-    </dl>
-    <ul class="notes">
-      <li>GitHub first shows a short “development port” notice – click <strong>Continue</strong>.</li>
-      <li>Everything in the demo is fictional.</li>
-      <li>If the page doesn’t open, the test server is asleep – it wakes up when the owner starts it on GitHub.</li>
-    </ul>
-  </div>
-  <footer>Built on the open-source <a href="https://github.com/BAISESYSTEMS/GoHyperLevel">GoHyperLevel</a> (AGPL-3.0) · <a href="https://github.com/vinitdeep/vmediacrm">Source code</a></footer>
+  <img src="icon.svg" alt="" />
+  <h1>Opening V Media CRM…</h1>
+  <p>If nothing happens, use the button. If it still doesn’t open, the test server is asleep – it wakes up when the owner starts it on GitHub.</p>
+  <a class="btn" href="https://effective-computing-machine-g5x7q94vjrpfv9w9-4700.app.github.dev/app/dashboard">Open the dashboard</a>
+  <div class="login">Demo login: <code>demo@example.com</code> / <code>demo1234</code> · GitHub first shows a “development port” notice – click Continue.</div>
 </main>
 </body>
 </html>
