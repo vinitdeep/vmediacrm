@@ -1,5 +1,6 @@
 import type { IconName } from '../icons';
 import type { Tour, TourGroup, TourProgress, TourStep } from './types';
+import { tourSearchText } from './text';
 import { JOURNEY } from './content/journey';
 import { START_TOURS } from './content/start';
 import { CRM_TOURS } from './content/crm';
@@ -123,7 +124,7 @@ export function searchTours(list: Tour[], q: string): Tour[] {
   const words = norm(q).split(/\s+/).filter(Boolean);
   if (!words.length) return list;
   return list.filter((t) => {
-    const hay = norm([t.title, t.summary, t.keywords ?? '', ...t.steps.map((s) => s.title)].join(' '));
+    const hay = norm(tourSearchText(t)); // German and English
     return words.every((w) => hay.includes(w));
   });
 }

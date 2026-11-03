@@ -1,3 +1,4 @@
+import { useT } from '../i18n';
 import { Icon } from '../icons';
 
 /**
@@ -19,9 +20,10 @@ export function learn(tourOrPath?: string) {
 const LABELS = { tour: 'Tour starten', learn: 'Lernen', guided: 'Geführte Tour starten', academy: 'Academy starten' } as const;
 
 export function LearnLink({ tour, label = 'tour', className = 'btn small secondary' }: { tour?: string; label?: keyof typeof LABELS; className?: string }) {
+  const t = useT('b3tour');
   return (
-    <button type="button" className={`${className} learn-link`} data-tour="learn" onClick={() => learn(tour)} title="Geführte Tour zu diesem Bereich – direkt in der echten Oberfläche">
-      <Icon name="academy" size={14} /> {LABELS[label]}
+    <button type="button" className={`${className} learn-link`} data-tour="learn" onClick={() => learn(tour)} title={t('Geführte Tour zu diesem Bereich – direkt in der echten Oberfläche')}>
+      <Icon name="academy" size={14} /> {t(LABELS[label])}
     </button>
   );
 }

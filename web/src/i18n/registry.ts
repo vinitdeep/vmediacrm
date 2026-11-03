@@ -171,6 +171,14 @@ export const NAMESPACES = {
   // files in the customer portal: the share toggle on a contact's documents and the upload rules (docs/sales.md)
   portalfiles: { complete: true, files: ['pages/PortalFiles.tsx'] },
   gaps: { complete: true, files: ['pages/SiteSeo.tsx', 'pages/SocialExtras.tsx', 'pages/AgencyBanners.tsx', 'pages/RoleTemplates.tsx', 'pages/VideoTestimonials.tsx', 'pages/PromptLab.tsx', 'pages/GoogleLeads.tsx', 'pages/SystemMails.tsx', 'pages/WordPressPlugin.tsx', 'pages/ReviewBulk.tsx', 'pages/CourseAi.tsx'] },
+  // guided tours (batch 3 wiring): the tour data catalogs (toursA/B/C, keys = the exact German strings, merged from three agents; read via tour/text.ts) and the UI of the tour layer
+  toursA: { complete: false, files: [] },
+  toursB: { complete: false, files: [] },
+  // complete:false = nothing is enforced; the files are listed only so the check sees the German strings as "used" (the catalog's keys)
+  toursC: { complete: false, files: ['tour/content/sales.ts', 'tour/content/sepa.ts', 'tour/content/service.ts', 'tour/content/settings.ts', 'tour/content/sites.ts', 'tour/content/start.ts', 'tour/content/teamtools.ts', 'tour/content/umzug.ts', 'tour/content/undo.ts', 'tour/content/voice.ts', 'tour/content/webinars.ts', 'tour/content/workflow-tools.ts', 'tour/content/xr.ts', 'tour/catalog.ts'] },
+  b3tour: { complete: true, files: ['tour/engine.tsx', 'tour/learn.tsx', 'tour/welcome.tsx', 'tour/help.tsx', 'tour/docs.tsx'] },
+  b3tourbook: { complete: true, files: ['tour/handbook.ts'] },
+  b3tourhandover: { complete: true, files: ['tour/handover.tsx'] },
 } as const satisfies Record<string, { complete: boolean; server?: boolean; files: readonly string[] }>;
 export type Namespace = keyof typeof NAMESPACES;
 
@@ -233,5 +241,11 @@ export const CATALOGS: { [L in Exclude<Locale, typeof SOURCE_LOCALE>]: Partial<R
     rentals: () => import('./en/rentals'),
     gaps: () => import('./en/gaps'),
     portalfiles: () => import('./en/portalfiles'),
+    toursA: () => import('./en/toursA'),
+    toursB: () => import('./en/toursB'),
+    toursC: () => import('./en/toursC'),
+    b3tour: () => import('./en/b3tour'),
+    b3tourbook: () => import('./en/b3tourbook'),
+    b3tourhandover: () => import('./en/b3tourhandover'),
   },
 };

@@ -1,11 +1,16 @@
+import { tr } from '../i18n';
 import { JOURNEY, MODULE_TOURS, GROUPS } from './catalog';
 import { slug } from './slug';
+import { tourText } from './text';
 import type { Tour } from './types';
 
 /**
  * The printable handbook: the whole journey „Firma übernehmen“ as Markdown, generated from the same
  * data as the tours. The academy renders it (print → PDF) and docs/handbuch.md is a copy of it –
  * tests/academy.test.ts makes sure the copy stays up to date.
+ *
+ * The generator's output is German in the source language (that is what the test compares). In the English app the same
+ * calls translate at render time: its own texts through `tr('b3tourbook')`, the tour data through `tourText`.
  */
 
 const SECTIONS: Record<string, string> = {
@@ -123,55 +128,70 @@ const TABS: Record<string, string> = {
 /** „Einstellungen → Telefonie“ for `settings/telephony`. */
 export function placeLabel(route: string): string {
   const [a, b] = route.split('/');
-  const first = SECTIONS[a] ?? a;
+  const t = tr('b3tourbook');
+  const first = SECTIONS[a] ? t(SECTIONS[a]) : a;
   const tab = b ? (TABS[`${a}/${b}`] ?? null) : null;
-  return tab ? `${first} → ${tab}` : first;
+  return tab ? `${first} → ${t(tab)}` : first;
 }
 
-const plain = (s: string, brand: string) => s.replace(/\{brand\}/g, brand).replace(/\s+/g, ' ').trim();
-const docLink = (t: Tour) => (t.docs ? `[${t.docs.label}](${t.docs.file === 'README' ? '../README.md' : `${t.docs.file}.md`}${t.docs.anchor ? `#${t.docs.anchor}` : ''})` : '');
+const plain = (s: string, brand: string) => tourText(s).replace(/\{brand\}/g, brand).replace(/\s+/g, ' ').trim();
+const docLink = (t: Tour) => (t.docs ? `[${tourText(t.docs.label)}](${t.docs.file === 'README' ? '../README.md' : `${t.docs.file}.md`}${t.docs.anchor ? `#${t.docs.anchor}` : ''})` : '');
+
+const chapterHeading = (t: Tour) => {
+  const x = tr('b3tourbook');
+  return x('Kapitel {n}: {title}', { n: t.chapter ?? '', title: tourText(t.title) });
+};
+const duration = (t: Tour) => {
+  const x = tr('b3tourbook');
+  return t.admin ? x('ca. {n} Minuten, nur für die Agentur', { n: t.minutes }) : x('ca. {n} Minuten', { n: t.minutes });
+};
 
 function chapter(t: Tour, brand: string): string {
+  const x = tr('b3tourbook');
   const out: string[] = [];
-  out.push(`## Kapitel ${t.chapter}: ${t.title}`, '', `${plain(t.summary, brand)} *(ca. ${t.minutes} Minuten${t.admin ? ', nur für die Agentur' : ''})*`, '');
+  out.push(`## ${chapterHeading(t)}`, '', `${plain(t.summary, brand)} *(${duration(t)})*`, '');
   let place = '';
   t.steps.forEach((s, i) => {
     const here = s.route ? placeLabel(s.route) : '';
     const where = here && here !== place ? ` *(${here})*` : '';
     if (here) place = here;
-    const extra = s.do ? ` – *So geht's:* ${plain(s.do, brand)}` : '';
+    const extra = s.do ? ` – *${x("So geht's:")}* ${plain(s.do, brand)}` : '';
     out.push(`${i + 1}. **${plain(s.title, brand)}**${where} – ${plain(s.text, brand)}${extra}`);
   });
-  out.push('', '**Das hast du gelernt:**', '');
+  out.push('', `**${x('Das hast du gelernt:')}**`, '');
   for (const l of t.learned) out.push(`- ${plain(l, brand)}`);
-  if (t.docs) out.push('', `Mehr dazu: ${docLink(t)}`);
+  if (t.docs) out.push('', `${x('Mehr dazu:')} ${docLink(t)}`);
   out.push('');
   return out.join('\n');
 }
 
 export function handbookMarkdown(brand = 'V Media CRM'): string {
+  const x = tr('b3tourbook');
   const minutes = JOURNEY.reduce((s, t) => s + t.minutes, 0);
   const out: string[] = [
-    `# Handbuch: Die Firma mit ${brand} übernehmen`,
+    x('# Handbuch: Die Firma mit {brand} übernehmen', { brand }),
     '',
-    `Dieses Handbuch ist die gedruckte Fassung des Gesamt-Guides **„Firma übernehmen“** aus der **Akademie** (Menüpunkt *Akademie* in ${brand}). Es führt eine Nachfolgerin oder einen Nachfolger in ${JOURNEY.length} Kapiteln durch alles, was man braucht, um die Firma zu führen – vom sicheren Zugang über die Tagesroutine bis zum Betrieb des Servers. Zusammen dauert das etwa ${Math.round(minutes / 60)} Stunden; jedes Kapitel lässt sich einzeln machen und später fortsetzen.`,
+    x(
+      'Dieses Handbuch ist die gedruckte Fassung des Gesamt-Guides **„Firma übernehmen“** aus der **Akademie** (Menüpunkt *Akademie* in {brand}). Es führt eine Nachfolgerin oder einen Nachfolger in {n} Kapiteln durch alles, was man braucht, um die Firma zu führen – vom sicheren Zugang über die Tagesroutine bis zum Betrieb des Servers. Zusammen dauert das etwa {hours} Stunden; jedes Kapitel lässt sich einzeln machen und später fortsetzen.',
+      { brand, n: JOURNEY.length, hours: Math.round(minutes / 60) },
+    ),
     '',
-    '> Am besten machst du die Kapitel direkt in der App: Die Tour markiert dort jedes Feld und jeden Knopf, erklärt ihn und wartet, bis du ihn ausprobiert hast. Zum Üben legt die Akademie auf Wunsch eine **Übungs-Firma** mit erfundenen Kunden an – dort kann nichts kaputtgehen und nichts wird verschickt.',
+    x('> Am besten machst du die Kapitel direkt in der App: Die Tour markiert dort jedes Feld und jeden Knopf, erklärt ihn und wartet, bis du ihn ausprobiert hast. Zum Üben legt die Akademie auf Wunsch eine **Übungs-Firma** mit erfundenen Kunden an – dort kann nichts kaputtgehen und nichts wird verschickt.'),
     '',
-    '**Inhalt**',
+    `**${x('Inhalt')}**`,
     '',
-    ...JOURNEY.map((t) => `${t.chapter}. [${t.title}](#${slug(`Kapitel ${t.chapter}: ${t.title}`)}) – ${plain(t.summary, brand)}`),
+    ...JOURNEY.map((t) => `${t.chapter}. [${tourText(t.title)}](#${slug(chapterHeading(t))}) – ${plain(t.summary, brand)}`),
     '',
     '---',
     '',
   ];
   for (const t of JOURNEY) out.push(chapter(t, brand), '---', '');
-  out.push('## Anhang: Alle Modul-Touren', '', `Neben dem Gesamt-Guide gibt es für jeden Bereich eine kurze Tour (5–15 Schritte). Du findest sie in der Akademie oder über das **?** oben rechts auf jeder Seite.`, '');
+  out.push(`## ${x('Anhang: Alle Modul-Touren')}`, '', x('Neben dem Gesamt-Guide gibt es für jeden Bereich eine kurze Tour (5–15 Schritte). Du findest sie in der Akademie oder über das **?** oben rechts auf jeder Seite.'), '');
   for (const g of GROUPS) {
     const list = MODULE_TOURS.filter((t) => t.group === g.id);
     if (!list.length) continue;
-    out.push(`### ${g.label}`, '');
-    for (const t of list) out.push(`- **${t.title}** (${t.steps.length} Schritte, ca. ${t.minutes} Min.${t.admin ? ', Agentur' : ''}) – ${plain(t.summary, brand)}`);
+    out.push(`### ${tourText(g.label)}`, '');
+    for (const t of list) out.push(`- **${tourText(t.title)}** (${t.admin ? x('{steps} Schritte, ca. {n} Min., Agentur', { steps: t.steps.length, n: t.minutes }) : x('{steps} Schritte, ca. {n} Min.', { steps: t.steps.length, n: t.minutes })}) – ${plain(t.summary, brand)}`);
     out.push('');
   }
   return out.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';

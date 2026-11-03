@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api, d } from '../api';
+import { tr, useT } from '../i18n';
 import { Icon } from '../icons';
 import { useSession } from '../session';
 import { useAcademy } from './progress';
@@ -34,9 +35,10 @@ const CHECKS: Check[] = [
     scope: 'location',
     to: 'settings/messaging',
     load: async () => {
+      const t = tr('b3tourhandover');
       const l = await api.get('/api/location');
       const e = l.settings?.email ?? {};
-      return e.provider && e.provider !== 'log' ? ok(`SMTP ${e.host ?? ''}`.trim()) : missing('Nur speichern – es geht keine E-Mail raus');
+      return e.provider && e.provider !== 'log' ? ok(`SMTP ${e.host ?? ''}`.trim()) : missing(t('Nur speichern – es geht keine E-Mail raus'));
     },
   },
   {
@@ -46,9 +48,10 @@ const CHECKS: Check[] = [
     to: 'settings/messaging',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const l = await api.get('/api/location');
       const p = l.settings?.sms?.provider;
-      return p && p !== 'log' ? ok(p === 'twilio' ? 'Twilio' : 'HTTP-Gateway') : off('Nur speichern');
+      return p && p !== 'log' ? ok(p === 'twilio' ? 'Twilio' : 'HTTP-Gateway') : off(t('Nur speichern'));
     },
   },
   {
@@ -57,9 +60,10 @@ const CHECKS: Check[] = [
     scope: 'location',
     to: 'settings/billing',
     load: async () => {
+      const t = tr('b3tourhandover');
       const l = await api.get('/api/location');
       const s = l.settings?.invoices ?? {};
-      return s.iban && (s.tax_id || s.small_business) ? ok('IBAN und Steuerangaben hinterlegt') : missing(!s.iban ? 'IBAN fehlt' : 'Steuernummer / USt-ID fehlt');
+      return s.iban && (s.tax_id || s.small_business) ? ok(t('IBAN und Steuerangaben hinterlegt')) : missing(!s.iban ? t('IBAN fehlt') : t('Steuernummer / USt-ID fehlt'));
     },
   },
   {
@@ -69,9 +73,10 @@ const CHECKS: Check[] = [
     to: 'settings/channels',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const m = await api.get('/api/settings/meta');
       const on = [m.whatsapp?.configured && 'WhatsApp', m.messenger?.configured && 'Messenger', m.instagram?.configured && 'Instagram'].filter(Boolean);
-      return on.length ? ok(on.join(', ')) : off('Nicht verbunden');
+      return on.length ? ok(on.join(', ')) : off(t('Nicht verbunden'));
     },
   },
   {
@@ -81,8 +86,9 @@ const CHECKS: Check[] = [
     to: 'settings/telephony',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/calls/status');
-      return s.ready ? ok((s.numbers ?? []).join(', ') || 'bereit') : off(s.missing?.length ? `Fehlt: ${s.missing.join(', ')}` : 'Nicht eingerichtet');
+      return s.ready ? ok((s.numbers ?? []).join(', ') || t('bereit')) : off(s.missing?.length ? t('Fehlt: {list}', { list: s.missing.join(', ') }) : t('Nicht eingerichtet'));
     },
   },
   {
@@ -92,8 +98,9 @@ const CHECKS: Check[] = [
     to: 'settings/telephony',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/phone/status');
-      return s.enabled && s.ready ? ok('bereit') : off(s.enabled ? `Fehlt: ${(s.missing ?? []).join(', ')}` : 'Aus');
+      return s.enabled && s.ready ? ok(t('bereit')) : off(s.enabled ? t('Fehlt: {list}', { list: (s.missing ?? []).join(', ') }) : t('Aus'));
     },
   },
   {
@@ -103,8 +110,9 @@ const CHECKS: Check[] = [
     to: 'settings/ai',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/ai/status');
-      return s.enabled ? ok(s.assistant_name || 'an') : off('Aus oder kein Anthropic-Schlüssel');
+      return s.enabled ? ok(s.assistant_name || t('an')) : off(t('Aus oder kein Anthropic-Schlüssel'));
     },
   },
   {
@@ -114,9 +122,10 @@ const CHECKS: Check[] = [
     to: 'settings/telephony',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/voice-ai/settings');
       const mode = s.settings?.mode ?? 'off';
-      return mode !== 'off' ? (s.ai_ready && s.telephony_ready ? ok(`Modus: ${mode}`) : missing(s.ai_problem || 'Telefonie nicht bereit')) : off('Aus');
+      return mode !== 'off' ? (s.ai_ready && s.telephony_ready ? ok(t('Modus: {mode}', { mode })) : missing(s.ai_problem || t('Telefonie nicht bereit'))) : off(t('Aus'));
     },
   },
   {
@@ -126,9 +135,10 @@ const CHECKS: Check[] = [
     to: 'settings/stripe',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/stripe');
-      if (!s.connected) return off('Nicht verbunden');
-      return s.webhook_set ? ok(`${s.account?.name ?? 'verbunden'}${s.live ? ' · Live' : ' · Testmodus'}`) : missing('Webhook-Signing-Secret fehlt – Zahlungen werden nicht verbucht');
+      if (!s.connected) return off(t('Nicht verbunden'));
+      return s.webhook_set ? ok(`${s.account?.name ?? t('verbunden')}${s.live ? ` · ${t('Live')}` : ` · ${t('Testmodus')}`}`) : missing(t('Webhook-Signing-Secret fehlt – Zahlungen werden nicht verbucht'));
     },
   },
   {
@@ -138,9 +148,10 @@ const CHECKS: Check[] = [
     to: 'settings/reviews',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const [b, p] = await Promise.all([api.get('/api/google-reviews/business').catch(() => ({})), api.get('/api/google-reviews/settings').catch(() => ({}))]);
-      if (b.connected) return b.needs_reconnect ? missing('Unternehmensprofil neu verbinden') : ok(b.location_title || 'Unternehmensprofil verbunden');
-      return p.api_key_set && p.place_id ? ok(p.place_name || 'Places API') : off('Nicht verbunden');
+      if (b.connected) return b.needs_reconnect ? missing(t('Unternehmensprofil neu verbinden')) : ok(b.location_title || t('Unternehmensprofil verbunden'));
+      return p.api_key_set && p.place_id ? ok(p.place_name || 'Places API') : off(t('Nicht verbunden'));
     },
   },
   {
@@ -150,8 +161,9 @@ const CHECKS: Check[] = [
     to: 'settings/chat',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/livechat');
-      return s.enabled ? ok('an') : off('Aus');
+      return s.enabled ? ok(t('an')) : off(t('Aus'));
     },
   },
   {
@@ -161,8 +173,9 @@ const CHECKS: Check[] = [
     to: 'social',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/social');
-      return s.configured ? (s.channels?.length ? ok(`${s.channels.length} Kanäle`) : missing('Postiz verbunden, aber keine Kanäle')) : off('Postiz nicht verbunden');
+      return s.configured ? (s.channels?.length ? ok(t('{n} Kanäle', { n: s.channels.length })) : missing(t('Postiz verbunden, aber keine Kanäle'))) : off(t('Postiz nicht verbunden'));
     },
   },
   {
@@ -172,15 +185,16 @@ const CHECKS: Check[] = [
     to: 'settings/helpdesk',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const [h, open] = await Promise.all([api.get('/api/helpdesk/settings'), api.get('/api/tickets?state=open&owner=none&limit=1').catch(() => ({ total: 0 }))]);
       const s = h.settings ?? {};
       const on = [
-        s.assignment?.mode && s.assignment.mode !== 'manual' && 'automatische Zuweisung',
-        s.email_to_ticket?.mode && s.email_to_ticket.mode !== 'off' && 'E-Mail → Ticket',
-        s.help_center?.enabled && 'Hilfe-Center öffentlich',
+        s.assignment?.mode && s.assignment.mode !== 'manual' && t('automatische Zuweisung'),
+        s.email_to_ticket?.mode && s.email_to_ticket.mode !== 'off' && t('E-Mail → Ticket'),
+        s.help_center?.enabled && t('Hilfe-Center öffentlich'),
       ].filter(Boolean);
-      if (open.total) return missing(`${open.total} offene Tickets ohne Zuständige`);
-      return on.length ? ok(on.join(', ')) : off('Nicht eingerichtet (Zuweisung manuell, kein Support-Postfach)');
+      if (open.total) return missing(t('{n} offene Tickets ohne Zuständige', { n: open.total }));
+      return on.length ? ok(on.join(', ')) : off(t('Nicht eingerichtet (Zuweisung manuell, kein Support-Postfach)'));
     },
   },
   {
@@ -190,12 +204,13 @@ const CHECKS: Check[] = [
     to: 'settings/import',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/import/hubspot');
       const job = s.job;
-      if (job?.status === 'running') return ok('Import läuft gerade');
-      if (job && job.status !== 'done') return missing('Import unterbrochen – unter Einstellungen → Import fortsetzen');
-      if (job) return ok(`Importiert am ${d(job.finished_at ?? job.updated_at)}${s.connection?.connected ? ' · Token noch verbunden (nach dem Umzug trennen)' : ''}`);
-      return s.connection?.connected ? missing('Verbunden, aber noch nicht importiert') : off('Kein Umzug aus HubSpot');
+      if (job?.status === 'running') return ok(t('Import läuft gerade'));
+      if (job && job.status !== 'done') return missing(t('Import unterbrochen – unter Einstellungen → Import fortsetzen'));
+      if (job) return ok(`${t('Importiert am {date}', { date: d(job.finished_at ?? job.updated_at) })}${s.connection?.connected ? ` · ${t('Token noch verbunden (nach dem Umzug trennen)')}` : ''}`);
+      return s.connection?.connected ? missing(t('Verbunden, aber noch nicht importiert')) : off(t('Kein Umzug aus HubSpot'));
     },
   },
   {
@@ -204,9 +219,10 @@ const CHECKS: Check[] = [
     scope: 'agency',
     to: 'agency/branding',
     load: async () => {
+      const t = tr('b3tourhandover');
       const b = await api.get('/api/agency/branding');
-      const dom = b.app_domain ? `${b.app_domain}${b.app_domain_status?.status === 'active' ? '' : ' (noch nicht aktiv)'}` : 'keine eigene Domain';
-      return b.name && b.name !== 'V Media CRM' ? ok(`${b.name} · ${dom}`) : missing('Name und Logo der Agentur fehlen');
+      const dom = b.app_domain ? `${b.app_domain}${b.app_domain_status?.status === 'active' ? '' : ` ${t('(noch nicht aktiv)')}`}` : t('keine eigene Domain');
+      return b.name && b.name !== 'V Media CRM' ? ok(`${b.name} · ${dom}`) : missing(t('Name und Logo der Agentur fehlen'));
     },
   },
   {
@@ -216,11 +232,12 @@ const CHECKS: Check[] = [
     to: 'agency/domains',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/agency/domains');
       const list: any[] = s.domains ?? [];
-      if (!list.length) return off('Keine eingetragen');
+      if (!list.length) return off(t('Keine eingetragen'));
       const bad = list.filter((x) => x.status !== 'active');
-      return bad.length ? missing(`${bad.length} von ${list.length} nicht aktiv: ${bad.map((x) => x.domain).slice(0, 3).join(', ')}`) : ok(`${list.length} aktiv`);
+      return bad.length ? missing(t('{bad} von {n} nicht aktiv: {list}', { bad: bad.length, n: list.length, list: bad.map((x) => x.domain).slice(0, 3).join(', ') })) : ok(t('{n} aktiv', { n: list.length }));
     },
   },
   {
@@ -230,9 +247,10 @@ const CHECKS: Check[] = [
     to: 'agency/integrations/setup',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/agency/oauth');
       const on = [s.google?.configured && 'Google', s.microsoft?.configured && 'Microsoft'].filter(Boolean);
-      return on.length ? ok(on.join(', ')) : off('Keine OAuth-App');
+      return on.length ? ok(on.join(', ')) : off(t('Keine OAuth-App'));
     },
   },
   {
@@ -242,9 +260,10 @@ const CHECKS: Check[] = [
     to: 'agency/integrations/setup',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const list: any[] = await api.get('/api/agency/mail-accounts');
       const on = list.filter((m) => m.enabled);
-      return on.length ? ok(on.map((m) => m.own_address || m.username).join(', ')) : off('Kein Postfach');
+      return on.length ? ok(on.map((m) => m.own_address || m.username).join(', ')) : off(t('Kein Postfach'));
     },
   },
   {
@@ -254,8 +273,9 @@ const CHECKS: Check[] = [
     to: 'agency/integrations/setup',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/agency/supabase');
-      return s.enabled && s.key_set ? ok(s.url) : off('Aus');
+      return s.enabled && s.key_set ? ok(s.url) : off(t('Aus'));
     },
   },
   {
@@ -265,8 +285,9 @@ const CHECKS: Check[] = [
     to: 'agency/integrations/setup',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/agency/todoist');
-      return s.enabled && s.token_set ? ok(s.account?.name ?? 'an') : off('Aus');
+      return s.enabled && s.token_set ? ok(s.account?.name ?? t('an')) : off(t('Aus'));
     },
   },
   {
@@ -276,8 +297,9 @@ const CHECKS: Check[] = [
     to: 'agency/saas',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/saas/settings');
-      return s.connected ? (s.webhook_set ? ok(`${s.account?.name ?? 'verbunden'}${s.live ? ' · Live' : ' · Testmodus'}`) : missing('Webhook-Signing-Secret fehlt')) : off('Nicht genutzt');
+      return s.connected ? (s.webhook_set ? ok(`${s.account?.name ?? t('verbunden')}${s.live ? ` · ${t('Live')}` : ` · ${t('Testmodus')}`}`) : missing(t('Webhook-Signing-Secret fehlt'))) : off(t('Nicht genutzt'));
     },
   },
   {
@@ -286,12 +308,13 @@ const CHECKS: Check[] = [
     scope: 'agency',
     to: 'settings/locations',
     load: async () => {
+      const t = tr('b3tourhandover');
       const s = await api.get('/api/admin/backups');
-      if (!s.enabled) return missing('Automatische Backups sind aus (PGHL_BACKUPS=0)');
+      if (!s.enabled) return missing(t('Automatische Backups sind aus (PGHL_BACKUPS=0)'));
       const latest = (s.backups ?? [])[0];
-      if (!latest) return missing('Noch kein Backup vorhanden');
+      if (!latest) return missing(t('Noch kein Backup vorhanden'));
       const age = (Date.now() - new Date(latest.at).getTime()) / 864e5;
-      return age > 2 ? missing(`Letztes Backup vom ${d(latest.at)}`) : ok(`Letztes Backup ${d(latest.at)}`);
+      return age > 2 ? missing(t('Letztes Backup vom {date}', { date: d(latest.at) })) : ok(t('Letztes Backup {date}', { date: d(latest.at) }));
     },
   },
   {
@@ -301,8 +324,9 @@ const CHECKS: Check[] = [
     to: 'agency/api',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const list: any[] = await api.get('/api/agency/api-keys');
-      return list.length ? ok(`${list.length} Schlüssel (${list.map((k) => k.name).slice(0, 3).join(', ')})`) : off('Keiner angelegt');
+      return list.length ? ok(t('{n} Schlüssel ({list})', { n: list.length, list: list.map((k) => k.name).slice(0, 3).join(', ') })) : off(t('Keiner angelegt'));
     },
   },
   {
@@ -312,11 +336,12 @@ const CHECKS: Check[] = [
     to: 'settings/account',
     optional: true,
     load: async () => {
+      const t = tr('b3tourhandover');
       const [release, devices] = await Promise.all([api.get('/api/mobile/app').catch(() => null), api.get('/api/mobile/devices').catch(() => [])]);
-      if (!release) return off('Die App ist noch nicht hochgeladen');
+      if (!release) return off(t('Die App ist noch nicht hochgeladen'));
       const list: any[] = Array.isArray(devices) ? devices : [];
-      const version = release.version_name ? ` · App ${release.version_name}` : '';
-      return list.length ? ok(`${list.length} ${list.length === 1 ? 'Handy' : 'Handys'} gekoppelt${version}`) : off(`Noch kein Handy gekoppelt${version}`);
+      const version = release.version_name ? ` · ${t('App {v}', { v: release.version_name })}` : '';
+      return list.length ? ok(`${t.plural(list.length, { one: '{n} Handy gekoppelt', other: '{n} Handys gekoppelt' })}${version}`) : off(`${t('Noch kein Handy gekoppelt')}${version}`);
     },
   },
 ];
@@ -325,6 +350,7 @@ type Result = { state: State; detail: string };
 const ICON: Record<State, string> = { ok: '✓', missing: '!', off: '–', unknown: '?' };
 
 export function Handover() {
+  const t = useT('b3tourhandover');
   const session = useSession();
   const sandbox = useAcademy()?.sandbox?.id;
   const [res, setRes] = useState<Record<string, Result>>({});
@@ -334,7 +360,7 @@ export function Handover() {
     setRes({});
     for (const c of CHECKS)
       c.load()
-        .catch(() => ({ state: 'unknown' as const, detail: 'Konnte nicht geprüft werden' }))
+        .catch(() => ({ state: 'unknown' as const, detail: tr('b3tourhandover')('Konnte nicht geprüft werden') }))
         .then((r) => setRes((cur) => ({ ...cur, [c.key]: r })));
     api.get<any[]>('/api/users').then(setUsers).catch(() => setUsers([]));
     api.get<any[]>('/api/agency/projects').then(setProjects).catch(() => setProjects([]));
@@ -349,12 +375,12 @@ export function Handover() {
   const unread = real.reduce((s, p) => s + (p.stats?.unread ?? 0), 0);
   const required = CHECKS.filter((c) => !c.optional);
   const crit: { text: string; to: string }[] = [
-    ...no2fa.map((u) => ({ text: `${u.name} (Admin) hat keinen Zwei-Faktor-Login`, to: 'settings/account' })),
-    ...required.filter((c) => res[c.key]?.state === 'missing').map((c) => ({ text: `${c.label}: ${res[c.key].detail}`, to: c.to })),
-    ...CHECKS.filter((c) => c.optional && res[c.key]?.state === 'missing').map((c) => ({ text: `${c.label}: ${res[c.key].detail}`, to: c.to })),
-    ...down.map((p) => ({ text: `Website von „${p.name}“ ist nicht erreichbar`, to: 'agency/projects' })),
-    ...(overdue ? [{ text: `${overdue} überfällige Aufgabe${overdue === 1 ? '' : 'n'} in allen Projekten`, to: 'agency/tasks' }] : []),
-    ...(unread > 20 ? [{ text: `${unread} ungelesene Nachrichten in allen Projekten`, to: 'agency/projects' }] : []),
+    ...no2fa.map((u) => ({ text: t('{name} (Admin) hat keinen Zwei-Faktor-Login', { name: u.name }), to: 'settings/account' })),
+    ...required.filter((c) => res[c.key]?.state === 'missing').map((c) => ({ text: `${t(c.label)}: ${res[c.key].detail}`, to: c.to })),
+    ...CHECKS.filter((c) => c.optional && res[c.key]?.state === 'missing').map((c) => ({ text: `${t(c.label)}: ${res[c.key].detail}`, to: c.to })),
+    ...down.map((p) => ({ text: t('Website von „{name}“ ist nicht erreichbar', { name: p.name }), to: 'agency/projects' })),
+    ...(overdue ? [{ text: t.plural(overdue, { one: '{n} überfällige Aufgabe in allen Projekten', other: '{n} überfällige Aufgaben in allen Projekten' }), to: 'agency/tasks' }] : []),
+    ...(unread > 20 ? [{ text: t('{n} ungelesene Nachrichten in allen Projekten', { n: unread }), to: 'agency/projects' }] : []),
   ];
   const loc = session.locations.find((l) => l.id === session.locationId)?.name ?? '';
   const done = CHECKS.filter((c) => res[c.key]?.state === 'ok').length;
@@ -367,11 +393,11 @@ export function Handover() {
       <li className={`ho-row ${tone}`}>
         <span className="ho-ico" aria-label={st}>{r ? ICON[st] : '…'}</span>
         <span className="grow">
-          {c.label}
-          <small>{r ? r.detail : 'wird geprüft …'}</small>
+          {t(c.label)}
+          <small>{r ? r.detail : t('wird geprüft …')}</small>
         </span>
         <Link to={c.to} className="small">
-          {st === 'ok' ? 'Ansehen' : 'Einrichten'}
+          {st === 'ok' ? t('Ansehen') : t('Einrichten')}
         </Link>
       </li>
     );
@@ -381,15 +407,15 @@ export function Handover() {
     <div className="card handover" data-tour="academy-handover">
       <div className="row" style={{ justifyContent: 'space-between', alignItems: 'baseline' }}>
         <h2>
-          <Icon name="shield" size={18} /> Übergabe-Status
+          <Icon name="shield" size={18} /> {t('Übergabe-Status')}
         </h2>
         <span className="muted small">
-          {done} von {CHECKS.length} Punkten eingerichtet · Geheimnisse werden nie angezeigt
+          {t('{done} von {n} Punkten eingerichtet · Geheimnisse werden nie angezeigt', { done, n: CHECKS.length })}
         </span>
       </div>
       <div className="ho-grid">
         <div>
-          <h3>Offene Punkte</h3>
+          <h3>{t('Offene Punkte')}</h3>
           {users === null || projects === null ? (
             <Spinner />
           ) : crit.length ? (
@@ -399,17 +425,17 @@ export function Handover() {
                   <span className="ho-ico">!</span>
                   <span className="grow">{c.text}</span>
                   <Link to={c.to} className="small">
-                    Öffnen
+                    {t('Öffnen')}
                   </Link>
                 </li>
               ))}
             </ul>
           ) : (
             <p className="tour-ok">
-              <Icon name="ok" size={15} /> Nichts Dringendes offen.
+              <Icon name="ok" size={15} /> {t('Nichts Dringendes offen.')}
             </p>
           )}
-          <h3 style={{ marginTop: 14 }}>Wer hat Zugang?</h3>
+          <h3 style={{ marginTop: 14 }}>{t('Wer hat Zugang?')}</h3>
           {users === null ? (
             <Spinner />
           ) : (
@@ -420,20 +446,20 @@ export function Handover() {
                   <span className="grow">
                     {u.name} <span className="muted small">{u.email}</span>
                     <small>
-                      {u.role === 'admin' ? 'Agentur-Admin – sieht alles' : `Mitglied · ${u.locations?.length ?? 0} Sub-Account(s) · ${u.permissions ? `${u.permissions.length} Bereiche` : 'alle Bereiche'}`}
+                      {u.role === 'admin' ? t('Agentur-Admin – sieht alles') : t('Mitglied · {n} Sub-Account(s) · {areas}', { n: u.locations?.length ?? 0, areas: u.permissions ? t('{n} Bereiche', { n: u.permissions.length }) : t('alle Bereiche') })}
                     </small>
                   </span>
-                  {u.totp_enabled ? <Badge tone="green">2FA</Badge> : <Badge tone={u.role === 'admin' ? 'red' : 'gray'}>ohne 2FA</Badge>}
+                  {u.totp_enabled ? <Badge tone="green">2FA</Badge> : <Badge tone={u.role === 'admin' ? 'red' : 'gray'}>{t('ohne 2FA')}</Badge>}
                 </li>
               ))}
             </ul>
           )}
           <p className="muted small">
-            Zugänge verwaltest du unter <Link to="settings/team">Einstellungen → Team</Link>, Kunden-Logins unter <Link to="agency/clients">Agentur → Kunden</Link>.
+            {t('Zugänge verwaltest du unter')} <Link to="settings/team">{t('Einstellungen → Team')}</Link>{t(', Kunden-Logins unter')} <Link to="agency/clients">{t('Agentur → Kunden')}</Link>.
           </p>
         </div>
         <div>
-          <h3>Dieser Sub-Account{loc ? `: ${loc}` : ''}</h3>
+          <h3>{loc ? t('Dieser Sub-Account: {name}', { name: loc }) : t('Dieser Sub-Account')}</h3>
           <ul className="ho-list">
             {CHECKS.filter((c) => c.scope === 'location').map((c) => (
               <Row key={c.key} c={c} />
@@ -441,7 +467,7 @@ export function Handover() {
           </ul>
         </div>
         <div>
-          <h3>Agentur & Server</h3>
+          <h3>{t('Agentur & Server')}</h3>
           <ul className="ho-list">
             {CHECKS.filter((c) => c.scope === 'agency').map((c) => (
               <Row key={c.key} c={c} />
