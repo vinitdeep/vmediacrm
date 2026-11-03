@@ -1,7 +1,7 @@
 import { randomInt } from 'node:crypto';
 import type { App } from '../core/app.js';
 import { HttpError, bad } from '../core/http.js';
-import { centsToMoney, id, now } from '../core/util.js';
+import { centsToMoney, id, now, cleanCurrency, currencyOf } from '../core/util.js';
 
 /**
  * Gift cards (docs/store.md#gift-cards): a code and a balance kept in an append-only ledger (issue, redeem, refund, adjust). A
@@ -134,7 +134,7 @@ export interface IssueInput {
 export function issue(app: App, locationId: string, o: IssueInput): GiftCard {
   const amount = Math.round(o.amount_cents);
   if (!Number.isInteger(amount) || amount < 100 || amount > 1_000_000_00) throw bad('Betrag: 1 € bis 1.000.000 €');
-  const currency = /^[A-Z]{3}$/.test(o.currency ?? '') ? o.currency! : 'EUR';
+  const currency = cleanCurrency(o.currency, currencyOf(app.location(locationId)));
   let code = o.code ? normCode(o.code) : '';
   if (code && !/^[A-Z0-9-]{6,32}$/.test(code)) throw bad('Code: 6 bis 32 Buchstaben und Ziffern');
   if (code && cardByCode(app, locationId, code)) throw bad('Diesen Code gibt es schon');

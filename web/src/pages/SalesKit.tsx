@@ -1,3 +1,4 @@
+import { accountCurrency } from '../currency';
 import type { ReactNode } from 'react';
 import { money } from '../api';
 import { Badge, Check } from '../ui';
@@ -6,7 +7,7 @@ import { useT } from '../i18n';
 
 /** Shared parts of the sales pages: money input (euros on screen, cents on the wire), the positions editor and small status helpers. */
 
-export const eur = (cents: number | null | undefined, currency = 'EUR') => money(cents ?? 0, currency);
+export const eur = (cents: number | null | undefined, currency = accountCurrency()) => money(cents ?? 0, currency);
 /** "1.234,5" or "1234.5" → cents. */
 export const toCents = (v: unknown): number => {
   const s = String(v ?? '').trim().replace(/\s/g, '');
@@ -74,7 +75,7 @@ export function rowNet(l: LineDraft): number {
 }
 
 /** Positions with product picker, quantity, price, discount, tax and (for quotes) the "optional" tick. */
-export function LinesEditor({ lines, onChange, products, currency = 'EUR', defaultTax = 19, optional = false, label, tour }: { lines: LineDraft[]; onChange: (l: LineDraft[]) => void; products: any[]; currency?: string; defaultTax?: number; optional?: boolean; label?: string; tour?: string }) {
+export function LinesEditor({ lines, onChange, products, currency = accountCurrency(), defaultTax = 19, optional = false, label, tour }: { lines: LineDraft[]; onChange: (l: LineDraft[]) => void; products: any[]; currency?: string; defaultTax?: number; optional?: boolean; label?: string; tour?: string }) {
   const t = useT('b6sales');
   const set = (i: number, patch: Partial<LineDraft>) => onChange(lines.map((l, j) => (j === i ? { ...l, ...patch } : l)));
   const pick = (i: number, pid: string) => {

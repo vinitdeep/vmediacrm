@@ -181,11 +181,26 @@ export class Db {
       this.raw.exec(sql);
       this.run('INSERT INTO _migrations (name, applied_at) VALUES (?, ?)', name, new Date().toISOString());
     });
+    this.colCache.clear();
     this.invalidate();
+  }
+
+  /** Fills defaults that depend on the app (the account's currency) before `insert` writes a row; returns the row to write. */
+  onInsert?: (table: string, row: Row) => Row;
+  private colCache = new Map<string, Set<string>>();
+  /** Column names of a table (cached until the next migration). */
+  columns(table: string): Set<string> {
+    let c = this.colCache.get(table);
+    if (!c) {
+      c = new Set(this.all<{ name: string }>(`PRAGMA table_info(${table.replace(/[^A-Za-z0-9_]/g, '')})`).map((r) => r.name));
+      this.colCache.set(table, c);
+    }
+    return c;
   }
 
   /** Insert a plain object; objects/arrays are stored as JSON text. */
   insert(table: string, row: Row): void {
+    if (this.onInsert) row = this.onInsert(table, row);
     const keys = Object.keys(row).filter((k) => row[k] !== undefined);
     const sql = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`;
     this.run(sql, ...keys.map((k) => toSql(row[k])));

@@ -155,7 +155,7 @@ function BuyOffersFields({ product, data, setData }: { product: any; data: any; 
                 onChange={(v) => setCode({ ...code, kind: v })}
                 options={[
                   ['percent', '%'],
-                  ['amount', product.currency === 'EUR' ? '€' : product.currency],
+                  ['amount', ({ EUR: '€', INR: '₹', USD: '$', GBP: '£' } as Record<string, string>)[product.currency] ?? product.currency],
                 ]}
               />
               <Input value={code.value} onChange={(v) => setCode({ ...code, value: v })} placeholder={code.kind === 'amount' ? t('Betrag') : t('Prozent')} inputMode="decimal" aria-label={t('Rabatt')} />

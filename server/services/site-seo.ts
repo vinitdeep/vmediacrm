@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '../core/util.js';
 /**
  * SEO-Check and schema markup for site pages (pure, no imports from the app).
  *
@@ -276,7 +277,7 @@ export function buildSchema(type: string, data: Record<string, unknown>, page: {
         description: d.description,
         image: img('image'),
         brand: d.brand ? { '@type': 'Brand', name: d.brand } : undefined,
-        offers: price ? { '@type': 'Offer', price, priceCurrency: /^[A-Z]{3}$/.test(d.currency) ? d.currency : 'EUR', availability: 'https://schema.org/InStock', url: page.url } : undefined,
+        offers: price ? { '@type': 'Offer', price, priceCurrency: /^[A-Z]{3}$/.test(d.currency) ? d.currency : DEFAULT_CURRENCY, availability: 'https://schema.org/InStock', url: page.url } : undefined,
       });
     }
     case 'Event': {

@@ -1,7 +1,7 @@
 import type { Module } from '../core/app.js';
 import { bad, clampLimit, notFound, type Ctx } from '../core/http.js';
 import { render } from '../core/template.js';
-import { id, now } from '../core/util.js';
+import { id, now, DEFAULT_CURRENCY } from '../core/util.js';
 import { contactVars, getContact, logActivity } from '../services/contacts.js';
 import { auditLog, clip, json, money, purchaseTag, setPurchaseAccess, signToken, stripeCall, subscriptionOfInvoice } from '../services/creator-kit.js';
 import { cleanSettings, defaults, type DunningSettings } from '../services/dunning-model.js';
@@ -578,7 +578,7 @@ export const dunningModule: Module = {
           if (!run.contact_id) throw new Error('Kein Kontakt');
           const url = billingUrl(run.location_id, run.contact_id);
           const channel = step.channel === 'sms' ? 'sms' : 'email';
-          const full = { ...vars, dunning: { url, product: vars.event?.product?.name ?? '', amount: vars.event?.amount_cents ? money(Number(vars.event.amount_cents), String(vars.event.currency ?? 'EUR')) : '', days_left: 0 } };
+          const full = { ...vars, dunning: { url, product: vars.event?.product?.name ?? '', amount: vars.event?.amount_cents ? money(Number(vars.event.amount_cents), String(vars.event.currency ?? DEFAULT_CURRENCY)) : '', days_left: 0 } };
           const m = await sendToContact(app, run.location_id, { contactId: run.contact_id, channel, subject: channel === 'email' ? fill(requireText(step.subject, 'Betreff'), full) : undefined, body: fill(requireText(step.body, 'Text'), full), source: 'Workflow', ignoreDnd: true, purpose: 'transactional' });
           if (m.status === 'failed') throw new Error(String(m.error));
           return { result: `Link per ${channel === 'sms' ? 'SMS' : 'E-Mail'} gesendet`, vars: { billing_url: url } };

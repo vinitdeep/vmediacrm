@@ -1,7 +1,7 @@
 import type { App } from '../core/app.js';
 import { notFound, type Ctx } from '../core/http.js';
 import { addDaysYmd, tzOffsetMinutes } from '../core/time.js';
-import { now } from '../core/util.js';
+import { now, DEFAULT_CURRENCY } from '../core/util.js';
 import { openCents, paidRevenueSql } from './invoice-model.js';
 import { locationStats } from './location-stats.js';
 import { bounds, byTz, callRoute, checkArea, clampInt, contactName, deepLink, dueOn, marks, overdue, ownLocation, plain, scope, type Loc } from './mobile.js';
@@ -355,7 +355,7 @@ export function dealOut(o: any, n: Map<string, string>, stages: Map<string, stri
     id: o.id,
     name: o.name,
     value_cents: Number(o.value ?? 0) * 100,
-    currency: o.currency || 'EUR',
+    currency: o.currency || DEFAULT_CURRENCY,
     expected_close_date: o.expected_close_date ?? null,
     lost_reason: o.lost_reason || null,
     status: o.status,
@@ -579,7 +579,7 @@ export function payments(app: App, ctx: Ctx) {
       title: i.title || `${i.kind === 'estimate' ? 'Angebot' : 'Rechnung'} ${i.number}`,
       contact_name: i.contact_id ? i.company || contactName(i) : null,
       total_cents: Number(i.total_cents ?? 0),
-      currency: i.currency || 'EUR',
+      currency: i.currency || DEFAULT_CURRENCY,
       status: i.status,
       overdue: i.kind === 'invoice' && i.status === 'sent' && openCents(i as any) > 0 && !!i.due_at && i.due_at < (dayStartOf.get(i.location_id) ?? t),
       paid_at: i.paid_at ?? null,

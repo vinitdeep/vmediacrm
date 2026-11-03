@@ -8,7 +8,7 @@ import { contentMatches, extFor } from '../core/files.js';
 import { HttpError, bad, notFound, str, text, type Ctx } from '../core/http.js';
 import { cleanPermissions, visibleLocations } from '../core/permissions.js';
 import { isValidTz } from '../core/time.js';
-import { hashPassword, hashPasswordAsync, id, needsRehash, now, sha256, token, verifyPasswordAsync } from '../core/util.js';
+import { CURRENCIES, cleanCurrency, hashPassword, hashPasswordAsync, id, needsRehash, now, sha256, token, verifyPasswordAsync } from '../core/util.js';
 import { openIfSealed, sealSecret, sealSettings } from '../core/secrets.js';
 import { snapshotInto } from './backups.js';
 import { eraseLocations } from '../services/cloud-export.js';
@@ -213,8 +213,9 @@ export const coreModule: Module = {
       const u = ctx.user!;
       const locs =
         u.role === 'admin'
-          ? db.all('SELECT id, name, timezone FROM locations ORDER BY name')
-          : db.all(`SELECT id, name, timezone FROM locations WHERE id IN (SELECT value FROM json_each(?)) ORDER BY name`, JSON.stringify(u.locations));
+          ? db.all<Record<string, any>>("SELECT id, name, timezone, json_extract(settings, '$.currency') currency FROM locations ORDER BY name")
+          : db.all<Record<string, any>>(`SELECT id, name, timezone, json_extract(settings, '$.currency') currency FROM locations WHERE id IN (SELECT value FROM json_each(?)) ORDER BY name`, JSON.stringify(u.locations));
+      for (const l of locs) l.currency = cleanCurrency(l.currency);
       // Modules add fields of their own to the user (app.services.meFields, e.g. the UI language of modules/language.ts).
       const extra = ((app.services.meFields ?? []) as ((user: typeof u) => Record<string, unknown>)[]).reduce((o, fn) => ({ ...o, ...fn(u) }), {});
       return { user: { ...extra, ...u }, locations: visibleLocations(app, u, locs) };
@@ -316,6 +317,12 @@ export const coreModule: Module = {
         patch.timezone = ctx.body.timezone;
       }
       if (ctx.body.settings) {
+        // The account's currency (Settings → Company): the default for new products, invoices, deals, tickets …
+        if (ctx.body.settings.currency !== undefined) {
+          const c = String(ctx.body.settings.currency ?? '').trim().toUpperCase();
+          if (!(CURRENCIES as readonly string[]).includes(c)) throw bad(`Währung: ${CURRENCIES.join(', ')}`);
+          ctx.body.settings.currency = c;
+        }
         // The client's branding (incl. its login domain) is set by the agency only.
         const { branding: _b, ...rest } = ctx.body.settings;
         patch.settings = sealSettings(app, mergeSettings(cur.settings, rest)).value;

@@ -1,6 +1,6 @@
 import type { App } from '../core/app.js';
 import type { User } from '../core/http.js';
-import { id, now, token } from '../core/util.js';
+import { DEFAULT_CURRENCY, id, now, token } from '../core/util.js';
 import { AGENCY_NAME, type LocPlan } from './demo-seed-data.js';
 import { getOrCreateConversation } from './messaging.js';
 
@@ -206,7 +206,7 @@ export async function seedStore(k: Kit, products: any[]) {
         address: { company: '', street: `Hafenweg ${i + 2}`, postal_code: '24103', city: 'Kiel', country: 'DE' },
         items: lines, invoice_items: [], tax_mode: 'standard', shipping: { id: 'standard', name: 'Standardversand', price_cents: shipping },
         goods_cents: goods, shipping_cents: shipping, tax_cents: Math.round((goods + shipping) * 0.065), total_cents: goods + shipping, gift_cents: 0,
-        refunded_cents: status === 'refunded' ? goods + shipping : 0, currency: 'EUR', status, fulfilment,
+        refunded_cents: status === 'refunded' ? goods + shipping : 0, currency: DEFAULT_CURRENCY, status, fulfilment,
         carrier: ['shipped', 'delivered'].includes(fulfilment) ? 'dhl' : '', tracking_number: ['shipped', 'delivered'].includes(fulfilment) ? `00340434${String(161094 + i * 37).padStart(10, '0')}` : '',
         provider: status === 'pending' ? '' : 'demo', note: i === 4 ? 'Bitte als Geschenk verpacken.' : '', meta: { demo: true },
         created_at: created, paid_at: status === 'pending' ? null : created, shipped_at: ['shipped', 'delivered'].includes(fulfilment) ? created : null, delivered_at: fulfilment === 'delivered' ? created : null, updated_at: created,

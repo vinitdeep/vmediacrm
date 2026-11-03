@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '../core/util.js';
 /**
  * The pure rules of invoicing (no database, no HTTP): line maths with the rounding the EN 16931 rules expect, tax modes
  * with their mandatory note texts, number ranges, the state machine, VAT-ID / Leitweg-ID / IBAN checks, Skonto,
@@ -696,7 +697,7 @@ export function paymentTermsText(i: { due_ymd?: string; skonto?: Skonto | null; 
   if (i.due_ymd) parts.push(`Zahlbar ohne Abzug bis ${deYmd(i.due_ymd)}.`);
   if (i.skonto) {
     const s = skontoCents(i.total_cents, i.skonto.percent);
-    parts.push(`Bei Zahlung bis ${deYmd(skontoDeadline(i.issued_ymd, i.skonto.days))} (${i.skonto.days} Tage) ${String(i.skonto.percent).replace('.', ',')} % Skonto (${deAmount(s)} ${i.currency ?? 'EUR'}).`);
+    parts.push(`Bei Zahlung bis ${deYmd(skontoDeadline(i.issued_ymd, i.skonto.days))} (${i.skonto.days} Tage) ${String(i.skonto.percent).replace('.', ',')} % Skonto (${deAmount(s)} ${i.currency ?? DEFAULT_CURRENCY}).`);
   }
   return parts.join(' ');
 }

@@ -4,7 +4,7 @@ import { parseJson } from '../core/db.js';
 import { domainAlias } from '../core/domains.js';
 import { notFound, text, type Ctx } from '../core/http.js';
 import { addDaysYmd, ymdInTz, zonedToUtc } from '../core/time.js';
-import { id, now } from '../core/util.js';
+import { id, now, DEFAULT_CURRENCY, moneyLocale } from '../core/util.js';
 import { isBot } from '../services/ab-stats.js';
 import { parseTouch } from '../services/attribution.js';
 import { boardWidgets, type View } from '../services/boards-widgets.js';
@@ -144,9 +144,9 @@ export const siteAnalyticsModule: Module = {
       return page ? { funnel_id: funnel.id, page_id: page.id } : undefined;
     }
     const countable = (funnelId: string) => parseJson(db.get('SELECT settings FROM funnels WHERE id = ?', funnelId), ['settings'])?.settings?.analytics?.enabled !== false;
-    function convert(loc: string, where: { funnel_id: string; page_id: string }, kind: string, ref: string, cents = 0, currency = 'EUR') {
+    function convert(loc: string, where: { funnel_id: string; page_id: string }, kind: string, ref: string, cents = 0, currency = DEFAULT_CURRENCY) {
       if (!countable(where.funnel_id)) return;
-      db.insert('site_conversions', { id: id(), location_id: loc, funnel_id: where.funnel_id, page_id: where.page_id, kind, ref_id: String(ref ?? '').slice(0, 80), amount_cents: Math.max(0, Math.round(cents || 0)), currency: String(currency || 'EUR').toUpperCase().slice(0, 3), day: today(loc), created_at: now() });
+      db.insert('site_conversions', { id: id(), location_id: loc, funnel_id: where.funnel_id, page_id: where.page_id, kind, ref_id: String(ref ?? '').slice(0, 80), amount_cents: Math.max(0, Math.round(cents || 0)), currency: String(currency || DEFAULT_CURRENCY).toUpperCase().slice(0, 3), day: today(loc), created_at: now() });
     }
 
     app.events.on('form.submitted', (e) => {
@@ -332,7 +332,7 @@ export const siteAnalyticsModule: Module = {
     });
 
     // --- board widget -----------------------------------------------------------------------------------------------------------
-    const euro = (c: number) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(c / 100);
+    const euro = (c: number) => new Intl.NumberFormat(moneyLocale(DEFAULT_CURRENCY), { style: 'currency', currency: DEFAULT_CURRENCY, maximumFractionDigits: 0 }).format(c / 100);
     const rate = (v: number) => `${(v * 100).toFixed(1).replace('.', ',')} %`;
     try {
       boardWidgets(app).register({

@@ -2,7 +2,7 @@ import type { Ctx, RawResult } from '../core/http.js';
 import { html, notFound, redirect } from '../core/http.js';
 import type { Module } from '../core/app.js';
 import { escapeHtml } from '../core/template.js';
-import { now } from '../core/util.js';
+import { now, DEFAULT_CURRENCY } from '../core/util.js';
 import { getContact, logActivity } from '../services/contacts.js';
 import { auditLog, clip, limiter, money, openToken, purchaseTag, setPurchaseAccess, signToken, stripeCall, stripeKeyOf } from '../services/creator-kit.js';
 import { planLabel } from '../services/creator-plans.js';
@@ -140,7 +140,7 @@ export const dunningBillingModule: Module = {
         else if (open) (label = 'Zahlung offen'), (tone = 'err');
         else if (paused) (label = 'Pausiert'), (tone = 'warn');
         else if (cancelAt) (label = 'Gekündigt'), (tone = 'warn');
-        return { status, label, tone, next: end && !cancelAt && !paused && status !== 'canceled' ? new Date(end * 1000).toISOString() : '', amount: unit ? money(unit, String(item?.price?.currency ?? 'EUR')) : '', paused, cancelling: cancelAt, open, allow: { pause: false, cancel: false, cancelNow: false, switch: [] }, ...base } as View;
+        return { status, label, tone, next: end && !cancelAt && !paused && status !== 'canceled' ? new Date(end * 1000).toISOString() : '', amount: unit ? money(unit, String(item?.price?.currency ?? DEFAULT_CURRENCY)) : '', paused, cancelling: cancelAt, open, allow: { pause: false, cancel: false, cancelNow: false, switch: [] }, ...base } as View;
       };
       for (const p of plans) {
         const s = await live(p.stripe_subscription);

@@ -203,7 +203,7 @@ export default {
   '„{label}“ löschen? Die Werte bleiben am Kontakt gespeichert.': 'Delete "{label}"? The values stay saved on the contact.',
   '„{label}“ löschen? Die gespeicherten Werte werden entfernt.': 'Delete "{label}"? The saved values will be removed.',
   'Mehrzeiliger Text': 'Multi-line text',
-  'Währung (€)': 'Currency (€)',
+  'Währung (€)': 'Currency (¤)',
   'Mehrfachauswahl': 'Multi-select',
   'Nutzer': 'User',
 } satisfies Catalog;

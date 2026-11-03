@@ -3,7 +3,7 @@ import type { App, LocationRow } from '../core/app.js';
 import { parseJson, parseRows } from '../core/db.js';
 import { HttpError, bad } from '../core/http.js';
 import { escapeHtml } from '../core/template.js';
-import { centsToMoney, id, now, safeEqual, slugify } from '../core/util.js';
+import { centsToMoney, id, now, safeEqual, slugify, DEFAULT_CURRENCY } from '../core/util.js';
 import { addTags, getContact, logActivity, removeTags, upsertContact, type Contact } from './contacts.js';
 import { portalUrl, grantAccess, revokeAccess } from './courses.js';
 import { joinGroup } from './community-actions.js';
@@ -245,7 +245,7 @@ export function productInfo(app: App, locationId: string, productId: string | nu
   return {
     id: p.id,
     name: p.name,
-    currency: String(p.currency || 'EUR').toUpperCase(),
+    currency: String(p.currency || DEFAULT_CURRENCY).toUpperCase(),
     price_cents: p.price_cents,
     gross_cents: gross,
     tax,

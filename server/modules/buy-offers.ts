@@ -3,7 +3,7 @@ import { parseJson } from '../core/db.js';
 import { HttpError, bad, html, notFound, num, redirect, str, type Ctx } from '../core/http.js';
 import { jsonForScript, publicPage } from '../core/page.js';
 import { escapeHtml } from '../core/template.js';
-import { centsToMoney, id, now, token } from '../core/util.js';
+import { centsToMoney, id, now, token, DEFAULT_CURRENCY } from '../core/util.js';
 import { addTags, logActivity } from '../services/contacts.js';
 import { MIN_AMOUNT_CENTS, StripeError, lineItemParams, stripeRequest } from '../services/stripe.js';
 
@@ -78,7 +78,7 @@ export const buyOffersModule: Module = {
   register(app) {
     const { db, router } = app;
     const sb = () => app.services.stripeBuy as StripeBuy | undefined;
-    const money = (c: number, cur: string) => centsToMoney(c, String(cur || 'EUR').toUpperCase());
+    const money = (c: number, cur: string) => centsToMoney(c, String(cur || DEFAULT_CURRENCY).toUpperCase());
     const offerOf = (productId: string) => db.get('SELECT * FROM buy_offers WHERE product_id = ?', productId);
     /** An active one-time product of the same sub-account and currency, for bumps and upsells. */
     const extraProduct = (pid: string | null | undefined, main: any) => {

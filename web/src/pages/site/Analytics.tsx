@@ -1,3 +1,4 @@
+import { accountCurrency, moneyLocaleFor } from '../../currency';
 import { useState } from 'react';
 import { api } from '../../api';
 import { Badge, Empty, Spinner, Stat, useLoad } from '../../ui';
@@ -7,7 +8,7 @@ import { SOURCE_LOCALE } from '../../i18n/registry';
 import { SortableGrid } from '../../sortable/Sortable';
 
 // Numbers in the UI language (German as before: "12,5 %", English "12.5%").
-const eur = (c: number) => new Intl.NumberFormat(intlLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 }).format(c / 100);
+const eur = (c: number) => new Intl.NumberFormat(moneyLocaleFor(accountCurrency(), intlLocale()), { style: 'currency', currency: accountCurrency(), maximumFractionDigits: 2 }).format(c / 100);
 const pct = (v: number, d = 1) => (getLocale() === SOURCE_LOCALE ? `${(v * 100).toFixed(d).replace('.', ',')} %` : `${(v * 100).toFixed(d)}%`);
 const num = (n: number) => new Intl.NumberFormat(intlLocale()).format(n);
 const secs = (s: number) => (s >= 90 ? `${Math.floor(s / 60)} min ${Math.round(s % 60)} s` : `${Math.round(s)} s`);

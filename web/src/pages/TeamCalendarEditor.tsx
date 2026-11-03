@@ -1,3 +1,4 @@
+import { currencyOptions } from '../currency';
 import { useEffect, useState, type MutableRefObject } from 'react';
 import './teamtools.css';
 import { Icon } from '../icons';
@@ -182,7 +183,7 @@ export function TeamEditor({ cal, tab, saveRef }: { cal: { id: string; name: str
                 <Money label={tt('Preis (brutto)')} cents={c.payment.amount_cents} onChange={(v) => setPay({ amount_cents: v })} hint={tt('Was der Kunde für den ganzen Termin zahlt')} />
                 {c.payment.mode === 'deposit' && <Money label={tt('Anzahlung (brutto)')} cents={c.payment.deposit_cents} onChange={(v) => setPay({ deposit_cents: v })} hint={tt('Wird bei der Buchung bezahlt')} />}
                 <Field label={tt('Währung')}>
-                  <Select value={c.payment.currency} onChange={(v) => setPay({ currency: v })} options={['EUR', 'CHF', 'USD', 'GBP']} />
+                  <Select value={c.payment.currency} onChange={(v) => setPay({ currency: v })} options={currencyOptions()} />
                 </Field>
                 <Field label={tt('Steuersatz (%)')} hint={tt('Leer = Standard aus den Rechnungs-Einstellungen')}>
                   <Input type="number" min={0} max={100} value={c.payment.tax_rate ?? ''} placeholder={tt('Standard')} onChange={(v) => setPay({ tax_rate: v === '' ? null : Number(v) })} />

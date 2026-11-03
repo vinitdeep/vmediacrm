@@ -14,6 +14,7 @@ All variables are optional except `PGHL_BASE_URL`; much of it can also be set in
 | --- | --- |
 | `PGHL_BASE_URL` | Public address for links in e-mails (booking, invoice, unsubscribe). **Set it.** |
 | `PGHL_DOMAIN` | Domain for the bundled Caddy (`docker compose --profile caddy`) and the Traefik example; set by `scripts/install.sh` |
+| `PGHL_CURRENCY` | Currency of accounts without their own Currency setting (Settings → Company), e.g. `INR`, `EUR`, `USD` (default `INR`) |
 | `PGHL_TIMEZONE` | Time zone of the first sub-account and of the demo reset (default `Europe/Berlin`) |
 | `PGHL_DATA_DIR` | Database, uploads, keys (default `./data`, `/data` in the container) |
 | `PORT`, `PGHL_PORT` | Port (default 4700) |

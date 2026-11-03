@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY, moneyLocale } from '../core/util.js';
 /**
  * Living Boards: the built-in widgets. They register through the same `register()` any module uses (see
  * boards-widgets.ts) and read their data through the viewer's own API routes (`w.call`) – so member rights, the SaaS
@@ -12,7 +13,7 @@ import { CHART_PRESETS, KPI_PRESETS, RANGES, presetQuery, type ReportQuery } fro
 import { loadPage } from './wiki-store.js';
 import { WidgetRegistry, type ActionView, type ConfigField, type ListRow, type Tone, type View, type WidgetCtx, type WidgetDef } from './boards-widgets.js';
 
-const euro = (v: number) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v || 0);
+const euro = (v: number) => new Intl.NumberFormat(moneyLocale(DEFAULT_CURRENCY), { style: 'currency', currency: DEFAULT_CURRENCY, maximumFractionDigits: 0 }).format(v || 0);
 const nameOf = (c: any) => [c?.first_name, c?.last_name].filter(Boolean).join(' ') || c?.contact_name || c?.email || c?.contact_email || c?.phone || 'Unbekannt';
 const clip = (s: unknown, n: number) => {
   const t = String(s ?? '').replace(/\s+/g, ' ').trim();

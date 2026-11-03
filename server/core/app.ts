@@ -22,7 +22,7 @@ import {
 import { PerfMonitor } from './perf.js';
 import { openSettings, sealSettings } from './secrets.js';
 import { serveStatic } from './static.js';
-import { sha256 } from './util.js';
+import { cleanCurrency, sha256 } from './util.js';
 
 export interface Config {
   port: number;
@@ -181,6 +181,13 @@ export function createApp(config: Config, modules: Module[]) {
     },
   };
 
+  // A new row of a sub-account (product, invoice, deal, ticket event …) that names no currency gets the account's
+  // Currency setting (Settings → Company) instead of the column's old EUR default. Bookkeeping (acc_*) stays in EUR.
+  db.onInsert = (table, row) => {
+    if (row.currency !== undefined || !row.location_id || table.startsWith('acc_') || !db.columns(table).has('currency')) return row;
+    const loc = db.get<{ c: string | null }>("SELECT json_extract(settings, '$.currency') c FROM locations WHERE id = ?", row.location_id);
+    return loc ? { ...row, currency: cleanCurrency(loc.c) } : row;
+  };
   for (const m of modules) for (const [name, sql] of m.migrations ?? []) db.migrate(`${m.name}:${name}`, sql);
   // Planner statistics for tables and indexes that have none yet (new indexes from the migrations above).
   db.optimize(true);

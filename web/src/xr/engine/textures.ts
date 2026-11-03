@@ -1,3 +1,4 @@
+import { accountCurrency, moneyLocaleFor } from '../../currency';
 import type { ListRow, NumberFormat, Tone, View } from '../../boards/types';
 import { PX_PER_M } from './geometry';
 import { tr, intlLocale } from '../../i18n';
@@ -102,7 +103,7 @@ export function formatValue(v: string | number | null | undefined, format?: Numb
   if (typeof v === 'string') return v;
   switch (format) {
     case 'money':
-      return new Intl.NumberFormat(intlLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 }).format(v);
+      return new Intl.NumberFormat(moneyLocaleFor(accountCurrency(), intlLocale()), { style: 'currency', currency: accountCurrency(), maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 }).format(v);
     case 'percent':
       return `${nf(1).format(v)} %`;
     case 'days':

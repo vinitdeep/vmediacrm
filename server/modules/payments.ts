@@ -4,7 +4,7 @@ import { cached } from '../core/cache.js';
 import { HttpError, bad, html, notFound, num, str } from '../core/http.js';
 import { messagePage, publicPage } from '../core/page.js';
 import { escapeHtml, render } from '../core/template.js';
-import { centsToMoney, id, now, token } from '../core/util.js';
+import { centsToMoney, id, now, token, cleanCurrency, currencyOf } from '../core/util.js';
 import { contactVars, getContact, logActivity } from '../services/contacts.js';
 import { sendToContact } from '../services/messaging.js';
 import type { DocSnapshot } from '../services/einvoice-model.js';
@@ -299,7 +299,7 @@ export function createInvoice(app: App, locationId: string, input: Record<string
     contact_id: input.contact_id || null,
     title: str(input.title, 'Titel', { max: 300 }),
     items,
-    currency: /^[A-Z]{3}$/.test(input.currency ?? '') ? input.currency : 'EUR',
+    currency: cleanCurrency(input.currency, currencyOf(app.location(locationId))),
     ...t,
     status: 'draft',
     notes: str(input.notes, 'Hinweise', { max: 5000 }),
@@ -591,7 +591,7 @@ export const paymentsModule: Module = {
         name: str(ctx.body.name, 'Name', { required: true, max: 200 }),
         description: str(ctx.body.description, 'Beschreibung', { max: 5000 }),
         price_cents: Math.round(num(ctx.body.price_cents)),
-        currency: /^[A-Z]{3}$/.test(ctx.body.currency ?? '') ? ctx.body.currency : 'EUR',
+        currency: cleanCurrency(ctx.body.currency, currencyOf(app.location(ctx.locationId))),
         tax_rate: ctx.body.tax_rate === undefined || ctx.body.tax_rate === '' ? null : num(ctx.body.tax_rate),
         recurring: ['month', 'year'].includes(ctx.body.recurring) ? ctx.body.recurring : null,
         payment_link: str(ctx.body.payment_link, 'Zahlungslink', { max: 1000 }) || null,

@@ -195,7 +195,7 @@ export default {
   'Verträge, Zeugnisse und Abrechnungen unterliegen Aufbewahrungsfristen (meist 6 bis 10 Jahre) – lösche nur, was du nicht mehr aufbewahren musst.': 'Contracts, references and payslips are subject to retention periods (usually 6 to 10 years) – only delete what you no longer have to keep.',
   'Diese Daten sehen nur Administratoren und die in Personal → Einstellungen freigegebenen Personen.': 'Only administrators and the people authorised under HR → Settings can see this data.',
   'Verschlüsselt gespeichert. Das Ansehen und jede Änderung steht im Protokoll (ohne die Werte).': 'Stored encrypted. Viewing and every change is in the log (without the values).',
-  'Gehalt (€)': 'Salary (€)',
+  'Gehalt (€)': 'Salary (¤)',
   'je': 'per',
   'Stunde': 'hour',
   'Geburtsdatum': 'Date of birth',

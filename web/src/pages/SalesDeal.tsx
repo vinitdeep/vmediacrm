@@ -1,3 +1,4 @@
+import { accountCurrency } from '../currency';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { api, dt } from '../api';
 import { Check, Field, Input, Spinner, Textarea, act, confirmAsk, useLoad } from '../ui';
@@ -24,7 +25,7 @@ function Positions({ deal, onLock }: { deal: any; onLock: (locked: boolean) => v
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   if (!data || !rows) return <Spinner />;
-  const cur = deal.currency || 'EUR';
+  const cur = deal.currency || accountCurrency();
   const save = async () => {
     const r = await act(() => api.put(`/api/opportunities/${deal.id}/lines`, { lines: rows.map((l) => fromDraft(l)) }), rows.length ? tx('Positionen gespeichert – der Dealwert folgt') : tx('Positionen entfernt'));
     if (r) lines.setData(r);

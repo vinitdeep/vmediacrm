@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '../core/util.js';
 /**
  * Ereignis-Auslöser des Companions (docs/living-boards.md#ereignis-ausloser) – pure: the trigger registry, each trigger's words and
  * next action, and the routing rules (speak now / card / push / digest, rate limit, quiet hours). modules/companion-live.ts listens to
@@ -109,9 +110,9 @@ const clip = (s: unknown, n: number) => {
   return t.length > n ? `${t.slice(0, n - 1)}…` : t;
 };
 const personOf = (c: any) => clip([c?.first_name, c?.last_name].filter(Boolean).join(' ') || c?.name || c?.company || c?.email || c?.phone || '', 60);
-const euro = (cents: number, lang: Lang, cur = 'EUR') => {
+const euro = (cents: number, lang: Lang, cur = DEFAULT_CURRENCY) => {
   try {
-    return new Intl.NumberFormat(lang === 'en' ? 'en-GB' : 'de-DE', { style: 'currency', currency: cur || 'EUR', maximumFractionDigits: 0 }).format((Number(cents) || 0) / 100);
+    return new Intl.NumberFormat(lang === 'en' ? 'en-GB' : 'de-DE', { style: 'currency', currency: cur || DEFAULT_CURRENCY, maximumFractionDigits: 0 }).format((Number(cents) || 0) / 100);
   } catch {
     return `${Math.round((Number(cents) || 0) / 100)} ${cur}`;
   }

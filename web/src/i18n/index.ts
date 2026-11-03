@@ -1,3 +1,4 @@
+import { accountCurrency, currencySymbol, moneyLocaleFor } from '../currency';
 import { use, useSyncExternalStore } from 'react';
 import { CATALOGS, ENGLISH_ONLY, FALLBACK_LOCALE, LOCALES, SOURCE_LOCALE, type Catalog, type Locale, type Namespace, type PluralForms } from './registry';
 
@@ -139,7 +140,9 @@ const pluralRule = (l: Locale) => rules.get(l) ?? rules.set(l, new Intl.PluralRu
 
 function translate(l: Locale, ns: Namespace, text: string, vars?: Vars): string {
   const hit = lookup(l, ns, text);
-  return interpolate(hit === undefined ? text : typeof hit === 'string' ? hit : hit.other, vars);
+  const out = interpolate(hit === undefined ? text : typeof hit === 'string' ? hit : hit.other, vars);
+  // ¤ in a translation stands for the account's currency symbol ("Price (¤)" → "Price (₹)").
+  return out.includes('¤') ? out.replace(/¤/g, currencySymbol()) : out;
 }
 
 function plural(l: Locale, ns: Namespace, n: number, forms: PluralForms, vars?: Vars): string {
@@ -209,8 +212,11 @@ export function intlLocale(l: Locale = current): string {
   return own ?? LOCALES[l].intl;
 }
 export const fmtNumber = (n: number, opts?: Intl.NumberFormatOptions) => new Intl.NumberFormat(intlLocale(), opts).format(n || 0);
-/** Cents → "1.234,50 €" / "€1,234.50". */
-export const fmtMoney = (cents: number, currency = 'EUR', opts?: Intl.NumberFormatOptions) => new Intl.NumberFormat(intlLocale(), { style: 'currency', currency: currency || 'EUR', ...opts }).format((cents || 0) / 100);
+/** Cents → "₹1,234.50" (rupees in Indian grouping) / "€1,234.50"; no currency = the account's (Settings → Company). */
+export const fmtMoney = (cents: number, currency = accountCurrency(), opts?: Intl.NumberFormatOptions) => {
+  const c = currency || accountCurrency();
+  return new Intl.NumberFormat(moneyLocaleFor(c, intlLocale()), { style: 'currency', currency: c, ...opts }).format((cents || 0) / 100);
+};
 export const fmtDate = (v: string | number | Date, opts?: Intl.DateTimeFormatOptions) => new Date(v).toLocaleDateString(intlLocale(), opts);
 export const fmtDateTime = (v: string | number | Date, opts?: Intl.DateTimeFormatOptions) => new Date(v).toLocaleString(intlLocale(), opts);
 export const fmtTime = (v: string | number | Date, opts: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' }) => new Date(v).toLocaleTimeString(intlLocale(), opts);

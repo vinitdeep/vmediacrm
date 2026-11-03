@@ -58,9 +58,11 @@ describe('amounts in different currencies are never added up', () => {
       { currency: '', open_cents: 100 },
       { currency: 'CHF', open_cents: 0 },
     ];
+    // a row without a currency counts in the account's currency (V Media CRM: INR)
     expect(sumByCurrency(rows, (r) => r.open_cents)).toEqual([
-      ['EUR', 7600],
+      ['EUR', 7500],
       ['USD', 7000],
+      ['INR', 100],
     ]);
     expect(sumByCurrency([], () => 1)).toEqual([]);
   });

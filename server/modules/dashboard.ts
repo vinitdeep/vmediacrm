@@ -1,3 +1,4 @@
+import { currencyOf } from '../core/util.js';
 import type { Module } from '../core/app.js';
 import { num } from '../core/http.js';
 import { ymdInTz } from '../core/time.js';
@@ -62,7 +63,7 @@ export const dashboardModule: Module = {
 
       // Money in different currencies is never added up (there are no exchange rates): per currency, the sub-account's main
       // currency (the one most of its invoices are in) first. `paid`/`outstanding` keep the main currency's amounts for older clients.
-      const cur = (c: unknown) => (typeof c === 'string' && /^[A-Z]{3}$/.test(c) ? c : 'EUR');
+      const cur = (c: unknown) => (typeof c === 'string' && /^[A-Z]{3}$/.test(c) ? c : currencyOf(app.location(loc)));
       const byCurrency = new Map<string, { currency: string; paid: number; outstanding: number }>();
       const add = (c: unknown, k: 'paid' | 'outstanding', v: unknown) => {
         const key = cur(c);
@@ -72,7 +73,7 @@ export const dashboardModule: Module = {
       };
       for (const r of db.all(`SELECT currency, COALESCE(SUM(${paidRevenueSql()}),0) AS v FROM invoices WHERE location_id = ? AND status = 'paid' AND paid_at >= ? GROUP BY currency`, loc, since)) add(r.currency, 'paid', r.v);
       for (const r of db.all(`SELECT currency, COALESCE(SUM(MAX(0, total_cents - paid_cents - credited_cents - deducted_cents)),0) AS v FROM invoices WHERE location_id = ? AND kind = 'invoice' AND status = 'sent' GROUP BY currency`, loc)) add(r.currency, 'outstanding', r.v);
-      const main = cur(db.get(`SELECT currency FROM invoices WHERE location_id = ? AND kind = 'invoice' GROUP BY currency ORDER BY COUNT(*) DESC, currency = 'EUR' DESC, currency LIMIT 1`, loc)?.currency);
+      const main = cur(db.get(`SELECT currency FROM invoices WHERE location_id = ? AND kind = 'invoice' GROUP BY currency ORDER BY COUNT(*) DESC, currency = ? DESC, currency LIMIT 1`, loc, currencyOf(app.location(loc)))?.currency);
       const revenueByCurrency = [...byCurrency.values()].filter((r) => r.paid || r.outstanding).sort((a, b) => (a.currency === main ? -1 : b.currency === main ? 1 : a.currency < b.currency ? -1 : 1));
       const mainRow = byCurrency.get(main);
       const sources = db.all(`SELECT COALESCE(NULLIF(source,''),'unbekannt') AS source, COUNT(*) n FROM contacts WHERE location_id = ? AND created_at >= ?${cs.sql} GROUP BY 1 ORDER BY n DESC LIMIT 10`, loc, since, ...cs.params);

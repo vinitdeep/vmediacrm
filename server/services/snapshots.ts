@@ -1,6 +1,6 @@
 import type { App, LocationRow } from '../core/app.js';
 import { parseRows } from '../core/db.js';
-import { id, now, slugify, token } from '../core/util.js';
+import { id, now, slugify, token, DEFAULT_CURRENCY } from '../core/util.js';
 import { ensureTags } from './contacts.js';
 import { designFields } from './email-design.js';
 
@@ -333,7 +333,7 @@ export function applySnapshot(app: App, locationId: string, data: SnapshotData, 
       db.insert('templates', { id: id(), location_id: locationId, name: String(t.name), channel: t.channel === 'sms' ? 'sms' : 'email', subject: t.subject ?? '', body: t.body ?? '', is_html: t.is_html ? 1 : 0, created_at: now(), updated_at: now(), ...design });
     }
     for (const p of data.products) {
-      db.insert('products', { id: (p.id && maps.products.get(p.id)) || id(), location_id: locationId, name: String(p.name), description: p.description ?? '', price_cents: Number(p.price_cents) || 0, currency: p.currency || 'EUR', tax_rate: p.tax_rate ?? null, recurring: p.recurring ?? null, active: 1, created_at: now() });
+      db.insert('products', { id: (p.id && maps.products.get(p.id)) || id(), location_id: locationId, name: String(p.name), description: p.description ?? '', price_cents: Number(p.price_cents) || 0, currency: p.currency || DEFAULT_CURRENCY, tax_rate: p.tax_rate ?? null, recurring: p.recurring ?? null, active: 1, created_at: now() });
     }
     for (const p of parts) p.apply(app, locationId, items(p), { loc, maps, created });
   });

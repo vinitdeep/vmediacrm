@@ -1,6 +1,6 @@
 import { bad } from '../core/http.js';
 import { addDaysYmd, weekdayKey, ymdInTz, zonedToUtc } from '../core/time.js';
-import { id as newId } from '../core/util.js';
+import { id as newId, DEFAULT_CURRENCY } from '../core/util.js';
 import type { Windows } from './team-people.js';
 
 /**
@@ -83,7 +83,7 @@ export const defaultConfig = (): TeamCalConfig => ({
   buffer_before: null,
   buffer_after: null,
   questions: [],
-  payment: { mode: 'none', amount_cents: 0, deposit_cents: 0, currency: 'EUR', tax_rate: null, title: '', hold_minutes: 30, refund: 'manual' },
+  payment: { mode: 'none', amount_cents: 0, deposit_cents: 0, currency: DEFAULT_CURRENCY, tax_rate: null, title: '', hold_minutes: 30, refund: 'manual' },
   video: 'none',
   policy_text: '',
   allow_cancel: true,

@@ -1,3 +1,4 @@
+import { accountCurrency, moneyLocaleFor } from '../currency';
 import { useState } from 'react';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 import { api } from '../api';
@@ -70,7 +71,7 @@ export interface GrowthView {
   deltas: Record<string, number | null>;
 }
 
-const money = (v: number | null | undefined, locale: string) => new Intl.NumberFormat(locale === 'en' ? 'en-GB' : 'de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Math.round(Number(v) || 0));
+const money = (v: number | null | undefined, locale: string) => new Intl.NumberFormat(moneyLocaleFor(accountCurrency(), locale === 'en' ? 'en-GB' : 'de-DE'), { style: 'currency', currency: accountCurrency(), maximumFractionDigits: 0 }).format(Math.round(Number(v) || 0));
 
 /** The week's numbers of a growth check-in: revenue, new leads, deals won, win rate, open pipeline – with the change to last week. */
 export function GrowthKpis({ g, locale }: { g: GrowthView; locale: string }) {

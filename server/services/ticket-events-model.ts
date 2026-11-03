@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '../core/util.js';
 import { bad } from '../core/http.js';
 
 /**
@@ -9,7 +10,8 @@ import { bad } from '../core/http.js';
 export const MAX_TYPES = 20;
 /** Tickets in one order, whatever a type allows (each ticket is its own QR code, page and check-in). */
 export const MAX_PER_ORDER = 20;
-export const CURRENCIES = ['EUR', 'CHF', 'USD', 'GBP'] as const;
+export { CURRENCIES } from '../core/util.js';
+import { CURRENCIES } from '../core/util.js';
 /** How long a paid order holds its tickets while the buyer pays. */
 export const HOLD_MINUTES = 30;
 
@@ -78,8 +80,9 @@ export function cleanEvent(b: Record<string, any>, partial = false): Partial<Tic
     out.starts_at = s;
   }
   if (has('ends_at')) out.ends_at = isoOrNull(b.ends_at, 'Ende');
-  if (has('currency')) {
-    const c = String(b.currency ?? 'EUR').toUpperCase();
+  // No currency on a new event = the account's (set by the route).
+  if (b.currency !== undefined) {
+    const c = String(b.currency ?? DEFAULT_CURRENCY).toUpperCase();
     if (!(CURRENCIES as readonly string[]).includes(c)) throw bad(`Währung: ${CURRENCIES.join(', ')}`);
     out.currency = c;
   }

@@ -1,6 +1,6 @@
 import type { Module } from '../core/app.js';
 import { HttpError, bad, num, type Ctx } from '../core/http.js';
-import { id, now } from '../core/util.js';
+import { id, now, DEFAULT_CURRENCY } from '../core/util.js';
 import { boardWidgets, type View, type WidgetCtx } from '../services/boards-widgets.js';
 import { cleanCurrency } from '../services/opportunities.js';
 import { METRICS, METRIC_LABEL, PERIODS, currentPeriod, pct, periodRange, periodStart, rank, shiftPeriod, standings, type Metric, type PeriodKind, type Standing } from '../services/quotas.js';
@@ -78,7 +78,7 @@ export const quotasModule: Module = {
     // --- what a person may see ----------------------------------------------------------------------------------------------------
     const settingsOf = (loc: string) => {
       const r = db.get<{ leaderboard: string | null; currency: string }>('SELECT leaderboard, currency FROM quota_settings WHERE location_id = ?', loc);
-      return { leaderboard: (r?.leaderboard === 'all' || r?.leaderboard === 'own' || r?.leaderboard === 'off' ? r.leaderboard : null) as 'all' | 'own' | 'off' | null, currency: r?.currency || 'EUR' };
+      return { leaderboard: (r?.leaderboard === 'all' || r?.leaderboard === 'own' || r?.leaderboard === 'off' ? r.leaderboard : null) as 'all' | 'own' | 'off' | null, currency: r?.currency || DEFAULT_CURRENCY };
     };
     /** Who sees whose numbers: a setting; without one everybody sees all – except people whose deals are limited by record access, who see their own. */
     const visibility = (ctx: Ctx | WidgetCtx['ctx']): 'all' | 'own' | 'off' => {

@@ -1,7 +1,7 @@
 import type { App } from '../core/app.js';
 import { parseJson } from '../core/db.js';
 import { bad } from '../core/http.js';
-import { slugify } from '../core/util.js';
+import { slugify, DEFAULT_CURRENCY } from '../core/util.js';
 import { invoiceSettings } from '../modules/payments.js';
 import { DEFAULT_SETTINGS, cleanSettings, type ProductKind, type QuoteProduct, type StoreSettings } from './store-model.js';
 
@@ -117,7 +117,7 @@ export function catalog(app: App, locationId: string, o: { publishedOnly?: boole
       description: p.description ?? '',
       net_cents: net,
       tax_rate: p.tax_rate === null || p.tax_rate === undefined ? defaultTax : num(p.tax_rate),
-      currency: p.currency || 'EUR',
+      currency: p.currency || DEFAULT_CURRENCY,
       active: !!p.active,
       recurring: p.recurring ?? null,
       slug: p.store_slug || slugify(p.name) || p.id,

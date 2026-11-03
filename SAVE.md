@@ -33,12 +33,17 @@ Dev mode: `npm run dev` (api + vite). Deploy options: `docs/deploy/` (needs a VP
 6. **Translation** – ~5,900 untranslated German UI texts done by 7 parallel agents (branches `i18n-b1`…`i18n-b7`,
    worktrees `..\vmedia-wt1..7`). ALL 7 batches merged (~19k catalog entries); worktrees/branches removed.
    Tour data stays German in `tour/content/*.ts`; English comes from catalogs `toursA/B/C` via `web/src/tour/text.ts`.
-7. **Repo hygiene** – forced LF line endings (`.gitattributes eol=lf`, `core.autocrlf=false`); CRLF broke tests on Windows.
+7. **Currency** – Settings → Company → Currency (stored as `locations.settings.currency`; INR, USD, EUR, GBP, AED, SGD,
+   AUD, CAD, CHF, JPY). Default **INR** (`PGHL_CURRENCY` overrides). New rows of any table with a `currency` column get the
+   account's currency through `db.onInsert` (server/core/app.ts) – bookkeeping `acc_*` stays EUR (German GoBD/DATEV/SEPA).
+   Web: `web/src/currency.ts` (`accountCurrency()`, set from /api/me); rupees format en-IN (₹1,23,456.00); English labels
+   write `¤` for the account symbol ("Price (¤)" → "Price (₹)"). Tests run with `PGHL_CURRENCY=EUR` (vitest.config.ts) so the
+   upstream suite stays valid; `tests/currency.test.ts` covers INR. Existing records are never converted.
+8. **Repo hygiene** – forced LF line endings (`.gitattributes eol=lf`, `core.autocrlf=false`); CRLF broke tests on Windows.
 
 ## In progress / pending
 - **Server-side German still left** (separate pass): e-mails the server sends, public booking/form/invoice/portal pages,
   workflow trigger/action catalogue names, server error messages, starter templates, demo seed content.
-- **Currency** – € is hard-coded in ~100 places; switching to ₹/INR needs its own pass.
 - **GitHub** – pushed to https://github.com/vinitdeep/vmediacrm (PUBLIC repo – fine for AGPL, never commit `.env`/keys).
   History was rewritten with `vmedia-crm-tools\defang.cjs` (splits the upstream test suite's FAKE token literals, e.g.
   `'sk_' + 'test_…'`) because GitHub push protection blocked them. Run `node ../vmedia-crm-tools/defang.cjs .` before committing new tests that contain fake keys.
@@ -46,7 +51,8 @@ Dev mode: `npm run dev` (api + vite). Deploy options: `docs/deploy/` (needs a VP
 
 ## Tests – known baseline failures (also fail on untouched upstream, Windows/env related)
 `security` body caps (ECONNRESET), `sec-w10-testimonials`, `oss` export (Windows tar), `xr-spatial` (C:\C:\ path),
-`agent-bridge` relay, `mobile` UTC date. `cloud`, `day-boundary`, `cognee-*` flake only under full parallel load
+`agent-bridge` relay, `mobile` UTC date. On Windows `record-access-leaks`, `tenant-isolation`, `cloud-isolation` exhaust local ports
+(EADDRINUSE, ~16k TIME_WAIT) – they fail on untouched code too. `cloud`, `day-boundary`, `cognee-*` flake only under full parallel load
 (pass alone). Full run after translation: 5,745 passed; every remaining failure also fails on upstream or passes alone.
 
 ## Gotchas

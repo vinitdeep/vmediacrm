@@ -1,7 +1,7 @@
 import type { Module } from '../core/app.js';
 import { parseJson, parseRows } from '../core/db.js';
 import { bad, notFound, str } from '../core/http.js';
-import { id, now } from '../core/util.js';
+import { id, now, DEFAULT_CURRENCY, moneyLocale } from '../core/util.js';
 import { contactName } from '../services/contacts.js';
 
 /**
@@ -290,7 +290,7 @@ export const associationsModule: Module = {
       get: (loc, rid) => {
         const o = db.get('SELECT o.id, o.name, o.value, o.status, o.pipeline_id, p.name AS pipeline FROM opportunities o JOIN pipelines p ON p.id = o.pipeline_id WHERE o.id = ? AND o.location_id = ?', rid, loc);
         const status: Record<string, string> = { open: 'offen', won: 'gewonnen', lost: 'verloren', abandoned: 'aufgegeben' };
-        return o ? { id: o.id, name: o.name, sub: `${o.pipeline} · ${new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(o.value || 0)} · ${status[o.status] ?? o.status}`, link: `opportunities?pipeline=${o.pipeline_id}` } : undefined;
+        return o ? { id: o.id, name: o.name, sub: `${o.pipeline} · ${new Intl.NumberFormat(moneyLocale(DEFAULT_CURRENCY), { style: 'currency', currency: DEFAULT_CURRENCY, maximumFractionDigits: 0 }).format(o.value || 0)} · ${status[o.status] ?? o.status}`, link: `opportunities?pipeline=${o.pipeline_id}` } : undefined;
       },
       search: (loc, q, limit) => db.all('SELECT id, name, value FROM opportunities WHERE location_id = ? AND name LIKE ? ORDER BY updated_at DESC LIMIT ?', loc, `%${q}%`, limit).map((o) => ({ id: o.id, name: o.name, sub: `${o.value} €` })),
     });

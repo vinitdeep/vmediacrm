@@ -1,3 +1,5 @@
+import { accountCurrency, moneyLocaleFor } from '../currency';
+import { intlLocale } from '../i18n';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ICONS, Icon, type IconName } from '../icons';
 import { api, d, dt } from '../api';
@@ -78,7 +80,7 @@ export function useUsers(): User[] {
   return list;
 }
 
-const eur = (v: number) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(v || 0);
+const eur = (v: number) => new Intl.NumberFormat(moneyLocaleFor(accountCurrency(), intlLocale()), { style: 'currency', currency: accountCurrency() }).format(v || 0);
 
 /** A property value for reading (lists, record pages). */
 export function PropValue({ def, value, users }: { def: FieldDef; value: any; users?: User[] }): ReactNode {

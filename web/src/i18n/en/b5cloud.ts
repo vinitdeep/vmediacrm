@@ -277,7 +277,7 @@ export default {
   'Ich hoste selbst': 'I host it myself',
   'Brauche ich nicht mehr': 'I no longer need it',
   'Anderer Grund': 'Another reason',
-  '{v} € im Monat · {v2} € im Jahr ({v3} € je Monat)': '{v} € per month · {v2} € per year ({v3} € per month)',
+  '{v} € im Monat · {v2} € im Jahr ({v3} € je Monat)': '{v} ¤ per month · {v2} ¤ per year ({v3} ¤ per month)',
   'Kopiert': 'Copied',
   'Preise und Testphase': 'Prices and trial',
   'Alle Funktionen sind in jedem Tarif enthalten, es gibt keine Gebühr pro Nutzer. Preise in Euro pro Monat; ändern sie sich, gelten sie nur für neue Abos – laufende bleiben auf ihrem Stripe-Preis, bis der Kunde den Tarif wechselt.': 'All features are included in every plan, and there is no per-user fee. Prices are in euros per month; if they change, they only apply to new subscriptions – running ones stay on their Stripe price until the customer changes plan.',

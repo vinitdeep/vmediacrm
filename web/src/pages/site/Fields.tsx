@@ -1,3 +1,4 @@
+import { currencyOr, moneyLocaleFor } from '../../currency';
 import { createContext, useContext, useState } from 'react';
 import { api } from '../../api';
 import { Check, Input, Select, Spinner, Textarea, act } from '../../ui';
@@ -132,7 +133,7 @@ export function ImageField({ value, onChange }: { value: string; onChange: (v: s
   );
 }
 
-const money = (c: number, cur: string) => new Intl.NumberFormat(intlLocale(), { style: 'currency', currency: cur || 'EUR' }).format(c / 100);
+const money = (c: number, cur: string) => new Intl.NumberFormat(moneyLocaleFor(currencyOr(cur), intlLocale()), { style: 'currency', currency: currencyOr(cur) }).format(c / 100);
 
 /** One field of a block, by its type. `set(patch)` writes one or more keys (images also write width, height and srcset). */
 export function FieldInput({ f, value, set }: { f: F; value: any; set: (patch: Record<string, any>) => void }) {

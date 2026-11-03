@@ -1,3 +1,4 @@
+import { accountCurrency, currencyOptions } from '../currency';
 import { useEffect, useState } from 'react';
 import { ElsewhereHint } from './AgencyLists';
 import { api, name } from '../api';
@@ -20,7 +21,6 @@ import { DealForecastPanel } from './DealForecast';
 
 // Positions, quotes and call notes of a deal (Vertrieb): a chunk of its own, loaded when a deal is opened.
 const { DealSales } = lazyPages(() => import('./SalesDeal'), 'DealSales');
-const CURRENCIES = ['EUR', 'USD', 'CHF', 'GBP'];
 const OTHER_REASON = '__other';
 
 function PipelineEditor({ pipeline, onClose, onSaved }: { pipeline?: any; onClose: () => void; onSaved: () => void }) {
@@ -100,7 +100,7 @@ function OppModal({ opp, pipeline, onClose, onSaved }: { opp?: any; pipeline: an
   const t = useT('deals');
   // A deal with positions gets its amount from them: the field is locked and the old amount is never sent back.
   const [locked, setLocked] = useState(false);
-  const [o, setO] = useState<any>(opp ?? { stage_id: pipeline.stages[0].id, value: 0, currency: 'EUR', expected_close_date: '', contact: { first_name: '', email: '' } });
+  const [o, setO] = useState<any>(opp ?? { stage_id: pipeline.stages[0].id, value: 0, currency: accountCurrency(), expected_close_date: '', contact: { first_name: '', email: '' } });
   // Reason of a lost deal: one of the pipeline's list, or free text behind "Anderer Grund".
   const reasonList: string[] = pipeline.lost_reason_options ?? [];
   const [reasonPick, setReasonPick] = useState<string>(opp?.lost_reason ? (reasonList.includes(opp.lost_reason) ? opp.lost_reason : OTHER_REASON) : '');
@@ -117,7 +117,7 @@ function OppModal({ opp, pipeline, onClose, onSaved }: { opp?: any; pipeline: an
   const save = async () => {
     // Moving a deal to lost needs a reason (the server insists, too); an already lost deal keeps its reason.
     if (opp && o.status === 'lost' && !lostReason && (opp.status !== 'lost' || opp.lost_reason)) return toastError(new Error(t('Bitte einen Verlustgrund wählen')));
-    const common = { expected_close_date: o.expected_close_date || null, currency: o.currency || 'EUR' };
+    const common = { expected_close_date: o.expected_close_date || null, currency: o.currency || accountCurrency() };
     const body = opp
       ? { name: o.name, ...(locked ? {} : { value: o.value }), stage_id: o.stage_id, status: o.status, ...common, ...(o.status === 'lost' && lostReason ? { lost_reason: lostReason } : {}) }
       : { pipeline_id: pipeline.id, stage_id: o.stage_id, value: Number(o.value) || 0, name: o.name, ...common, ...(o.contact_id ? { contact_id: o.contact_id } : { contact: o.contact }) };
@@ -179,7 +179,7 @@ function OppModal({ opp, pipeline, onClose, onSaved }: { opp?: any; pipeline: an
         );
         const currency = (
           <Field label={t('Währung')} tour="opp-currency">
-            <Select value={o.currency || 'EUR'} onChange={(v) => setO({ ...o, currency: v })} options={[...new Set([...CURRENCIES, o.currency || 'EUR'])]} />
+            <Select value={o.currency || accountCurrency()} onChange={(v) => setO({ ...o, currency: v })} options={currencyOptions(o.currency)} />
           </Field>
         );
         const stage = (
@@ -197,7 +197,7 @@ function OppModal({ opp, pipeline, onClose, onSaved }: { opp?: any; pipeline: an
           <div className="grid2">
             {value}
             {stage}
-            <MoreFields id="opp-edit" values={[o.currency && o.currency !== 'EUR' ? o.currency : '', o.expected_close_date]} count={2}>
+            <MoreFields id="opp-edit" values={[o.currency && o.currency !== accountCurrency() ? o.currency : '', o.expected_close_date]} count={2}>
               {currency}
               {close}
             </MoreFields>

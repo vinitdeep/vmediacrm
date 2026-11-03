@@ -6,7 +6,7 @@ import { areaAllowed } from '../services/canvas-cards.js';
 import { accessOf, type BoardRow } from '../services/canvas-store.js';
 import { contentMatches, extFor } from '../core/files.js';
 import { openIfSealed, sealSecret } from '../core/secrets.js';
-import { id, now, sha256, slugify, token } from '../core/util.js';
+import { id, now, sha256, slugify, token, DEFAULT_CURRENCY, moneyLocale } from '../core/util.js';
 import { actorOf, asUser, isBot, teamUsers } from '../services/collab-actor.js';
 import { registerCardKind, resolveEmbeds, type EmbedCard } from '../services/collab-cards.js';
 import { createFts } from '../services/collab-fts.js';
@@ -285,7 +285,7 @@ export const wikiModule: Module = {
       const probe: Record<string, string> = { contact: '/api/contacts', company: '/api/companies', deal: '/api/opportunities', task: '/api/tasks', ticket: '/api/tickets', pipeline: '/api/opportunities', canvas: '/api/canvas', doc: '/api/docs', wiki: '/api/wiki' };
       if (!probe[kind]) return [];
       if (!areaAllowed(app, ctx, probe[kind])) throw new HttpError(403, 'Kein Zugriff auf diesen Bereich');
-      const eurFmt = (v: number) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v || 0);
+      const eurFmt = (v: number) => new Intl.NumberFormat(moneyLocale(DEFAULT_CURRENCY), { style: 'currency', currency: DEFAULT_CURRENCY, maximumFractionDigits: 0 }).format(v || 0);
       switch (kind) {
         case 'contact':
           return db

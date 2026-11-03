@@ -41,6 +41,8 @@ export default {
   // company
   Firmenname: 'Company name',
   Zeitzone: 'Time zone',
+  Währung: 'Currency',
+  'Gilt für neue Produkte, Rechnungen, Deals und Tickets. Bestehende Beträge behalten ihre Währung.': 'Used for new products, invoices, deals and tickets. Existing amounts keep their currency.',
   'E-Mail (bekommt Team-Benachrichtigungen)': 'Email (receives team notifications)',
   Webseite: 'Website',
   'Logo-URL': 'Logo URL',

@@ -3,7 +3,7 @@ import { parseJson } from '../core/db.js';
 import { HttpError, bad, notFound } from '../core/http.js';
 import { render } from '../core/template.js';
 import { ymdInTz } from '../core/time.js';
-import { centsToMoney, id, now, token } from '../core/util.js';
+import { centsToMoney, id, now, token, DEFAULT_CURRENCY } from '../core/util.js';
 import { createSignedContract, isSignatureImage } from '../modules/contracts.js';
 import { createInvoice, invoiceSettings, sendInvoice } from '../modules/payments.js';
 import { contactName, contactVars, getContact, logActivity } from './contacts.js';
@@ -121,7 +121,7 @@ export function createQuote(app: App, loc: string, dealId: string, o: { userId?:
     number: '',
     title: String(o.title ?? '').trim().slice(0, 200) || deal.name || 'Angebot',
     status: 'draft',
-    currency: deal.currency || 'EUR',
+    currency: deal.currency || DEFAULT_CURRENCY,
     tax_mode: settings.tax_mode,
     intro: '',
     terms: '',

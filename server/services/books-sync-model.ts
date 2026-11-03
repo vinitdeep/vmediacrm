@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '../core/util.js';
 import type { BuyerParty, DocSnapshot } from './einvoice-model.js';
 import type { TaxGroup, TaxMode } from './invoice-model.js';
 
@@ -274,7 +275,7 @@ export function sevInvoice(doc: DocSnapshot, o: SevDocInput): Record<string, any
       ...(country === 'DE' ? { addressCountry: { id: 1, objectName: 'StaticCountry' } } : {}),
       status: 100,
       invoiceType: doc.inv_type === 'partial' ? 'TR' : doc.inv_type === 'final' ? 'ER' : 'RE',
-      currency: doc.currency || 'EUR',
+      currency: doc.currency || DEFAULT_CURRENCY,
       showNet: true,
       taxRule: { id: String(SEV_TAX_RULE[doc.tax_mode] ?? 1), objectName: 'TaxRule' },
       taxType: SEV_TAX_TYPE[doc.tax_mode] ?? 'default',
@@ -303,7 +304,7 @@ export function sevCreditNote(doc: DocSnapshot, o: SevDocInput): Record<string, 
       address: sevAddress(doc.buyer),
       status: 100,
       bookingCategory: 'UNDERACHIEVEMENT',
-      currency: doc.currency || 'EUR',
+      currency: doc.currency || DEFAULT_CURRENCY,
       showNet: true,
       taxRule: { id: String(SEV_TAX_RULE[doc.tax_mode] ?? 1), objectName: 'TaxRule' },
       taxType: SEV_TAX_TYPE[doc.tax_mode] ?? 'default',

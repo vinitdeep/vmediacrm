@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY, moneyLocale } from '../core/util.js';
 /**
  * Live CRM cards on the canvas: resolves {kind, id} references to current data with the viewer's
  * rights. Every kind first runs the app's own guards against the route of its area (member areas,
@@ -38,7 +39,7 @@ export function areaAllowed(app: App, ctx: Ctx, path: string, method = 'GET'): b
   }
 }
 
-const euro = (v: number) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v || 0);
+const euro = (v: number) => new Intl.NumberFormat(moneyLocale(DEFAULT_CURRENCY), { style: 'currency', currency: DEFAULT_CURRENCY, maximumFractionDigits: 0 }).format(v || 0);
 const name = (c: any) => [c?.first_name, c?.last_name].filter(Boolean).join(' ') || c?.email || c?.phone || 'Unbekannt';
 const tags = (v: unknown): string[] => {
   try {

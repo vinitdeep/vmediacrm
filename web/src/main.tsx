@@ -1,3 +1,4 @@
+import { setAccountCurrency } from './currency';
 import { Suspense, useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
@@ -539,6 +540,7 @@ function App() {
       let loc = takeLocParam(me.locations) ?? currentLocation();
       if (!me.locations.some((l: any) => l.id === loc)) loc = me.locations[0]?.id ?? '';
       setLocation(loc);
+      setAccountCurrency(me.locations.find((l: any) => l.id === loc)?.currency);
       void loadBranding(true);
       void loadAppearance();
       // Signed in: fetch the landing page's chunk while the next requests run.
@@ -575,6 +577,7 @@ function App() {
     reload: load,
     switchLocation: (id, page) => {
       setLocation(id);
+      setAccountCurrency(state.session!.locations.find((l) => l.id === id)?.currency);
       if (state.session!.user.role !== 'admin') void loadBranding(true);
       setState((s) => ({ ...s, session: { ...s.session!, locationId: id, saas: null, hr: null } }));
       void loadSaasAccount().then((saas) => setState((s) => (s.session?.locationId === id ? { ...s, session: { ...s.session, saas } } : s)));

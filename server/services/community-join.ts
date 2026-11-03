@@ -1,6 +1,6 @@
 import type { App } from '../core/app.js';
 import { HttpError, bad } from '../core/http.js';
-import { id, normalizeEmail, now, token } from '../core/util.js';
+import { id, normalizeEmail, now, token, DEFAULT_CURRENCY } from '../core/util.js';
 import { StripeError, stripeRequest } from './stripe.js';
 import { getContact, logActivity, upsertContact, type Contact } from './contacts.js';
 import { ensureQuestionFields, membershipOf, openMembership, tierOf, tierPrices, tiersOf, activateMembership, checkoutUrl, communityMail, notifyStaff, grants, type Billing, type Membership, type PageRow, type Tier } from './community-tiers.js';
@@ -221,7 +221,7 @@ export function usableCoupon(app: App, groupId: string, code: unknown, tierId?: 
   return { coupon: row };
 }
 
-export const couponLabel = (c: Coupon, currency = 'EUR') =>
+export const couponLabel = (c: Coupon, currency = DEFAULT_CURRENCY) =>
   `${c.percent_off ? `−${c.percent_off} %` : `−${new Intl.NumberFormat('de-DE', { style: 'currency', currency }).format((c.amount_off_cents ?? 0) / 100)}`}${c.duration === 'once' ? ' auf die erste Zahlung' : c.duration === 'repeating' ? ` für ${c.months} Monate` : ' dauerhaft'}`;
 
 /** The Stripe coupon for a code (created once with the sub-account's key, then reused). */

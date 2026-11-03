@@ -2,7 +2,7 @@ import type { LocationRow, Module } from '../core/app.js';
 import { bad, html, notFound, num, redirect, str, text, type Ctx, type RawResult } from '../core/http.js';
 import { escapeHtml } from '../core/template.js';
 import { addDaysYmd } from '../core/time.js';
-import { centsToMoney, id, normalizeEmail, now, sha256, slugify, token } from '../core/util.js';
+import { centsToMoney, id, normalizeEmail, now, sha256, slugify, token, DEFAULT_CURRENCY, currencyOf } from '../core/util.js';
 import { cleanRef, type AttributionHook, type TouchRow } from '../services/attribution.js';
 import { today } from '../services/bo-common.js';
 import { cleanIban, commissionFor, payoutCsv, refundAdjustment, sepaXml, validIban, type PayoutLine } from '../services/affiliates.js';
@@ -142,7 +142,7 @@ export const affiliatesModule: Module = {
     app.services.workflowTriggers = [...(app.services.workflowTriggers ?? []), ...AFFILIATE_TRIGGERS];
     const mailer = (loc: LocationRow, mail: OutMail): Promise<{ status: string }> => (app.services.affiliateMailer ?? deliverEmail)(loc, mail);
     const ipHash = (ip: string) => (ip ? sha256(`${app.config.secret}:ip:${ip}`).slice(0, 32) : '');
-    const money = (c: number, cur = 'EUR') => centsToMoney(c, cur);
+    const money = (c: number, cur = DEFAULT_CURRENCY) => centsToMoney(c, cur);
 
     const program = (pid: string, locationId?: string) => db.get(`SELECT * FROM affiliate_programs WHERE id = ?${locationId ? ' AND location_id = ?' : ''}`, pid, ...(locationId ? [locationId] : []));
     const affiliate = (aid: string, locationId?: string) => db.get(`SELECT * FROM affiliates WHERE id = ?${locationId ? ' AND location_id = ?' : ''}`, aid, ...(locationId ? [locationId] : []));
@@ -480,7 +480,7 @@ export const affiliatesModule: Module = {
       if (!a) throw bad('Affiliate wählen');
       const amount = Math.round(num(ctx.body?.amount_cents, 0));
       if (!amount) throw bad('Betrag fehlt');
-      const row = { id: id(), location_id: ctx.locationId, program_id: a.program_id, affiliate_id: a.id, kind: 'manual', base_cents: 0, amount_cents: amount, currency: 'EUR', status: 'approved', note: str(ctx.body?.note, 'Notiz', { max: 300 }) || 'Manuelle Buchung', created_at: now(), approved_at: now() };
+      const row = { id: id(), location_id: ctx.locationId, program_id: a.program_id, affiliate_id: a.id, kind: 'manual', base_cents: 0, amount_cents: amount, currency: currencyOf(app.location(ctx.locationId)), status: 'approved', note: str(ctx.body?.note, 'Notiz', { max: 300 }) || 'Manuelle Buchung', created_at: now(), approved_at: now() };
       db.insert('affiliate_commissions', row);
       return row;
     });
@@ -532,7 +532,7 @@ export const affiliatesModule: Module = {
             skipped.push({ affiliate: a.name || a.email, balance_cents: sum, threshold_cents: a.payout_threshold_cents });
             continue;
           }
-          const o = { id: id(), location_id: ctx.locationId, affiliate_id: a.id, amount_cents: sum, currency: 'EUR', method: a.payout_method, reference: `Provision ${a.program_name} ${month} ${a.code}`.slice(0, 140), status: 'open', created_at: now() };
+          const o = { id: id(), location_id: ctx.locationId, affiliate_id: a.id, amount_cents: sum, currency: currencyOf(app.location(ctx.locationId)), method: a.payout_method, reference: `Provision ${a.program_name} ${month} ${a.code}`.slice(0, 140), status: 'open', created_at: now() };
           db.insert('affiliate_payouts', o);
           for (const r of rows) db.run('UPDATE affiliate_commissions SET payout_id = ? WHERE id = ?', o.id, r.id);
           created.push({ ...o, affiliate_name: a.name, email: a.email });

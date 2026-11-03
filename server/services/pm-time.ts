@@ -789,7 +789,7 @@ export function invoiceFromTime(app: App, locationId: string, b: BillingInput, a
   if (!items.some((i) => i.price_cents > 0)) throw bad('Es ist kein Stundensatz hinterlegt (Projekt, Person oder Standard) – bitte zuerst einen Satz festlegen');
   const range = [b.from, b.to].filter(Boolean).map((d) => stamp(String(d)));
   const title = str(b.title, 'Titel', { max: 300 }) || `${project?.name ?? 'Leistungen'}${range.length ? ` (${range.join(' – ')})` : ''}`;
-  const invoice = createInvoice(app, locationId, { contact_id: contactId, title, items, notes: str(b.notes, 'Hinweise', { max: 5000 }), currency: 'EUR' });
+  const invoice = createInvoice(app, locationId, { contact_id: contactId, title, items, notes: str(b.notes, 'Hinweise', { max: 5000 }) });
   const t = now();
   try {
     app.db.tx(() => {

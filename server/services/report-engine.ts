@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY, moneyLocale } from '../core/util.js';
 import type { DatabaseSync } from 'node:sqlite';
 import type { Db, Param } from '../core/db.js';
 import { addDaysYmd, localDayStart, tzOffsetMinutes, ymdInTz, zonedToUtc } from '../core/time.js';
@@ -895,7 +896,7 @@ export function formatValue(v: number | null | undefined, format: Format): strin
   if (v === null || v === undefined || Number.isNaN(v)) return '–';
   switch (format) {
     case 'money':
-      return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 }).format(v);
+      return new Intl.NumberFormat(moneyLocale(DEFAULT_CURRENCY), { style: 'currency', currency: DEFAULT_CURRENCY, maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 }).format(v);
     case 'percent':
       return `${nf(1).format(v)} %`;
     case 'days':

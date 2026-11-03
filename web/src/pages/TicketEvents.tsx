@@ -1,3 +1,4 @@
+import { accountCurrency, currencyOptions } from '../currency';
 import { useState } from 'react';
 import { api, money } from '../api';
 import { MoreFields } from '../areas/fields';
@@ -55,7 +56,7 @@ export function TicketEvents() {
     <div>
       <p className="muted">{t('Events mit Ticketarten: Käufer wählen Ticketart und Anzahl, jedes Ticket hat einen eigenen QR-Code für den Einlass.')}</p>
       <div className="actions">
-        <button className="tx-btn primary" onClick={() => setEdit({ name: '', starts_at: '', ends_at: '', venue: '', description: '', currency: 'EUR', tax_rate: '', slug: '', active: true, types: [blankType(t('Standard'))] })}>
+        <button className="tx-btn primary" onClick={() => setEdit({ name: '', starts_at: '', ends_at: '', venue: '', description: '', currency: accountCurrency(), tax_rate: '', slug: '', active: true, types: [blankType(t('Standard'))] })}>
           + {t('Event')}
         </button>
       </div>
@@ -203,7 +204,7 @@ function EventEditor({ ev, onClose, onSaved }: { ev: Ev; onClose: () => void; on
           <Input value={e.venue} onChange={(x) => setE({ ...e, venue: x })} />
         </Field>
       </div>
-      <MoreFields id="ticket-event-more" values={[e.description, e.ends_at, e.currency !== 'EUR' ? e.currency : '', e.tax_rate, e.active ? '' : 'x']}>
+      <MoreFields id="ticket-event-more" values={[e.description, e.ends_at, e.currency !== accountCurrency() ? e.currency : '', e.tax_rate, e.active ? '' : 'x']}>
         <Field label={t('Beschreibung')}>
           <Textarea value={e.description} onChange={(x) => setE({ ...e, description: x })} rows={3} />
         </Field>
@@ -212,7 +213,7 @@ function EventEditor({ ev, onClose, onSaved }: { ev: Ev; onClose: () => void; on
             <Input type="datetime-local" value={e.ends_at} onChange={(x) => setE({ ...e, ends_at: x })} />
           </Field>
           <Field label={t('Währung')}>
-            <Select value={e.currency} onChange={(x) => setE({ ...e, currency: x })} options={['EUR', 'CHF', 'USD', 'GBP']} />
+            <Select value={e.currency} onChange={(x) => setE({ ...e, currency: x })} options={currencyOptions()} />
           </Field>
           <Field label={t('Steuersatz in %')} hint={t('Leer = Standard der Rechnungen')}>
             <Input value={e.tax_rate} inputMode="decimal" onChange={(x) => setE({ ...e, tax_rate: x })} />

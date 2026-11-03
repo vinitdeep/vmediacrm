@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '../core/util.js';
 import type { App, Module } from '../core/app.js';
 import { escapeHtml } from '../core/template.js';
 import { wrap, siteBlocks, type BlockEnv } from '../services/site-blocks.js';
@@ -22,7 +23,7 @@ export const siteProductModule: Module = {
   name: 'site-product',
   register(app: App) {
     const { db } = app;
-    const money = (cents: number, cur: string) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: String(cur || 'EUR').toUpperCase() }).format(cents / 100);
+    const money = (cents: number, cur: string) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: String(cur || DEFAULT_CURRENCY).toUpperCase() }).format(cents / 100);
 
     /** Product, price and link of a product that can be bought from this page (own sub-account, active, link on). */
     function offer(env: BlockEnv, productId: string) {

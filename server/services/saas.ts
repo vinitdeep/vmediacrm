@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '../core/util.js';
 import { PERMISSIONS, type Permission } from '../core/permissions.js';
 
 /**
@@ -134,7 +135,7 @@ export function cleanPlan(b: any, cur?: Partial<Plan>): Omit<Plan, 'id' | 'strip
     markup = b.markup_percent === null || b.markup_percent === '' ? null : Number(b.markup_percent);
     if (markup !== null && (!Number.isFinite(markup) || markup < 0 || markup > 1000)) throw new Error('Aufschlag: 0 bis 1000 %');
   }
-  const currency = String(b.currency ?? cur?.currency ?? 'EUR').toUpperCase();
+  const currency = String(b.currency ?? cur?.currency ?? DEFAULT_CURRENCY).toUpperCase();
   if (!/^[A-Z]{3}$/.test(currency)) throw new Error('Währung als ISO-Code, z. B. EUR');
   const price_month_cents = pick('month');
   const price_year_cents = pick('year');

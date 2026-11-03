@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '../core/util.js';
 import { calcTotals, type LineItem, type TaxMode } from './invoice-model.js';
 
 /**
@@ -56,7 +57,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   enabled: false,
   name: '',
   slug: '',
-  currency: 'EUR',
+  currency: DEFAULT_CURRENCY,
   countries: ['DE', 'AT', 'CH'],
   shipping: [{ id: 'standard', name: 'Standardversand', type: 'flat', price_cents: 490, tiers: [], countries: [], free_over_cents: 0, delivery: '2–4 Werktage' }],
   order_prefix: 'B-',
@@ -106,7 +107,7 @@ export function cleanSettings(input: any, base: StoreSettings = DEFAULT_SETTINGS
     enabled: !!pick('enabled'),
     name: txt(pick('name'), 120),
     slug: /^[a-z0-9][a-z0-9-]{1,58}[a-z0-9]$/.test(slug) ? slug : '',
-    currency: /^[A-Z]{3}$/.test(String(pick('currency'))) ? String(pick('currency')) : 'EUR',
+    currency: /^[A-Z]{3}$/.test(String(pick('currency'))) ? String(pick('currency')) : DEFAULT_CURRENCY,
     countries: [...new Set(countries)].slice(0, 60) as string[],
     shipping,
     order_prefix: txt(pick('order_prefix'), 10).replace(/[^A-Za-z0-9-]/g, '') || 'B-',

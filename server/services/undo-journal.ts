@@ -1,7 +1,7 @@
 import type { App } from '../core/app.js';
 import type { Row } from '../core/db.js';
 import { HttpError, bad, notFound, clampLimit, type Ctx, type Route } from '../core/http.js';
-import { id as newId, now, sha256 } from '../core/util.js';
+import { id as newId, now, sha256, DEFAULT_CURRENCY } from '../core/util.js';
 import { TooBig, changedColumns, fingerprint, kidCounts, kidsText, sameValue, type Snapshot } from './undo-core.js';
 import { clip, type Fmt, type UndoEntity } from './undo-table.js';
 
@@ -192,7 +192,7 @@ export function createJournal(app: App) {
       case 'datetime':
         return dateFmt(String(v), tz, true);
       case 'money':
-        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: String(row.currency || 'EUR') }).format(Number(v) / 100);
+        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: String(row.currency || DEFAULT_CURRENCY) }).format(Number(v) / 100);
       case 'tags':
       case 'json': {
         try {

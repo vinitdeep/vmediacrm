@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '../icons';
+import { CURRENCY_NAMES, DEFAULT_CURRENCY, currencyOptions } from '../currency';
 import { api, dt } from '../api';
 import { useSession } from '../session';
 import { PermissionPicker } from './PermissionPicker';
@@ -77,6 +78,9 @@ function Company() {
         <Field label={t('Zeitzone')}>
           <Input value={l.timezone} onChange={(v) => setL({ ...l, timezone: v })} />
         </Field>
+        <Field label={t('Währung')} hint={t('Gilt für neue Produkte, Rechnungen, Deals und Tickets. Bestehende Beträge behalten ihre Währung.')}>
+          <Select value={l.settings?.currency || DEFAULT_CURRENCY} onChange={(v) => setL({ ...l, settings: { ...l.settings, currency: v } })} options={currencyOptions(l.settings?.currency).map((c) => [c, CURRENCY_NAMES[c] ?? c])} />
+        </Field>
         <Field label={t('E-Mail (bekommt Team-Benachrichtigungen)')}>
           <Input value={l.email} onChange={(v) => setL({ ...l, email: v })} />
         </Field>
@@ -97,7 +101,7 @@ function Company() {
           </Field>
         </div>
       </MoreFields>
-      <button className="btn" onClick={() => save({ name: l.name, timezone: l.timezone, email: l.email, phone: l.phone, website: l.website, logo_url: l.logo_url, address: l.address }).then(session.reload)}>
+      <button className="btn" onClick={() => save({ name: l.name, timezone: l.timezone, settings: { currency: l.settings?.currency || DEFAULT_CURRENCY }, email: l.email, phone: l.phone, website: l.website, logo_url: l.logo_url, address: l.address }).then(session.reload)}>
         {t('Speichern')}
       </button>
     </div>

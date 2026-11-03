@@ -2,7 +2,7 @@ import type { App, Module } from '../core/app.js';
 import { HttpError, bad, html, notFound, num, str, type Ctx } from '../core/http.js';
 import { messagePage } from '../core/page.js';
 import { isValidTz } from '../core/time.js';
-import { centsToMoney, id, now, slugify } from '../core/util.js';
+import { centsToMoney, id, now, slugify, currencyOf } from '../core/util.js';
 import { normalizeBookingSettings, todayOf } from '../services/booking-rules.js';
 import { logActivity } from '../services/contacts.js';
 import { notifyTeam } from '../services/messaging.js';
@@ -287,7 +287,7 @@ export const rentalsModule: Module = {
         settings: normalizeBookingSettings({ ...DEFAULT_SETTINGS, ...RENTAL_SETTINGS, rental: true }, {}, todayOf({ timezone: tz })),
         created_at: t,
       };
-      const row = { id: id(), location_id: ctx.locationId, calendar_id: cal.id, quantity: 1, unit: 'day' as Unit, price_cents: 0, deposit_cents: 0, currency: 'EUR', min_units: 1, max_units: 0, checkin_time: '', checkout_time: '', hold_minutes: 30, ...fields, created_at: t, updated_at: t };
+      const row = { id: id(), location_id: ctx.locationId, calendar_id: cal.id, quantity: 1, unit: 'day' as Unit, price_cents: 0, deposit_cents: 0, currency: currencyOf(app.location(ctx.locationId)), min_units: 1, max_units: 0, checkin_time: '', checkout_time: '', hold_minutes: 30, ...fields, created_at: t, updated_at: t };
       db.tx(() => {
         db.insert('calendars', cal);
         db.insert('rentals', row);

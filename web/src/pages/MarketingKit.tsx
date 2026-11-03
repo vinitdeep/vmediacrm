@@ -1,3 +1,4 @@
+import { accountCurrency, moneyLocaleFor } from '../currency';
 import { useEffect, useState, type ComponentProps, type ReactNode } from 'react';
 import { Badge, Select } from '../ui';
 import './marketing.css';
@@ -17,7 +18,7 @@ export const pct = (rate: number | null | undefined, digits = 2) => percent(((Nu
 /** A percentage that is already in percent (23.4) → "23,4 %". */
 export const pctPlain = (v: number | null | undefined, digits = 1) => percent((Number(v) || 0).toLocaleString(intlLocale(), { maximumFractionDigits: digits }));
 
-export const euro = (cents: number | null | undefined) => ((Number(cents) || 0) / 100).toLocaleString(intlLocale(), { style: 'currency', currency: 'EUR' });
+export const euro = (cents: number | null | undefined) => ((Number(cents) || 0) / 100).toLocaleString(moneyLocaleFor(accountCurrency(), intlLocale()), { style: 'currency', currency: accountCurrency() });
 
 export const hourLabel = (h: number) => `${String(h).padStart(2, '0')}:00`;
 

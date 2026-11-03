@@ -116,7 +116,7 @@ export default {
   '{n} Min.': '{n} min',
   '{n} Mio.': '{n}M',
   '{n} Tsd.': '{n}k',
-  '{n} €': '€{n}',
+  '{n} €': '¤{n}',
   Andere: 'Other',
   'Keine Daten im Zeitraum.': 'No data in this period.',
   Summe: 'Total',

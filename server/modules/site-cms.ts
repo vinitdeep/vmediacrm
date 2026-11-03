@@ -2,7 +2,7 @@ import type { App, Module } from '../core/app.js';
 import { parseJson } from '../core/db.js';
 import { HttpError, bad, html, notFound, str, type Ctx, type RawResult } from '../core/http.js';
 import { escapeHtml } from '../core/template.js';
-import { id, now, slugify } from '../core/util.js';
+import { id, now, slugify, DEFAULT_CURRENCY } from '../core/util.js';
 import { isBot } from '../services/ab-stats.js';
 import { excerptOf, stripMarkdown } from '../services/markdown.js';
 import { FIELD_LABEL, FIELD_TYPES, PRESETS, cleanData, cleanFields, cleanSettings, defaultDetail, display, fillTemplate, listItems, presetOf, type CollectionSettings, type Field, type ItemView } from '../services/site-cms.js';
@@ -112,7 +112,7 @@ export const siteCmsModule: Module = {
 
     const collUrl = (f: any, c: Coll) => pageUrl(app, f, { slug: c.slug });
     const itemUrl = (f: any, c: Coll, it: Item) => `${collUrl(f, c)}/${it.slug}`;
-    const money = (cents: number, cur: string) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: String(cur || 'EUR').toUpperCase() }).format(cents / 100);
+    const money = (cents: number, cur: string) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: String(cur || DEFAULT_CURRENCY).toUpperCase() }).format(cents / 100);
     /** Product field → name, price and buy link (only for products that can be bought). */
     const productOf = (loc: string) => (pid: string) => {
       if (!pid) return undefined;

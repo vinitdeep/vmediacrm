@@ -1,7 +1,7 @@
 import type { App } from '../core/app.js';
 import { bad, str } from '../core/http.js';
 import { addDaysYmd, ymdInTz, zonedToUtc } from '../core/time.js';
-import { id, now } from '../core/util.js';
+import { id, now, DEFAULT_CURRENCY } from '../core/util.js';
 import { renderMarkdown } from './markdown.js';
 import { getContact, logActivity } from './contacts.js';
 import { createPost, notify, type Author } from './community-actions.js';
@@ -154,7 +154,7 @@ export function analytics(app: App, g: { id: string; location_id: string; name: 
   // Money: monthly recurring revenue (net) of paying memberships; trials are listed apart.
   const tiers = new Map<string, Tier>(tiersOf(app, g.id).map((t) => [t.id, t]));
   const live = db.all<{ tier_id: string | null; status: string; billing: string; joined_at: string | null }>(`SELECT tier_id, status, billing, joined_at FROM community_memberships WHERE group_id = ? AND status IN ('active','trialing','past_due')`, g.id);
-  let currency = 'EUR';
+  let currency = DEFAULT_CURRENCY;
   let mrr = 0;
   let trialMrr = 0;
   let oneTime = 0;

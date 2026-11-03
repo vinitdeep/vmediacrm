@@ -1,3 +1,4 @@
+import { accountCurrency } from './currency';
 /** xn--mller-kva.de → müller.de (RFC 3492), for display only. */
 export function displayHost(url: string): string {
   let host = '';
@@ -52,7 +53,7 @@ export function displayHost(url: string): string {
 export function sumByCurrency<T extends { currency?: string | null }>(rows: T[], amount: (r: T) => number): [string, number][] {
   const sums = new Map<string, number>();
   for (const r of rows) {
-    const c = r.currency && /^[A-Z]{3}$/.test(r.currency) ? r.currency : 'EUR';
+    const c = r.currency && /^[A-Z]{3}$/.test(r.currency) ? r.currency : accountCurrency();
     sums.set(c, (sums.get(c) ?? 0) + (Number(amount(r)) || 0));
   }
   return [...sums].filter(([, v]) => v !== 0).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1));

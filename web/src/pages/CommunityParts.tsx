@@ -1,3 +1,5 @@
+import { accountCurrency, currencyOr, moneyLocaleFor } from '../currency';
+import { intlLocale } from '../i18n';
 import { useEffect, useState, type ReactNode } from 'react';
 import { currentLocation } from '../api';
 import { api } from '../api';
@@ -134,4 +136,4 @@ export const toLocalInput = (iso?: string | null) => {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
 };
 export const fromLocalInput = (v: string) => (v ? new Date(v).toISOString() : '');
-export const euro = (cents: number, cur = 'EUR') => new Intl.NumberFormat('de-DE', { style: 'currency', currency: cur }).format((cents || 0) / 100);
+export const euro = (cents: number, cur = accountCurrency()) => new Intl.NumberFormat(moneyLocaleFor(currencyOr(cur), intlLocale()), { style: 'currency', currency: currencyOr(cur) }).format((cents || 0) / 100);

@@ -150,7 +150,7 @@ export default {
   'Höchstgebühr (0 = keine)': 'Maximum fee (0 = none)',
   'PayPal': 'PayPal',
   '+ Zahlungsart': '+ Payment method',
-  '(€ pro Monat)': '(€ per month)',
+  '(€ pro Monat)': '(¤ per month)',
   'je Kunde': 'per customer',
   'je Nutzer': 'per user',
   'Variable Kosten': 'Variable costs',

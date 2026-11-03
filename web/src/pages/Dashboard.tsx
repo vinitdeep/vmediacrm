@@ -1,3 +1,4 @@
+import { accountCurrency } from '../currency';
 import { Suspense, useState } from 'react';
 import { api, euro, moneyList } from '../api';
 import { Link, PageHead, Select, Spinner, useLoad } from '../ui';
@@ -61,7 +62,7 @@ export function Dashboard() {
         return <Kpi key={k} data-kpi={k} icon="conversations" label={t('Nachrichten')} value={data.messages.sent} sub={t('{received} empfangen · {unread} ungelesen', { received: data.messages.received, unread: data.messages.unread })} />;
       case 'revenue': {
         // per currency, never added up (100 € + 100 $ is not 200 €)
-        const rows: { currency: string; paid: number; outstanding: number }[] = data.revenue.by_currency ?? [{ currency: data.revenue.currency ?? 'EUR', paid: data.revenue.paid, outstanding: data.revenue.outstanding }];
+        const rows: { currency: string; paid: number; outstanding: number }[] = data.revenue.by_currency ?? [{ currency: data.revenue.currency ?? accountCurrency(), paid: data.revenue.paid, outstanding: data.revenue.outstanding }];
         const list = (key: 'paid' | 'outstanding') => moneyList(rows.filter((r) => r[key]).map((r) => [r.currency, r[key]]), data.revenue.currency);
         return <Kpi key={k} data-kpi={k} icon="invoices" label={t('Umsatz bezahlt')} value={list('paid')} sub={t('{amount} offen', { amount: list('outstanding') })} />;
       }

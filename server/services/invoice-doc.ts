@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '../core/util.js';
 /**
  * Composes the frozen form of an invoice document (the snapshot that is hashed when it is finalised) from plain
  * values – no database. The same function renders drafts (previews) and finalised documents (PDF, HTML, e-invoice).
@@ -51,7 +52,7 @@ export function composeSnapshot(i: ComposeInput): DocSnapshot {
     issued_at: i.issued_at,
     issued_ymd,
     due_ymd: i.due_at ? ymd(i.due_at, tz) : '',
-    currency: i.currency ?? 'EUR',
+    currency: i.currency ?? DEFAULT_CURRENCY,
     title: i.title ?? '',
     notes: i.notes ?? '',
     tax_mode,

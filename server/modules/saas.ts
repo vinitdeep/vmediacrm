@@ -2,7 +2,7 @@ import type { App, Module } from '../core/app.js';
 import { parseJson } from '../core/db.js';
 import { HttpError, bad, notFound, str, type User } from '../core/http.js';
 import { PERMISSIONS } from '../core/permissions.js';
-import { id, now, normalizeEmail } from '../core/util.js';
+import { id, now, normalizeEmail, DEFAULT_CURRENCY } from '../core/util.js';
 import {
   LIMITS,
   PAYING,
@@ -904,10 +904,10 @@ export const saasModule: Module = {
         .slice(0, 25)
         .map((s) => {
           const p = plans.get(s.plan_id);
-          return { location_id: s.location_id, name: s.name, plan: p?.name ?? '', date: s.current_period_end, amount_cents: p ? priceOf(p, s.interval) : 0, currency: p?.currency ?? 'EUR', interval: s.interval, status: s.status, ends: !!s.cancel_at_period_end };
+          return { location_id: s.location_id, name: s.name, plan: p?.name ?? '', date: s.current_period_end, amount_cents: p ? priceOf(p, s.interval) : 0, currency: p?.currency ?? DEFAULT_CURRENCY, interval: s.interval, status: s.status, ends: !!s.cancel_at_period_end };
         });
       return {
-        currency: currency || allPlans()[0]?.currency || 'EUR',
+        currency: currency || allPlans()[0]?.currency || DEFAULT_CURRENCY,
         mrr_cents: mrr,
         arr_cents: mrr * 12,
         counts,

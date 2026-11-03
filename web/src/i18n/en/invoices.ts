@@ -83,7 +83,7 @@ export default {
   Position: 'Item',
   Menge: 'Qty',
   Einheit: 'Unit',
-  'Preis (€)': 'Price (€)',
+  'Preis (€)': 'Price (¤)',
   'USt %': 'VAT %',
   Summe: 'Total',
   'Position entfernen': 'Remove item',
@@ -143,7 +143,7 @@ export default {
   einmalig: 'one-off',
   'Löschen?': 'Delete?',
   'Noch keine Produkte.': 'No products yet.',
-  'Preis netto (€)': 'Net price (€)',
+  'Preis netto (€)': 'Net price (¤)',
   'USt % (leer = Standard)': 'VAT % (empty = standard)',
   'Zahlungslink (Stripe/PayPal, optional)': 'Payment link (Stripe/PayPal, optional)',
 } satisfies Catalog;

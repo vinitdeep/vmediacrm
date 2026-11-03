@@ -58,7 +58,7 @@ describe('the language layer', () => {
     expect(t.plural(0, { zero: 'Keine Kontakte', one: '{n} Kontakt', other: '{n} Kontakte' })).toBe('Keine Kontakte');
     expect(interpolate('Hallo {{contact.first_name}}, {name}', { name: 'Ada' })).toBe('Hallo {{contact.first_name}}, Ada');
     expect(interpolate('{unknown} bleibt', { other: 1 })).toBe('{unknown} bleibt');
-    expect(fmtMoney(123456)).toBe('1.234,56 €');
+    expect(fmtMoney(123456, 'EUR')).toBe('1.234,56 €');
   });
 
   it('switches to English after loading the catalogs: own namespace, then core, then the German text – never a raw key', async () => {
@@ -77,7 +77,7 @@ describe('the language layer', () => {
       expect(tr('inbox')('Nicht zugewiesen')).toBe('Unassigned');
       // formatting follows the language
       expect(intlLocale()).toMatch(/^en/);
-      expect(fmtMoney(123456)).toMatch(/€1,234\.56/);
+      expect(fmtMoney(123456, 'EUR')).toMatch(/€1,234\.56/);
       // the server's generic messages are translated where they are shown, the rest stays German
       expect(serverText('Nicht angemeldet')).toBe('Not signed in');
       expect(serverText('Interner Fehler (Request-ID abc-123)')).toBe('Internal error (request ID abc-123)');

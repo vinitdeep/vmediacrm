@@ -1,6 +1,6 @@
 import type { App, Module } from '../core/app.js';
 import { HttpError, bad, notFound, str, type Handler, type Route } from '../core/http.js';
-import { id, now, slugify } from '../core/util.js';
+import { id, now, slugify, currencyOf } from '../core/util.js';
 import type { Tool } from './mcp.js';
 import { MIN_CENTS, registerPayPurpose } from '../services/pay-registry.js';
 import { registerTriggers, type TriggerMeta } from '../services/wfx-kit.js';
@@ -182,7 +182,7 @@ export const ticketEventsModule: Module = {
       const b = ctx.body ?? {};
       const fields = cleanEvent(b);
       const t0 = now();
-      const ev = { id: id(), location_id: ctx.locationId, slug: slugFor(b.slug, fields.name!), currency: 'EUR', description: '', venue: '', ends_at: null, tax_rate: null, active: 1, ...fields, created_at: t0, updated_at: t0 } as TicketEventRow;
+      const ev = { id: id(), location_id: ctx.locationId, slug: slugFor(b.slug, fields.name!), currency: currencyOf(app.location(ctx.locationId)), description: '', venue: '', ends_at: null, tax_rate: null, active: 1, ...fields, created_at: t0, updated_at: t0 } as TicketEventRow;
       db.tx(() => {
         db.insert('tix_events', ev);
         if (b.types !== undefined) saveTypes(ev, b.types);

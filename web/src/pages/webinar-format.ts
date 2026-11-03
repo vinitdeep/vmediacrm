@@ -1,3 +1,5 @@
+import { accountCurrency, moneyLocaleFor } from '../currency';
+import { intlLocale } from '../i18n';
 /** Pure helpers of the Webinare pages (no React, no browser): fields that take minutes or mm:ss, deep edits, labels. Tested in tests/webinar-ui.test.ts. */
 
 export const WEEKDAYS: [string, string][] = [
@@ -50,7 +52,7 @@ export function setIn<T>(obj: T, path: string, value: unknown): T {
 export const getIn = (obj: any, path: string): any => path.split('.').reduce((cur, k) => (cur === null || cur === undefined ? undefined : cur[k]), obj);
 
 export const percent = (v: number | null | undefined) => (v === null || v === undefined ? '–' : `${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 }).format(v * 100)} %`);
-export const euros = (cents: number) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format((cents || 0) / 100);
+export const euros = (cents: number) => new Intl.NumberFormat(moneyLocaleFor(accountCurrency(), intlLocale()), { style: 'currency', currency: accountCurrency() }).format((cents || 0) / 100);
 
 /** "Mo., 9. Nov., 19:00 MEZ" – a session start in a time zone. */
 export function fmtSession(startIso: string, tz: string): string {

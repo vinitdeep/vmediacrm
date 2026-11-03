@@ -1,7 +1,7 @@
 import type { Module } from '../core/app.js';
 import { parseJson, parseRows } from '../core/db.js';
 import { HttpError, bad, clampLimit, html, notFound, type Ctx } from '../core/http.js';
-import { id, now, slugify } from '../core/util.js';
+import { id, now, slugify, DEFAULT_CURRENCY } from '../core/util.js';
 import type { SystemBlock } from '../services/anthropic.js';
 import { auditLog, json, limiter } from '../services/creator-kit.js';
 import { callRoute } from '../services/route-call.js';
@@ -176,7 +176,7 @@ export const siteAiModule: Module = {
       return {
         form: safe(() => db.all<{ id: string; name: string }>('SELECT id, name FROM forms WHERE location_id = ? ORDER BY updated_at DESC LIMIT 30', loc), []),
         calendar: safe(() => db.all<{ slug: string; name: string }>('SELECT slug, name FROM calendars WHERE location_id = ? ORDER BY created_at LIMIT 30', loc), []),
-        product: safe(() => db.all<{ id: string; name: string; price_cents: number; currency: string }>('SELECT id, name, price_cents, currency FROM products WHERE location_id = ? ORDER BY name LIMIT 30', loc).map((p) => ({ id: p.id, name: p.name, price: `${(Number(p.price_cents) / 100).toFixed(2).replace('.', ',')} ${p.currency || 'EUR'}` })), []),
+        product: safe(() => db.all<{ id: string; name: string; price_cents: number; currency: string }>('SELECT id, name, price_cents, currency FROM products WHERE location_id = ? ORDER BY name LIMIT 30', loc).map((p) => ({ id: p.id, name: p.name, price: `${(Number(p.price_cents) / 100).toFixed(2).replace('.', ',')} ${p.currency || DEFAULT_CURRENCY}` })), []),
       };
     };
     const system = (rules: string, refs: AccountRefs): SystemBlock[] => [{ text: `${rules}${catalogFor(registry())}`, cache: true }, { text: `KONTO (nur diese IDs gibt es)\n${refsText(refs)}` }];

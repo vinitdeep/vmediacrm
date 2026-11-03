@@ -1,3 +1,4 @@
+import { accountCurrency } from './currency';
 /** Fetch wrapper: JSON in/out, CSRF header, current sub-account header, readable errors. */
 import { fmtDate, fmtDateTime, fmtMoney, tr } from './i18n';
 
@@ -85,12 +86,12 @@ export const api = {
 };
 
 // Numbers, money and dates follow the UI language (i18n/index.ts: de-DE for German, the browser's variant for English).
-export const money = (cents: number, currency = 'EUR') => fmtMoney(cents, currency);
+export const money = (cents: number, currency = accountCurrency()) => fmtMoney(cents, currency);
 /** Sums per currency (`sumByCurrency` in format.ts) as "1.200,00 € · 300,00 $" – never added up; no sum at all is 0 in `fallback`. */
-export const moneyList = (sums: [string, number][], fallback = 'EUR') => (sums.length ? sums.map(([c, v]) => money(v, c)).join(' · ') : money(0, fallback));
+export const moneyList = (sums: [string, number][], fallback = accountCurrency()) => (sums.length ? sums.map(([c, v]) => money(v, c)).join(' · ') : money(0, fallback));
 /** Whole-unit amount (deal values) in any currency, no decimals. */
-export const amount = (v: number, currency = 'EUR') => fmtMoney((v || 0) * 100, currency || 'EUR', { maximumFractionDigits: 0 });
-export const euro = (v: number) => fmtMoney((v || 0) * 100, 'EUR', { maximumFractionDigits: 0 });
+export const amount = (v: number, currency = accountCurrency()) => fmtMoney((v || 0) * 100, currency || accountCurrency(), { maximumFractionDigits: 0 });
+export const euro = (v: number) => fmtMoney((v || 0) * 100, accountCurrency(), { maximumFractionDigits: 0 });
 export const dt = (s?: string | null) => (s ? fmtDateTime(s, { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '–');
 export const d = (s?: string | null) => (s ? fmtDate(s) : '–');
 export const name = (c: any) => [c?.first_name, c?.last_name].filter(Boolean).join(' ') || c?.email || c?.phone || t('Unbekannt');

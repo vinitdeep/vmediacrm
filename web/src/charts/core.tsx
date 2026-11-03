@@ -1,3 +1,4 @@
+import { accountCurrency, moneyLocaleFor } from '../currency';
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { getLocale, intlLocale, tr } from '../i18n';
 import { SOURCE_LOCALE } from '../i18n/registry';
@@ -44,7 +45,7 @@ export function fmt(v: number | null | undefined, format: Format): string {
   if (v === null || v === undefined || Number.isNaN(v)) return '–';
   switch (format) {
     case 'money':
-      return new Intl.NumberFormat(intlLocale(), { style: 'currency', currency: 'EUR', maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 }).format(v);
+      return new Intl.NumberFormat(moneyLocaleFor(accountCurrency(), intlLocale()), { style: 'currency', currency: accountCurrency(), maximumFractionDigits: Math.abs(v) >= 1000 ? 0 : 2 }).format(v);
     case 'percent':
       return percentText(nf(1).format(v));
     case 'days':

@@ -1,6 +1,6 @@
 import type { App } from '../core/app.js';
 import { parseJson } from '../core/db.js';
-import { id, now } from '../core/util.js';
+import { id, now, CURRENCIES, DEFAULT_CURRENCY, currencyOf } from '../core/util.js';
 import { getContact, logActivity } from './contacts.js';
 
 export const OPP_STATUSES = ['open', 'won', 'lost', 'abandoned'] as const;
@@ -9,7 +9,7 @@ export const OPP_STATUSES = ['open', 'won', 'lost', 'abandoned'] as const;
 export const DEFAULT_LOST_REASONS = ['Preis zu hoch', 'Kein Budget', 'Mitbewerber gewählt', 'Kein Bedarf mehr', 'Keine Rückmeldung', 'Zeitpunkt passt nicht', 'Sonstiges'];
 /** Reason of a deal that a workflow, which has no person to ask, marks as lost. */
 export const AUTO_LOST_REASON = 'Per Automation';
-export const DEAL_CURRENCIES = ['EUR', 'USD', 'CHF', 'GBP'];
+export const DEAL_CURRENCIES: string[] = [...CURRENCIES];
 
 export function getPipeline(app: App, locationId: string, pipelineId: string) {
   return parseJson(app.db.get('SELECT * FROM pipelines WHERE id = ? AND location_id = ?', pipelineId, locationId), ['stages', 'lost_reasons']);
@@ -41,10 +41,10 @@ export function cleanCloseDate(v: unknown): string | null {
   return s;
 }
 
-/** ISO 4217 code in capitals, checked against what the runtime knows; empty = euro. */
-export function cleanCurrency(v: unknown): string {
+/** ISO 4217 code in capitals, checked against what the runtime knows; empty = the fallback (the account's currency). */
+export function cleanCurrency(v: unknown, fallback = DEFAULT_CURRENCY): string {
   const c = String(v ?? '').trim().toUpperCase();
-  if (!c) return 'EUR';
+  if (!c) return fallback;
   try {
     if (!/^[A-Z]{3}$/.test(c)) throw new Error();
     new Intl.NumberFormat('de-DE', { style: 'currency', currency: c });
@@ -97,7 +97,7 @@ export function createOpportunity(
     assigned_to: input.assigned_to ?? null,
     source: input.source ?? '',
     expected_close_date: cleanCloseDate(input.expected_close_date),
-    currency: cleanCurrency(input.currency),
+    currency: cleanCurrency(input.currency, currencyOf(app.location(locationId))),
     lost_reason: status === 'lost' ? lostReason : '',
     created_at: now(),
     updated_at: now(),

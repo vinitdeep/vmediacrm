@@ -3,7 +3,7 @@ import type { Module } from '../core/app.js';
 import { cached } from '../core/cache.js';
 import { HttpError, bad, notFound, str, type Ctx } from '../core/http.js';
 import { zonedToUtc } from '../core/time.js';
-import { centsToMoney, id, now, sha256, token } from '../core/util.js';
+import { centsToMoney, id, now, sha256, token, DEFAULT_CURRENCY } from '../core/util.js';
 import {
   APPOINTMENT_SELECT,
   appointmentOut,
@@ -481,7 +481,7 @@ export const mobileModule: Module = {
       const i = e.data.invoice ?? {};
       if (!i.id) return;
       const c = contactOf(e.locationId, i.contact_id);
-      feed({ locationId: e.locationId, type: 'payment', area: 'payments', title: `Zahlung erhalten: ${centsToMoney(Number(i.total_cents ?? 0), i.currency || 'EUR')}`, body: [i.number ? `Rechnung ${i.number}` : '', c ? who(c) : '', e.data.via ? `via ${e.data.via}` : ''].filter(Boolean).join(' · '), link: `/app/invoices/${i.id}`, ref: `payment:${i.id}` });
+      feed({ locationId: e.locationId, type: 'payment', area: 'payments', title: `Zahlung erhalten: ${centsToMoney(Number(i.total_cents ?? 0), i.currency || DEFAULT_CURRENCY)}`, body: [i.number ? `Rechnung ${i.number}` : '', c ? who(c) : '', e.data.via ? `via ${e.data.via}` : ''].filter(Boolean).join(' · '), link: `/app/invoices/${i.id}`, ref: `payment:${i.id}` });
     });
     const site = (down: boolean) => (e: { locationId: string; data: Record<string, any> }) => {
       const name = app.location(e.locationId)?.name ?? 'Projekt';

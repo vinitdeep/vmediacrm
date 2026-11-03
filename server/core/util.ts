@@ -131,6 +131,22 @@ export function uniq<T>(xs: T[]): T[] {
   return [...new Set(xs)];
 }
 
-export function centsToMoney(cents: number, currency = 'EUR'): string {
-  return new Intl.NumberFormat('de-DE', { style: 'currency', currency }).format((cents || 0) / 100);
+/** Currencies offered in the app's pickers (account default + per record). */
+export const CURRENCIES = ['INR', 'USD', 'EUR', 'GBP', 'AED', 'SGD', 'AUD', 'CAD', 'CHF', 'JPY'] as const;
+/** The default for accounts without a Currency setting. V Media CRM defaults to Indian rupees; PGHL_CURRENCY overrides it. */
+export const DEFAULT_CURRENCY: string = /^[A-Z]{3}$/.test(String(process.env.PGHL_CURRENCY ?? '').toUpperCase()) ? String(process.env.PGHL_CURRENCY).toUpperCase() : 'INR';
+/** A valid ISO 4217 code from user input, else the fallback. */
+export function cleanCurrency(v: unknown, fallback = DEFAULT_CURRENCY): string {
+  const c = String(v ?? '').trim().toUpperCase();
+  return /^[A-Z]{3}$/.test(c) ? c : fallback;
+}
+/** An account's (sub-account's) currency – its Currency setting, else the default. */
+export function currencyOf(loc: { settings?: Record<string, any> } | null | undefined): string {
+  return cleanCurrency(loc?.settings?.currency);
+}
+/** Intl locale for an amount: rupees in Indian grouping (₹1,23,456.00), everything else as before. */
+export const moneyLocale = (currency: string) => (currency === 'INR' ? 'en-IN' : 'de-DE');
+
+export function centsToMoney(cents: number, currency = DEFAULT_CURRENCY): string {
+  return new Intl.NumberFormat(moneyLocale(currency), { style: 'currency', currency }).format((cents || 0) / 100);
 }

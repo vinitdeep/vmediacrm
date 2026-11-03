@@ -1,6 +1,6 @@
 import type { App, Module } from '../core/app.js';
 import { HttpError, bad, clampLimit, notFound, num, str, type Ctx } from '../core/http.js';
-import { centsToMoney, normalizeEmail, now } from '../core/util.js';
+import { centsToMoney, normalizeEmail, now, DEFAULT_CURRENCY } from '../core/util.js';
 import { getContact, logActivity } from '../services/contacts.js';
 import {
   available,
@@ -134,7 +134,7 @@ export const giftCardsModule: Module = {
         if (take > 0) recordPayment(app, loc, invoiceId, { amount_cents: take, method: 'Gutschein', note: `${masked} · ${ref}` }, { id: null, name: 'Automatik (Gutschein)' }, { source: 'auto', via: 'Gutschein' });
         if (amount > take) {
           app.services.giftCards.refund(loc, cardId, amount - take, 'invoice', invoiceId);
-          invAudit(app, loc, invoiceId, 'payment.mismatch', `Gutschein ${masked}: ${centsToMoney(amount - take, inv?.currency ?? 'EUR')} passten nicht mehr auf die Rechnung und sind wieder auf dem Gutschein`);
+          invAudit(app, loc, invoiceId, 'payment.mismatch', `Gutschein ${masked}: ${centsToMoney(amount - take, inv?.currency ?? DEFAULT_CURRENCY)} passten nicht mehr auf die Rechnung und sind wieder auf dem Gutschein`);
         }
         return take;
       },

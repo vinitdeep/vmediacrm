@@ -275,7 +275,7 @@ export function closeMonth(app: App, loc: string, rid: string, b: { month?: stri
   const entries = monthEntries(app, loc, r, month, freed).filter((e) => !settings.approval_required || b.include_unapproved || e.approval === 'approved');
   const taxRate = r.tax_rate ?? settings.tax_rate;
   const items = preview.lines.map((l) => ({ ...l, ...(taxRate !== null && taxRate !== undefined ? { tax_rate: Number(taxRate) } : {}) }));
-  const invoice = createInvoice(app, loc, { contact_id: contactId, title: `Retainer „${r.name}“ – ${preview.label}`.slice(0, 300), items, notes: r.notes, currency: 'EUR' });
+  const invoice = createInvoice(app, loc, { contact_id: contactId, title: `Retainer „${r.name}“ – ${preview.label}`.slice(0, 300), items, notes: r.notes });
   const t = now();
   const row: PeriodRow = {
     id: newId(),

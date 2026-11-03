@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY, moneyLocale } from '../core/util.js';
 import type { Module } from '../core/app.js';
 import { HttpError, bad, notFound, redirect } from '../core/http.js';
 import { escapeHtml } from '../core/template.js';
@@ -206,7 +207,7 @@ export const communityGrowthModule: Module = {
       return p && p.active ? p : undefined;
     };
     ui.tabs.push((p, _m, g) => (partnerProgram(g) ? [{ key: 'partner', href: `${kitOf(app).gHref(p, g)}/partner`, label: '🤝 Partner' }] : []));
-    const money = (c: number, cur = 'EUR') => new Intl.NumberFormat('de-DE', { style: 'currency', currency: cur }).format(c / 100);
+    const money = (c: number, cur = DEFAULT_CURRENCY) => new Intl.NumberFormat(moneyLocale(cur), { style: 'currency', currency: cur }).format(c / 100);
     const partnerPage = (ctx: any, flash = '') =>
       kitOf(app).withGroup(ctx, (p, m, g) => {
         const k = kitOf(app);

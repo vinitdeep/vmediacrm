@@ -1,7 +1,7 @@
 import { createHmac } from 'node:crypto';
 import type { App } from '../core/app.js';
 import { HttpError, type Ctx } from '../core/http.js';
-import { centsToMoney, safeEqual } from '../core/util.js';
+import { centsToMoney, safeEqual, DEFAULT_CURRENCY } from '../core/util.js';
 import { openSecret } from '../core/secrets.js';
 import { addTags, removeTags } from './contacts.js';
 import { grantAccess, revokeAccess } from './courses.js';
@@ -13,7 +13,7 @@ import { StripeError, stripeRequest } from './stripe.js';
  * access on and off, audit lines for work that happens without a request, and gross/net maths that matches the invoices.
  */
 
-export const money = (cents: number, currency = 'EUR') => centsToMoney(cents, String(currency || 'EUR').toUpperCase());
+export const money = (cents: number, currency = DEFAULT_CURRENCY) => centsToMoney(cents, String(currency || DEFAULT_CURRENCY).toUpperCase());
 
 export const clip = (v: unknown, max: number) => String(v ?? '').trim().slice(0, max);
 

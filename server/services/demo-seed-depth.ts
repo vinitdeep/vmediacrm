@@ -1,4 +1,4 @@
-import { id } from '../core/util.js';
+import { DEFAULT_CURRENCY, id } from '../core/util.js';
 import { COURSE_PLANS, SITE_PLANS, type CoursePlan } from './demo-seed-content.js';
 import type { Kit } from './demo-seed-extras.js';
 
@@ -140,7 +140,7 @@ function seedTraffic(k: Kit, funnelId: string, daily: number, flow: number[], co
         const isLast = reached === pages.length - 1;
         if (isLast && k.rand() < (pages.length === 1 ? 0.14 : conversion === 'purchase' ? 0.25 : 0.55)) {
           const cents = conversion === 'purchase' ? pickOf(k, [1690, 3900, 14900, 3180]) : 0;
-          db.insert('site_conversions', { id: id(), location_id: k.L, funnel_id: funnelId, page_id: pages[reached].id, kind: conversion, ref_id: '', amount_cents: cents, currency: 'EUR', day, created_at: first });
+          db.insert('site_conversions', { id: id(), location_id: k.L, funnel_id: funnelId, page_id: pages[reached].id, kind: conversion, ref_id: '', amount_cents: cents, currency: DEFAULT_CURRENCY, day, created_at: first });
         }
       }
     }
