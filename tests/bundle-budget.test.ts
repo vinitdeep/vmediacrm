@@ -12,7 +12,7 @@ import { build } from 'vite';
  * Budget: 250 KB gzip of JavaScript for the first download (shell + login + dashboard); we are at ~115 KB,
  * the test fails at 160 KB so a regression is caught long before the target is touched.
  */
-const JS_BUDGET_GZ = 160 * 1024;
+const JS_BUDGET_GZ = 164 * 1024; // V Media: +4 KB for the English-only i18n wiring (t()/tr() calls and catalog loaders in the shell)
 const CSS_BUDGET_GZ = 48 * 1024; // V Media: +8 KB for the bundled Inter + Plus Jakarta Sans @font-face rules and the studio theme
 const ROOT = resolve(__dirname, '..');
 

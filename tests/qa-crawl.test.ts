@@ -144,7 +144,7 @@ describe('open items of the crawl (fix/polish)', () => {
     const thumb = /\.cv-thumb \.muted \{ color: (#[0-9a-f]{6}); \}/.exec(css)![1];
     expect(contrast(thumb, '#ffffff')).toBeGreaterThanOrEqual(4.5);
     expect(contrast(/\.cv-preview \{[^}]*color: (#[0-9a-f]{6})/.exec(css)![1], '#ffffff')).toBeGreaterThanOrEqual(4.5);
-    expect(read('canvas/CanvasPage.tsx')).toContain('<span className="muted">Leer</span>');
+    expect(read('canvas/CanvasPage.tsx')).toContain("<span className=\"muted\">{tt('Leer')}</span>");
   });
 
   it('community group: channel inputs and the Markdown text areas have accessible names', () => {

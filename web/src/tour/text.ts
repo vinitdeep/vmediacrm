@@ -27,6 +27,7 @@ export function useTourText(): (s: string) => string {
   useT('b4agent');
   useT('b4canvas');
   useT('b5cognee');
+  useT('b1tour'); // badges, groups and practice cards built by tour/catalog.ts with tr('b1tour')
   return (s) => pick(s, ts);
 }
 
