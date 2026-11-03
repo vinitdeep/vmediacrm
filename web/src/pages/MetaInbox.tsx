@@ -3,7 +3,7 @@ import { Icon, channelIcon } from '../icons';
 import { api, currentLocation } from '../api';
 import { Input, Link, Select, Spinner, Textarea, act, confirmAsk, toast, useLoad } from '../ui';
 import { ChannelMedia, useMoreChannels } from './ChannelInbox';
-import { useT } from '../i18n';
+import { tr, useT } from '../i18n';
 import { DraftOffer, finishDraft, useDraftFill, type ComposerDraft } from './MsgDrafts';
 
 /**
@@ -16,7 +16,8 @@ export const CHANNEL_LABELS: Record<string, string> = { email: 'E-Mail', sms: 'S
 
 /** Channel icon in the platform's colour. */
 export function ChannelIcon({ channel, size = 14 }: { channel: string; size?: number }) {
-  return <Icon name={channelIcon(channel)} size={size} className={`ico chan-ico chan-${channel}`} aria-label={CHANNEL_LABELS[channel] ?? channel} />;
+  const tx = useT('b6mail');
+  return <Icon name={channelIcon(channel)} size={size} className={`ico chan-ico chan-${channel}`} aria-label={tx(CHANNEL_LABELS[channel] ?? channel)} />;
 }
 
 const FILTERS: [string, string][] = [['', 'Alle'], ['email', ''], ['sms', ''], ['chat', ''], ['call', ''], ['whatsapp', ''], ['messenger', ''], ['instagram', ''], ['telegram', ''], ['discord', ''], ['comment', '']];
@@ -38,6 +39,7 @@ export function ChannelFilter({ value, onChange }: { value: string; onChange: (v
 
 /** Image, audio, video, file or map link of an inbound WhatsApp/Messenger/Instagram message. */
 export function MessageMedia({ m }: { m: any }) {
+  const tx = useT('b6mail');
   const [broken, setBroken] = useState(false);
   let a: any = m?.meta_media;
   if (typeof a === 'string') {
@@ -52,16 +54,16 @@ export function MessageMedia({ m }: { m: any }) {
   if (a.kind === 'location' && Number.isFinite(a.lat) && Number.isFinite(a.lng)) {
     return (
       <a className="media-link" href={`https://www.openstreetmap.org/?mlat=${a.lat}&mlon=${a.lng}#map=17/${a.lat}/${a.lng}`} target="_blank" rel="noreferrer">
-        <Icon name="location" size={14} /> Karte öffnen
+        <Icon name="location" size={14} /> {tx('Karte öffnen')}
       </a>
     );
   }
   const src = `/api/messages/meta/media/${encodeURIComponent(m.id)}?locationId=${encodeURIComponent(currentLocation())}`;
-  if (broken) return <div className="media-link muted">Datei bei Meta nicht mehr verfügbar</div>;
+  if (broken) return <div className="media-link muted">{tx('Datei bei Meta nicht mehr verfügbar')}</div>;
   if (a.kind === 'image' || a.kind === 'sticker') {
     return (
       <a href={src} target="_blank" rel="noreferrer" className="media-wrap">
-        <img className={`media-img${a.kind === 'sticker' ? ' sticker' : ''}`} src={src} alt={a.kind === 'sticker' ? 'Sticker' : 'Bild'} loading="lazy" onError={() => setBroken(true)} />
+        <img className={`media-img${a.kind === 'sticker' ? ' sticker' : ''}`} src={src} alt={a.kind === 'sticker' ? tx('Sticker') : tx('Bild')} loading="lazy" onError={() => setBroken(true)} />
       </a>
     );
   }
@@ -69,7 +71,7 @@ export function MessageMedia({ m }: { m: any }) {
   if (a.kind === 'video') return <video className="media-video" controls preload="none" src={src} onError={() => setBroken(true)} />;
   return (
     <a className="media-link" href={src} target="_blank" rel="noreferrer">
-      <Icon name="file" size={14} /> {a.filename || 'Datei öffnen'}
+      <Icon name="file" size={14} /> {a.filename || tx('Datei öffnen')}
     </a>
   );
 }
@@ -87,6 +89,7 @@ export interface ExtraChannel {
  * channel of the contact's last message.
  */
 export function useMetaComposer(contact: any, messages: any[] | undefined) {
+  const tx = useT('b6mail');
   const cid: string | undefined = contact?.id;
   const lastIn = (messages ?? []).filter((m) => m.direction === 'in').at(-1);
   const [state, setState] = useState<{ cid?: string; channels: Record<string, any> }>({ channels: {} });
@@ -104,7 +107,7 @@ export function useMetaComposer(contact: any, messages: any[] | undefined) {
   const more = useMoreChannels(contact, messages);
   const metaExtra: ExtraChannel[] = META_CHANNELS.filter((ch) => channels[ch]?.configured && (ch === 'whatsapp' || channels[ch].reachable)).map((ch) => ({
     key: ch,
-    label: CHANNEL_LABELS[ch],
+    label: tx(CHANNEL_LABELS[ch]),
     render: (onSent, draft) => <MetaComposerPanel key={`${cid}:${ch}`} channel={ch} contact={contact} st={channels[ch]} onSent={onSent} draft={draft} />,
   }));
   const extra = [...metaExtra, ...more.extra];
@@ -112,18 +115,20 @@ export function useMetaComposer(contact: any, messages: any[] | undefined) {
 }
 
 function left(ends: string) {
+  const tx = tr('b6mail');
   const ms = new Date(ends).getTime() - Date.now();
   const h = Math.floor(ms / 3600_000);
-  return h >= 1 ? `noch ${h} Std.` : `noch ${Math.max(1, Math.round(ms / 60_000))} Min.`;
+  return h >= 1 ? tx('noch {h} Std.', { h }) : tx('noch {max} Min.', { max: Math.max(1, Math.round(ms / 60_000)) });
 }
 
 /** Shows whether free text is allowed right now. */
 export function WindowState({ channel, st }: { channel: string; st: any }) {
+  const tx = useT('b6mail');
   const w = st?.window ?? {};
   if (w.open) {
     return (
       <div className="win-state open">
-        <Icon name="ok" size={14} /> 24-Stunden-Fenster offen · {left(w.ends_at)}
+        <Icon name="ok" size={14} /> {tx('24-Stunden-Fenster offen · {left}', { left: left(w.ends_at) })}
       </div>
     );
   }
@@ -133,9 +138,9 @@ export function WindowState({ channel, st }: { channel: string; st: any }) {
       <Icon name="pending" size={14} />{' '}
       {channel === 'whatsapp'
         ? w.last_inbound_at
-          ? 'Fenster geschlossen (letzte Nachricht vor über 24 Std.) – nur freigegebene Vorlagen'
-          : 'Der Kontakt hat noch nicht per WhatsApp geschrieben – die erste Nachricht muss eine Vorlage sein'
-        : `Fenster geschlossen – über ${label} geht es erst weiter, wenn der Kontakt wieder schreibt`}
+          ? tx('Fenster geschlossen (letzte Nachricht vor über 24 Std.) – nur freigegebene Vorlagen')
+          : tx('Der Kontakt hat noch nicht per WhatsApp geschrieben – die erste Nachricht muss eine Vorlage sein')
+        : tx('Fenster geschlossen – über {label} geht es erst weiter, wenn der Kontakt wieder schreibt', { label })}
     </div>
   );
 }
@@ -144,10 +149,11 @@ const fill = (text: string, values: Record<string, string>, prefix: string) => S
 
 /** Preview of a WhatsApp template with the values filled in so far. */
 export function TemplatePreview({ t, values }: { t: any; values: Record<string, string> }) {
+  const tx = useT('b6mail');
   return (
     <div className="tpl-preview">
       {t.header && <strong>{fill(t.header, values, 'header')}</strong>}
-      {t.header_format && t.header_format !== 'TEXT' && <div className="muted small">[{t.header_format === 'IMAGE' ? 'Bild' : t.header_format === 'VIDEO' ? 'Video' : 'Dokument'}]</div>}
+      {t.header_format && t.header_format !== 'TEXT' && <div className="muted small">[{t.header_format === 'IMAGE' ? tx('Bild') : t.header_format === 'VIDEO' ? tx('Video') : tx('Dokument')}]</div>}
       <div>{fill(t.body, values, 'body')}</div>
       {t.footer && <div className="muted small">{t.footer}</div>}
       {t.buttons?.length > 0 && (
@@ -163,13 +169,14 @@ export function TemplatePreview({ t, values }: { t: any; values: Record<string, 
 
 /** Inputs for the template's placeholders (header, body, link buttons, header media). */
 export function TemplateSlots({ t, values, onChange, hint }: { t: any; values: Record<string, string>; onChange: (v: Record<string, string>) => void; hint?: string }) {
-  if (!t.slots?.length) return <p className="muted small">Diese Vorlage hat keine Platzhalter.</p>;
+  const tx = useT('b6mail');
+  if (!t.slots?.length) return <p className="muted small">{tx('Diese Vorlage hat keine Platzhalter.')}</p>;
   return (
     <div className="tpl-slots">
       {t.slots.map((s: any) => (
         <label key={s.key} className="field">
           <span>{s.label}</span>
-          <Input value={values[s.key]} onChange={(v) => onChange({ ...values, [s.key]: v })} placeholder={s.kind !== 'text' ? 'https://…' : s.example ? `z. B. ${s.example}` : hint} />
+          <Input value={values[s.key]} onChange={(v) => onChange({ ...values, [s.key]: v })} placeholder={s.kind !== 'text' ? 'https://…' : s.example ? tx('z. B. {example}', { example: s.example }) : hint} />
         </label>
       ))}
     </div>
@@ -177,6 +184,7 @@ export function TemplateSlots({ t, values, onChange, hint }: { t: any; values: R
 }
 
 function MetaComposerPanel({ channel, contact, st, onSent, draft }: { channel: string; contact: any; st: any; onSent: () => void; draft?: ComposerDraft }) {
+  const tx = useT('b6mail');
   const open = !!st.window?.open;
   // A draft starts in text mode with its text; with the 24-hour window closed the text stays visible but only a template can go out.
   const [mode, setMode] = useState<'text' | 'template'>(channel === 'whatsapp' && !open && !draft ? 'template' : 'text');
@@ -196,7 +204,7 @@ function MetaComposerPanel({ channel, contact, st, onSent, draft }: { channel: s
   const send = async () => {
     let ignoreDnd = false;
     if (contact.dnd) {
-      if (!confirmAsk('Kontakt hat „Nicht stören“. Trotzdem senden?')) return;
+      if (!confirmAsk(tx('Kontakt hat „Nicht stören“. Trotzdem senden?'))) return;
       ignoreDnd = true;
     }
     setBusy(true);
@@ -210,9 +218,9 @@ function MetaComposerPanel({ channel, contact, st, onSent, draft }: { channel: s
     );
     setBusy(false);
     if (!r) return;
-    if (r.status === 'failed') toast(`Nicht gesendet: ${r.error}`);
+    if (r.status === 'failed') toast(tx('Nicht gesendet: {error}', { error: r.error }));
     else {
-      toast(`Per ${CHANNEL_LABELS[channel]} gesendet`);
+      toast(tx('Per {CHANNEL_LABELS} gesendet', { CHANNEL_LABELS: CHANNEL_LABELS[channel] }));
       if (draft && mode === 'text') await finishDraft(draft.id);
     }
     setBody('');
@@ -231,12 +239,12 @@ function MetaComposerPanel({ channel, contact, st, onSent, draft }: { channel: s
           </span>
         )}
         {channel === 'whatsapp' && (
-          <div className="seg" role="group" aria-label="Art">
+          <div className="seg" role="group" aria-label={tx('Art')}>
             <button type="button" className={mode === 'text' ? 'on' : ''} onClick={() => setMode('text')}>
-              Text
+              {tx('Text')}
             </button>
             <button type="button" className={mode === 'template' ? 'on' : ''} onClick={() => setMode('template')}>
-              <Icon name="template" size={13} /> Vorlage
+              <Icon name="template" size={13} /> {tx('Vorlage')}
             </button>
           </div>
         )}
@@ -247,25 +255,25 @@ function MetaComposerPanel({ channel, contact, st, onSent, draft }: { channel: s
           onChange={setBody}
           rows={4}
           disabled={!open}
-          placeholder={open ? `${CHANNEL_LABELS[channel]}-Nachricht an ${contact.first_name || 'den Kontakt'}` : channel === 'whatsapp' ? 'Freier Text erst wieder nach einer Nachricht des Kontakts – bitte „Vorlage“ wählen' : 'Freier Text erst wieder nach einer Nachricht des Kontakts'}
+          placeholder={open ? tx('{CHANNEL_LABELS}-Nachricht an {n}', { CHANNEL_LABELS: CHANNEL_LABELS[channel], n: contact.first_name || 'den Kontakt' }) : channel === 'whatsapp' ? tx('Freier Text erst wieder nach einer Nachricht des Kontakts – bitte „Vorlage“ wählen') : tx('Freier Text erst wieder nach einer Nachricht des Kontakts')}
         />
       ) : !st.templates ? (
         <p className="muted small">
-          Für Vorlagen fehlt die WhatsApp-Business-Konto-ID – <Link to="settings/channels">Einstellungen → Kanäle</Link>.
+          {tx('Für Vorlagen fehlt die WhatsApp-Business-Konto-ID –')} <Link to="settings/channels">{tx('Einstellungen → Kanäle')}</Link>.
         </p>
       ) : templates.loading && !templates.data ? (
         <Spinner />
       ) : templates.error ? (
-        <p className="muted small">Vorlagen nicht geladen: {templates.error}</p>
+        <p className="muted small">{tx('Vorlagen nicht geladen: {error}', { error: templates.error })}</p>
       ) : !templates.data?.length ? (
-        <p className="muted small">Keine freigegebenen Vorlagen. Vorlagen legst du im WhatsApp Manager von Meta an; nach der Freigabe erscheinen sie hier.</p>
+        <p className="muted small">{tx('Keine freigegebenen Vorlagen. Vorlagen legst du im WhatsApp Manager von Meta an; nach der Freigabe erscheinen sie hier.')}</p>
       ) : (
         <>
           <Select
             value={tpl}
             onChange={(v) => (setTpl(v), setValues({}))}
-            placeholder="Vorlage wählen…"
-            options={templates.data.map((t) => [`${t.name}|${t.language}`, `${t.name} (${t.language}, ${t.category === 'MARKETING' ? 'Marketing' : t.category === 'UTILITY' ? 'Service' : t.category === 'AUTHENTICATION' ? 'Code' : t.category})${t.supported ? '' : ' – nicht unterstützt'}`])}
+            placeholder={tx('Vorlage wählen…')}
+            options={templates.data.map((t) => [`${t.name}|${t.language}`, `${t.name} (${t.language}, ${t.category === 'MARKETING' ? tx('Marketing') : t.category === 'UTILITY' ? tx('Service') : t.category === 'AUTHENTICATION' ? tx('Code') : t.category})${t.supported ? '' : tx(' – nicht unterstützt')}`])}
           />
           {chosen && !chosen.supported && <p className="muted small">{chosen.reason}</p>}
           {chosen?.supported && (
@@ -278,10 +286,10 @@ function MetaComposerPanel({ channel, contact, st, onSent, draft }: { channel: s
       )}
       <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <small className="muted">
-          {mode === 'text' ? `${body.length} / ${st.limit} Zeichen` : chosen ? 'Vorlagen kosten je nach Kategorie eine Meta-Gebühr.' : ''}
+          {mode === 'text' ? tx('{length} / {limit} Zeichen', { length: body.length, limit: st.limit }) : chosen ? tx('Vorlagen kosten je nach Kategorie eine Meta-Gebühr.') : ''}
         </small>
         <button className="btn" disabled={!canSend} onClick={send}>
-          <ChannelIcon channel={channel} /> Senden
+          <ChannelIcon channel={channel} /> {tx('Senden')}
         </button>
       </div>
     </>

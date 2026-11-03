@@ -6,6 +6,7 @@ import { Badge, Check, CodeBox, Empty, Field, Input, Modal, Select, Spinner, act
 import { CallTools, TransferModal } from './PhoneTools';
 import { Slot } from '../slots';
 import { MoreFields } from '../areas/fields';
+import { useT, tr } from '../i18n';
 
 /**
  * Browser phone (Twilio Voice JS SDK, loaded only when switched on): a floating dialer that stays
@@ -113,17 +114,19 @@ async function applySavedDevices(d: Device) {
 }
 
 async function register() {
+  const tx = tr('b6phone');
   if (!device) return;
   try {
     await device.register();
     setState({ registered: true });
   } catch (e) {
     setState({ registered: false });
-    phoneError(`Telefon: ${message(e)}`);
+    phoneError(tx('Telefon: {message}', { message: message(e) }));
   }
 }
 
 export async function startPhone() {
+  const tx = tr('b6phone');
   const gen = ++generation;
   let st: any;
   try {
@@ -139,7 +142,7 @@ export async function startPhone() {
     if (gen !== generation) return;
     const d = new DeviceClass(tok.token, {
       edge: tok.edge,
-      closeProtection: 'Ein Anruf läuft – die Seite wirklich verlassen?',
+      closeProtection: tx('Ein Anruf läuft – die Seite wirklich verlassen?'),
       codecPreferences: ['opus', 'pcmu'],
       logLevel: 'error',
       appName: 'gohigh',
@@ -154,7 +157,7 @@ export async function startPhone() {
     });
     d.on('registered', () => setState({ registered: true }));
     d.on('unregistered', () => setState({ registered: false }));
-    d.on('error', (e: any) => phoneError(`Telefon: ${e?.message ?? 'Fehler'}`));
+    d.on('error', (e: any) => phoneError(tx('Telefon: {n}', { n: e?.message ?? 'Fehler' })));
     d.on('incoming', onIncoming);
     void applySavedDevices(d);
     setState({ status: 'ready', available: st.available, incomingAllowed: !!tok.incoming, number: tok.number });
@@ -192,6 +195,7 @@ export async function restartPhone() {
 }
 
 function track(call: Call, info: Omit<ActiveCall, 'muted'>) {
+  const tx = tr('b6phone');
   current = call;
   setState({ call: { ...info, muted: false }, open: true });
   const patch = (p: Partial<ActiveCall>) => current === call && state.call && setState({ call: { ...state.call, ...p } });
@@ -229,16 +233,17 @@ function track(call: Call, info: Omit<ActiveCall, 'muted'>) {
   call.on('cancel', end);
   call.on('reject', end);
   call.on('error', (e: any) => {
-    toastError(`Anruf: ${e?.message ?? 'Fehler'}`);
+    toastError(tx('Anruf: {n}', { n: e?.message ?? 'Fehler' }));
     end();
   });
 }
 
 function onIncoming(call: Call) {
+  const tx = tr('b6phone');
   if (current || ringing) return call.reject();
   ringing = call;
   const p = call.customParameters;
-  setState({ incoming: { number: p.get('from') || call.parameters?.From || 'Unbekannt', name: p.get('name') || '', callId: p.get('callId') || '', transfer: p.get('transfer') || undefined } });
+  setState({ incoming: { number: p.get('from') || call.parameters?.From || tx('Unbekannt'), name: p.get('name') || '', callId: p.get('callId') || '', transfer: p.get('transfer') || undefined } });
   const clear = () => {
     if (ringing !== call) return;
     ringing = null;
@@ -272,9 +277,10 @@ export function ignoreIncoming() {
 
 /** Calls a number from the browser. Returns false when the browser phone isn't ready (caller falls back). */
 export async function phoneDial(number: string, opts: { contactId?: string; name?: string; dialerItem?: string } = {}): Promise<boolean> {
+  const tx = tr('b6phone');
   if (!device || state.status !== 'ready') return false;
   if (current) {
-    toast('Es läuft schon ein Anruf.');
+    toast(tx('Es läuft schon ein Anruf.'));
     setState({ open: true });
     return true;
   }
@@ -285,7 +291,7 @@ export async function phoneDial(number: string, opts: { contactId?: string; name
     const call = await device.connect({ params: { To: to, ...(opts.contactId ? { contactId: opts.contactId } : {}), ...(opts.dialerItem ? { dialerItem: opts.dialerItem } : {}) } });
     track(call, { direction: 'out', number: to, name: opts.name ?? '', callId: '', contactId: opts.contactId, state: 'connecting' });
   } catch (e) {
-    toastError(`Anruf: ${message(e)}`);
+    toastError(tx('Anruf: {message}', { message: message(e) }));
   }
   return true;
 }
@@ -295,10 +301,11 @@ export const toggleMute = () => current && current.mute(!current.isMuted());
 export const sendDigit = (d: string) => current?.sendDigits(d);
 
 export async function holdCall() {
+  const tx = tr('b6phone');
   const c = state.call;
   if (!c || !current) return;
   const key = c.callId || current.parameters?.CallSid;
-  if (!key || c.state !== 'open') return toast('Halten geht erst, wenn verbunden ist.');
+  if (!key || c.state !== 'open') return toast(tx('Halten geht erst, wenn verbunden ist.'));
   setState({ call: { ...c, holding: true } });
   const r = await act(() => api.post(`/api/phone/calls/${encodeURIComponent(key)}/hold`));
   if (!r) return state.call && setState({ call: { ...state.call, holding: false } });
@@ -309,8 +316,9 @@ export async function holdCall() {
 }
 
 export async function resumeCall(callId: string) {
+  const tx = tr('b6phone');
   if (!device) return;
-  if (current) return toast('Erst den laufenden Anruf beenden oder halten.');
+  if (current) return toast(tx('Erst den laufenden Anruf beenden oder halten.'));
   const h = state.held.find((x) => x.callId === callId);
   if (!h) return;
   setState({ held: state.held.filter((x) => x.callId !== callId) });
@@ -318,7 +326,7 @@ export async function resumeCall(callId: string) {
     const call = await device.connect({ params: { resume: callId } });
     track(call, { direction: 'out', number: h.number, name: h.name, callId, state: 'connecting' });
   } catch (e) {
-    toastError(`Fortsetzen: ${message(e)}`);
+    toastError(tx('Fortsetzen: {message}', { message: message(e) }));
     setState({ held: [...state.held, h] });
   }
 }
@@ -330,6 +338,7 @@ export async function hangUpHeld(callId: string) {
 
 /** Held calls can end on the other side: poll until none is left. */
 function watchHeld() {
+  const tx = tr('b6phone');
   if (heldTimer) return;
   heldTimer = setInterval(async () => {
     if (!state.held.length) {
@@ -341,7 +350,7 @@ function watchHeld() {
       const r = await api.get(`/api/phone/calls/${encodeURIComponent(h.callId)}`).catch(() => null);
       if (r?.ended) {
         setState({ held: state.held.filter((x) => x.callId !== h.callId) });
-        toast(`Gehaltener Anruf beendet: ${h.name || h.number}`);
+        toast(tx('Gehaltener Anruf beendet: {n}', { n: h.name || h.number }));
       }
     }
   }, 5000);
@@ -373,10 +382,11 @@ const KEYS: [string, string][] = [
 ];
 
 function Keypad({ onKey }: { onKey: (k: string) => void }) {
+  const tx = useT('b6phone');
   return (
     <div className="phone-keys">
       {KEYS.map(([k, sub]) => (
-        <button key={k} type="button" onClick={() => onKey(k)} aria-label={`Taste ${k}`}>
+        <button key={k} type="button" onClick={() => onKey(k)} aria-label={tx('Taste {k}', { k })}>
           <span>{k}</span>
           <small>{sub}</small>
         </button>
@@ -401,6 +411,7 @@ function useTick(on: boolean) {
 
 /** Mounted once in the app shell: floating button, dialer panel, incoming popup. */
 export function BrowserPhone() {
+  const tx = useT('b6phone');
   const p = usePhone();
   useEffect(() => {
     void startPhone();
@@ -417,7 +428,7 @@ export function BrowserPhone() {
     <>
       {p.incoming && <IncomingPopup inc={p.incoming} />}
       {p.open && <PhonePanel />}
-      <button data-tour="phone-fab" className={`phone-fab${p.call ? ' live' : ''}${p.held.length ? ' held' : ''}`} onClick={() => setState({ open: !state.open })} aria-label="Telefon" title={p.status === 'error' ? `Telefon: ${p.error}` : 'Telefon'}>
+      <button data-tour="phone-fab" className={`phone-fab${p.call ? ' live' : ''}${p.held.length ? ' held' : ''}`} onClick={() => setState({ open: !state.open })} aria-label={tx('Telefon')} title={p.status === 'error' ? tx('Telefon: {error}', { error: p.error }) : tx('Telefon')}>
         <Icon name="phone" size={22} />
         {p.call?.startedAt ? <CallClock since={p.call.startedAt} /> : null}
         <span className={`dot ${p.status === 'error' ? 'err' : p.registered ? 'on' : 'off'}`} />
@@ -432,27 +443,28 @@ function CallClock({ since }: { since: number }) {
 }
 
 function IncomingPopup({ inc }: { inc: Incoming }) {
+  const tx = useT('b6phone');
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && ignoreIncoming();
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
   return (
-    <div className="phone-incoming" role="alertdialog" aria-label="Eingehender Anruf">
-      <button className="icon-btn phone-x" onClick={ignoreIncoming} aria-label="Klingeln hier ausblenden" title="Hier nicht mehr klingeln (Esc)">
+    <div className="phone-incoming" role="alertdialog" aria-label={tx('Eingehender Anruf')}>
+      <button className="icon-btn phone-x" onClick={ignoreIncoming} aria-label={tx('Klingeln hier ausblenden')} title={tx('Hier nicht mehr klingeln (Esc)')}>
         ✕
       </button>
       <div className="muted small">
-        <Icon name="callIn" size={14} /> Eingehender Anruf
+        <Icon name="callIn" size={14} /> {tx('Eingehender Anruf')}
       </div>
       <div className="phone-who">{inc.name || inc.number}</div>
       {inc.name && <div className="muted">{inc.number}</div>}
       <div className="phone-incoming-actions">
         <button className="btn phone-accept" onClick={acceptIncoming}>
-          <Icon name="phone" size={16} /> Annehmen
+          <Icon name="phone" size={16} /> {tx('Annehmen')}
         </button>
         <button className="btn danger" onClick={rejectIncoming}>
-          <Icon name="hangup" size={16} /> Ablehnen
+          <Icon name="hangup" size={16} /> {tx('Ablehnen')}
         </button>
       </div>
     </div>
@@ -460,6 +472,7 @@ function IncomingPopup({ inc }: { inc: Incoming }) {
 }
 
 function PhonePanel() {
+  const tx = useT('b6phone');
   const p = usePhone();
   const [num, setNum] = useState('');
   const [keypad, setKeypad] = useState(false);
@@ -472,16 +485,16 @@ function PhonePanel() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [devices, transfer]);
-  const status = p.status === 'error' ? p.error : !p.incomingAllowed ? 'Nur ausgehend' : p.registered ? 'Erreichbar' : p.available ? 'Verbindet…' : 'Nicht erreichbar';
+  const status = p.status === 'error' ? p.error : !p.incomingAllowed ? tx('Nur ausgehend') : p.registered ? tx('Erreichbar') : p.available ? tx('Verbindet…') : tx('Nicht erreichbar');
   return (
-    <div className="phone-panel" role="dialog" aria-label="Telefon">
+    <div className="phone-panel" role="dialog" aria-label={tx('Telefon')}>
       <div className="phone-head">
-        <strong>Telefon</strong>
+        <strong>{tx('Telefon')}</strong>
         <span className={`phone-state ${p.registered ? 'on' : ''}`}>{status}</span>
-        <button className="icon-btn" onClick={() => setDevices(true)} aria-label="Audiogeräte" title="Mikrofon & Lautsprecher">
+        <button className="icon-btn" onClick={() => setDevices(true)} aria-label={tx('Audiogeräte')} title={tx('Mikrofon & Lautsprecher')}>
           <Icon name="headset" size={16} />
         </button>
-        <button className="icon-btn" onClick={() => setState({ open: false })} aria-label="Schließen" title="Schließen (Esc)">
+        <button className="icon-btn" onClick={() => setState({ open: false })} aria-label={tx('Schließen')} title={tx('Schließen (Esc)')}>
           ✕
         </button>
       </div>
@@ -489,24 +502,24 @@ function PhonePanel() {
         <div className="phone-call">
           <div className="phone-who">{c.name || c.number}</div>
           {c.name && <div className="muted">{c.number}</div>}
-          <div className="phone-timer">{c.holding ? 'Wird gehalten…' : c.state === 'open' && c.startedAt ? clock(Date.now() - c.startedAt) : c.state === 'ringing' ? 'Klingelt…' : 'Verbinde…'}</div>
+          <div className="phone-timer">{c.holding ? tx('Wird gehalten…') : c.state === 'open' && c.startedAt ? clock(Date.now() - c.startedAt) : c.state === 'ringing' ? tx('Klingelt…') : tx('Verbinde…')}</div>
           {keypad && <Keypad onKey={sendDigit} />}
           <div className="phone-controls">
-            <button className={`phone-ctl${c.muted ? ' on' : ''}`} onClick={toggleMute} aria-pressed={c.muted} title={c.muted ? 'Stummschaltung aufheben' : 'Stumm schalten'}>
+            <button className={`phone-ctl${c.muted ? ' on' : ''}`} onClick={toggleMute} aria-pressed={c.muted} title={c.muted ? tx('Stummschaltung aufheben') : tx('Stumm schalten')}>
               <Icon name={c.muted ? 'micOff' : 'mic'} size={18} />
-              <span>{c.muted ? 'Stumm' : 'Mikro'}</span>
+              <span>{c.muted ? tx('Stumm') : tx('Mikro')}</span>
             </button>
-            <button className="phone-ctl" onClick={holdCall} disabled={c.state !== 'open' || c.holding} title="Halten – der Anrufer hört Wartemusik">
+            <button className="phone-ctl" onClick={holdCall} disabled={c.state !== 'open' || c.holding} title={tx('Halten – der Anrufer hört Wartemusik')}>
               <Icon name="pause" size={18} />
-              <span>Halten</span>
+              <span>{tx('Halten')}</span>
             </button>
-            <button className={`phone-ctl${keypad ? ' on' : ''}`} onClick={() => setKeypad(!keypad)} aria-pressed={keypad} title="Tastenfeld (Tonwahl)">
+            <button className={`phone-ctl${keypad ? ' on' : ''}`} onClick={() => setKeypad(!keypad)} aria-pressed={keypad} title={tx('Tastenfeld (Tonwahl)')}>
               <Icon name="keypad" size={18} />
-              <span>Tasten</span>
+              <span>{tx('Tasten')}</span>
             </button>
-            <button className="phone-ctl end" onClick={hangUp} title="Auflegen">
+            <button className="phone-ctl end" onClick={hangUp} title={tx('Auflegen')}>
               <Icon name="hangup" size={18} />
-              <span>Auflegen</span>
+              <span>{tx('Auflegen')}</span>
             </button>
           </div>
           <CallTools callId={c.callId} open={c.state === 'open'} onTransfer={() => setTransfer({ callId: c.callId, held: false, name: c.name || c.number })} />
@@ -521,19 +534,19 @@ function PhonePanel() {
           }}
         >
           <div className="phone-number">
-            <input value={num} onChange={(e) => setNum(e.target.value)} placeholder="Nummer eingeben" inputMode="tel" autoComplete="tel" aria-label="Telefonnummer" />
+            <input value={num} onChange={(e) => setNum(e.target.value)} placeholder={tx('Nummer eingeben')} inputMode="tel" autoComplete="tel" aria-label={tx('Telefonnummer')} />
             {num && (
-              <button type="button" className="icon-btn" onClick={() => setNum(num.slice(0, -1))} aria-label="Löschen">
+              <button type="button" className="icon-btn" onClick={() => setNum(num.slice(0, -1))} aria-label={tx('Löschen')}>
                 <Icon name="backspace" size={16} />
               </button>
             )}
           </div>
           <Keypad onKey={(k) => setNum(num + k)} />
           <button className="btn phone-accept phone-go" disabled={!num.trim() || p.status !== 'ready'}>
-            <Icon name="phone" size={16} /> Anrufen
+            <Icon name="phone" size={16} /> {tx('Anrufen')}
           </button>
-          {p.incomingAllowed && <Check checked={p.available} onChange={(v) => void setAvailable(v)} label="Für eingehende Anrufe erreichbar" />}
-          {p.number && <div className="muted small">Angezeigte Nummer: {p.number}</div>}
+          {p.incomingAllowed && <Check checked={p.available} onChange={(v) => void setAvailable(v)} label={tx('Für eingehende Anrufe erreichbar')} />}
+          {p.number && <div className="muted small">{tx('Angezeigte Nummer: {number}', { number: p.number })}</div>}
         </form>
       )}
       {p.held.length > 0 && (
@@ -543,12 +556,12 @@ function PhonePanel() {
               <Icon name="pause" size={14} />
               <span className="grow">{h.name || h.number}</span>
               <button className="btn small" onClick={() => void resumeCall(h.callId)} disabled={!!c}>
-                Fortsetzen
+                {tx('Fortsetzen')}
               </button>
-              <button className="btn small secondary" onClick={() => setTransfer({ callId: h.callId, held: true, name: h.name || h.number })} title="An eine Kollegin, einen Kollegen oder eine Nummer übergeben">
-                Übergeben
+              <button className="btn small secondary" onClick={() => setTransfer({ callId: h.callId, held: true, name: h.name || h.number })} title={tx('An eine Kollegin, einen Kollegen oder eine Nummer übergeben')}>
+                {tx('Übergeben')}
               </button>
-              <button className="btn small danger" onClick={() => void hangUpHeld(h.callId)} aria-label="Gehaltenen Anruf beenden">
+              <button className="btn small danger" onClick={() => void hangUpHeld(h.callId)} aria-label={tx('Gehaltenen Anruf beenden')}>
                 <Icon name="hangup" size={14} />
               </button>
             </div>
@@ -574,6 +587,7 @@ function PhonePanel() {
 }
 
 function DevicesModal({ onClose }: { onClose: () => void }) {
+  const tx = useT('b6phone');
   const [inputs, setInputs] = useState<MediaDeviceInfo[]>([]);
   const [outputs, setOutputs] = useState<MediaDeviceInfo[]>([]);
   const [sel, setSel] = useState({ input: store.get('input'), output: store.get('output'), ringtone: store.get('ringtone') });
@@ -587,7 +601,7 @@ function DevicesModal({ onClose }: { onClose: () => void }) {
         const s = await navigator.mediaDevices.getUserMedia({ audio: true });
         s.getTracks().forEach((t) => t.stop());
       } catch {
-        if (live) setErr('Kein Zugriff aufs Mikrofon – bitte im Browser erlauben.');
+        if (live) setErr(tx('Kein Zugriff aufs Mikrofon – bitte im Browser erlauben.'));
       }
       const list = await navigator.mediaDevices.enumerateDevices().catch(() => [] as MediaDeviceInfo[]);
       if (!live) return;
@@ -609,24 +623,24 @@ function DevicesModal({ onClose }: { onClose: () => void }) {
       toastError(message(e));
     }
   };
-  const opts = (list: MediaDeviceInfo[]) => list.map((d, i): [string, string] => [d.deviceId, d.label || `Gerät ${i + 1}`]);
+  const opts = (list: MediaDeviceInfo[]) => list.map((d, i): [string, string] => [d.deviceId, d.label || tx('Gerät {n}', { n: i + 1 })]);
   return (
-    <Modal title="Mikrofon & Lautsprecher" onClose={onClose}>
+    <Modal title={tx('Mikrofon & Lautsprecher')} onClose={onClose}>
       {err && <p className="voice-warn small">{err}</p>}
-      <Field label="Mikrofon">
-        <Select value={sel.input} onChange={(v) => void pick('input', v)} placeholder="Standard" options={opts(inputs)} />
+      <Field label={tx('Mikrofon')}>
+        <Select value={sel.input} onChange={(v) => void pick('input', v)} placeholder={tx('Standard')} options={opts(inputs)} />
       </Field>
       {canPickOutput ? (
         <>
-          <Field label="Lautsprecher / Headset">
-            <Select value={sel.output} onChange={(v) => void pick('output', v)} placeholder="Standard" options={opts(outputs)} />
+          <Field label={tx('Lautsprecher / Headset')}>
+            <Select value={sel.output} onChange={(v) => void pick('output', v)} placeholder={tx('Standard')} options={opts(outputs)} />
           </Field>
-          <Field label="Klingelton auf">
-            <Select value={sel.ringtone} onChange={(v) => void pick('ringtone', v)} placeholder="Standard" options={opts(outputs)} />
+          <Field label={tx('Klingelton auf')}>
+            <Select value={sel.ringtone} onChange={(v) => void pick('ringtone', v)} placeholder={tx('Standard')} options={opts(outputs)} />
           </Field>
         </>
       ) : (
-        <p className="muted small">Dieser Browser lässt die Ausgabe nicht wählen – es wird der Standard-Lautsprecher genutzt.</p>
+        <p className="muted small">{tx('Dieser Browser lässt die Ausgabe nicht wählen – es wird der Standard-Lautsprecher genutzt.')}</p>
       )}
     </Modal>
   );
@@ -634,11 +648,12 @@ function DevicesModal({ onClose }: { onClose: () => void }) {
 
 /** "Wählen" in the call log: opens the dialer when the browser phone is on. */
 export function PhoneDialButton() {
+  const tx = useT('b6phone');
   const p = usePhone();
   if (p.status !== 'ready') return null;
   return (
     <button className="btn" data-tour="phone-dial" onClick={() => setState({ open: true })}>
-      <Icon name="keypad" size={16} /> Wählen
+      <Icon name="keypad" size={16} /> {tx('Wählen')}
     </button>
   );
 }
@@ -653,6 +668,7 @@ const INCOMING: [string, string][] = [
 const EDGE_LABEL: Record<string, string> = { roaming: 'Automatisch (nächster Standort)', frankfurt: 'Frankfurt', dublin: 'Dublin', ashburn: 'Ashburn (USA)', umatilla: 'Umatilla (USA)', sydney: 'Sydney', tokyo: 'Tokio', singapore: 'Singapur', 'sao-paulo': 'São Paulo' };
 
 export function BrowserPhoneSettings() {
+  const tx = useT('b6phone');
   const data = useLoad(() => api.get<any>('/api/phone/settings'), []);
   const [s, setS] = useState<any>();
   const [busy, setBusy] = useState(false);
@@ -662,7 +678,7 @@ export function BrowserPhoneSettings() {
   const set = (p: any) => setS({ ...s, ...p });
   const save = async () => {
     const { enabled, api_key_sid, api_secret, twiml_app_sid, incoming, edge } = s;
-    const r = await act(() => api.put('/api/phone/settings', { enabled, api_key_sid, api_secret, twiml_app_sid, incoming, edge }), 'Gespeichert');
+    const r = await act(() => api.put('/api/phone/settings', { enabled, api_key_sid, api_secret, twiml_app_sid, incoming, edge }), tx('Gespeichert'));
     if (r) {
       data.setData(r);
       void restartPhone();
@@ -672,33 +688,33 @@ export function BrowserPhoneSettings() {
     <div className="card" style={{ marginTop: 14 }} data-tour="tel-browser">
       <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>
-          <Icon name="headset" size={18} /> Browser-Telefon
+          <Icon name="headset" size={18} /> {tx('Browser-Telefon')}
         </h2>
-        {!d.enabled ? <Badge>aus</Badge> : d.ready ? <Badge tone="green">Bereit</Badge> : <Badge tone="yellow">Es fehlt: {d.missing.join(', ')}</Badge>}
+        {!d.enabled ? <Badge>{tx('aus')}</Badge> : d.ready ? <Badge tone="green">{tx('Bereit')}</Badge> : <Badge tone="yellow">{tx('Es fehlt: {join}', { join: d.missing.join(', ') })}</Badge>}
       </div>
       <p className="muted small">
-        Telefonieren direkt im Browser über Twilio (Headset empfohlen); eingehende Anrufe klingeln bei allen, die erreichbar sind. Braucht HTTPS und Mikrofon-Freigabe.
+        {tx('Telefonieren direkt im Browser über Twilio (Headset empfohlen); eingehende Anrufe klingeln bei allen, die erreichbar sind. Braucht HTTPS und Mikrofon-Freigabe.')}
       </p>
-      <Check checked={s.enabled} onChange={(v) => set({ enabled: v })} label="Browser-Telefon einschalten" />
-      <MoreFields id="tel-browser-manual" label="Von Hand einrichten" values={[s.api_key_sid, s.twiml_app_sid]}>
+      <Check checked={s.enabled} onChange={(v) => set({ enabled: v })} label={tx('Browser-Telefon einschalten')} />
+      <MoreFields id="tel-browser-manual" label={tx('Von Hand einrichten')} values={[s.api_key_sid, s.twiml_app_sid]}>
       <div className="grid2">
-        <Field label="API Key SID" hint="Twilio-Konsole → Account → API keys & tokens → Create API key (Standard).">
-          <Input value={s.api_key_sid} onChange={(v) => set({ api_key_sid: v })} placeholder="SK…" autoComplete="off" />
+        <Field label={tx('API Key SID')} hint={tx('Twilio-Konsole → Account → API keys & tokens → Create API key (Standard).')}>
+          <Input value={s.api_key_sid} onChange={(v) => set({ api_key_sid: v })} placeholder={tx('SK…')} autoComplete="off" />
         </Field>
-        <Field label="API Key Secret" hint="Wird verschlüsselt gespeichert und nie wieder angezeigt.">
+        <Field label={tx('API Key Secret')} hint={tx('Wird verschlüsselt gespeichert und nie wieder angezeigt.')}>
           <Input type="password" value={s.api_secret} onChange={(v) => set({ api_secret: v })} autoComplete="new-password" />
         </Field>
-        <Field label="TwiML App SID" hint="Twilio → Voice → TwiML Apps; Voice-URL siehe unten.">
-          <Input value={s.twiml_app_sid} onChange={(v) => set({ twiml_app_sid: v })} placeholder="AP…" autoComplete="off" />
+        <Field label={tx('TwiML App SID')} hint={tx('Twilio → Voice → TwiML Apps; Voice-URL siehe unten.')}>
+          <Input value={s.twiml_app_sid} onChange={(v) => set({ twiml_app_sid: v })} placeholder={tx('AP…')} autoComplete="off" />
         </Field>
-        <Field label="Twilio-Standort">
-          <Select value={s.edge} onChange={(v) => set({ edge: v })} options={d.edges.map((e: string) => [e, EDGE_LABEL[e] ?? e])} />
+        <Field label={tx('Twilio-Standort')}>
+          <Select value={s.edge} onChange={(v) => set({ edge: v })} options={d.edges.map((e: string) => [e, tx(EDGE_LABEL[e] ?? e)])} />
         </Field>
       </div>
-      <Field label="TwiML App → Voice Request URL (POST)">
+      <Field label={tx('TwiML App → Voice Request URL (POST)')}>
         <CodeBox text={d.webhooks.voice} />
       </Field>
-      <Field label="TwiML App → Status Callback URL (POST, optional)">
+      <Field label={tx('TwiML App → Status Callback URL (POST, optional)')}>
         <CodeBox text={d.webhooks.status} />
       </Field>
       </MoreFields>
@@ -706,10 +722,10 @@ export function BrowserPhoneSettings() {
         <button
           className="btn small secondary"
           disabled={busy}
-          title="Legt API-Key und TwiML-App mit Account SID und Auth Token an (bzw. trägt die Adressen bei der vorhandenen App ein)"
+          title={tx('Legt API-Key und TwiML-App mit Account SID und Auth Token an (bzw. trägt die Adressen bei der vorhandenen App ein)')}
           onClick={async () => {
             setBusy(true);
-            const r = await act(() => api.post('/api/phone/setup'), 'Bei Twilio eingerichtet');
+            const r = await act(() => api.post('/api/phone/setup'), tx('Bei Twilio eingerichtet'));
             setBusy(false);
             if (r) {
               data.setData(r);
@@ -717,15 +733,15 @@ export function BrowserPhoneSettings() {
             }
           }}
         >
-          <Icon name="refresh" size={14} /> Bei Twilio automatisch einrichten
+          <Icon name="refresh" size={14} /> {tx('Bei Twilio automatisch einrichten')}
         </button>
       </div>
-      <Field label="Eingehende Anrufe">
-        <Select value={s.incoming} onChange={(v) => set({ incoming: v })} options={INCOMING} />
+      <Field label={tx('Eingehende Anrufe')}>
+        <Select value={s.incoming} onChange={(v) => set({ incoming: v })} options={INCOMING.map(([k, l]) => [k, tx(l)] as [string, string])} />
       </Field>
       <p>
         <button className="btn" onClick={save}>
-          Speichern
+          {tx('Speichern')}
         </button>
       </p>
     </div>

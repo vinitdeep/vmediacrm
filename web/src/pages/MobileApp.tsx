@@ -62,6 +62,7 @@ export function AppDevices() {
 
 /** Admins: upload a new signed APK (raw body) and set the App-Links certificate. */
 function ApkUpload({ current, onDone }: { current: any; onDone: () => void }) {
+  const t = useT('b6phone');
   const file = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [f, setF] = useState({ code: '', name: '', changelog: '' });
@@ -70,7 +71,7 @@ function ApkUpload({ current, onDone }: { current: any; onDone: () => void }) {
   const [cert, setCert] = useState<string | null>(null);
   const upload = async () => {
     const apk = file.current?.files?.[0];
-    if (!apk) return toastError(new Error('Bitte die APK-Datei wählen'));
+    if (!apk) return toastError(new Error(t('Bitte die APK-Datei wählen')));
     setBusy(true);
     try {
       const r = await fetch('/api/mobile/app', {
@@ -80,8 +81,8 @@ function ApkUpload({ current, onDone }: { current: any; onDone: () => void }) {
         credentials: 'same-origin',
       });
       const data = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(data.error || `Fehler ${r.status}`);
-      toast(`Version ${data.version_name} ist online`);
+      if (!r.ok) throw new Error(data.error || t('Fehler {status}', { status: r.status }));
+      toast(t('Version {version_name} ist online', { version_name: data.version_name }));
       setF({ code: '', name: '', changelog: '' });
       if (file.current) file.current.value = '';
       onDone();
@@ -95,48 +96,48 @@ function ApkUpload({ current, onDone }: { current: any; onDone: () => void }) {
     return (
       <p>
         <button className="btn small secondary" onClick={() => setOpen(true)}>
-          Neue App-Version hochladen (Agentur)
+          {t('Neue App-Version hochladen (Agentur)')}
         </button>
       </p>
     );
   return (
     <div className="card" style={{ background: 'var(--bg)', marginTop: 12 }}>
-      <h3>Neue App-Version</h3>
+      <h3>{t('Neue App-Version')}</h3>
       <p className="muted small">
-        Signierte Release-APK von <code>{cfg.data?.effective_package_name ?? 'org.gohigh.android'}</code>. Erscheint sofort unter <a href="/android">/android</a>; die App meldet das Update.
-        {current ? ` Aktuell: ${current.version_name} (${current.version_code}).` : ''}
+        {t('Signierte Release-APK von')} <code>{cfg.data?.effective_package_name ?? 'org.gohigh.android'}</code>{t('. Erscheint sofort unter')} <a href="/android">/android</a>{t('; die App meldet das Update.')}
+        {current ? t(' Aktuell: {version_name} ({version_code}).', { version_name: current.version_name, version_code: current.version_code }) : ''}
       </p>
-      <Field label="APK-Datei">
+      <Field label={t('APK-Datei')}>
         <input ref={file} type="file" accept=".apk,application/vnd.android.package-archive" />
       </Field>
       <div className="row">
-        <Field label="Versionscode (versionCode)">
+        <Field label={t('Versionscode (versionCode)')}>
           <Input value={f.code} onChange={(v) => setF({ ...f, code: v })} inputMode="numeric" placeholder={current ? String(current.version_code + 1) : '1'} />
         </Field>
-        <Field label="Versionsname">
+        <Field label={t('Versionsname')}>
           <Input value={f.name} onChange={(v) => setF({ ...f, name: v })} placeholder="1.0.0" />
         </Field>
       </div>
-      <Field label="Was ist neu?">
+      <Field label={t('Was ist neu?')}>
         <Textarea value={f.changelog} onChange={(v) => setF({ ...f, changelog: v })} rows={3} />
       </Field>
       <button className="btn" disabled={busy || !f.code || !f.name} onClick={upload}>
-        {busy ? 'Lädt hoch…' : 'Hochladen'}
+        {busy ? t('Lädt hoch…') : t('Hochladen')}
       </button>
       {cfg.data && (
         <>
           <hr />
-          <Field label="App Links: SHA-256 des Signatur-Zertifikats" hint={cfg.data.effective_cert_sha256.length ? `Wirksam: ${cfg.data.effective_cert_sha256.join(', ')}` : 'Noch keins – App Links sind aus, bis du den Fingerabdruck deines Signatur-Zertifikats einträgst.'}>
-            <Input value={cert ?? cfg.data.cert_sha256} onChange={setCert} placeholder="AB:CD:EF:… (keytool -list -v -keystore …)" />
+          <Field label={t('App Links: SHA-256 des Signatur-Zertifikats')} hint={cfg.data.effective_cert_sha256.length ? t('Wirksam: {join}', { join: cfg.data.effective_cert_sha256.join(', ') }) : t('Noch keins – App Links sind aus, bis du den Fingerabdruck deines Signatur-Zertifikats einträgst.')}>
+            <Input value={cert ?? cfg.data.cert_sha256} onChange={setCert} placeholder={t('AB:CD:EF:… (keytool -list -v -keystore …)')} />
           </Field>
           <button
             className="btn small secondary"
             onClick={async () => {
-              const r = await act(() => api.put('/api/agency/mobile-app', { cert_sha256: cert ?? cfg.data.cert_sha256 }), 'Gespeichert');
+              const r = await act(() => api.put('/api/agency/mobile-app', { cert_sha256: cert ?? cfg.data.cert_sha256 }), t('Gespeichert'));
               if (r) (cfg.setData(r), setCert(null));
             }}
           >
-            Speichern
+            {t('Speichern')}
           </button>
         </>
       )}

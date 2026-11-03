@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { api } from '../api';
 import { Badge, Check, Copy, Field, Input, Link, Select, Textarea, act, confirmAsk, toast, useLoad } from '../ui';
 import './quickwins.css';
+import { useT } from '../i18n';
 
 /** "KI-Antwort vorschlagen" for Google reviews: tone and brand voice settings, the suggest button and editable drafts. A suggestion is only ever a draft. */
 
@@ -24,13 +25,14 @@ export function useReplyCfg() {
 export const isAiDraft = (review: any, text: string) => (review.reply_draft_source === 'ai' || review.reply_draft_source === 'auto') && !!review.reply_draft && text === review.reply_draft;
 
 /** Tone choice and the suggest button. `onText` gets the draft and the updated review. */
-export function SuggestBar({ review, cfg, hasText, onText, label = 'KI-Antwort vorschlagen' }: { review: any; cfg: ReplyCfg | null | undefined; hasText: boolean; onText: (text: string, review: any) => void; label?: string }) {
+export function SuggestBar({ review, cfg, hasText, onText, label }: { review: any; cfg: ReplyCfg | null | undefined; hasText: boolean; onText: (text: string, review: any) => void; label?: string }) {
+  const tx = useT('b6reviews');
   const [tone, setTone] = useState('');
   const [busy, setBusy] = useState(false);
   if (!cfg) return null;
   const off = cfg.ai_problem;
   const run = async () => {
-    if (hasText && !confirmAsk('Den Text im Feld durch einen neuen KI-Vorschlag ersetzen?')) return;
+    if (hasText && !confirmAsk(tx('Den Text im Feld durch einen neuen KI-Vorschlag ersetzen?'))) return;
     setBusy(true);
     const r = await act(() => api.post(`/api/google-reviews/${review.id}/suggest-reply`, { tone: tone || cfg.tone }));
     setBusy(false);
@@ -38,10 +40,10 @@ export function SuggestBar({ review, cfg, hasText, onText, label = 'KI-Antwort v
   };
   return (
     <span className="suggest-bar" data-tour="review-suggest">
-      <button className="btn small secondary" disabled={busy || !!off} onClick={run} title={off ?? 'Die KI schreibt einen Entwurf im Ton deines Unternehmens – du prüfst und veröffentlichst selbst.'}>
-        {busy ? 'Schreibt …' : label}
+      <button className="btn small secondary" disabled={busy || !!off} onClick={run} title={off ?? tx('Die KI schreibt einen Entwurf im Ton deines Unternehmens – du prüfst und veröffentlichst selbst.')}>
+        {busy ? tx('Schreibt …') : label ?? tx('KI-Antwort vorschlagen')}
       </button>
-      <select value={tone || cfg.tone} onChange={(e) => setTone(e.target.value)} aria-label="Tonfall des Vorschlags" title="Tonfall dieses Vorschlags">
+      <select value={tone || cfg.tone} onChange={(e) => setTone(e.target.value)} aria-label={tx('Tonfall des Vorschlags')} title={tx('Tonfall dieses Vorschlags')}>
         {cfg.tones.map((t) => (
           <option key={t.id} value={t.id}>
             {t.label}
@@ -50,7 +52,7 @@ export function SuggestBar({ review, cfg, hasText, onText, label = 'KI-Antwort v
       </select>
       {off && (
         <span className="muted small">
-          {off} <Link to="settings/ai">Einstellungen</Link>
+          {off} <Link to="settings/ai">{tx('Einstellungen')}</Link>
         </span>
       )}
     </span>
@@ -59,6 +61,7 @@ export function SuggestBar({ review, cfg, hasText, onText, label = 'KI-Antwort v
 
 /** Reviews without a connected business profile cannot be answered here: the draft is edited and copied, then pasted at Google. */
 export function DraftOnly({ review, cfg, onSaved }: { review: any; cfg: ReplyCfg | null | undefined; onSaved: (r: any) => void }) {
+  const tx = useT('b6reviews');
   const [text, setText] = useState<string>(review.reply_draft ?? '');
   const [open, setOpen] = useState(!!review.reply_draft);
   const [busy, setBusy] = useState(false);
@@ -66,7 +69,7 @@ export function DraftOnly({ review, cfg, onSaved }: { review: any; cfg: ReplyCfg
   const dirty = text.trim() !== (review.reply_draft ?? '').trim();
   const save = async () => {
     setBusy(true);
-    const r = await act(() => api.put(`/api/google-reviews/${review.id}/reply-draft`, { text }), 'Entwurf gespeichert');
+    const r = await act(() => api.put(`/api/google-reviews/${review.id}/reply-draft`, { text }), tx('Entwurf gespeichert'));
     setBusy(false);
     if (r) onSaved(r);
   };
@@ -87,20 +90,20 @@ export function DraftOnly({ review, cfg, onSaved }: { review: any; cfg: ReplyCfg
   return (
     <div className="g-reply g-draft">
       <div className="muted small">
-        {isAiDraft(review, text) ? <Badge tone="purple">KI-Entwurf – bitte prüfen</Badge> : <Badge>Entwurf</Badge>} Wird nicht veröffentlicht: Text kopieren und bei Google einfügen.
+        {isAiDraft(review, text) ? <Badge tone="purple">{tx('KI-Entwurf – bitte prüfen')}</Badge> : <Badge>{tx('Entwurf')}</Badge>} {tx('Wird nicht veröffentlicht: Text kopieren und bei Google einfügen.')}
       </div>
-      <Textarea value={text} onChange={setText} rows={4} aria-label="Entwurf der Antwort" />
+      <Textarea value={text} onChange={setText} rows={4} aria-label={tx('Entwurf der Antwort')} />
       <div className="actions" style={{ marginTop: 6 }}>
-        <Copy text={text} label="Text kopieren" />
+        <Copy text={text} label={tx('Text kopieren')} />
         <a className="btn small secondary" href={review.link} target="_blank" rel="noopener noreferrer">
-          Auf Google antworten
+          {tx('Auf Google antworten')}
         </a>
         <button className="btn small" disabled={busy || !dirty || !text.trim()} onClick={save}>
-          Entwurf speichern
+          {tx('Entwurf speichern')}
         </button>
-        <SuggestBar review={review} cfg={cfg} hasText={!!text.trim()} label="Neuer Vorschlag" onText={(t, r) => (setText(t), onSaved(r))} />
+        <SuggestBar review={review} cfg={cfg} hasText={!!text.trim()} label={tx('Neuer Vorschlag')} onText={(t, r) => (setText(t), onSaved(r))} />
         <button className="btn small ghost" onClick={remove}>
-          Verwerfen
+          {tx('Verwerfen')}
         </button>
       </div>
     </div>
@@ -109,6 +112,7 @@ export function DraftOnly({ review, cfg, onSaved }: { review: any; cfg: ReplyCfg
 
 /** Tone, address, own hints, signature and the auto-draft switch. */
 export function ReplySettingsPanel({ cfg, onSaved }: { cfg: ReplyCfg | null | undefined; onSaved: () => void }) {
+  const tx = useT('b6reviews');
   const [s, setS] = useState<Partial<ReplyCfg> | null>(null);
   const [busy, setBusy] = useState(false);
   if (!cfg) return null;
@@ -116,37 +120,37 @@ export function ReplySettingsPanel({ cfg, onSaved }: { cfg: ReplyCfg | null | un
   const set = (patch: Partial<ReplyCfg>) => setS({ ...(s ?? {}), ...patch });
   const save = async () => {
     setBusy(true);
-    const r = await act(() => api.put('/api/google-reviews/reply-settings', { tone: v.tone, formality: v.formality, instructions: v.instructions, signature: v.signature, auto_draft: v.auto_draft }), 'Gespeichert');
+    const r = await act(() => api.put('/api/google-reviews/reply-settings', { tone: v.tone, formality: v.formality, instructions: v.instructions, signature: v.signature, auto_draft: v.auto_draft }), tx('Gespeichert'));
     setBusy(false);
     if (r) {
       setS(null);
       onSaved();
-    } else toast('Nicht gespeichert');
+    } else toast(tx('Nicht gespeichert'));
   };
   return (
     <details className="reply-settings" data-tour="review-reply-settings">
-      <summary>KI-Antworten: Tonfall und Stil</summary>
+      <summary>{tx('KI-Antworten: Tonfall und Stil')}</summary>
       <p className="muted small" style={{ marginTop: 6 }}>
-        Die KI schreibt Antwort-Entwürfe im Stil deines Unternehmens (Persona und Fakten aus <Link to="settings/ai">Einstellungen → KI-Assistent</Link>). Sie veröffentlicht nie von selbst: du prüfst, änderst und sendest jede Antwort.
+        {tx('Die KI schreibt Antwort-Entwürfe im Stil deines Unternehmens (Persona und Fakten aus')} <Link to="settings/ai">{tx('Einstellungen → KI-Assistent')}</Link>{tx('). Sie veröffentlicht nie von selbst: du prüfst, änderst und sendest jede Antwort.')}
       </p>
       <div className="grid2">
-        <Field label="Tonfall">
+        <Field label={tx('Tonfall')}>
           <Select value={v.tone} onChange={(x) => set({ tone: x })} options={cfg.tones.map((t) => [t.id, `${t.label} – ${t.hint}`] as [string, string])} />
         </Field>
-        <Field label="Anrede">
-          <Select value={v.formality} onChange={(x) => set({ formality: x as 'sie' | 'du' })} options={[['sie', 'Sie (förmlich)'], ['du', 'du (persönlich)']]} />
+        <Field label={tx('Anrede')}>
+          <Select value={v.formality} onChange={(x) => set({ formality: x as 'sie' | 'du' })} options={[['sie', tx('Sie (förmlich)')], ['du', tx('du (persönlich)')]]} />
         </Field>
       </div>
-      <Field label="Eigene Hinweise (optional)" hint="z. B. „Nenne nie Preise.“ oder „Bei Kritik immer den Rückruf anbieten.“">
+      <Field label={tx('Eigene Hinweise (optional)')} hint={tx('z. B. „Nenne nie Preise.“ oder „Bei Kritik immer den Rückruf anbieten.“')}>
         <Textarea value={v.instructions} onChange={(x) => set({ instructions: x })} rows={3} maxLength={2000} />
       </Field>
-      <Field label="Grußformel unter jeder Antwort (optional)">
-        <Input value={v.signature} onChange={(x) => set({ signature: x })} maxLength={300} placeholder="Herzliche Grüße, Ihr Team von Malerei Muster" />
+      <Field label={tx('Grußformel unter jeder Antwort (optional)')}>
+        <Input value={v.signature} onChange={(x) => set({ signature: x })} maxLength={300} placeholder={tx('Herzliche Grüße, Ihr Team von Malerei Muster')} />
       </Field>
-      <Check checked={!!v.auto_draft} onChange={(x) => set({ auto_draft: x })} label="Für neue Google-Bewertungen automatisch einen Entwurf schreiben (wird nie veröffentlicht)" />
+      <Check checked={!!v.auto_draft} onChange={(x) => set({ auto_draft: x })} label={tx('Für neue Google-Bewertungen automatisch einen Entwurf schreiben (wird nie veröffentlicht)')} />
       <div className="actions" style={{ marginTop: 8 }}>
         <button className="btn small" disabled={busy || !s} onClick={save}>
-          Speichern
+          {tx('Speichern')}
         </button>
       </div>
     </details>

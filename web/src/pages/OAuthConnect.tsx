@@ -4,7 +4,7 @@ import { Icon } from '../icons';
 import { useSession } from '../session';
 import { Badge, Check, CodeBox, Field, Input, Link, Select, Spinner, act, confirmAsk, toast, toastError, useLoad } from '../ui';
 import { SignupLink } from '../referrals';
-import { useT } from '../i18n';
+import { tr, useT } from '../i18n';
 
 /**
  * Google & Microsoft via OAuth: the agency's apps (Agentur → Integrationen), the calendar
@@ -16,14 +16,15 @@ const CAL_LABEL: Record<string, string> = { google: 'Google Kalender', microsoft
 
 /** After the provider sends the browser back (?oauth=ok|error&msg=…): toast once and clean the address. */
 export function useOAuthReturn(onOk?: () => void) {
+  const t = tr('b6integ');
   useEffect(() => {
     const q = new URLSearchParams(location.search);
     const state = q.get('oauth');
     if (!state) return;
     if (state === 'ok') {
-      toast(`${LABEL[q.get('provider') ?? ''] ?? 'Konto'} verbunden`);
+      toast(t('{n} verbunden', { n: LABEL[q.get('provider') ?? ''] ?? 'Konto' }));
       onOk?.();
-    } else toastError(q.get('msg') || 'Verbinden fehlgeschlagen');
+    } else toastError(q.get('msg') || t('Verbinden fehlgeschlagen'));
     history.replaceState(null, '', location.pathname);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -38,6 +39,7 @@ export async function startOAuth(provider: string, purpose: 'calendar' | 'busine
 // --- Agentur → Integrationen -----------------------------------------------------------------
 
 export function OAuthApps() {
+  const t = useT('b6integ');
   const s = useLoad(() => api.get<any>('/api/agency/oauth'), []);
   const [f, setF] = useState<any>(null);
   useEffect(() => {
@@ -47,68 +49,68 @@ export function OAuthApps() {
   const set = (p: string, patch: any) => setF({ ...f, [p]: { ...f[p], ...patch } });
   const save = async () => {
     const body = { google: { ...f.google, client_secret: f.google.client_secret || undefined }, microsoft: { ...f.microsoft, client_secret: f.microsoft.client_secret || undefined } };
-    const r = await act(() => api.put('/api/agency/oauth', body), 'Gespeichert');
+    const r = await act(() => api.put('/api/agency/oauth', body), t('Gespeichert'));
     if (r) s.setData(r);
   };
   const count = (p: string, purpose: string) => s.data.connections.find((c: any) => c.provider === p && c.purpose === purpose)?.n ?? 0;
   const status = (p: string) =>
     s.data[p].configured ? (
-      <Badge tone="green">eingerichtet{s.data[p].from_env ? ' (Umgebung)' : ''}</Badge>
+      <Badge tone="green">{t('eingerichtet')}{s.data[p].from_env ? t(' (Umgebung)') : ''}</Badge>
     ) : (
-      <Badge>nicht eingerichtet</Badge>
+      <Badge>{t('nicht eingerichtet')}</Badge>
     );
   return (
     <div className="card oauth-apps" data-tour="oauth-apps">
-      <h2>Google & Microsoft (OAuth)</h2>
+      <h2>{t('Google & Microsoft (OAuth)')}</h2>
       <p className="muted small">
-        Einmal für die Agentur: Damit verbindet jeder Login seinen Google- oder Outlook-Kalender (<em>Einstellungen → Mein Konto</em>) und jeder Sub-Account sein Google-Unternehmensprofil (
-        <em>Einstellungen → Bewertungen</em>). Anleitung: <code>docs/self-hosting.md</code>, Abschnitt „Google & Microsoft verbinden“.
+        {t('Einmal für die Agentur: Damit verbindet jeder Login seinen Google- oder Outlook-Kalender (')}<em>{t('Einstellungen → Mein Konto')}</em>{t(') und jeder Sub-Account sein Google-Unternehmensprofil (')}
+        <em>{t('Einstellungen → Bewertungen')}</em>{t('). Anleitung:')} <code>docs/self-hosting.md</code>{t(', Abschnitt „Google & Microsoft verbinden“.')}
       </p>
       <div className="grid2">
         <div>
           <h3>
             Google {status('google')} <SignupLink id="google_cloud" />
           </h3>
-          <Field label="Client-ID" hint="Google Cloud Console → APIs & Dienste → Anmeldedaten → OAuth-Client-ID (Webanwendung)">
+          <Field label={t('Client-ID')} hint={t('Google Cloud Console → APIs & Dienste → Anmeldedaten → OAuth-Client-ID (Webanwendung)')}>
             <Input value={f.google.client_id} onChange={(v) => set('google', { client_id: v })} placeholder="…apps.googleusercontent.com" />
           </Field>
-          <Field label="Clientschlüssel" hint="Wird verschlüsselt gespeichert und nie wieder angezeigt.">
-            <Input type="password" value={f.google.client_secret} onChange={(v) => set('google', { client_secret: v })} placeholder={s.data.google.secret_set ? '•••••••• (gespeichert)' : 'GOCSPX-…'} autoComplete="new-password" />
+          <Field label={t('Clientschlüssel')} hint={t('Wird verschlüsselt gespeichert und nie wieder angezeigt.')}>
+            <Input type="password" value={f.google.client_secret} onChange={(v) => set('google', { client_secret: v })} placeholder={s.data.google.secret_set ? t('•••••••• (gespeichert)') : t('GOCSPX-…')} autoComplete="new-password" />
           </Field>
-          <Field label="Autorisierte Weiterleitungs-URI (bei Google eintragen)">
+          <Field label={t('Autorisierte Weiterleitungs-URI (bei Google eintragen)')}>
             {s.data.google.redirect_uris.map((u: string) => (
               <CodeBox key={u} text={u} />
             ))}
           </Field>
           <p className="muted small">
-            APIs aktivieren: Google Calendar API; für Bewertungen/Beiträge die Business Profile APIs (Freischaltung durch Google nötig); für den Postfach-Sync die Gmail API (Bereiche gmail.modify und gmail.send sind bei Google „eingeschränkt“ – <code>docs/mailbox-sync.md</code>). Verbunden: Kalender {count('google', 'calendar')} · Unternehmensprofile {count('google', 'business')} · Postfächer {count('google', 'mail')}.
+            {t('APIs aktivieren: Google Calendar API; für Bewertungen/Beiträge die Business Profile APIs (Freischaltung durch Google nötig); für den Postfach-Sync die Gmail API (Bereiche gmail.modify und gmail.send sind bei Google „eingeschränkt“ –')} <code>docs/mailbox-sync.md</code>{t('). Verbunden: Kalender')} {count('google', 'calendar')} {t('· Unternehmensprofile')} {count('google', 'business')} {t('· Postfächer')} {count('google', 'mail')}.
           </p>
         </div>
         <div>
           <h3>
             Microsoft {status('microsoft')} <SignupLink id="microsoft365" />
           </h3>
-          <Field label="Anwendungs-ID (Client-ID)" hint="Microsoft Entra Admin Center → App-Registrierungen → Neue Registrierung">
+          <Field label={t('Anwendungs-ID (Client-ID)')} hint={t('Microsoft Entra Admin Center → App-Registrierungen → Neue Registrierung')}>
             <Input value={f.microsoft.client_id} onChange={(v) => set('microsoft', { client_id: v })} placeholder="00000000-0000-0000-0000-000000000000" />
           </Field>
-          <Field label="Geheimer Clientschlüssel (Wert)" hint="Zertifikate & Geheimnisse → Neuer geheimer Clientschlüssel. Verschlüsselt gespeichert.">
-            <Input type="password" value={f.microsoft.client_secret} onChange={(v) => set('microsoft', { client_secret: v })} placeholder={s.data.microsoft.secret_set ? '•••••••• (gespeichert)' : ''} autoComplete="new-password" />
+          <Field label={t('Geheimer Clientschlüssel (Wert)')} hint={t('Zertifikate & Geheimnisse → Neuer geheimer Clientschlüssel. Verschlüsselt gespeichert.')}>
+            <Input type="password" value={f.microsoft.client_secret} onChange={(v) => set('microsoft', { client_secret: v })} placeholder={s.data.microsoft.secret_set ? t('•••••••• (gespeichert)') : ''} autoComplete="new-password" />
           </Field>
-          <Field label="Mandant" hint="common = Geschäfts- und private Konten; organizations = nur Geschäftskonten; oder die Mandanten-ID">
+          <Field label={t('Mandant')} hint={t('common = Geschäfts- und private Konten; organizations = nur Geschäftskonten; oder die Mandanten-ID')}>
             <Input value={f.microsoft.tenant} onChange={(v) => set('microsoft', { tenant: v })} placeholder="common" />
           </Field>
-          <Field label="Umleitungs-URI (Plattform „Web“)">
+          <Field label={t('Umleitungs-URI (Plattform „Web“)')}>
             {s.data.microsoft.redirect_uris.map((u: string) => (
               <CodeBox key={u} text={u} />
             ))}
           </Field>
           <p className="muted small">
-            API-Berechtigungen (delegiert): Calendars.ReadWrite, offline_access, openid, email; für Postfächer Mail.ReadWrite, Mail.Send (gemeinsame Postfächer: .Shared) – in manchen Mandanten braucht es die Zustimmung eines Administrators. Verbunden: Kalender {count('microsoft', 'calendar')} · Postfächer {count('microsoft', 'mail')}.
+            {t('API-Berechtigungen (delegiert): Calendars.ReadWrite, offline_access, openid, email; für Postfächer Mail.ReadWrite, Mail.Send (gemeinsame Postfächer: .Shared) – in manchen Mandanten braucht es die Zustimmung eines Administrators. Verbunden: Kalender')} {count('microsoft', 'calendar')} {t('· Postfächer')} {count('microsoft', 'mail')}.
           </p>
         </div>
       </div>
       <button className="btn" onClick={save}>
-        Speichern
+        {t('Speichern')}
       </button>
     </div>
   );
