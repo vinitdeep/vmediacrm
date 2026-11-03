@@ -135,3 +135,6 @@ table.t th :is(button, a) { text-transform: inherit; letter-spacing: inherit; }
 .ap-theme, .ap-pal button, .ap-pack, .ap-profile { box-shadow: var(--sh-xs); transition: border-color var(--t-fast), box-shadow var(--t-fast); }
 .ap-theme:hover:not(:disabled), .ap-pack:hover:not(:disabled), .ap-pal button:hover:not(:disabled) { box-shadow: var(--sh-md); }
 .ap-offer { box-shadow: var(--sh-sm); }
+
+/* Brand name: wrap onto two lines instead of truncating ("V Media CRM Demo"). */
+.side .brand .brand-name { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.15; font-size: 15px; }

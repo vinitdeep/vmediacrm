@@ -93,7 +93,7 @@ Alle Kanäle in einem Posteingang, Tickets mit SLA, eine Wissensdatenbank, die F
 3. **Realistische Fristen** *(Einstellungen → Service)* – Versprich nur, was du halten kannst. Allein gegründet? Dann lieber „erste Antwort innerhalb eines Werktags“ als eine Stunde, die du nicht schaffst.
 4. **Wissensdatenbank** *(Wissensdatenbank)* – Die Vorlage legt vier Entwürfe an: Cloud vs. Self-Hosting, Preise, Umzug von HighLevel, DSGVO/AVV. Lies sie, passe sie an und veröffentliche sie.
 5. **Die goldene Regel** – Jede Frage, die zweimal kommt, wird ein Hilfe-Artikel. So beantwortet die Wissensdatenbank mit der Zeit die Hälfte der Tickets für dich.
-6. **Deine 10-Minuten-Aufgabe** – Passe die Fristen an, veröffentliche zwei der vier Hilfe-Artikel und schicke dir selbst ein Ticket über das Formular **Support**. – *So geht's:* Öffne **Wissensdatenbank** und veröffentliche den Artikel „Was kostet HyperLevel?“.
+6. **Deine 10-Minuten-Aufgabe** – Passe die Fristen an, veröffentliche zwei der vier Hilfe-Artikel und schicke dir selbst ein Ticket über das Formular **Support**. – *So geht's:* Öffne **Wissensdatenbank** und veröffentliche den Artikel „Was kostet V Media CRM?“.
 
 **Das hast du gelernt:**
 
@@ -114,7 +114,7 @@ Rechnungen mit XRechnung/ZUGFeRD, Lastschrift per SEPA, automatisches Mahnwesen,
 3. **Mahnwesen** *(dunning)* – Freundliche Erinnerung, dann Mahnstufen – automatisch, aber mit deiner Freigabe für die letzte Stufe.
 4. **Buchhaltung light und DATEV** *(Buchhaltung)* – Belege hochladen, Bankumsätze zuordnen, monatlich den DATEV-Export an die Steuerberatung. Die Buchhaltung bereitet vor – die Steuerberatung entscheidet.
 5. **Gewinnrechner** *(Gewinnrechner)* – Was bleibt bei 49,99 €, 99,99 € und 199 € nach USt, Gebühren, Kosten und Steuern? Lege ein Szenario mit deinen echten Zahlen an – eine Schätzung, keine Steuerberatung.
-6. **Deine 10-Minuten-Aufgabe** – Schreib eine Test-Rechnung an dich selbst, aktiviere eine Mahnstufe und lege im Gewinnrechner ein Szenario mit deinen drei Tarifen an. – *So geht's:* Öffne den **Gewinnrechner** und nimm die Vorlage „HyperLevel Staffel“ als Start.
+6. **Deine 10-Minuten-Aufgabe** – Schreib eine Test-Rechnung an dich selbst, aktiviere eine Mahnstufe und lege im Gewinnrechner ein Szenario mit deinen drei Tarifen an. – *So geht's:* Öffne den **Gewinnrechner** und nimm die Vorlage „V Media CRM Staffel“ als Start.
 
 **Das hast du gelernt:**
 

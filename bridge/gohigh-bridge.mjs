@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /**
- * HyperLevel Bridge – runs on YOUR computer and lets the HyperLevel Agent use the official CLI you are
+ * V Media CRM Bridge – runs on YOUR computer and lets the V Media CRM Agent use the official CLI you are
  * already signed in to with your own subscription:
  *   - Codex CLI   (`codex exec --json`, "Sign in with ChatGPT")
  *   - Claude Code (`claude -p --output-format stream-json`, Claude Pro/Max)
  *
- * How it works: pair once with a one-time code from HyperLevel (KI-Agenten → Mit deinem Abo). The bridge
- * then keeps an OUTBOUND long-poll to your HyperLevel server (no open ports), receives the chat prompt,
- * starts the CLI in an empty temporary folder with HyperLevel's MCP endpoint (a per-job token, valid only
+ * How it works: pair once with a one-time code from V Media CRM (KI-Agenten → Mit deinem Abo). The bridge
+ * then keeps an OUTBOUND long-poll to your V Media CRM server (no open ports), receives the chat prompt,
+ * starts the CLI in an empty temporary folder with V Media CRM's MCP endpoint (a per-job token, valid only
  * while the job runs) and streams the answer back into the web chat. File, shell and web tools of the
- * CLI are switched off – it can only use HyperLevel's tools, with your rights and your agent's safety mode.
+ * CLI are switched off – it can only use V Media CRM's tools, with your rights and your agent's safety mode.
  * Your subscription login never leaves this computer. Personal use only (your own account, for you).
  *
  *   node gohigh-bridge.mjs pair https://crm.example.com ABCD-EFGH   # once
@@ -18,7 +18,7 @@
  *
  * It reconnects on its own after network trouble or a restart of the server (waiting 1 s, then longer, up to a minute), and keeps waiting
  * while an agency admin has switched the bridge off. It only works while this computer is on and the bridge is running.
- * The model is chosen in HyperLevel (Einstellungen → KI-Anbieter → your computer) and passed to the CLI as --model / -m.
+ * The model is chosen in V Media CRM (Einstellungen → KI-Anbieter → your computer) and passed to the CLI as --model / -m.
  *
  * Environment: GOHIGH_BRIDGE_CONFIG (config file, default ~/.gohigh-bridge.json), GOHIGH_CODEX_BIN,
  * GOHIGH_CLAUDE_BIN (paths to the CLIs), GOHIGH_CODEX_ARGS / GOHIGH_CLAUDE_ARGS (extra arguments).
@@ -56,11 +56,11 @@ export function saveConfig(cfg, file = CONFIG) {
   }
 }
 
-/** Only https – plain http only for a HyperLevel on this computer (development). */
+/** Only https – plain http only for a V Media CRM on this computer (development). */
 export function checkServerUrl(raw) {
   const u = new URL(raw);
   const local = ['localhost', '127.0.0.1', '::1', '[::1]'].includes(u.hostname);
-  if (u.protocol !== 'https:' && !(u.protocol === 'http:' && local)) throw new Error('Bitte die https://-Adresse deines HyperLevel angeben.');
+  if (u.protocol !== 'https:' && !(u.protocol === 'http:' && local)) throw new Error('Bitte die https://-Adresse deines V Media CRM angeben.');
   return u.origin;
 }
 
@@ -112,7 +112,7 @@ export function commandFor(cli, job, dir, opts = {}) {
       env: { GOHIGH_MCP_TOKEN: job.mcp_token },
     };
   }
-  // Claude Code: only HyperLevel's MCP tools; file, shell and web tools off.
+  // Claude Code: only V Media CRM's MCP tools; file, shell and web tools off.
   const config = join(dir, 'mcp.json');
   writeFileSync(config, JSON.stringify({ mcpServers: { gohigh: { type: 'http', url: job.mcp_url, headers: { Authorization: `Bearer ${job.mcp_token}` } } } }), { mode: 0o600 });
   return {
@@ -122,7 +122,7 @@ export function commandFor(cli, job, dir, opts = {}) {
   };
 }
 
-/** One line of CLI output → events for HyperLevel: {kind: 'text'|'status'|'result'|'error', text}. */
+/** One line of CLI output → events for V Media CRM: {kind: 'text'|'status'|'result'|'error', text}. */
 export function normalizeLine(cli, line) {
   let d;
   try {
@@ -153,7 +153,7 @@ export function normalizeLine(cli, line) {
   return out;
 }
 
-// --- talking to HyperLevel -------------------------------------------------------------------------------------
+// --- talking to V Media CRM -------------------------------------------------------------------------------------
 
 async function api(cfg, method, path, body, opts = {}) {
   const r = await (opts.fetch ?? fetch)(`${cfg.url}${path}`, {
@@ -190,7 +190,7 @@ export async function pair(url, code, opts = {}) {
 
 /** Runs one job with the CLI and streams the output back. Resolves with the final text. */
 export async function runJob(cfg, jobIn, opts = {}) {
-  // The MCP endpoint is always on the HyperLevel this bridge was paired with – never a host the server names.
+  // The MCP endpoint is always on the V Media CRM this bridge was paired with – never a host the server names.
   const job = { ...jobIn, mcp_url: new URL(new URL(jobIn.mcp_url).pathname, cfg.url).toString() };
   const cli = job.cli === 'codex' || job.cli === 'claude' ? job.cli : cfg.cli || 'claude';
   const dir = mkdtempSync(join(tmpdir(), 'gohigh-bridge-'));
@@ -265,26 +265,26 @@ export async function main(argv = process.argv.slice(2)) {
   }
   if (cmd === 'unpair') {
     rmSync(CONFIG, { force: true });
-    console.log('Kopplung entfernt (in HyperLevel unter KI-Agenten → Bridge kannst du das Gerät auch löschen).');
+    console.log('Kopplung entfernt (in V Media CRM unter KI-Agenten → Bridge kannst du das Gerät auch löschen).');
     return;
   }
   const cfg = loadConfig();
   if (!cfg) throw new Error('Noch nicht gekoppelt: gohigh-bridge pair <https://dein-gohigh> <CODE>');
   if (cmd === 'status') {
-    // A short poll tells HyperLevel this computer is there and shows whether the pairing and the agency switch are fine.
+    // A short poll tells V Media CRM this computer is there and shows whether the pairing and the agency switch are fine.
     const connection = await api(cfg, 'GET', '/api/agent/bridge/poll?wait=0').then(() => 'verbunden', (e) => (e.status === 401 ? 'nicht mehr gekoppelt – bitte neu koppeln' : e.status === 403 ? 'von der Agentur ausgeschaltet' : `nicht erreichbar (${e.message})`));
     console.log(JSON.stringify({ url: cfg.url, user: cfg.user, location: cfg.location, cli: cfg.cli, installed: detectClis(), version: VERSION, connection }, null, 2));
     return;
   }
-  console.log(`HyperLevel Bridge ${VERSION} – verbunden mit ${cfg.url} als ${cfg.user}. Läuft auf deinem Rechner mit deinem eigenen Abo – nur für dich selbst. Strg+C beendet.`);
+  console.log(`V Media CRM Bridge ${VERSION} – verbunden mit ${cfg.url} als ${cfg.user}. Läuft auf deinem Rechner mit deinem eigenen Abo – nur für dich selbst. Strg+C beendet.`);
   let backoff = 1000;
   for (;;) {
     try {
       await pollOnce(cfg, { log: (s) => console.log(s) });
       backoff = 1000;
     } catch (e) {
-      // Unpaired (device removed in HyperLevel): nothing to wait for. Switched off by the agency: keep waiting, it may come back.
-      if (e.status === 401) throw new Error('Diese Bridge ist nicht (mehr) gekoppelt – in HyperLevel einen neuen Code erzeugen und „gohigh-bridge pair …“ ausführen.');
+      // Unpaired (device removed in V Media CRM): nothing to wait for. Switched off by the agency: keep waiting, it may come back.
+      if (e.status === 401) throw new Error('Diese Bridge ist nicht (mehr) gekoppelt – in V Media CRM einen neuen Code erzeugen und „gohigh-bridge pair …“ ausführen.');
       if (e.status === 403) backoff = Math.max(backoff, 30_000);
       console.error(e.status === 403 ? `Die Bridge ist für diese Agentur ausgeschaltet – ich warte (neuer Versuch in ${Math.round(backoff / 1000)} s)` : `Verbindung unterbrochen (${e.message}) – neuer Versuch in ${Math.round(backoff / 1000)} s`);
       await new Promise((r) => setTimeout(r, backoff));
