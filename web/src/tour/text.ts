@@ -23,6 +23,10 @@ const pick = (s: string, translators: Translator[]): string => {
 /** In a component: translates a tour string; waits (inside Suspense) until the tour catalogs are loaded. */
 export function useTourText(): (s: string) => string {
   const ts: Translator[] = [useT('toursA'), useT('toursB'), useT('toursC')];
+  // Tour data that translates itself on read (agent/tour.ts, canvas/tour.ts, pages/collab-tour.ts) needs its catalog loaded too.
+  useT('b4agent');
+  useT('b4canvas');
+  useT('b5cognee');
   return (s) => pick(s, ts);
 }
 

@@ -1,7 +1,8 @@
 import type { Tour } from '../tour/types';
+import { trData } from '../i18n/data';
 
 /** Academy tours: the Wiki and the Team-Chat. Pure data – the `data-tour` targets are in Wiki.tsx, WikiEditor.tsx and TeamChat.tsx. */
-export const COLLAB_TOURS: Tour[] = [
+export const COLLAB_TOURS: Tour[] = trData('b5cognee', [
   {
     id: 'wiki',
     title: 'Wiki: Wissen im Team festhalten',
@@ -54,4 +55,4 @@ export const COLLAB_TOURS: Tour[] = [
       { title: 'Mitglieder und Einstellungen', target: 'chat-settings', text: 'Wer ist im Kanal, wie laut soll er für dich sein (alle Nachrichten, nur Erwähnungen, stumm) – und für Verantwortliche: Name, Thema, Archivieren, optional die Kopie nach Slack.' },
     ],
   },
-];
+]);

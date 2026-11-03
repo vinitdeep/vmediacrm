@@ -220,6 +220,18 @@ export const NAMESPACES = {
   b6phone: { complete: true, files: ['pages/Phone.tsx', 'pages/PhoneTools.tsx', 'pages/MobileApp.tsx#mb,ApkUpload'] },
   b6integ: { complete: true, files: ['pages/Integrations.tsx', 'pages/InboundWebhook.tsx', 'pages/Nango.tsx', 'pages/McpServers.tsx', 'pages/OAuthConnect.tsx#LABEL,CAL_LABEL,useOAuthReturn,startOAuth,OAuthApps', 'pages/OAuthConsent.tsx', 'pages/RestHooks.tsx', 'pages/LoginSettings.tsx'] },
   b6studio: { complete: true, files: ['pages/KiStudio.tsx', 'pages/GenMediaKit.tsx'] },
+
+  // batch 5: calls, channels, cloud, cognee, community, connectors, consent, dunning, feedback
+  b5calls: { complete: true, files: ['pages/Calls.tsx', 'pages/CallsDialer.tsx', 'pages/CallsNotes.tsx', 'pages/CallsNumbers.tsx'] },
+  b5callsx: { complete: true, files: ['pages/CallsFlows.tsx', 'pages/CallsIntel.tsx', 'pages/CallsRouting.tsx', 'pages/CallsScorecards.tsx'] },
+  b5chan: { complete: true, files: ['pages/Certificates.tsx', 'pages/ChannelInbox.tsx', 'pages/ChannelProviders.tsx', 'pages/ChannelSettings.tsx'] },
+  b5cloud: { complete: true, files: ['pages/Cloud.tsx', 'pages/CloudConsole.tsx', 'pages/CloudData.tsx', 'pages/CloudKit.tsx', 'pages/CloudSettings.tsx', 'pages/CloudTeam.tsx', 'pages/CloudWaitlist.tsx'] },
+  b5cognee: { complete: true, files: ['pages/CogneeAgency.tsx', 'pages/CogneeKit.tsx', 'pages/CogneeSettings.tsx', 'pages/collab-badge.tsx', 'pages/collab-tour.ts', 'pages/CommentDm.tsx'] },
+  b5comm: { complete: true, files: ['pages/Community.tsx', 'pages/CommunityEngage.tsx'] },
+  b5comm2: { complete: true, files: ['pages/CommunityGrowth.tsx', 'pages/CommunityImport.tsx', 'pages/CommunityJoin.tsx', 'pages/CommunityMessages.tsx', 'pages/CommunityStats.tsx'] },
+  b5conn: { complete: true, files: ['pages/Companies.tsx', 'pages/Composio.tsx', 'pages/Connectors.tsx', 'pages/ContactSales.tsx', 'pages/Contracts.tsx', 'pages/CreatorKit.tsx', 'pages/Docs.tsx'] },
+  b5consent: { complete: true, files: ['pages/Consent.tsx', 'pages/ConsentCheckout.tsx', 'pages/ConsentCmp.tsx', 'pages/ConsentContact.tsx', 'pages/ConsentKit.tsx', 'pages/ConsentLegal.tsx'] },
+  b5misc: { complete: true, files: ['pages/Dunning.tsx', 'pages/Feedback.tsx#meCache,listeners,refreshFeedback,useFeedbackMe,KIND,StatusPill,openReport,loadImage,fileToDataUrl,sizeOf,shrink,drawScaled,canCaptureScreen,captureScreen,ScreenshotPicker,DIAG_LABEL,diagPayload,DiagnosticsView,ReportModal,MenuRow,Prefs,MyReports,Thread,Shots,ReplyBox,DiagnosticsDetails,ReportDetail,FeedbackPage'] },
 } as const satisfies Record<string, { complete: boolean; server?: boolean; files: readonly string[] }>;
 export type Namespace = keyof typeof NAMESPACES;
 
@@ -326,5 +338,16 @@ export const CATALOGS: { [L in Exclude<Locale, typeof SOURCE_LOCALE>]: Partial<R
     b6phone: () => import('./en/b6phone'),
     b6integ: () => import('./en/b6integ'),
     b6studio: () => import('./en/b6studio'),
+
+    b5calls: () => import('./en/b5calls'),
+    b5callsx: () => import('./en/b5callsx'),
+    b5chan: () => import('./en/b5chan'),
+    b5cloud: () => import('./en/b5cloud'),
+    b5cognee: () => import('./en/b5cognee'),
+    b5comm: () => import('./en/b5comm'),
+    b5comm2: () => import('./en/b5comm2'),
+    b5conn: () => import('./en/b5conn'),
+    b5consent: () => import('./en/b5consent'),
+    b5misc: () => import('./en/b5misc'),
   },
 };

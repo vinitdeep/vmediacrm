@@ -2,6 +2,8 @@ import { useState, type ReactNode } from 'react';
 import { currentLocation } from '../api';
 import { Badge, toastError } from '../ui';
 import './creator.css';
+import { tr } from '../i18n';
+import { trData } from '../i18n/data';
 
 /**
  * Small shared parts of the Creator & Commerce pages (Ratenzahlung, Mahnwesen, Quiz & Zertifikate, Kommentar-zu-DM): euro input,
@@ -94,7 +96,7 @@ export function Fold({ title, children, open: start = false, tour }: { title: Re
   );
 }
 
-export const STATUS: Record<string, [string, 'gray' | 'green' | 'red' | 'blue' | 'yellow' | 'purple']> = {
+export const STATUS: Record<string, [string, 'gray' | 'green' | 'red' | 'blue' | 'yellow' | 'purple']> = trData('b5conn', {
   active: ['läuft', 'blue'],
   completed: ['abgeschlossen', 'green'],
   defaulted: ['ausgefallen', 'red'],
@@ -115,20 +117,20 @@ export const STATUS: Record<string, [string, 'gray' | 'green' | 'red' | 'blue' |
   rejected: ['überarbeiten', 'red'],
   graded: ['ausgewertet', 'green'],
   revoked: ['widerrufen', 'red'],
-};
+});
 
 export function StatusBadge({ status }: { status: string }) {
   const [label, tone] = STATUS[status] ?? [status, 'gray'];
   return <Badge tone={tone}>{label}</Badge>;
 }
 
-export const ACCESS_LABEL: Record<string, string> = { active: 'Zugang aktiv', paused: 'Zugang pausiert', revoked: 'Zugang entzogen' };
+export const ACCESS_LABEL: Record<string, string> = trData('b5conn', { active: 'Zugang aktiv', paused: 'Zugang pausiert', revoked: 'Zugang entzogen' });
 
 /** Opens a file from an admin route (PDF, hand-in) in a new tab – or saves it under `saveAs`: the request carries the session, a plain link would not. */
 export async function openAuthed(path: string, saveAs?: string) {
   try {
     const r = await fetch(path, { headers: { 'x-pghl': '1', 'x-location-id': currentLocation() } });
-    if (!r.ok) throw new Error(((await r.json().catch(() => null)) as any)?.error ?? `Fehler ${r.status}`);
+    if (!r.ok) throw new Error(((await r.json().catch(() => null)) as any)?.error ?? tr('b5conn')('Fehler {status}', { status: r.status }));
     const url = URL.createObjectURL(await r.blob());
     if (saveAs) {
       const a = document.createElement('a');

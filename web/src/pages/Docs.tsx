@@ -4,16 +4,18 @@ import { Icon, type IconName } from '../icons';
 import { StatusDot, useOpenProject, useProjects } from '../nav';
 import { can, useSession } from '../session';
 import { Empty, Input, Select, Spinner, act, confirmAsk, useLoad } from '../ui';
+import { useT } from '../i18n';
+import { trData } from '../i18n/data';
 
 /** Reports, Claude artifacts and documents: per project and agency-wide with an inbox. */
 
-const KIND: Record<string, [IconName, string]> = {
+const KIND: Record<string, [IconName, string]> = trData('b5conn', {
   artifact: ['artifact', 'Artefakt'],
   report: ['doc', 'Bericht'],
   doc: ['doc', 'Dokument'],
   session: ['claude', 'Claude-Sitzung'],
   link: ['link', 'Link'],
-};
+});
 
 /** Kind of a link pasted by hand: Claude artifacts, ChatGPT canvases and Codex tasks are recognised. */
 export function kindOfUrl(url: string): string {
@@ -23,11 +25,12 @@ export function kindOfUrl(url: string): string {
 }
 
 function DocRow({ d, actions }: { d: any; actions?: React.ReactNode }) {
+  const t = useT('b5conn');
   const [kindIcon, kindLabel] = KIND[d.kind] ?? KIND.link;
   // Codex tasks are sessions too, with their own icon.
   const codex = d.source === 'Codex' || /chatgpt\.com\/codex/.test(d.url);
   const icon: IconName = codex ? 'codex' : kindIcon;
-  const label = codex && d.kind === 'session' ? 'Codex-Aufgabe' : kindLabel;
+  const label = codex && d.kind === 'session' ? t('Codex-Aufgabe') : kindLabel;
   return (
     <div className="doc-row">
       <Icon name={icon} size={17} />
@@ -41,9 +44,7 @@ function DocRow({ d, actions }: { d: any; actions?: React.ReactNode }) {
           {d.session_url && (
             <>
               {' · '}
-              <a href={d.session_url} target="_blank" rel="noreferrer">
-                Sitzung öffnen
-              </a>
+              <a href={d.session_url} target="_blank" rel="noreferrer">{t('Sitzung öffnen')}</a>
             </>
           )}
         </div>
@@ -55,13 +56,14 @@ function DocRow({ d, actions }: { d: any; actions?: React.ReactNode }) {
 
 /** Card on the project page. */
 export function ProjectDocs() {
+  const t = useT('b5conn');
   const session = useSession();
   const docs = useLoad(() => api.get<any[]>('/api/docs'), [session.locationId]);
   const [add, setAdd] = useState({ title: '', url: '' });
   const edit = can(session, 'settings');
   return (
     <div className="card" data-tour="project-docs">
-      <h2>Berichte & Artefakte</h2>
+      <h2>{t('Berichte & Artefakte')}</h2>
       {!docs.data ? (
         <Spinner />
       ) : docs.data.length ? (
@@ -73,10 +75,10 @@ export function ProjectDocs() {
               actions={
                 edit && (
                   <span className="doc-actions">
-                    <button className="icon-btn" title={d.pinned ? 'Nicht mehr anheften' : 'Anheften'} onClick={async () => (await act(() => api.patch(`/api/docs/${d.id}`, { pinned: !d.pinned }))) && docs.reload()}>
+                    <button className="icon-btn" title={d.pinned ? t('Nicht mehr anheften') : t('Anheften')} onClick={async () => (await act(() => api.patch(`/api/docs/${d.id}`, { pinned: !d.pinned }))) && docs.reload()}>
                       <Icon name="pin" size={14} />
                     </button>
-                    <button className="icon-btn" title="Entfernen" onClick={async () => confirmAsk(`„${d.title}“ aus dem Projekt entfernen?`) && (await act(() => api.del(`/api/docs/${d.id}`))) && docs.reload()}>
+                    <button className="icon-btn" title={t('Entfernen')} onClick={async () => confirmAsk(t('„{title}“ aus dem Projekt entfernen?', { title: d.title })) && (await act(() => api.del(`/api/docs/${d.id}`))) && docs.reload()}>
                       <Icon name="trash" size={14} />
                     </button>
                   </span>
@@ -86,15 +88,13 @@ export function ProjectDocs() {
           ))}
         </div>
       ) : (
-        <p className="muted small">Noch nichts abgelegt. Claude-Artefakte, ChatGPT-Canvas und Codex-Aufgaben zu diesem Projekt erscheinen hier automatisch.</p>
+        <p className="muted small">{t('Noch nichts abgelegt. Claude-Artefakte, ChatGPT-Canvas und Codex-Aufgaben zu diesem Projekt erscheinen hier automatisch.')}</p>
       )}
       {edit && (
         <div className="list-row" style={{ gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.3fr) auto', marginTop: 10 }}>
-          <Input value={add.title} onChange={(title) => setAdd({ ...add, title })} placeholder="Titel" />
-          <Input value={add.url} onChange={(url) => setAdd({ ...add, url })} placeholder="Link (claude.ai, chatgpt.com …)" />
-          <button className="btn small secondary" disabled={!add.url} onClick={async () => (await act(() => api.post('/api/docs', { ...add, kind: kindOfUrl(add.url) }), 'Abgelegt')) && (setAdd({ title: '', url: '' }), docs.reload())}>
-            + Ablegen
-          </button>
+          <Input value={add.title} onChange={(title) => setAdd({ ...add, title })} placeholder={t('Titel')} />
+          <Input value={add.url} onChange={(url) => setAdd({ ...add, url })} placeholder={t('Link (claude.ai, chatgpt.com …)')} />
+          <button className="btn small secondary" disabled={!add.url} onClick={async () => (await act(() => api.post('/api/docs', { ...add, kind: kindOfUrl(add.url) }), t('Abgelegt'))) && (setAdd({ title: '', url: '' }), docs.reload())}>{t('+ Ablegen')}</button>
         </div>
       )}
     </div>
@@ -103,6 +103,7 @@ export function ProjectDocs() {
 
 /** Agency tab: all documents, the inbox first. */
 export function AgencyDocs() {
+  const t = useT('b5conn');
   const projects = useProjects();
   const open = useOpenProject();
   const [q, setQ] = useState('');
@@ -116,21 +117,21 @@ export function AgencyDocs() {
   const groups = new Map<string, any[]>();
   for (const d of filed) groups.set(d.location_id, [...(groups.get(d.location_id) ?? []), d]);
   const status = Object.fromEntries(projects.map((p) => [p.id, p.status]));
-  const assign = async (d: any, location_id: string) => (await act(() => api.patch(`/api/agency/docs/${d.id}`, { location_id }), location_id ? 'Zugeordnet' : 'In den Eingang gelegt')) && docs.reload();
+  const assign = async (d: any, location_id: string) => (await act(() => api.patch(`/api/agency/docs/${d.id}`, { location_id }), location_id ? t('Zugeordnet') : t('In den Eingang gelegt'))) && docs.reload();
   return (
     <>
       <div className="row" style={{ marginBottom: 12 }}>
         <div className="grow" style={{ maxWidth: 420 }}>
-          <Input value={q} onChange={setQ} placeholder="Titel, Projekt…" />
+          <Input value={q} onChange={setQ} placeholder={t('Titel, Projekt…')} />
         </div>
         <div style={{ width: 260 }}>
-          <Select value={loc} onChange={setLoc} placeholder="Alle Projekte" options={options} />
+          <Select value={loc} onChange={setLoc} placeholder={t('Alle Projekte')} options={options} />
         </div>
       </div>
       {inbox.length > 0 && !loc && (
         <div className="card">
           <h2>
-            <Icon name="inbox" size={18} /> Eingang <span className="muted small">· {inbox.length} ohne Projekt</span>
+            <Icon name="inbox" size={18} />{' '}{t('Eingang')}{' '}<span className="muted small">{t('· {length} ohne Projekt', { length: inbox.length })}</span>
           </h2>
           <div className="doc-list">
             {inbox.map((d) => (
@@ -139,7 +140,7 @@ export function AgencyDocs() {
                 d={d}
                 actions={
                   <div style={{ width: 220 }}>
-                    <Select value="" onChange={(v) => v && assign(d, v)} placeholder="Projekt zuordnen…" options={options} />
+                    <Select value="" onChange={(v) => v && assign(d, v)} placeholder={t('Projekt zuordnen…')} options={options} />
                   </div>
                 }
               />
@@ -159,7 +160,7 @@ export function AgencyDocs() {
                 key={d.id}
                 d={d}
                 actions={
-                  <button className="icon-btn" title="Zurück in den Eingang" onClick={() => assign(d, '')}>
+                  <button className="icon-btn" title={t('Zurück in den Eingang')} onClick={() => assign(d, '')}>
                     <Icon name="inbox" size={14} />
                   </button>
                 }
@@ -168,7 +169,7 @@ export function AgencyDocs() {
           </div>
         </div>
       ))}
-      {!inbox.length && !groups.size && <Empty>Keine Dokumente gefunden.</Empty>}
+      {!inbox.length && !groups.size && <Empty>{t('Keine Dokumente gefunden.')}</Empty>}
     </>
   );
 }

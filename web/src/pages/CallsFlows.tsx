@@ -5,6 +5,8 @@ import { lazyPages } from '../lazy';
 import { Badge, Check, Empty, Field, Input, Modal, Select, Spinner, Tabs, Textarea, act, confirmAsk, useLoad } from '../ui';
 import { Callout, Item, Panel } from './CreatorKit';
 import { Tl, splitList, useCanSettings } from './CallsKit';
+import { useT, tr } from '../i18n';
+import { trData } from '../i18n/data';
 
 /**
  * Telefonmenü-Baukasten: the menu a caller walks through (greeting, keys, business hours and holidays, ring group or queue, voicemail,
@@ -28,7 +30,7 @@ interface Meta {
   states: { code: string; name: string }[];
 }
 
-const TYPE: Record<string, { icon: IconName; short: string }> = {
+const TYPE: Record<string, { icon: IconName; short: string }> = trData('b5callsx', {
   menu: { icon: 'keypad', short: 'Menü' },
   schedule: { icon: 'schedule', short: 'Zeitplan' },
   say: { icon: 'audio', short: 'Ansage' },
@@ -37,14 +39,14 @@ const TYPE: Record<string, { icon: IconName; short: string }> = {
   voicemail: { icon: 'voicemail', short: 'Voicemail' },
   ai: { icon: 'bot', short: 'KI-Telefonagent' },
   hangup: { icon: 'hangup', short: 'Auflegen' },
-};
+});
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '*', '#'];
 
 const blank = (type: string, id: string): Node => {
   const base = { id, type, label: TYPE[type].short };
   switch (type) {
     case 'menu':
-      return { ...base, say: 'Für … drücken Sie die 1, für … die 2.', audio_id: '', options: {}, option_labels: {}, on_timeout: '', on_invalid: '', retries: 2, timeout: 6 };
+      return { ...base, say: tr('b5callsx')('Für … drücken Sie die 1, für … die 2.'), audio_id: '', options: {}, option_labels: {}, on_timeout: '', on_invalid: '', retries: 2, timeout: 6 };
     case 'schedule':
       return { ...base, schedule_id: '', open: '', closed: '', holiday: '' };
     case 'say':
@@ -73,21 +75,21 @@ function edgesOf(n: Node): { label: ReactNode; to: string }[] {
         ...Object.keys(n.options ?? {})
           .sort()
           .map((k) => ({ label: <><b>{k}</b> {n.option_labels?.[k] || ''}</>, to: n.options[k] })),
-        { label: 'keine Eingabe', to: n.on_timeout },
-        { label: 'falsche Taste', to: n.on_invalid },
+        { label: tr('b5callsx')('keine Eingabe'), to: n.on_timeout },
+        { label: tr('b5callsx')('falsche Taste'), to: n.on_invalid },
       ];
     case 'schedule':
       return [
-        { label: 'geöffnet', to: n.open },
+        { label: tr('b5callsx')('geöffnet'), to: n.open },
         { label: 'geschlossen', to: n.closed },
-        { label: 'Feiertag', to: n.holiday },
+        { label: tr('b5callsx')('Feiertag'), to: n.holiday },
       ];
     case 'say':
       return [{ label: 'danach', to: n.next }];
     case 'forward':
     case 'group':
     case 'ai':
-      return [{ label: 'niemand erreichbar', to: n.on_fail }];
+      return [{ label: tr('b5callsx')('niemand erreichbar'), to: n.on_fail }];
     default:
       return [];
   }
@@ -96,25 +98,26 @@ function edgesOf(n: Node): { label: ReactNode; to: string }[] {
 function summary(n: Node, meta: Meta): string {
   switch (n.type) {
     case 'menu':
-      return n.say || 'Aufgenommene Ansage';
+      return n.say || tr('b5callsx')('Aufgenommene Ansage');
     case 'schedule':
-      return n.schedule_id ? (meta.schedules.find((s) => s.id === n.schedule_id)?.name ?? 'Zeitplan (gelöscht)') : 'Öffnungszeiten aus den Telefonie-Einstellungen';
+      return n.schedule_id ? (meta.schedules.find((s) => s.id === n.schedule_id)?.name ?? tr('b5callsx')('Zeitplan (gelöscht)')) : tr('b5callsx')('Öffnungszeiten aus den Telefonie-Einstellungen');
     case 'say':
-      return n.say || 'Aufgenommene Ansage';
+      return n.say || tr('b5callsx')('Aufgenommene Ansage');
     case 'forward':
-      return [...(n.numbers ?? []), ...(n.users ?? []).map((u: string) => meta.users.find((x) => x.id === u)?.name ?? 'Person')].join(', ') || 'Noch kein Ziel';
+      return [...(n.numbers ?? []), ...(n.users ?? []).map((u: string) => meta.users.find((x) => x.id === u)?.name ?? tr('b5callsx')('Person'))].join(', ') || tr('b5callsx')('Noch kein Ziel');
     case 'group':
-      return meta.groups.find((g) => g.id === n.group_id)?.name ?? 'Noch keine Gruppe gewählt';
+      return meta.groups.find((g) => g.id === n.group_id)?.name ?? tr('b5callsx')('Noch keine Gruppe gewählt');
     case 'voicemail':
-      return `Postfach „${n.box || n.label}“`;
+      return tr('b5callsx')('Postfach „{v}“', { v: n.box || n.label });
     case 'ai':
-      return 'Nimmt das Gespräch an, wenn der KI-Telefonagent eingerichtet ist';
+      return tr('b5callsx')('Nimmt das Gespräch an, wenn der KI-Telefonagent eingerichtet ist');
     default:
-      return n.say || 'Beendet den Anruf';
+      return n.say || tr('b5callsx')('Beendet den Anruf');
   }
 }
 
 function FlowTree({ flow, meta, issues, onOpen }: { flow: Flow; meta: Meta; issues: string[]; onOpen: (id: string) => void }) {
+  const tt = useT('b5callsx');
   const seen = new Set<string>();
   const card = (n: Node) => (
     <button type="button" className={`tl-node${n.id === flow.start ? ' start' : ''}${issues.some((i) => i.includes(`„${n.label}“`)) ? ' bad' : ''}`} onClick={() => onOpen(n.id)} data-tour={n.id === flow.start ? 'ivr-start' : undefined}>
@@ -123,7 +126,7 @@ function FlowTree({ flow, meta, issues, onOpen }: { flow: Flow; meta: Meta; issu
       </span>
       <span className="tl-node-main">
         <strong>
-          {n.label} {n.id === flow.start && <Badge tone="green">Start</Badge>}
+          {n.label} {n.id === flow.start && <Badge tone="green">{tt('Start')}</Badge>}
         </strong>
         <span>
           {TYPE[n.type]?.short}: {summary(n, meta)}
@@ -149,8 +152,7 @@ function FlowTree({ flow, meta, issues, onOpen }: { flow: Flow; meta: Meta; issu
                   <span className="tl-edge-label">{e.label}</span>
                   {seen.has(e.to) ? (
                     <button type="button" className="tl-ref" onClick={() => onOpen(e.to)}>
-                      <Icon name="repeat" size={14} /> weiter bei „{flow.nodes[e.to].label}“
-                    </button>
+                      <Icon name="repeat" size={14} />{' '}{tt('weiter bei „{label}“', { label: flow.nodes[e.to].label })}</button>
                   ) : (
                     render(e.to)
                   )}
@@ -168,9 +170,7 @@ function FlowTree({ flow, meta, issues, onOpen }: { flow: Flow; meta: Meta; issu
       {tree}
       {loose.length > 0 && (
         <>
-          <p className="muted small" style={{ margin: '10px 0 0' }}>
-            Nicht angeschlossene Schritte (kein anderer Schritt führt hierher):
-          </p>
+          <p className="muted small" style={{ margin: '10px 0 0' }}>{tt('Nicht angeschlossene Schritte (kein anderer Schritt führt hierher):')}</p>
           {loose.map((n) => (
             <div key={n.id}>{card(n)}</div>
           ))}
@@ -182,9 +182,10 @@ function FlowTree({ flow, meta, issues, onOpen }: { flow: Flow; meta: Meta; issu
 
 /** Where a step leads next: an existing step, a new one, or nowhere (the normal flow continues). */
 function Target({ value, flow, self, onChange, required }: { value: string; flow: Flow; self: string; onChange: (v: string) => void; required?: boolean }) {
+  const tt = useT('b5callsx');
   return (
-    <select value={value || ''} onChange={(e) => onChange(e.target.value)} aria-label="Weiter bei">
-      <option value="">{required ? '— bitte wählen —' : '— nichts (normaler Ablauf) —'}</option>
+    <select value={value || ''} onChange={(e) => onChange(e.target.value)} aria-label={tt('Weiter bei')}>
+      <option value="">{required ? tt('— bitte wählen —') : tt('— nichts (normaler Ablauf) —')}</option>
       {Object.values(flow.nodes)
         .filter((n) => n.id !== self)
         .map((n) => (
@@ -192,7 +193,7 @@ function Target({ value, flow, self, onChange, required }: { value: string; flow
             {n.label} ({TYPE[n.type]?.short})
           </option>
         ))}
-      <optgroup label="Neuer Schritt">
+      <optgroup label={tt('Neuer Schritt')}>
         {Object.entries(TYPE).map(([k, t]) => (
           <option key={k} value={`__new:${k}`}>
             ＋ {t.short}
@@ -204,12 +205,14 @@ function Target({ value, flow, self, onChange, required }: { value: string; flow
 }
 
 function AudioSelect({ value, meta, onChange }: { value: string; meta: Meta; onChange: (v: string) => void }) {
+  const tt = useT('b5callsx');
   return (
-    <Select value={value} onChange={onChange} placeholder="Text vorlesen lassen" options={meta.audio.map((a) => [a.id, `${a.name} (${a.duration_s} s)`])} />
+    <Select value={value} onChange={onChange} placeholder={tt('Text vorlesen lassen')} options={meta.audio.map((a) => [a.id, `${a.name} (${a.duration_s} s)`])} />
   );
 }
 
 function NodeEditor({ flowIn, nodeId, meta, onCommit, onClose }: { flowIn: Flow; nodeId: string; meta: Meta; onCommit: (f: Flow) => void; onClose: () => void }) {
+  const tt = useT('b5callsx');
   const [flow, setFlow] = useState<Flow>(() => JSON.parse(JSON.stringify(flowIn)));
   const n = flow.nodes[nodeId];
   const set = (p: Record<string, any>) => setFlow((f) => ({ ...f, nodes: { ...f.nodes, [nodeId]: { ...f.nodes[nodeId], ...p } } }));
@@ -228,7 +231,7 @@ function NodeEditor({ flowIn, nodeId, meta, onCommit, onClose }: { flowIn: Flow;
       return { ...f, nodes };
     });
   const remove = () => {
-    if (!confirmAsk(`„${n.label}“ löschen? Verweise darauf werden entfernt.`)) return;
+    if (!confirmAsk(tt('„{label}“ löschen? Verweise darauf werden entfernt.', { label: n.label }))) return;
     const nodes: Record<string, Node> = {};
     for (const [id, x] of Object.entries(flow.nodes)) {
       if (id === nodeId) continue;
@@ -255,32 +258,27 @@ function NodeEditor({ flowIn, nodeId, meta, onCommit, onClose }: { flowIn: Flow;
       onClose={onClose}
       footer={
         <>
-          <button className="btn" onClick={() => onCommit(flow)}>
-            Übernehmen
-          </button>
+          <button className="btn" onClick={() => onCommit(flow)}>{tt('Übernehmen')}</button>
           {!isStart && (
-            <button className="btn secondary" onClick={() => onCommit({ ...flow, start: nodeId })}>
-              Als Start festlegen
-            </button>
+            <button className="btn secondary" onClick={() => onCommit({ ...flow, start: nodeId })}>{tt('Als Start festlegen')}</button>
           )}
           {!isStart && (
             <button className="btn danger" onClick={remove}>
-              <Icon name="trash" size={14} /> Schritt löschen
-            </button>
+              <Icon name="trash" size={14} />{' '}{tt('Schritt löschen')}</button>
           )}
         </>
       }
     >
-      <Field label="Name des Schritts" hint="Steht im Anrufprotokoll („Hauptmenü › Taste 2 Support“).">
+      <Field label={tt('Name des Schritts')} hint={tt('Steht im Anrufprotokoll („Hauptmenü › Taste 2 Support“).')}>
         <Input value={n.label} onChange={(v) => set({ label: v })} maxLength={60} />
       </Field>
 
       {(n.type === 'menu' || n.type === 'say') && (
         <>
-          <Field label="Ansage" hint="Wird mit deutscher Stimme vorgelesen – oder lade unter „Audio“ eine eigene Aufnahme hoch.">
-            <Textarea value={n.say} onChange={(v) => set({ say: v })} rows={3} placeholder="Willkommen bei …" />
+          <Field label={tt('Ansage')} hint={tt('Wird mit deutscher Stimme vorgelesen – oder lade unter „Audio“ eine eigene Aufnahme hoch.')}>
+            <Textarea value={n.say} onChange={(v) => set({ say: v })} rows={3} placeholder={tt('Willkommen bei …')} />
           </Field>
-          <Field label="oder eigene Aufnahme">
+          <Field label={tt('oder eigene Aufnahme')}>
             <AudioSelect value={n.audio_id} meta={meta} onChange={(v) => set({ audio_id: v })} />
           </Field>
         </>
@@ -288,7 +286,7 @@ function NodeEditor({ flowIn, nodeId, meta, onCommit, onClose }: { flowIn: Flow;
 
       {n.type === 'menu' && (
         <>
-          <h4 style={{ margin: '12px 0 6px' }}>Tasten</h4>
+          <h4 style={{ margin: '12px 0 6px' }}>{tt('Tasten')}</h4>
           <div className="cr-lines">
             {Object.keys(opts)
               .sort()
@@ -296,14 +294,14 @@ function NodeEditor({ flowIn, nodeId, meta, onCommit, onClose }: { flowIn: Flow;
                 <div className="cr-line" key={k}>
                   <strong style={{ width: 28, textAlign: 'center' }}>{k}</strong>
                   <div className="grow">
-                    <Input value={n.option_labels?.[k] ?? ''} onChange={(v) => set({ option_labels: { ...n.option_labels, [k]: v } })} placeholder="Wofür? (nur zur Übersicht)" aria-label={`Beschriftung Taste ${k}`} />
+                    <Input value={n.option_labels?.[k] ?? ''} onChange={(v) => set({ option_labels: { ...n.option_labels, [k]: v } })} placeholder={tt('Wofür? (nur zur Übersicht)')} aria-label={tt('Beschriftung Taste {k}', { k })} />
                   </div>
                   <div className="grow">
                     <Target value={opts[k]} flow={flow} self={nodeId} onChange={(v) => link('options', v, k)} required />
                   </div>
                   <button
                     className="icon-btn"
-                    aria-label={`Taste ${k} entfernen`}
+                    aria-label={tt('Taste {k} entfernen', { k })}
                     onClick={() => {
                       const o = { ...opts };
                       delete o[k];
@@ -317,18 +315,18 @@ function NodeEditor({ flowIn, nodeId, meta, onCommit, onClose }: { flowIn: Flow;
           </div>
           {freeKeys.length > 0 && (
             <div className="actions" style={{ margin: '10px 0' }}>
-              <Select value="" onChange={(k) => k && set({ options: { ...opts, [k]: '' } })} placeholder="＋ Taste hinzufügen" options={freeKeys} />
+              <Select value="" onChange={(k) => k && set({ options: { ...opts, [k]: '' } })} placeholder={tt('＋ Taste hinzufügen')} options={freeKeys} />
             </div>
           )}
           <div className="cr-form-row">
-            {T('on_timeout', 'Wenn nichts gedrückt wird (nach den Wiederholungen)')}
-            {T('on_invalid', 'Wenn eine nicht belegte Taste gedrückt wird')}
+            {T('on_timeout', tt('Wenn nichts gedrückt wird (nach den Wiederholungen)'))}
+            {T('on_invalid', tt('Wenn eine nicht belegte Taste gedrückt wird'))}
           </div>
           <div className="cr-form-row">
-            <Field label="Wiederholungen">
+            <Field label={tt('Wiederholungen')}>
               <Input type="number" min={0} max={5} value={n.retries} onChange={(v) => set({ retries: Number(v) })} />
             </Field>
-            <Field label="Sekunden auf eine Taste warten">
+            <Field label={tt('Sekunden auf eine Taste warten')}>
               <Input type="number" min={3} max={20} value={n.timeout} onChange={(v) => set({ timeout: Number(v) })} />
             </Field>
           </div>
@@ -337,82 +335,82 @@ function NodeEditor({ flowIn, nodeId, meta, onCommit, onClose }: { flowIn: Flow;
 
       {n.type === 'schedule' && (
         <>
-          <Field label="Zeitplan" hint="Öffnungszeiten, Feiertage und Sonderzeiten legst du im Reiter „Zeitpläne“ an.">
-            <Select value={n.schedule_id} onChange={(v) => set({ schedule_id: v })} placeholder="Öffnungszeiten aus den Telefonie-Einstellungen" options={meta.schedules.map((s) => [s.id, s.name])} />
+          <Field label={tt('Zeitplan')} hint={tt('Öffnungszeiten, Feiertage und Sonderzeiten legst du im Reiter „Zeitpläne“ an.')}>
+            <Select value={n.schedule_id} onChange={(v) => set({ schedule_id: v })} placeholder={tt('Öffnungszeiten aus den Telefonie-Einstellungen')} options={meta.schedules.map((s) => [s.id, s.name])} />
           </Field>
-          {T('open', 'Wenn geöffnet', true)}
-          {T('closed', 'Wenn geschlossen', true)}
-          {T('holiday', 'An Feiertagen (leer: wie geschlossen)')}
+          {T('open', tt('Wenn geöffnet'), true)}
+          {T('closed', tt('Wenn geschlossen'), true)}
+          {T('holiday', tt('An Feiertagen (leer: wie geschlossen)'))}
         </>
       )}
 
-      {n.type === 'say' && T('next', 'Danach weiter bei')}
+      {n.type === 'say' && T('next', tt('Danach weiter bei'))}
 
       {n.type === 'forward' && (
         <>
-          <Field label="Ansage vor dem Weiterleiten (optional)">
+          <Field label={tt('Ansage vor dem Weiterleiten (optional)')}>
             <Input value={n.say} onChange={(v) => set({ say: v })} maxLength={500} />
           </Field>
-          <Field label="Nummern" hint="Mehrere mit Komma trennen – alle klingeln gleichzeitig. Format +49…">
+          <Field label={tt('Nummern')} hint={tt('Mehrere mit Komma trennen – alle klingeln gleichzeitig. Format +49…')}>
             <Input value={(n.numbers ?? []).join(', ')} onChange={(v) => set({ numbers: splitList(v) })} placeholder="+49151…" />
           </Field>
-          <Field label="Personen (Browser-Telefon)">
+          <Field label={tt('Personen (Browser-Telefon)')}>
             <div className="cr-lines">
               {meta.users.map((u) => (
                 <Check key={u.id} checked={(n.users ?? []).includes(u.id)} onChange={(on) => set({ users: on ? [...(n.users ?? []), u.id] : (n.users ?? []).filter((x: string) => x !== u.id) })} label={u.name} />
               ))}
             </div>
           </Field>
-          <Field label="Klingeldauer (Sekunden)">
+          <Field label={tt('Klingeldauer (Sekunden)')}>
             <Input type="number" min={5} max={60} value={n.timeout} onChange={(v) => set({ timeout: Number(v) })} />
           </Field>
-          {T('on_fail', 'Wenn niemand abnimmt')}
+          {T('on_fail', tt('Wenn niemand abnimmt'))}
         </>
       )}
 
       {n.type === 'group' && (
         <>
-          <Field label="Ruf-Gruppe oder Warteschlange" hint="Mitglieder, Verteilung, Wartemusik und Überlauf stellst du im Reiter „Gruppen“ ein.">
-            <Select value={n.group_id} onChange={(v) => set({ group_id: v })} placeholder="— bitte wählen —" options={meta.groups.map((g) => [g.id, `${g.name} (${g.kind === 'queue' ? 'Warteschlange' : 'Ruf-Gruppe'})`])} />
+          <Field label={tt('Ruf-Gruppe oder Warteschlange')} hint={tt('Mitglieder, Verteilung, Wartemusik und Überlauf stellst du im Reiter „Gruppen“ ein.')}>
+            <Select value={n.group_id} onChange={(v) => set({ group_id: v })} placeholder={tt('— bitte wählen —')} options={meta.groups.map((g) => [g.id, `${g.name} (${g.kind === 'queue' ? tt('Warteschlange') : tt('Ruf-Gruppe')})`])} />
           </Field>
-          {T('on_fail', 'Wenn niemand erreichbar ist')}
+          {T('on_fail', tt('Wenn niemand erreichbar ist'))}
         </>
       )}
 
       {n.type === 'voicemail' && (
         <>
-          <Field label="Name des Postfachs" hint="Erscheint im Anrufprotokoll und in der Benachrichtigung („Vertrieb“).">
+          <Field label={tt('Name des Postfachs')} hint={tt('Erscheint im Anrufprotokoll und in der Benachrichtigung („Vertrieb“).')}>
             <Input value={n.box} onChange={(v) => set({ box: v })} maxLength={60} placeholder={n.label} />
           </Field>
-          <Field label="Ansage vor dem Signalton" hint="Leer: die Standardansage.">
+          <Field label={tt('Ansage vor dem Signalton')} hint={tt('Leer: die Standardansage.')}>
             <Textarea value={n.say} onChange={(v) => set({ say: v })} rows={3} />
           </Field>
-          <Field label="oder eigene Aufnahme">
+          <Field label={tt('oder eigene Aufnahme')}>
             <AudioSelect value={n.audio_id} meta={meta} onChange={(v) => set({ audio_id: v })} />
           </Field>
-          <Field label="Rückruf-Aufgabe für" hint="Zu jeder Nachricht entsteht eine Aufgabe für diese Person.">
-            <Select value={n.assign_user} onChange={(v) => set({ assign_user: v })} placeholder="niemanden" options={meta.users.map((u) => [u.id, u.name])} />
+          <Field label={tt('Rückruf-Aufgabe für')} hint={tt('Zu jeder Nachricht entsteht eine Aufgabe für diese Person.')}>
+            <Select value={n.assign_user} onChange={(v) => set({ assign_user: v })} placeholder={tt('niemanden')} options={meta.users.map((u) => [u.id, u.name])} />
           </Field>
         </>
       )}
 
       {n.type === 'ai' && (
         <>
-          <p className="muted">Der Anruf geht an den KI-Telefonagent (Einstellungen → KI-Telefonagent). Ist er nicht eingerichtet oder nicht erreichbar, geht es hier weiter:</p>
-          {T('on_fail', 'Wenn die KI nicht antworten kann')}
+          <p className="muted">{tt('Der Anruf geht an den KI-Telefonagent (Einstellungen → KI-Telefonagent). Ist er nicht eingerichtet oder nicht erreichbar, geht es hier weiter:')}</p>
+          {T('on_fail', tt('Wenn die KI nicht antworten kann'))}
         </>
       )}
 
       {n.type === 'hangup' && (
-        <Field label="Letzter Satz (optional)">
-          <Input value={n.say} onChange={(v) => set({ say: v })} maxLength={500} placeholder="Vielen Dank für Ihren Anruf." />
+        <Field label={tt('Letzter Satz (optional)')}>
+          <Input value={n.say} onChange={(v) => set({ say: v })} maxLength={500} placeholder={tt('Vielen Dank für Ihren Anruf.')} />
         </Field>
       )}
     </Modal>
   );
 }
 
-const END_TEXT: Record<string, string> = {
+const END_TEXT: Record<string, string> = trData('b5callsx', {
   waiting: 'Das Menü wartet hier auf eine Taste.',
   default: 'Der normale Ablauf übernimmt (Weiterleitung, KI-Telefonagent oder Voicemail).',
   loop: 'Der Weg läuft im Kreis.',
@@ -422,9 +420,10 @@ const END_TEXT: Record<string, string> = {
   ai: 'Der KI-Telefonagent nimmt das Gespräch an.',
   hangup: 'Der Anruf wird beendet.',
   say: 'Nach der Ansage ist der Anruf zu Ende.',
-};
+});
 
 function Simulator({ id, dirty }: { id: string; dirty: boolean }) {
+  const tt = useT('b5callsx');
   const [keys, setKeys] = useState('');
   const [at, setAt] = useState('');
   const [res, setRes] = useState<any>(null);
@@ -434,19 +433,18 @@ function Simulator({ id, dirty }: { id: string; dirty: boolean }) {
     if (r) setRes(r);
   };
   return (
-    <Panel title="Testlauf" sub="Geht den gespeicherten Ablauf durch, als würde jemand anrufen – es wird niemand angerufen." tour="ivr-test">
-      {dirty && <Callout tone="warn">Du hast ungespeicherte Änderungen. Der Testlauf nutzt den gespeicherten Stand.</Callout>}
+    <Panel title={tt('Testlauf')} sub={tt('Geht den gespeicherten Ablauf durch, als würde jemand anrufen – es wird niemand angerufen.')} tour="ivr-test">
+      {dirty && <Callout tone="warn">{tt('Du hast ungespeicherte Änderungen. Der Testlauf nutzt den gespeicherten Stand.')}</Callout>}
       <div className="cr-form-row">
-        <Field label="Gedrückte Tasten" hint="In der Reihenfolge, z. B. 12 – ein Unterstrich steht für „nichts gedrückt“.">
-          <Input value={keys} onChange={setKeys} placeholder="z. B. 1" />
+        <Field label={tt('Gedrückte Tasten')} hint={tt('In der Reihenfolge, z. B. 12 – ein Unterstrich steht für „nichts gedrückt“.')}>
+          <Input value={keys} onChange={setKeys} placeholder={tt('z. B. 1')} />
         </Field>
-        <Field label="Zeitpunkt des Anrufs" hint="Leer: jetzt. So prüfst du Feiertage und Abendstunden.">
+        <Field label={tt('Zeitpunkt des Anrufs')} hint={tt('Leer: jetzt. So prüfst du Feiertage und Abendstunden.')}>
           <Input type="datetime-local" value={at} onChange={setAt} />
         </Field>
       </div>
       <button className="btn" onClick={run}>
-        <Icon name="play" size={14} /> Testen
-      </button>
+        <Icon name="play" size={14} />{' '}{tt('Testen')}</button>
       {res && (
         <>
           <ol className="tl-sim">
@@ -460,7 +458,7 @@ function Simulator({ id, dirty }: { id: string; dirty: boolean }) {
             ))}
           </ol>
           <p className="small" style={{ marginTop: 10 }}>
-            <strong>Ergebnis:</strong> {END_TEXT[res.end] ?? res.end}
+            <strong>{tt('Ergebnis:')}</strong> {END_TEXT[res.end] ?? res.end}
           </p>
         </>
       )}
@@ -469,6 +467,7 @@ function Simulator({ id, dirty }: { id: string; dirty: boolean }) {
 }
 
 function FlowEditor({ id, meta, onBack }: { id: string; meta: Meta; onBack: () => void }) {
+  const tt = useT('b5callsx');
   const data = useLoad(() => api.get(`/api/telephony/ivr/${id}`), [id]);
   const [flow, setFlow] = useState<Flow | null>(null);
   const [name, setName] = useState('');
@@ -484,7 +483,7 @@ function FlowEditor({ id, meta, onBack }: { id: string; meta: Meta; onBack: () =
   if (!data.data || !flow) return <Spinner />;
   const dirty = JSON.stringify([name, flow]) !== base;
   const save = async () => {
-    const r = await act(() => api.put(`/api/telephony/ivr/${id}`, { name, flow }), 'Gespeichert');
+    const r = await act(() => api.put(`/api/telephony/ivr/${id}`, { name, flow }), tt('Gespeichert'));
     if (r) {
       setFlow(r.flow);
       setBase(JSON.stringify([r.name, r.flow]));
@@ -499,19 +498,15 @@ function FlowEditor({ id, meta, onBack }: { id: string; meta: Meta; onBack: () =
   return (
     <>
       <div className="tl-bar">
-        <button className="btn secondary" onClick={() => (!dirty || confirmAsk('Ungespeicherte Änderungen verwerfen?')) && onBack()}>
-          ← Alle Menüs
-        </button>
+        <button className="btn secondary" onClick={() => (!dirty || confirmAsk(tt('Ungespeicherte Änderungen verwerfen?'))) && onBack()}>{tt('← Alle Menüs')}</button>
         <div className="grow">
-          <Input value={name} onChange={setName} aria-label="Name des Menüs" maxLength={80} />
+          <Input value={name} onChange={setName} aria-label={tt('Name des Menüs')} maxLength={80} />
         </div>
-        <button className="btn" disabled={!dirty} onClick={save} data-tour="ivr-save">
-          Speichern
-        </button>
+        <button className="btn" disabled={!dirty} onClick={save} data-tour="ivr-save">{tt('Speichern')}</button>
       </div>
       {data.data.issues.length > 0 && (
         <Callout tone="warn">
-          <strong>Das fällt auf:</strong>
+          <strong>{tt('Das fällt auf:')}</strong>
           <ul>
             {data.data.issues.map((t: string) => (
               <li key={t}>{t}</li>
@@ -520,23 +515,21 @@ function FlowEditor({ id, meta, onBack }: { id: string; meta: Meta; onBack: () =
         </Callout>
       )}
       {data.data.numbers.length === 0 && (
-        <Callout>
-          Dieses Menü ist noch keiner Nummer zugeordnet. Unter „Nummern“ legst du fest, welche Nummer in dieses Menü führt.
-        </Callout>
+        <Callout>{tt('Dieses Menü ist noch keiner Nummer zugeordnet. Unter „Nummern“ legst du fest, welche Nummer in dieses Menü führt.')}</Callout>
       )}
       <div className="cr-panels two">
         <Panel
-          title="Ablauf"
-          sub="Klicke einen Schritt, um ihn zu bearbeiten. Die Linien zeigen, wohin welche Taste oder Bedingung führt."
+          title={tt('Ablauf')}
+          sub={tt('Klicke einen Schritt, um ihn zu bearbeiten. Die Linien zeigen, wohin welche Taste oder Bedingung führt.')}
           wide
           actions={
-            <Select value="" onChange={(t) => t && add(t)} placeholder="＋ Schritt hinzufügen" options={Object.entries(TYPE).map(([k, t]) => [k, t.short])} />
+            <Select value="" onChange={(t) => t && add(t)} placeholder={tt('＋ Schritt hinzufügen')} options={Object.entries(TYPE).map(([k, t]) => [k, t.short])} />
           }
         >
           <FlowTree flow={flow} meta={meta} issues={data.data.issues} onOpen={setOpen} />
         </Panel>
         <Simulator id={id} dirty={dirty} />
-        <Panel title="Nummern in dieses Menü">
+        <Panel title={tt('Nummern in dieses Menü')}>
           {data.data.numbers.length ? (
             data.data.numbers.map((n: any) => (
               <p key={n.id} style={{ margin: '0 0 6px' }}>
@@ -544,7 +537,7 @@ function FlowEditor({ id, meta, onBack }: { id: string; meta: Meta; onBack: () =
               </p>
             ))
           ) : (
-            <p className="muted">Noch keine.</p>
+            <p className="muted">{tt('Noch keine.')}</p>
           )}
         </Panel>
       </div>
@@ -566,6 +559,7 @@ function FlowEditor({ id, meta, onBack }: { id: string; meta: Meta; onBack: () =
 }
 
 function FlowList({ onOpen }: { onOpen: (id: string) => void }) {
+  const tt = useT('b5callsx');
   const list = useLoad(() => api.get<any[]>('/api/telephony/ivr'), []);
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState('');
@@ -573,13 +567,12 @@ function FlowList({ onOpen }: { onOpen: (id: string) => void }) {
   return (
     <>
       <Panel
-        title="Telefonmenüs"
-        sub="Ein Menü begrüßt Anrufer, lässt sie eine Taste drücken, prüft Öffnungszeiten und Feiertage und leitet an Personen, Gruppen, die KI oder die Voicemail weiter."
+        title={tt('Telefonmenüs')}
+        sub={tt('Ein Menü begrüßt Anrufer, lässt sie eine Taste drücken, prüft Öffnungszeiten und Feiertage und leitet an Personen, Gruppen, die KI oder die Voicemail weiter.')}
         wide
         actions={
           <button className="btn" onClick={() => setCreating(true)} data-tour="ivr-new">
-            <Icon name="plus" size={14} /> Neues Menü
-          </button>
+            <Icon name="plus" size={14} />{' '}{tt('Neues Menü')}</button>
         }
       >
         {list.data.length ? (
@@ -590,13 +583,13 @@ function FlowList({ onOpen }: { onOpen: (id: string) => void }) {
                 onClick={() => onOpen(f.id)}
                 side={
                   <>
-                    {f.issues.length > 0 && <Badge tone="yellow">{f.issues.length} Hinweis{f.issues.length > 1 ? 'e' : ''}</Badge>}
+                    {f.issues.length > 0 && <Badge tone="yellow">{tt.plural(f.issues.length, { one: '{n} Hinweis', other: '{n} Hinweise' })}</Badge>}
                     <button
                       className="icon-btn"
-                      aria-label={`${f.name} löschen`}
+                      aria-label={tt('{name} löschen', { name: f.name })}
                       onClick={async (e) => {
                         e.stopPropagation();
-                        if (confirmAsk(`Telefonmenü „${f.name}“ löschen?`) && (await act(() => api.del(`/api/telephony/ivr/${f.id}`), 'Gelöscht'))) void list.reload();
+                        if (confirmAsk(tt('Telefonmenü „{name}“ löschen?', { name: f.name })) && (await act(() => api.del(`/api/telephony/ivr/${f.id}`), tt('Gelöscht')))) void list.reload();
                       }}
                     >
                       <Icon name="trash" size={16} />
@@ -605,19 +598,17 @@ function FlowList({ onOpen }: { onOpen: (id: string) => void }) {
                 }
               >
                 <strong>{f.name}</strong>
-                <div className="cr-sub">
-                  {Object.keys(f.flow.nodes).length} Schritte · {f.numbers.length ? f.numbers.map((n: any) => n.label || n.number).join(', ') : 'noch keiner Nummer zugeordnet'}
-                </div>
+                <div className="cr-sub">{tt('{length} Schritte · {v}', { length: Object.keys(f.flow.nodes).length, v: f.numbers.length ? f.numbers.map((n: any) => n.label || n.number).join(', ') : tt('noch keiner Nummer zugeordnet') })}</div>
               </Item>
             ))}
           </div>
         ) : (
-          <Empty>Noch kein Telefonmenü. Lege eins an und ordne es unter „Nummern“ einer Rufnummer zu.</Empty>
+          <Empty>{tt('Noch kein Telefonmenü. Lege eins an und ordne es unter „Nummern“ einer Rufnummer zu.')}</Empty>
         )}
       </Panel>
       {creating && (
         <Modal
-          title="Neues Telefonmenü"
+          title={tt('Neues Telefonmenü')}
           onClose={() => setCreating(false)}
           footer={
             <button
@@ -631,12 +622,10 @@ function FlowList({ onOpen }: { onOpen: (id: string) => void }) {
                   onOpen(r.id);
                 }
               }}
-            >
-              Anlegen
-            </button>
+            >{tt('Anlegen')}</button>
           }
         >
-          <Field label="Name" hint="Zum Beispiel „Hauptnummer“ oder „Support-Hotline“. Du startest mit einem Begrüßungsmenü und baust von dort aus weiter.">
+          <Field label="Name" hint={tt('Zum Beispiel „Hauptnummer“ oder „Support-Hotline“. Du startest mit einem Begrüßungsmenü und baust von dort aus weiter.')}>
             <Input value={name} onChange={setName} maxLength={80} autoFocus />
           </Field>
         </Modal>
@@ -646,19 +635,20 @@ function FlowList({ onOpen }: { onOpen: (id: string) => void }) {
 }
 
 export function CallsFlows({ sub }: { sub?: string }) {
+  const tt = useT('b5callsx');
   const can = useCanSettings();
   const [tab, setTab] = useState(['menus', 'schedules', 'groups', 'audio'].includes(sub ?? '') ? sub! : 'menus');
   const [flowId, setFlowId] = useState('');
   const meta = useLoad(() => api.get<Meta>('/api/telephony/ivr/meta'), [tab, flowId]);
-  if (!can) return <Empty>Telefonmenüs, Gruppen und Nummern stellt die Agentur oder ein Mitglied mit Zugriff auf die Einstellungen ein.</Empty>;
+  if (!can) return <Empty>{tt('Telefonmenüs, Gruppen und Nummern stellt die Agentur oder ein Mitglied mit Zugriff auf die Einstellungen ein.')}</Empty>;
   return (
     <Tl name="flows">
       <Tabs
         tabs={[
-          ['menus', 'Menüs'],
-          ['schedules', 'Zeitpläne'],
-          ['groups', 'Gruppen & Warteschlangen'],
-          ['audio', 'Audio'],
+          ['menus', tt('Menüs')],
+          ['schedules', tt('Zeitpläne')],
+          ['groups', tt('Gruppen & Warteschlangen')],
+          ['audio', tt('Audio')],
         ]}
         value={tab}
         onChange={(t) => (setTab(t), setFlowId(''))}

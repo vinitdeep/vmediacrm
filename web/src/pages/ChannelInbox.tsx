@@ -3,13 +3,15 @@ import { Icon, channelIcon } from '../icons';
 import { api, currentLocation } from '../api';
 import { Input, Textarea, act, confirmAsk, toast } from '../ui';
 import type { ExtraChannel } from './MetaInbox';
+import { useT } from '../i18n';
+import { trData } from '../i18n/data';
 
 /**
  * Telegram, Discord and push inside Konversationen: composer tabs for contacts reachable there
  * and the files of inbound messages. Hooked into the inbox through useMetaComposer/MessageMedia.
  */
 
-export const MORE_LABELS: Record<string, string> = { telegram: 'Telegram', discord: 'Discord', push: 'Push' };
+export const MORE_LABELS: Record<string, string> = trData('b5chan', { telegram: 'Telegram', discord: 'Discord', push: 'Push' });
 const ORDER = ['telegram', 'discord', 'push'] as const;
 
 export function useMoreChannels(contact: any, messages: any[] | undefined) {
@@ -35,6 +37,7 @@ export function useMoreChannels(contact: any, messages: any[] | undefined) {
 }
 
 function ChatPanel({ channel, contact, st, onSent }: { channel: string; contact: any; st: any; onSent: () => void }) {
+  const t = useT('b5chan');
   const [body, setBody] = useState('');
   const [file, setFile] = useState('');
   const [showFile, setShowFile] = useState(false);
@@ -44,15 +47,15 @@ function ChatPanel({ channel, contact, st, onSent }: { channel: string; contact:
   const send = async () => {
     let ignoreDnd = false;
     if (contact.dnd) {
-      if (!confirmAsk('Kontakt hat „Nicht stören“. Trotzdem senden?')) return;
+      if (!confirmAsk(t('Kontakt hat „Nicht stören“. Trotzdem senden?'))) return;
       ignoreDnd = true;
     }
     setBusy(true);
     const r = await act(() => api.post('/api/messages', { contact_id: contact.id, channel, body, ...(file.trim() ? { media_url: file.trim() } : {}), ignoreDnd }));
     setBusy(false);
     if (!r) return;
-    if (r.status === 'failed') toast(`Nicht gesendet: ${r.error}`);
-    else toast(`Per ${MORE_LABELS[channel]} gesendet`);
+    if (r.status === 'failed') toast(t('Nicht gesendet: {error}', { error: r.error }));
+    else toast(t('Per {v} gesendet', { v: MORE_LABELS[channel] }));
     setBody('');
     setFile('');
     onSent();
@@ -60,32 +63,29 @@ function ChatPanel({ channel, contact, st, onSent }: { channel: string; contact:
   return (
     <div data-tour={`composer-${channel}`}>
       <div className="muted small chan-to">
-        <Icon name={channelIcon(channel)} size={13} /> an {st.handle || 'den Kontakt'}
-        {channel === 'discord' && <> · {st.where === 'channel' ? 'Antwort im Kanal' : 'Direktnachricht'}</>}
+        <Icon name={channelIcon(channel)} size={13} /> {t('an')} {st.handle || t('den Kontakt')}
+        {channel === 'discord' && <> · {st.where === 'channel' ? t('Antwort im Kanal') : t('Direktnachricht')}</>}
       </div>
-      <Textarea value={body} onChange={setBody} rows={4} placeholder={`${MORE_LABELS[channel]}-Nachricht an ${contact.first_name || 'den Kontakt'}`} />
-      {channel === 'telegram' && showFile && <Input value={file} onChange={setFile} placeholder="https://… (Bild, PDF, Audio oder Video)" aria-label="Datei-Link" />}
+      <Textarea value={body} onChange={setBody} rows={4} placeholder={t('{v}-Nachricht an {v2}', { v: MORE_LABELS[channel], v2: contact.first_name || t('den Kontakt') })} />
+      {channel === 'telegram' && showFile && <Input value={file} onChange={setFile} placeholder={t('https://… (Bild, PDF, Audio oder Video)')} aria-label={t('Datei-Link')} />}
       <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <small className="muted">
-          {body.length} / {limit} Zeichen
-          {channel === 'telegram' && !showFile && (
+        <small className="muted">{t('{length} / {limit} Zeichen', { length: body.length, limit })}{channel === 'telegram' && !showFile && (
             <>
               {' · '}
               <button type="button" className="linkbtn" onClick={() => setShowFile(true)}>
-                <Icon name="file" size={12} /> Datei-Link anhängen
-              </button>
+                <Icon name="file" size={12} />{' '}{t('Datei-Link anhängen')}</button>
             </>
           )}
         </small>
         <button className="btn" disabled={!canSend} onClick={send}>
-          <Icon name={channelIcon(channel)} size={14} className={`ico chan-ico chan-${channel}`} /> Senden
-        </button>
+          <Icon name={channelIcon(channel)} size={14} className={`ico chan-ico chan-${channel}`} />{' '}{t('Senden')}</button>
       </div>
     </div>
   );
 }
 
 function PushPanel({ contact, st, onSent }: { contact: any; st: any; onSent: () => void }) {
+  const t = useT('b5chan');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [url, setUrl] = useState('');
@@ -96,7 +96,7 @@ function PushPanel({ contact, st, onSent }: { contact: any; st: any; onSent: () 
     const r = await act(() => api.post('/api/messages', { contact_id: contact.id, channel: 'push', subject: title, body, url: url.trim() }));
     setBusy(false);
     if (!r) return;
-    toast(r.status === 'failed' ? `Nicht gesendet: ${r.error}` : `Push an ${r.devices ?? 1} Gerät(e) gesendet`);
+    toast(r.status === 'failed' ? t('Nicht gesendet: {error}', { error: r.error }) : t('Push an {v} Gerät(e) gesendet', { v: r.devices ?? 1 }));
     setTitle('');
     setBody('');
     setUrl('');
@@ -105,16 +105,14 @@ function PushPanel({ contact, st, onSent }: { contact: any; st: any; onSent: () 
   return (
     <>
       <div className="muted small chan-to">
-        <Icon name="push" size={13} /> Browser-Benachrichtigung an {st.devices} {st.devices === 1 ? 'Gerät' : 'Geräte'}
-      </div>
-      <Input value={title} onChange={setTitle} placeholder="Titel (leer = Firmenname)" maxLength={80} />
-      <Textarea value={body} onChange={setBody} rows={3} placeholder="Kurzer Text" />
-      <Input value={url} onChange={setUrl} placeholder="Link beim Antippen (https://…, optional)" />
+        <Icon name="push" size={13} />{' '}{t('Browser-Benachrichtigung an {devices} {v}', { devices: st.devices, v: st.devices === 1 ? t('Gerät') : t('Geräte') })}</div>
+      <Input value={title} onChange={setTitle} placeholder={t('Titel (leer = Firmenname)')} maxLength={80} />
+      <Textarea value={body} onChange={setBody} rows={3} placeholder={t('Kurzer Text')} />
+      <Input value={url} onChange={setUrl} placeholder={t('Link beim Antippen (https://…, optional)')} />
       <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <small className="muted">{body.length} / 300 Zeichen</small>
+        <small className="muted">{t('{length} / 300 Zeichen', { length: body.length })}</small>
         <button className="btn" disabled={!canSend} onClick={send}>
-          <Icon name="push" size={14} /> Senden
-        </button>
+          <Icon name="push" size={14} />{' '}{t('Senden')}</button>
       </div>
     </>
   );
@@ -122,6 +120,7 @@ function PushPanel({ contact, st, onSent }: { contact: any; st: any; onSent: () 
 
 /** Photo, voice message, video, document or map link of a Telegram/Discord message. */
 export function ChannelMedia({ m }: { m: any }) {
+  const t = useT('b5chan');
   const [broken, setBroken] = useState(false);
   let a: any = m?.channel_media;
   if (typeof a === 'string') {
@@ -135,8 +134,7 @@ export function ChannelMedia({ m }: { m: any }) {
   if (a.kind === 'location' && Number.isFinite(a.lat) && Number.isFinite(a.lng)) {
     return (
       <a className="media-link" href={`https://www.openstreetmap.org/?mlat=${a.lat}&mlon=${a.lng}#map=17/${a.lat}/${a.lng}`} target="_blank" rel="noreferrer">
-        <Icon name="location" size={14} /> Karte öffnen
-      </a>
+        <Icon name="location" size={14} />{' '}{t('Karte öffnen')}</a>
     );
   }
   // Files we sent are a link the platform fetched; only https is shown.
@@ -148,11 +146,11 @@ export function ChannelMedia({ m }: { m: any }) {
     ) : null;
   }
   const src = `/api/messages/channels/media/${encodeURIComponent(m.id)}?locationId=${encodeURIComponent(currentLocation())}`;
-  if (broken) return <div className="media-link muted">Datei nicht mehr verfügbar</div>;
+  if (broken) return <div className="media-link muted">{t('Datei nicht mehr verfügbar')}</div>;
   if (a.kind === 'image' || a.kind === 'sticker') {
     return (
       <a href={src} target="_blank" rel="noreferrer" className="media-wrap">
-        <img className={`media-img${a.kind === 'sticker' ? ' sticker' : ''}`} src={src} alt={a.kind === 'sticker' ? 'Sticker' : 'Bild'} loading="lazy" onError={() => setBroken(true)} />
+        <img className={`media-img${a.kind === 'sticker' ? ' sticker' : ''}`} src={src} alt={a.kind === 'sticker' ? t('Sticker') : t('Bild')} loading="lazy" onError={() => setBroken(true)} />
       </a>
     );
   }
@@ -160,7 +158,7 @@ export function ChannelMedia({ m }: { m: any }) {
   if (a.kind === 'video') return <video className="media-video" controls preload="none" src={src} onError={() => setBroken(true)} />;
   return (
     <a className="media-link" href={src} target="_blank" rel="noreferrer">
-      <Icon name="file" size={14} /> {a.filename || 'Datei öffnen'}
+      <Icon name="file" size={14} /> {a.filename || t('Datei öffnen')}
     </a>
   );
 }

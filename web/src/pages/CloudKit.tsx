@@ -1,3 +1,5 @@
+import { useT } from '../i18n';
+import { trData } from '../i18n/data';
 /** Shared by the customer's account area (Cloud*.tsx): the shapes the API returns and the fair-use meter. */
 
 export interface Meter {
@@ -42,18 +44,19 @@ export interface CloudMe {
 }
 
 /** Why a customer cancels (keys as the server stores them). */
-export const REASONS: [string, string][] = [
+export const REASONS: [string, string][] = trData('b5cloud', [
   ['price', 'Zu teuer'],
   ['features', 'Es fehlt eine Funktion'],
   ['switched', 'Zu einem anderen Anbieter gewechselt'],
   ['selfhost', 'Ich hoste selbst'],
   ['not_needed', 'Brauche ich nicht mehr'],
   ['other', 'Anderer Grund'],
-];
+]);
 
 export const PHASE_TONE: Record<string, 'green' | 'blue' | 'yellow' | 'red' | 'gray' | 'purple'> = { active: 'green', trial: 'blue', comped: 'purple', past_due: 'yellow', read_only: 'red', canceled: 'gray', deletion_scheduled: 'red' };
 
 export function MeterBar({ label, m, unit = '' }: { label: string; m: Meter; unit?: string }) {
+  const t = useT('b5cloud');
   const unlimited = m.limit === null;
   const pct = unlimited ? 0 : m.limit === 0 ? (m.used > 0 ? 100 : 0) : Math.min(100, Math.round((m.used / m.limit!) * 100));
   const passThrough = m.limit === 0 && m.overage === 'bill';
@@ -64,7 +67,7 @@ export function MeterBar({ label, m, unit = '' }: { label: string; m: Meter; uni
         <strong>
           {m.used.toLocaleString('de-DE')}
           {unit}
-          <span className="muted"> / {unlimited ? 'unbegrenzt' : passThrough ? 'zum Selbstkostenpreis' : `${m.limit!.toLocaleString('de-DE')}${unit}`}</span>
+          <span className="muted"> / {unlimited ? t('unbegrenzt') : passThrough ? t('zum Selbstkostenpreis') : `${m.limit!.toLocaleString('de-DE')}${unit}`}</span>
         </strong>
       </div>
       {!unlimited && !passThrough && (
@@ -72,7 +75,7 @@ export function MeterBar({ label, m, unit = '' }: { label: string; m: Meter; uni
           <div style={{ width: `${pct}%` }} />
         </div>
       )}
-      {!unlimited && pct >= 100 && !passThrough && <small className="muted">Fair-Use-Grenze erreicht – {m.overage === 'bill' ? 'darüber hinaus wird zum Selbstkostenpreis berechnet.' : 'bitte melde dich, wenn du mehr brauchst.'}</small>}
+      {!unlimited && pct >= 100 && !passThrough && <small className="muted">{t('Fair-Use-Grenze erreicht – {v}', { v: m.overage === 'bill' ? t('darüber hinaus wird zum Selbstkostenpreis berechnet.') : t('bitte melde dich, wenn du mehr brauchst.') })}</small>}
     </div>
   );
 }
