@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api';
+import { tr } from '../i18n';
 
 /** What the user is looking at – sent with every message (the agent's `ui_context` tool reads it). */
 export interface UiContext {
@@ -75,7 +76,7 @@ export function useUiContext(route: string, enabled: boolean): UiContext {
   const [ctx, setCtx] = useState<UiContext>({ route });
   useEffect(() => {
     const [page, id] = route.split('/');
-    const base: UiContext = { route, label: PAGE_LABELS[page] ?? page, entity: null };
+    const base: UiContext = { route, label: tr('b4agent')(PAGE_LABELS[page] ?? page), entity: null };
     setCtx(base);
     if (!enabled || !id || !WITH_ENTITY.has(page)) return;
     let alive = true;

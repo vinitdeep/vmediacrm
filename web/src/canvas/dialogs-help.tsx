@@ -1,5 +1,6 @@
 import { Modal } from '../ui';
 import type { DialogProps } from './dialogs';
+import { useT } from '../i18n';
 
 /** Keyboard and mouse reference ("?" on the board). */
 
@@ -52,26 +53,27 @@ const SECTIONS: { title: string; rows: [string, string][] }[] = [
 ];
 
 export function ShortcutsDialog({ onClose }: DialogProps) {
+  const t = useT('b4canvas');
   return (
-    <Modal title="Tastenkürzel" onClose={onClose} wide>
+    <Modal title={t('Tastenkürzel')} onClose={onClose} wide>
       <div className="cv-keys">
         {SECTIONS.map((s) => (
           <section key={s.title}>
-            <h3>{s.title}</h3>
+            <h3>{t(s.title)}</h3>
             <dl>
               {s.rows.map(([k, v]) => (
                 <div key={k}>
                   <dt>
-                    <kbd>{k}</kbd>
+                    <kbd>{t(k)}</kbd>
                   </dt>
-                  <dd>{v}</dd>
+                  <dd>{t(v)}</dd>
                 </div>
               ))}
             </dl>
           </section>
         ))}
       </div>
-      <p className="muted small">Auf Mac gilt ⌘ statt Strg. Mit Maus: Rechtsklick öffnet das Kontextmenü, Doppelklick auf eine freie Stelle legt einen Text an.</p>
+      <p className="muted small">{t('Auf Mac gilt ⌘ statt Strg. Mit Maus: Rechtsklick öffnet das Kontextmenü, Doppelklick auf eine freie Stelle legt einen Text an.')}</p>
     </Modal>
   );
 }

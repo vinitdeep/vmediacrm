@@ -6,6 +6,7 @@
  *  - done lines for background tasks ("Erledigt: …").
  */
 
+import { tr } from '../i18n';
 type Lang = 'de' | 'en';
 
 const ABBREV = /(?:\b(?:z|u|d|o|s|v|i|bzw|ca|nr|dr|prof|inkl|ggf|evtl|usw|etc|mio|mrd|tel|str|vgl|bspw|mr|mrs|ms|vs|approx|no|e\.g|i\.e)|\b[A-Za-zÄÖÜäöü])\.$/i;
@@ -60,8 +61,8 @@ export class SentenceSplitter {
 }
 
 const FILLERS: Record<Lang, string[]> = {
-  de: ['Moment, ich schau nach …', 'Einen Augenblick, ich kümmere mich darum.', 'Alles klar, ich bin dran.', 'Gib mir einen Moment …', 'Mach ich – kurz Geduld.', 'Ich seh mir das gleich an.'],
-  en: ['One moment, let me check …', 'Right away – give me a second.', 'On it.', 'Let me look into that …', 'Certainly, just a moment.', 'I’m on it – one moment.'],
+  de: ['Moment, ich schau nach …', 'Einen Augenblick, ich kümmere mich darum.', 'Alles klar, ich bin dran.', 'Gib mir einen Moment …', 'Mach ich – kurz Geduld.', 'Ich seh mir das gleich an.'], // i18n-ignore (the voice speaks in the language it is asked for)
+  en: ['One moment, let me check …', 'Right away – give me a second.', 'On it.', 'Let me look into that …', 'Certainly, just a moment.', 'I’m on it – one moment.'], // i18n-ignore
 };
 let lastFiller = -1;
 
@@ -76,10 +77,11 @@ export function filler(lang: Lang, pick: (n: number) => number = (n) => Math.flo
 
 /** "Erledigt: Rechnung an Anna" / "Das hat nicht geklappt: …" / "Ich brauche deine Bestätigung: …". Pure. */
 export function taskLine(status: 'done' | 'failed' | 'confirm' | 'stopped', label: string, lang: Lang, detail = ''): string {
+  const t = tr('b4agent');
   const L = (de: string, en: string) => (lang === 'en' ? en : de);
   const what = label.length > 80 ? `${label.slice(0, 79)}…` : label;
   if (status === 'done') return L(`Erledigt: ${what}.`, `Done: ${what}.`) + (detail ? ` ${detail}` : '');
-  if (status === 'confirm') return L(`Für „${what}“ brauche ich deine Bestätigung – bitte tippe auf „Ausführen“.`, `“${what}” needs your confirmation – please tap “Run”.`);
+  if (status === 'confirm') return L(t('Für „{what}“ brauche ich deine Bestätigung – bitte tippe auf „Ausführen“.', { what }), `“${what}” needs your confirmation – please tap “Run”.`);
   if (status === 'stopped') return L(`Angehalten: ${what}.`, `Stopped: ${what}.`);
-  return L(`Das hat nicht geklappt: ${what}.`, `That did not work: ${what}.`) + (detail ? ` ${detail}` : '');
+  return L(t('Das hat nicht geklappt: {what}.', { what }), `That did not work: ${what}.`) + (detail ? ` ${detail}` : '');
 }

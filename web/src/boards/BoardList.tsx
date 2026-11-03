@@ -9,29 +9,31 @@ import { Gallery, NewBoard, Starters } from './Templates';
 import { useCatalogue } from './store';
 import type { BoardItem } from './types';
 import { SortableGrid } from '../sortable/Sortable';
+import { useT } from '../i18n';
 
 function Card({ b, catalogue, first }: { b: BoardItem; catalogue: ReturnType<typeof useCatalogue>; first?: boolean }) {
+  const t = useT('b4boards');
   return (
     <Link to={`boards/${b.id}`} className="bd-card-link" tour={first ? 'board-card' : undefined}>
       <span className="bd-card-mini" style={b.accent ? ({ '--bd-accent': b.accent } as React.CSSProperties) : undefined}>
-        {b.preview?.length ? <Mini cells={b.preview} accent={b.accent} catalogue={catalogue} /> : <span className="bd-card-blank">Leer</span>}
+        {b.preview?.length ? <Mini cells={b.preview} accent={b.accent} catalogue={catalogue} /> : <span className="bd-card-blank">{t('Leer')}</span>}
       </span>
       <span className="bd-card-info">
         <b>
           <Icon name={(b.icon || 'boards') as IconName} size={15} /> {b.name}
         </b>
         <span className="bd-card-badges">
-          {b.scope === 'shared' ? <span className="bd-badge tone-blue">Team</span> : <span className="bd-badge">Persönlich</span>}
+          {b.scope === 'shared' ? <span className="bd-badge tone-blue">Team</span> : <span className="bd-badge">{t('Persönlich')}</span>}
           {b.home && (
             <span className="bd-badge tone-green">
-              <Icon name="house" size={11} /> Startseite
+              <Icon name="house" size={11} /> {t('Startseite')}
             </span>
           )}
-          {b.access === 'view' && <span className="bd-badge">Nur Ansicht</span>}
+          {b.access === 'view' && <span className="bd-badge">{t('Nur Ansicht')}</span>}
           {b.viewers.length > 0 && <span className="bd-badge tone-purple">{b.viewers.length} live</span>}
         </span>
         <span className="muted small">
-          {b.widgets} Widgets · {b.mine ? 'von dir' : `von ${b.owner_name || 'unbekannt'}`} · {ago(b.updated_at)}
+          {b.widgets} {t('Widgets ·')} {b.mine ? t('von dir') : t('von {unbekannt}', { unbekannt: b.owner_name || t('unbekannt') })} · {ago(b.updated_at)}
         </span>
       </span>
     </Link>
@@ -40,6 +42,7 @@ function Card({ b, catalogue, first }: { b: BoardItem; catalogue: ReturnType<typ
 
 /** "Boards": your own and the team's, plus the template gallery. */
 export function BoardList({ tab }: { tab: 'boards' | 'vorlagen' }) {
+  const t = useT('b4boards');
   const session = useSession();
   const admin = session.user.role === 'admin';
   const [all, setAll] = useState(false);
@@ -58,16 +61,16 @@ export function BoardList({ tab }: { tab: 'boards' | 'vorlagen' }) {
     <div className="bd-list-page" data-tour="boards-page">
       <PageHead
         title="Boards"
-        sub="Software, die sich an dich anpasst. Nicht andersrum. Setze dir aus Bausteinen deine Arbeitsfläche zusammen – per Ziehen oder per Wunsch."
+        sub={t('Software, die sich an dich anpasst. Nicht andersrum. Setze dir aus Bausteinen deine Arbeitsfläche zusammen – per Ziehen oder per Wunsch.')}
       >
         <button type="button" className="btn" onClick={() => setCreating(true)} data-tour="board-new">
-          <Icon name="plus" size={15} /> Neues Board
+          <Icon name="plus" size={15} /> {t('Neues Board')}
         </button>
       </PageHead>
       <Tabs
         tabs={[
-          ['boards', 'Meine Boards'],
-          ['vorlagen', 'Vorlagen'],
+          ['boards', t('Meine Boards')],
+          ['vorlagen', t('Vorlagen')],
         ]}
         value={tab}
         onChange={(v) => navigate(v === 'boards' ? 'boards' : `boards/${v}`)}
@@ -80,19 +83,19 @@ export function BoardList({ tab }: { tab: 'boards' | 'vorlagen' }) {
           {loading && !data && <Spinner />}
           {none && (
             <div className="bd-hero">
-              <h2>Dein erstes Board</h2>
-              <p className="muted">Starte mit einem fertigen Board – du kannst danach alles verschieben, ergänzen oder per Wunsch umbauen.</p>
+              <h2>{t('Dein erstes Board')}</h2>
+              <p className="muted">{t('Starte mit einem fertigen Board – du kannst danach alles verschieben, ergänzen oder per Wunsch umbauen.')}</p>
               <Starters catalogue={catalogue} />
               <p>
                 <button type="button" className="btn secondary" onClick={() => setCreating(true)}>
-                  Leeres Board anlegen
+                  {t('Leeres Board anlegen')}
                 </button>
               </p>
             </div>
           )}
           {mine.length > 0 && (
             <section className="bd-section">
-              <h3>Meine Boards</h3>
+              <h3>{t('Meine Boards')}</h3>
               <SortableGrid id="boards.mine" className="bd-cards">
                 {mine.map((b, i) => (
                   <Card key={b.id} b={b} catalogue={catalogue} first={i === 0} />
@@ -102,7 +105,7 @@ export function BoardList({ tab }: { tab: 'boards' | 'vorlagen' }) {
           )}
           {team.length > 0 && (
             <section className="bd-section">
-              <h3>Geteilt im Team</h3>
+              <h3>{t('Geteilt im Team')}</h3>
               <SortableGrid id="boards.team" className="bd-cards">
                 {team.map((b) => (
                   <Card key={b.id} b={b} catalogue={catalogue} />
@@ -112,7 +115,7 @@ export function BoardList({ tab }: { tab: 'boards' | 'vorlagen' }) {
           )}
           {others.length > 0 && (
             <section className="bd-section">
-              <h3>Persönliche Boards anderer</h3>
+              <h3>{t('Persönliche Boards anderer')}</h3>
               <SortableGrid id="boards.others" className="bd-cards">
                 {others.map((b) => (
                   <Card key={b.id} b={b} catalogue={catalogue} />
@@ -120,12 +123,12 @@ export function BoardList({ tab }: { tab: 'boards' | 'vorlagen' }) {
               </SortableGrid>
             </section>
           )}
-          {data && data.boards.length > 0 && !mine.length && !team.length && !others.length && <Empty>Keine Boards.</Empty>}
+          {data && data.boards.length > 0 && !mine.length && !team.length && !others.length && <Empty>{t('Keine Boards.')}</Empty>}
           {admin && (
             <div className="bd-admin-row">
-              <Check checked={all} onChange={setAll} label="Als Admin auch die persönlichen Boards anderer zeigen" />
+              <Check checked={all} onChange={setAll} label={t('Als Admin auch die persönlichen Boards anderer zeigen')} />
               <button type="button" className="btn ghost small" onClick={() => setHosts(true)}>
-                <Icon name="monitor" size={14} /> Freigegebene Einbettungs-Adressen
+                <Icon name="monitor" size={14} /> {t('Freigegebene Einbettungs-Adressen')}
               </button>
             </div>
           )}

@@ -19,6 +19,7 @@ import { XrButton } from '../xr/XrButton';
 // Live-Zusammenarbeit: "Mauszeiger anderer zeigen" and following a person (docs/collaboration.md).
 import { CanvasPeople } from '../presence/canvas';
 import { usePresence } from '../presence/store';
+import { useT } from '../i18n';
 
 /**
  * The Canvas editor: an infinite board drawn as SVG (each element rendered by the shared renderer),
@@ -132,6 +133,7 @@ const Scene = memo(function Scene({ tree, byId, cards, editingId, dark, rev, x1,
 });
 
 export function Editor({ store, board: initial, onBack }: { store: BoardStore; board: BoardMeta; onBack: () => void }) {
+  const t = useT('b4canvas');
   const session = useSession();
   const rev = useSyncExternalStore(store.subscribe, store.getRev);
   const [board, setBoard] = useState(initial);
@@ -299,7 +301,7 @@ export function Editor({ store, board: initial, onBack }: { store: BoardStore; b
   useEffect(() => {
     store.onBoard = (b) => setBoard((cur) => ({ ...cur, ...b, access: cur.access }));
     store.onDeleted = () => {
-      toast('Dieses Board wurde gelöscht');
+      toast(t('Dieses Board wurde gelöscht'));
       onBack();
     };
     store.onReload = () => void store.catchUp();
@@ -393,7 +395,7 @@ export function Editor({ store, board: initial, onBack }: { store: BoardStore; b
   const cardOpen = (e: CanvasElement) => {
     const data = store.cards[cardKey(e.card!.kind, e.card!.id)];
     if (data?.url) navigate(data.url);
-    else toast(data?.error ?? 'Datensatz wird geladen …');
+    else toast(data?.error ?? t('Datensatz wird geladen …'));
   };
 
   const editingRef = useRef(editing);
@@ -406,7 +408,7 @@ export function Editor({ store, board: initial, onBack }: { store: BoardStore; b
     setEditing(null);
     const e = byId.get(ed.id);
     if (!e) return;
-    if (e.type === 'frame') return void store.update({ [e.id]: { name: ed.value.trim() || 'Rahmen' } });
+    if (e.type === 'frame') return void store.update({ [e.id]: { name: ed.value.trim() || t('Rahmen') } });
     if (ed.isNew) {
       // a new text/note was added without history: an empty text is dropped, otherwise creation + text are one undo step
       if (e.type === 'text' && !ed.value.trim()) return void store.remove([e.id], { history: false });
@@ -1263,26 +1265,26 @@ export function Editor({ store, board: initial, onBack }: { store: BoardStore; b
     const has = selected.length > 0;
     const items: ([string, () => void, string?] | null)[] = [];
     if (has) {
-      items.push(['Kopieren', () => document.execCommand('copy'), 'Strg C']);
-      if (!readOnly) items.push(['Ausschneiden', () => document.execCommand('cut'), 'Strg X'], ['Duplizieren', () => setSelection(duplicate(store, selection)), 'Strg D'], ['Löschen', deleteSel, 'Entf']);
+      items.push([t('Kopieren'), () => document.execCommand('copy'), t('Strg C')]);
+      if (!readOnly) items.push([t('Ausschneiden'), () => document.execCommand('cut'), t('Strg X')], [t('Duplizieren'), () => setSelection(duplicate(store, selection)), t('Strg D')], [t('Löschen'), deleteSel, t('Entf')]);
       items.push(null);
       if (!readOnly) {
-        items.push(['Ganz nach vorne', () => reorder(store, selection, 'front'), 'Strg ]'], ['Nach vorne', () => reorder(store, selection, 'up'), ']'], ['Nach hinten', () => reorder(store, selection, 'down'), '['], ['Ganz nach hinten', () => reorder(store, selection, 'back'), 'Strg [']);
+        items.push([t('Ganz nach vorne'), () => reorder(store, selection, 'front'), 'Strg ]'], [t('Nach vorne'), () => reorder(store, selection, 'up'), ']'], [t('Nach hinten'), () => reorder(store, selection, 'down'), '['], [t('Ganz nach hinten'), () => reorder(store, selection, 'back'), 'Strg [']);
         items.push(null);
-        if (selected.length > 1) items.push(['Gruppieren', () => group(store, selection), 'Strg G']);
-        if (selected.some((x) => x.groupIds?.length)) items.push(['Gruppierung aufheben', () => ungroup(store, selection), 'Strg ⇧ G']);
-        items.push([selected.every((x) => x.locked) ? 'Entsperren' : 'Sperren', toggleLock, 'Strg L']);
-        if (selected.length > 1) items.push(['Links ausrichten', () => align(store, selection, 'left')], ['Mittig ausrichten', () => align(store, selection, 'hcenter')], ['Oben ausrichten', () => align(store, selection, 'top')]);
-        if (selected.length > 2) items.push(['Horizontal verteilen', () => distribute(store, selection, 'h')], ['Vertikal verteilen', () => distribute(store, selection, 'v')]);
+        if (selected.length > 1) items.push([t('Gruppieren'), () => group(store, selection), t('Strg G')]);
+        if (selected.some((x) => x.groupIds?.length)) items.push([t('Gruppierung aufheben'), () => ungroup(store, selection), 'Strg ⇧ G']);
+        items.push([selected.every((x) => x.locked) ? t('Entsperren') : t('Sperren'), toggleLock, t('Strg L')]);
+        if (selected.length > 1) items.push([t('Links ausrichten'), () => align(store, selection, 'left')], [t('Mittig ausrichten'), () => align(store, selection, 'hcenter')], [t('Oben ausrichten'), () => align(store, selection, 'top')]);
+        if (selected.length > 2) items.push([t('Horizontal verteilen'), () => distribute(store, selection, 'h')], [t('Vertikal verteilen'), () => distribute(store, selection, 'v')]);
         items.push(null);
-        if (selected.some((x) => (x.text ?? '').trim() && x.type !== 'card')) items.push(['Als Aufgabe anlegen', () => convert('task')], ['Als Deal anlegen', () => setDialog({ kind: 'deal', data: { ids: selection } })]);
+        if (selected.some((x) => (x.text ?? '').trim() && x.type !== 'card')) items.push([t('Als Aufgabe anlegen'), () => convert('task')], [t('Als Deal anlegen'), () => setDialog({ kind: 'deal', data: { ids: selection } })]);
       }
-      items.push(['Kommentieren', () => (setCommentAt({ x: menu!.world[0], y: menu!.world[1], elementId: selection[0] }), setPanels((p) => ({ ...p, comments: true })))]);
+      items.push([t('Kommentieren'), () => (setCommentAt({ x: menu!.world[0], y: menu!.world[1], elementId: selection[0] }), setPanels((p) => ({ ...p, comments: true })))]);
       items.push(['Auswahl exportieren …', () => setDialog({ kind: 'export', data: { scope: 'selection' } })]);
-      items.push(['Auswahl einpassen', () => zoomTo(selection), '⇧ 2']);
+      items.push([t('Auswahl einpassen'), () => zoomTo(selection), '⇧ 2']);
     } else {
-      if (!readOnly) items.push(['Einfügen', () => void pasteFromMenu(), 'Strg V'], ['Vorlage einfügen …', () => setDialog({ kind: 'templates' })], ['CRM-Karte einfügen …', () => setDialog({ kind: 'crm' })], ['Bild einfügen …', () => setDialog({ kind: 'media' })], null);
-      items.push(['Alles auswählen', () => setSelection(store.ordered.filter((x) => !x.frameId).map((x) => x.id)), 'Strg A'], ['Alles einpassen', () => zoomTo(), '⇧ 1'], ['Kommentar hier', () => (setCommentAt({ x: menu!.world[0], y: menu!.world[1], elementId: null }), setPanels((p) => ({ ...p, comments: true })))]);
+      if (!readOnly) items.push([t('Einfügen'), () => void pasteFromMenu(), t('Strg V')], [t('Vorlage einfügen …'), () => setDialog({ kind: 'templates' })], [t('CRM-Karte einfügen …'), () => setDialog({ kind: 'crm' })], [t('Bild einfügen …'), () => setDialog({ kind: 'media' })], null);
+      items.push([t('Alles auswählen'), () => setSelection(store.ordered.filter((x) => !x.frameId).map((x) => x.id)), t('Strg A')], [t('Alles einpassen'), () => zoomTo(), '⇧ 1'], [t('Kommentar hier'), () => (setCommentAt({ x: menu!.world[0], y: menu!.world[1], elementId: null }), setPanels((p) => ({ ...p, comments: true })))]);
     }
     return items;
   }
@@ -1300,7 +1302,7 @@ export function Editor({ store, board: initial, onBack }: { store: BoardStore; b
     const ids = selected.filter((x) => (x.text ?? '').trim() && x.type !== 'card').map((x) => x.id);
     if (!ids.length) return;
     await store.flush();
-    const r = await act(() => api.post(`/api/canvas/${board.id}/convert`, { element_ids: ids, to, clientId: store.clientId }), `${ids.length === 1 ? 'Aufgabe' : `${ids.length} Aufgaben`} angelegt – als Live-Karte auf dem Board`);
+    const r = await act(() => api.post(`/api/canvas/${board.id}/convert`, { element_ids: ids, to, clientId: store.clientId }), t('{Aufgaben} angelegt – als Live-Karte auf dem Board', { Aufgaben: ids.length === 1 ? t('Aufgabe') : t('{length} Aufgaben', { length: ids.length }) }));
     if (r) await catchUpCreated();
   };
 
@@ -1311,28 +1313,28 @@ export function Editor({ store, board: initial, onBack }: { store: BoardStore; b
   return (
     <div className={`cv${dark ? ' cv-dark' : ''}`} data-tour="canvas-editor">
       <header className="cv-head" data-tour="canvas-head">
-        <button className="icon-btn" onClick={onBack} aria-label="Zurück zu allen Boards" title="Alle Boards">
+        <button className="icon-btn" onClick={onBack} aria-label={t('Zurück zu allen Boards')} title={t('Alle Boards')}>
           <Icon name="up" style={{ transform: 'rotate(-90deg)' }} />
         </button>
-        <input className="cv-title" value={board.name} readOnly={readOnly} onChange={(e) => setBoard({ ...board, name: e.target.value })} onBlur={() => !readOnly && board.name.trim() && saveBoard({ name: board.name.trim() })} aria-label="Name des Boards" />
-        {readOnly && <span className="badge gray">Nur ansehen</span>}
-        <span className={`cv-status ${store.status}`} title={store.status === 'offline' ? 'Keine Verbindung – Änderungen werden gesendet, sobald sie wieder da ist' : store.status === 'saving' ? 'Speichert …' : 'Gespeichert, live verbunden'}>
-          {store.status === 'offline' ? 'Offline' : store.status === 'saving' ? 'Speichert …' : 'Live'}
+        <input className="cv-title" value={board.name} readOnly={readOnly} onChange={(e) => setBoard({ ...board, name: e.target.value })} onBlur={() => !readOnly && board.name.trim() && saveBoard({ name: board.name.trim() })} aria-label={t('Name des Boards')} />
+        {readOnly && <span className="badge gray">{t('Nur ansehen')}</span>}
+        <span className={`cv-status ${store.status}`} title={store.status === 'offline' ? t('Keine Verbindung – Änderungen werden gesendet, sobald sie wieder da ist') : store.status === 'saving' ? t('Speichert …') : t('Gespeichert, live verbunden')}>
+          {store.status === 'offline' ? t('Offline') : store.status === 'saving' ? t('Speichert …') : t('Live')}
         </span>
         <CanvasPeople people={people} following={following} onFollow={setFollowing} />
         <div className="cv-head-actions">
-          <button className={`btn small secondary${panels.comments ? ' on' : ''}`} onClick={() => setPanels((p) => ({ ...p, comments: !p.comments }))} data-tour="canvas-comments" title="Kommentare">
+          <button className={`btn small secondary${panels.comments ? ' on' : ''}`} onClick={() => setPanels((p) => ({ ...p, comments: !p.comments }))} data-tour="canvas-comments" title={t('Kommentare')}>
             <Icon name="chat" /> <span className="cv-hide-sm">{store.comments.filter((c) => !c.resolved_at && !c.parent_id).length || ''}</span>
           </button>
-          <button className="btn small secondary" onClick={() => setDialog({ kind: 'history' })} title="Versionen" data-tour="canvas-history">
+          <button className="btn small secondary" onClick={() => setDialog({ kind: 'history' })} title={t('Versionen')} data-tour="canvas-history">
             <Icon name="schedule" />
           </button>
           <XrButton kind="canvas" id={board.id} name={board.name} />
-          <button className="btn small secondary" onClick={() => setDialog({ kind: 'export' })} aria-label="Export" data-tour="canvas-export">
-            <Icon name="download" /> <span className="cv-hide-sm">Export</span>
+          <button className="btn small secondary" onClick={() => setDialog({ kind: 'export' })} aria-label={t('Export')} data-tour="canvas-export">
+            <Icon name="download" /> <span className="cv-hide-sm">{t('Export')}</span>
           </button>
-          <button className="btn small" onClick={() => setDialog({ kind: 'share' })} aria-label="Teilen" data-tour="canvas-share">
-            <Icon name="link" /> <span className="cv-hide-sm">Teilen</span>
+          <button className="btn small" onClick={() => setDialog({ kind: 'share' })} aria-label={t('Teilen')} data-tour="canvas-share">
+            <Icon name="link" /> <span className="cv-hide-sm">{t('Teilen')}</span>
           </button>
         </div>
       </header>
@@ -1389,14 +1391,14 @@ export function Editor({ store, board: initial, onBack }: { store: BoardStore; b
         {textEditor}
         {!ordered.length && !readOnly && (
           <div className="cv-empty" data-tour="canvas-empty">
-            <h2>Leeres Board</h2>
-            <p>Zeichne los (Werkzeuge oben), wähle eine Vorlage oder lass die KI etwas zeichnen.</p>
+            <h2>{t('Leeres Board')}</h2>
+            <p>{t('Zeichne los (Werkzeuge oben), wähle eine Vorlage oder lass die KI etwas zeichnen.')}</p>
             <div className="cv-empty-actions">
               <button className="btn" onClick={() => setDialog({ kind: 'templates' })}>
-                Vorlage wählen
+                {t('Vorlage wählen')}
               </button>
               <button className="btn secondary" onClick={() => setAiOpen(true)}>
-                <Icon name="ai" /> KI zeichnen lassen
+                <Icon name="ai" /> {t('KI zeichnen lassen')}
               </button>
             </div>
           </div>
@@ -1404,27 +1406,27 @@ export function Editor({ store, board: initial, onBack }: { store: BoardStore; b
       </div>
       {!readOnly && <Toolbar api={apiObj} />}
       <div className="cv-bottom-left cv-panel" data-tour="canvas-zoom">
-        <button className="icon-btn" onClick={() => store.undo()} disabled={!store.canUndo() || readOnly} title="Rückgängig (Strg Z)" aria-label="Rückgängig">
+        <button className="icon-btn" onClick={() => store.undo()} disabled={!store.canUndo() || readOnly} title={t('Rückgängig (Strg Z)')} aria-label={t('Rückgängig')}>
           <Icon name="undo" />
         </button>
-        <button className="icon-btn" onClick={() => store.redo()} disabled={!store.canRedo() || readOnly} title="Wiederholen (Strg Y)" aria-label="Wiederholen">
+        <button className="icon-btn" onClick={() => store.redo()} disabled={!store.canRedo() || readOnly} title={t('Wiederholen (Strg Y)')} aria-label={t('Wiederholen')}>
           <Icon name="redo" />
         </button>
         <span className="cv-sep" />
-        <button className="icon-btn" onClick={() => zoomAt(1 / 1.25, size.w / 2, size.h / 2)} aria-label="Verkleinern">
+        <button className="icon-btn" onClick={() => zoomAt(1 / 1.25, size.w / 2, size.h / 2)} aria-label={t('Verkleinern')}>
           −
         </button>
-        <button className="cv-zoom" onClick={() => zoomTo()} title="Alles einpassen (⇧ 1)">
+        <button className="cv-zoom" onClick={() => zoomTo()} title={t('Alles einpassen (⇧ 1)')}>
           {Math.round(view.z * 100)} %
         </button>
-        <button className="icon-btn" onClick={() => zoomAt(1.25, size.w / 2, size.h / 2)} aria-label="Vergrößern">
+        <button className="icon-btn" onClick={() => zoomAt(1.25, size.w / 2, size.h / 2)} aria-label={t('Vergrößern')}>
           +
         </button>
         <span className="cv-sep" />
-        <button className={`icon-btn${panels.layers ? ' on' : ''}`} onClick={() => setPanels((p) => ({ ...p, layers: !p.layers }))} title="Ebenen" aria-label="Ebenen" data-tour="canvas-layers">
+        <button className={`icon-btn${panels.layers ? ' on' : ''}`} onClick={() => setPanels((p) => ({ ...p, layers: !p.layers }))} title={t('Ebenen')} aria-label={t('Ebenen')} data-tour="canvas-layers">
           <Icon name="layers" />
         </button>
-        <button className={`icon-btn cv-hide-sm${panels.minimap ? ' on' : ''}`} onClick={() => setPanels((p) => ({ ...p, minimap: !p.minimap }))} title="Übersichtskarte" aria-label="Übersichtskarte">
+        <button className={`icon-btn cv-hide-sm${panels.minimap ? ' on' : ''}`} onClick={() => setPanels((p) => ({ ...p, minimap: !p.minimap }))} title={t('Übersichtskarte')} aria-label={t('Übersichtskarte')}>
           <Icon name="grid" />
         </button>
       </div>

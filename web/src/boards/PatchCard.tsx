@@ -3,6 +3,7 @@ import { Icon, type IconName } from '../icons';
 import { openBuild } from '../werkstatt/shared';
 import { Mini, cellsOfSpec } from './Mini';
 import type { BoardFull, Catalogue, Change, ComposeResult } from './types';
+import { useT } from '../i18n';
 
 const KIND: Record<Change['kind'], IconName> = { add: 'plus', remove: 'trash', move: 'move', resize: 'columns', configure: 'toggles', rename: 'edit', theme: 'palette' };
 
@@ -14,6 +15,7 @@ const RISK: Record<string, { text: string; cls: string }> = {
 
 /** What the board would look like and what exactly changes – the person confirms or throws it away. Esc discards. */
 export function PatchCard({ result, board, catalogue, busy, onApply, onReject }: { result: ComposeResult; board: BoardFull; catalogue: Catalogue | null; busy: boolean; onApply: () => void; onReject: () => void }) {
+  const t = useT('b4boards');
   const p = result.proposal;
   const ref = useRef<HTMLDivElement>(null);
   const live = useRef({ busy, onReject });
@@ -32,8 +34,8 @@ export function PatchCard({ result, board, catalogue, busy, onApply, onReject }:
   const unsupported = result.unsupported ?? p?.unsupported ?? [];
   const risk = p ? RISK[p.risk] : null;
   return (
-    <div ref={ref} className="bd-patch" role="group" aria-label="Vorschlag für dein Board" data-tour="board-patch">
-      <button type="button" className="icon-btn bd-patch-x" onClick={onReject} aria-label="Vorschlag verwerfen" disabled={busy}>
+    <div ref={ref} className="bd-patch" role="group" aria-label={t('Vorschlag für dein Board')} data-tour="board-patch">
+      <button type="button" className="icon-btn bd-patch-x" onClick={onReject} aria-label={t('Vorschlag verwerfen')} disabled={busy}>
         ✕
       </button>
       {result.message && (
@@ -55,22 +57,22 @@ export function PatchCard({ result, board, catalogue, busy, onApply, onReject }:
             <div className="bd-diff" aria-hidden="true">
               <figure>
                 <Mini cells={cellsOfSpec(board.spec.widgets)} accent={board.accent} catalogue={catalogue} />
-                <figcaption>Jetzt</figcaption>
+                <figcaption>{t('Jetzt')}</figcaption>
               </figure>
               <span className="bd-diff-arrow">→</span>
               <figure>
                 <Mini cells={cellsOfSpec(after)} accent={p?.after?.accent || board.accent} catalogue={catalogue} highlight={hot} />
-                <figcaption>Danach</figcaption>
+                <figcaption>{t('Danach')}</figcaption>
               </figure>
             </div>
           )}
         </div>
       )}
-      {risk && <p className={`bd-risk ${risk.cls}`}>{risk.text}</p>}
-      {stale && <p className="bd-risk normal">Das Board wurde inzwischen geändert. Die Änderung wird auf den aktuellen Stand angewendet.</p>}
+      {risk && <p className={`bd-risk ${risk.cls}`}>{t(risk.text)}</p>}
+      {stale && <p className="bd-risk normal">{t('Das Board wurde inzwischen geändert. Die Änderung wird auf den aktuellen Stand angewendet.')}</p>}
       {unsupported.length > 0 && (
         <div className="bd-callout">
-          <b>Dafür gibt es noch kein Widget:</b>
+          <b>{t('Dafür gibt es noch kein Widget:')}</b>
           <ul>
             {unsupported.map((u, i) => (
               <li key={i}>
@@ -79,8 +81,8 @@ export function PatchCard({ result, board, catalogue, busy, onApply, onReject }:
               </li>
             ))}
           </ul>
-          <button type="button" className="btn secondary small" onClick={() => openBuild({ title: `Board-Widget: ${unsupported[0].need.slice(0, 60)}`, text: `Für Living Boards fehlt mir ein Widget: ${unsupported.map((u) => `${u.need}${u.reason ? ` (${u.reason})` : ''}`).join('; ')}` })}>
-            <Icon name="hammer" size={14} /> In der Werkstatt bauen lassen
+          <button type="button" className="btn secondary small" onClick={() => openBuild({ title: `Board-Widget: ${unsupported[0].need.slice(0, 60)}`, text: t('Für Living Boards fehlt mir ein Widget: {join}', { join: unsupported.map((u) => `${u.need}${u.reason ? ` (${u.reason})` : ''}`).join('; ') }) })}>
+            <Icon name="hammer" size={14} /> {t('In der Werkstatt bauen lassen')}
           </button>
         </div>
       )}
@@ -94,12 +96,12 @@ export function PatchCard({ result, board, catalogue, busy, onApply, onReject }:
       {p && p.status === 'pending' && (
         <div className="bd-patch-actions">
           <button type="button" className="btn" onClick={onApply} disabled={busy} data-tour="board-patch-apply">
-            <Icon name="check" size={15} /> Übernehmen
+            <Icon name="check" size={15} /> {t('Übernehmen')}
           </button>
           <button type="button" className="btn secondary" onClick={onReject} disabled={busy}>
-            Verwerfen
+            {t('Verwerfen')}
           </button>
-          <span className="muted small">Jede Änderung wird eine Version – du kannst sie sofort rückgängig machen.</span>
+          <span className="muted small">{t('Jede Änderung wird eine Version – du kannst sie sofort rückgängig machen.')}</span>
         </div>
       )}
     </div>

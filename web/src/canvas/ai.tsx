@@ -3,6 +3,7 @@ import { api } from '../api';
 import { act, toast } from '../ui';
 import { Icon } from '../icons';
 import type { EditorApi } from './Editor';
+import { useT } from '../i18n';
 
 /** „KI zeichnen lassen“: prompt → diagram/mind map/wireframe; with a selection: explain, tasks, tidy up. */
 
@@ -18,6 +19,7 @@ const KINDS: [string, string][] = [
 const IDEAS = ['Vertriebsprozess vom Lead bis zum Abschluss', 'Mindmap: Marketing-Ideen für den Herbst', 'Wireframe einer Landingpage für ein Webinar', 'Onboarding neuer Kunden als Flussdiagramm', 'Organigramm einer kleinen Agentur'];
 
 export function AiBar({ api: ed, open, setOpen }: { api: EditorApi; open: boolean; setOpen: (v: boolean) => void }) {
+  const t = useT('b4canvas');
   const [prompt, setPrompt] = useState('');
   const [kind, setKind] = useState('auto');
   const [busy, setBusy] = useState('');
@@ -25,7 +27,7 @@ export function AiBar({ api: ed, open, setOpen }: { api: EditorApi; open: boolea
   const sel = ed.selection;
   const run = async (mode: 'draw' | 'explain' | 'tasks' | 'tidy') => {
     if (mode === 'draw' && !prompt.trim()) return;
-    setBusy(mode === 'draw' ? 'KI zeichnet …' : mode === 'explain' ? 'KI liest …' : mode === 'tasks' ? 'KI legt Aufgaben an …' : 'Räumt auf …');
+    setBusy(mode === 'draw' ? 'KI zeichnet …' : mode === 'explain' ? 'KI liest …' : mode === 'tasks' ? 'KI legt Aufgaben an …' : t('Räumt auf …'));
     await ed.store.flush();
     const r = await act(() => api.post(`/api/canvas/${ed.board.id}/ai`, { mode, prompt: prompt.trim() || undefined, kind, ids: sel, clientId: ed.store.clientId, sketch: !!ed.defaults.sketch }));
     setBusy('');
@@ -42,7 +44,7 @@ export function AiBar({ api: ed, open, setOpen }: { api: EditorApi; open: boolea
     <div className={`cv-ai cv-panel${open ? ' open' : ''}`} data-tour="canvas-ai">
       {!open ? (
         <button className="cv-ai-btn" onClick={() => setOpen(true)}>
-          <Icon name="ai" /> KI zeichnen lassen
+          <Icon name="ai" /> {t('KI zeichnen lassen')}
         </button>
       ) : (
         <>
@@ -51,7 +53,7 @@ export function AiBar({ api: ed, open, setOpen }: { api: EditorApi; open: boolea
             <input
               autoFocus
               value={prompt}
-              placeholder={sel.length ? 'Was soll mit der Auswahl passieren? Oder neu zeichnen …' : 'Was soll ich zeichnen? z. B. „Kundenreise für unseren Onlinekurs“'}
+              placeholder={sel.length ? t('Was soll mit der Auswahl passieren? Oder neu zeichnen …') : t('Was soll ich zeichnen? z. B. „Kundenreise für unseren Onlinekurs“')}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => {
                 e.stopPropagation();
@@ -61,43 +63,43 @@ export function AiBar({ api: ed, open, setOpen }: { api: EditorApi; open: boolea
               disabled={!!busy}
               data-tour="canvas-ai-input"
             />
-            <select value={kind} onChange={(e) => setKind(e.target.value)} aria-label="Art" disabled={!!busy}>
+            <select value={kind} onChange={(e) => setKind(e.target.value)} aria-label={t('Art')} disabled={!!busy}>
               {KINDS.map(([k, l]) => (
                 <option key={k} value={k}>
-                  {l}
+                  {t(l)}
                 </option>
               ))}
             </select>
             <button className="btn small" onClick={() => void run('draw')} disabled={!!busy || !prompt.trim()}>
-              {busy || 'Zeichnen'}
+              {busy || t('Zeichnen')}
             </button>
-            <button className="icon-btn" onClick={() => setOpen(false)} aria-label="Schließen">
+            <button className="icon-btn" onClick={() => setOpen(false)} aria-label={t('Schließen')}>
               ✕
             </button>
           </div>
           <div className="cv-ai-chips">
             {sel.length > 0 ? (
               <>
-                <span className="muted small">{sel.length} ausgewählt:</span>
+                <span className="muted small">{sel.length} {t('ausgewählt:')}</span>
                 <button className="cv-chip" onClick={() => void run('explain')} disabled={!!busy}>
-                  Auswahl erklären
+                  {t('Auswahl erklären')}
                 </button>
                 <button className="cv-chip" onClick={() => void run('tasks')} disabled={!!busy}>
-                  In Aufgaben verwandeln
+                  {t('In Aufgaben verwandeln')}
                 </button>
                 <button className="cv-chip" onClick={() => void run('tidy')} disabled={!!busy}>
-                  Layout aufräumen
+                  {t('Layout aufräumen')}
                 </button>
               </>
             ) : (
               <>
                 {IDEAS.slice(0, 3).map((i) => (
-                  <button key={i} className="cv-chip" onClick={() => setPrompt(i)} disabled={!!busy}>
-                    {i}
+                  <button key={i} className="cv-chip" onClick={() => setPrompt(t(i))} disabled={!!busy}>
+                    {t(i)}
                   </button>
                 ))}
-                <button className="cv-chip" onClick={() => void run('tidy')} disabled={!!busy} title="Ordnet verbundene Formen automatisch an">
-                  Layout aufräumen
+                <button className="cv-chip" onClick={() => void run('tidy')} disabled={!!busy} title={t('Ordnet verbundene Formen automatisch an')}>
+                  {t('Layout aufräumen')}
                 </button>
               </>
             )}

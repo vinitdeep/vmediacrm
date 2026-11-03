@@ -3,6 +3,7 @@ import { ago, api, euro, name } from '../api';
 import { StatusDot, useOpenProject, useProjects } from '../nav';
 import { useSession } from '../session';
 import { Empty, Input, navigate, pressable, Select, Spinner, Tabs, useLoad } from '../ui';
+import { useT } from '../i18n';
 
 /** Agency-wide views: every contact and every deal of every project, one click into the project. */
 
@@ -16,6 +17,7 @@ function useDebounced(v: string, ms = 250) {
 }
 
 export function AllContacts() {
+  const t = useT('b4agency');
   const projects = useProjects();
   const open = useOpenProject();
   const [q, setQ] = useState('');
@@ -27,26 +29,26 @@ export function AllContacts() {
     <>
       <div className="row" style={{ marginBottom: 12 }}>
         <div className="grow" style={{ maxWidth: 420 }}>
-          <Input value={q} onChange={setQ} placeholder="Name, E-Mail, Firma, Telefon…" />
+          <Input value={q} onChange={setQ} placeholder={t('Name, E-Mail, Firma, Telefon…')} />
         </div>
         <div style={{ width: 260 }}>
-          <Select value={loc} onChange={setLoc} placeholder="Alle Projekte" options={projects.filter((p) => p.stats?.contacts).map((p) => [p.id, `${p.name} (${p.stats!.contacts})`])} />
+          <Select value={loc} onChange={setLoc} placeholder={t('Alle Projekte')} options={projects.filter((p) => p.stats?.contacts).map((p) => [p.id, `${p.name} (${p.stats!.contacts})`])} />
         </div>
       </div>
       {!data.data ? (
         <Spinner />
       ) : data.data.contacts.length ? (
         <>
-          <p className="muted small">{data.data.total} Kontakte{data.data.total > data.data.contacts.length ? `, die ${data.data.contacts.length} zuletzt aktiven` : ''}</p>
+          <p className="muted small">{data.data.total} {t('Kontakte')}{data.data.total > data.data.contacts.length ? t(', die {length} zuletzt aktiven', { length: data.data.contacts.length }) : ''}</p>
           <div className="table-wrap">
             <table className="t">
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>E-Mail / Telefon</th>
-                  <th>Projekt</th>
-                  <th>Deals</th>
-                  <th>Aktiv</th>
+                  <th>{t('E-Mail / Telefon')}</th>
+                  <th>{t('Projekt')}</th>
+                  <th>{t('Deals')}</th>
+                  <th>{t('Aktiv')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -73,13 +75,14 @@ export function AllContacts() {
           </div>
         </>
       ) : (
-        <Empty>Keine Kontakte gefunden.</Empty>
+        <Empty>{t('Keine Kontakte gefunden.')}</Empty>
       )}
     </>
   );
 }
 
 export function AllDeals() {
+  const t = useT('b4agency');
   const projects = useProjects();
   const open = useOpenProject();
   const [status, setStatus] = useState('open');
@@ -94,22 +97,22 @@ export function AllDeals() {
       <div className="row" style={{ marginBottom: 4, alignItems: 'center' }}>
         <Tabs
           tabs={[
-            ['open', 'Offen'],
-            ['won', 'Gewonnen'],
-            ['lost', 'Verloren'],
-            ['all', 'Alle'],
+            ['open', t('Offen')],
+            ['won', t('Gewonnen')],
+            ['lost', t('Verloren')],
+            ['all', t('Alle')],
           ]}
           value={status}
           onChange={setStatus}
         />
         <div className="grow" style={{ maxWidth: 360 }}>
-          <Input value={q} onChange={setQ} placeholder="Deal, E-Mail, Firma…" />
+          <Input value={q} onChange={setQ} placeholder={t('Deal, E-Mail, Firma…')} />
         </div>
       </div>
       {!data.data ? (
         <Spinner />
       ) : !data.data.length ? (
-        <Empty>Keine Deals.</Empty>
+        <Empty>{t('Keine Deals.')}</Empty>
       ) : (
         [...groups.entries()].map(([locId, list]) => {
           const stages = new Map<string, number>();
@@ -119,7 +122,7 @@ export function AllDeals() {
               <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <h3 className="linkish" onClick={() => open(locId, 'opportunities')}>
                   <StatusDot status={pStatus[locId] ?? ''} />
-                  {list[0].project} <span className="muted small">· {list.length} Deals · {euro(list.reduce((s, o) => s + o.value, 0))}</span>
+                  {list[0].project} <span className="muted small">· {list.length} {t('Deals ·')} {euro(list.reduce((s, o) => s + o.value, 0))}</span>
                 </h3>
                 <span className="muted small">{[...stages.entries()].map(([k, n]) => `${k}: ${n}`).join(' · ')}</span>
               </div>
@@ -136,7 +139,7 @@ export function AllDeals() {
                 ))}
                 {list.length > 12 && (
                   <a href="#" className="small" onClick={(e) => (e.preventDefault(), open(locId, 'opportunities'))}>
-                    + {list.length - 12} weitere in der Pipeline
+                    + {list.length - 12} {t('weitere in der Pipeline')}
                   </a>
                 )}
               </div>
@@ -150,6 +153,7 @@ export function AllDeals() {
 
 /** Shown in an empty project: where the data actually is, one click away. */
 export function ElsewhereHint({ kind }: { kind: 'contacts' | 'opportunities' }) {
+  const t = useT('b4agency');
   const session = useSession();
   const projects = useProjects();
   const open = useOpenProject();
@@ -161,7 +165,7 @@ export function ElsewhereHint({ kind }: { kind: 'contacts' | 'opportunities' }) 
   return (
     <div className="card elsewhere">
       <strong>
-        {kind === 'contacts' ? `${total} Kontakte` : `${total} offene Deals`} liegen in deinen anderen Projekten:
+        {kind === 'contacts' ? t('{total} Kontakte', { total }) : t('{total} offene Deals', { total })} {t('liegen in deinen anderen Projekten:')}
       </strong>
       <div className="chips">
         {others.map((p) => (
@@ -172,7 +176,7 @@ export function ElsewhereHint({ kind }: { kind: 'contacts' | 'opportunities' }) 
         ))}
       </div>
       <a href="#" className="small" onClick={(e) => (e.preventDefault(), navigate(kind === 'contacts' ? 'agency/contacts' : 'agency/deals'))}>
-        {kind === 'contacts' ? 'Alle Kontakte' : 'Alle Deals'} auf einen Blick →
+        {kind === 'contacts' ? t('Alle Kontakte') : t('Alle Deals')} {t('auf einen Blick →')}
       </a>
     </div>
   );

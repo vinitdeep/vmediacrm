@@ -10,7 +10,7 @@ import { AgentMarkdown } from './markdown';
 import { fileToBase64, streamPost, type AgentEvent } from './stream';
 import { canRecord, micError, onPlaying, speak, speakableText, startRecording, stopSpeaking, transcribe, type RecordingHandle } from './voice';
 import './agent.css';
-import { useT } from '../i18n';
+import { useT, tr } from '../i18n';
 
 /**
  * The V Media CRM Agent on every page: a right drawer (full screen on phones and on demand), opened with
@@ -84,6 +84,7 @@ const store = {
 
 /** Applies one streamed event to the chat items (same shape the server sends for a reload). */
 export function applyEvent(items: Item[], e: AgentEvent): Item[] {
+  const tt = tr('b4agent');
   if (!['text', 'tool', 'tool_result'].includes(e.type)) return items;
   const out = items.slice();
   let last = out[out.length - 1];
@@ -115,18 +116,19 @@ export function applyEvent(items: Item[], e: AgentEvent): Item[] {
       found = true;
       blocks[i] = { kind: 'tools', tools: b.tools.map((t) => (t.id === e.id ? { ...t, status: e.status, links: e.links ?? t.links, preview: e.preview ?? t.preview, error: e.error ?? t.error, undo: e.undo ?? t.undo } : t)) };
     }
-    if (!found && e.status) blocks.push({ kind: 'tools', tools: [{ id: e.id, name: e.name ?? 'werkzeug', title: e.name ?? 'Werkzeug', status: e.status, error: e.error, links: e.links, preview: e.preview, undo: e.undo }] });
+    if (!found && e.status) blocks.push({ kind: 'tools', tools: [{ id: e.id, name: e.name ?? 'werkzeug', title: e.name ?? tt('Werkzeug'), status: e.status, error: e.error, links: e.links, preview: e.preview, undo: e.undo }] });
   }
   out[out.length - 1] = { role: 'assistant', blocks };
   return out;
 }
 
 function StatusIcon({ status }: { status: string }) {
-  if (status === 'running') return <LoaderCircle size={15} className="agent-spin" aria-label="läuft" />;
-  if (status === 'ok') return <Check size={15} aria-label="erledigt" />;
-  if (status === 'blocked') return <Lock size={15} aria-label="gesperrt" />;
-  if (status === 'deferred' || status === 'pending') return <Clock size={15} aria-label="wartet" />;
-  return <CircleX size={15} aria-label="nicht ausgeführt" />;
+  const tt = useT('b4agent');
+  if (status === 'running') return <LoaderCircle size={15} className="agent-spin" aria-label={tt('läuft')} />;
+  if (status === 'ok') return <Check size={15} aria-label={tt('erledigt')} />;
+  if (status === 'blocked') return <Lock size={15} aria-label={tt('gesperrt')} />;
+  if (status === 'deferred' || status === 'pending') return <Clock size={15} aria-label={tt('wartet')} />;
+  return <CircleX size={15} aria-label={tt('nicht ausgeführt')} />;
 }
 
 const STATUS_TEXT: Record<string, string> = { running: 'läuft …', ok: 'erledigt', error: 'Fehler', blocked: 'gesperrt (Nur lesen)', rejected: 'abgelehnt', deferred: 'zur Freigabe', pending: 'offen' };
@@ -142,6 +144,7 @@ function argSummary(args?: Record<string, unknown>) {
 }
 
 export function ToolCardView({ t, onNavigate }: { t: ToolCard; onNavigate: (to: string) => void }) {
+  const tt = useT('b4agent');
   const [openDetail, setOpenDetail] = useState(false);
   return (
     <div className={`agent-tool s-${t.status}`} data-tour="agent-tool">
@@ -150,7 +153,7 @@ export function ToolCardView({ t, onNavigate }: { t: ToolCard; onNavigate: (to: 
           <StatusIcon status={t.status} />
         </span>
         <span className="agent-tool-title">{t.title}</span>
-        <span className="agent-tool-sum">{t.error && t.status !== 'ok' ? t.error : argSummary(t.args) || STATUS_TEXT[t.status]}</span>
+        <span className="agent-tool-sum">{t.error && t.status !== 'ok' ? t.error : argSummary(t.args) || (STATUS_TEXT[t.status] ? tt(STATUS_TEXT[t.status]) : '')}</span>
         {openDetail ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
       </button>
       {!!t.links?.length && (
@@ -165,8 +168,8 @@ export function ToolCardView({ t, onNavigate }: { t: ToolCard; onNavigate: (to: 
       {!!t.undo?.length && (
         <div className="agent-tool-links" data-tour="agent-undo">
           {t.undo.map((u) => (
-            <button key={u.id} className="btn small secondary" style={{ minHeight: 'var(--undo-hit, 44px)' }} title={u.label} aria-label={`Rückgängig: ${u.label}`} onClick={() => window.dispatchEvent(new CustomEvent('pghl:undo-do', { detail: { id: u.id } }))}>
-              <Undo2 size={14} /> Rückgängig
+            <button key={u.id} className="btn small secondary" style={{ minHeight: 'var(--undo-hit, 44px)' }} title={u.label} aria-label={tt('Rückgängig: {label}', { label: u.label })} onClick={() => window.dispatchEvent(new CustomEvent('pghl:undo-do', { detail: { id: u.id } }))}>
+              <Undo2 size={14} /> {tt('Rückgängig')}
             </button>
           ))}
           {t.undo[0]?.notice && <span className="muted small">{t.undo[0].notice}</span>}
@@ -176,17 +179,17 @@ export function ToolCardView({ t, onNavigate }: { t: ToolCard; onNavigate: (to: 
       {openDetail && (
         <div className="agent-tool-detail">
           <div className="muted small">
-            {t.name} · {STATUS_TEXT[t.status] ?? t.status}
+            {t.name} · {tt(STATUS_TEXT[t.status] ?? t.status)}
           </div>
           {t.args && (
             <>
-              <div className="agent-label">Eingaben</div>
+              <div className="agent-label">{tt('Eingaben')}</div>
               <pre>{JSON.stringify(t.args, null, 2)}</pre>
             </>
           )}
           {(t.preview || t.error) && (
             <>
-              <div className="agent-label">Ergebnis</div>
+              <div className="agent-label">{tt('Ergebnis')}</div>
               <pre>{prettyResult(t.preview || t.error || '')}</pre>
             </>
           )}
@@ -205,16 +208,17 @@ function prettyResult(s: string) {
 }
 
 export function ConfirmCard({ c, onDecide, busy }: { c: Confirm; onDecide: (approve: boolean) => void; busy: boolean }) {
+  const tt = useT('b4agent');
   const sensitive = c.klass === 'sensitive';
   return (
-    <div className={`agent-confirm${sensitive ? ' sensitive' : ''}`} data-tour="agent-confirm" role="group" aria-label="Bestätigung">
+    <div className={`agent-confirm${sensitive ? ' sensitive' : ''}`} data-tour="agent-confirm" role="group" aria-label={tt('Bestätigung')}>
       <div className="agent-confirm-head">
-        <ShieldAlert size={16} /> {sensitive ? 'Geht nach außen oder ist nicht rückgängig zu machen – bitte prüfen' : 'Änderung – bitte bestätigen'}
+        <ShieldAlert size={16} /> {sensitive ? tt('Geht nach außen oder ist nicht rückgängig zu machen – bitte prüfen') : tt('Änderung – bitte bestätigen')}
       </div>
       <div className="agent-confirm-title">{c.title}</div>
       {c.target && (
         <div className="small">
-          Empfänger: <strong>{c.target}</strong>
+          {tt('Empfänger:')} <strong>{c.target}</strong>
         </div>
       )}
       <dl className="agent-args">
@@ -229,10 +233,10 @@ export function ConfirmCard({ c, onDecide, busy }: { c: Confirm; onDecide: (appr
       </dl>
       <div className="row">
         <button className="btn" disabled={busy && !c.bridge} onClick={() => onDecide(true)} data-tour="agent-approve">
-          <Check size={15} /> Ausführen
+          <Check size={15} /> {tt('Ausführen')}
         </button>
         <button className="btn secondary" onClick={() => onDecide(false)}>
-          Ablehnen
+          {tt('Ablehnen')}
         </button>
       </div>
     </div>
@@ -262,6 +266,7 @@ interface SpeechLike {
 }
 
 export function AgentPanel() {
+  const tt = useT('b4agent');
   const session = useSession();
   const route = useRoute();
   const routeStr = useMemo(() => currentRoute(), [route.join('/'), typeof location !== 'undefined' ? location.search : '']);
@@ -355,17 +360,17 @@ export function AgentPanel() {
   const onEvent = useCallback((e: AgentEvent) => {
     if (e.type === 'start') {
       if (e.conversation_id) setConvId(e.conversation_id);
-      if (e.bridge) setStatus('Bridge: wird gestartet …');
+      if (e.bridge) setStatus(tt('Bridge: wird gestartet …'));
     } else if (e.type === 'confirm') setConfirm(e as unknown as Confirm);
     else if (e.type === 'navigate' && typeof e.to === 'string') {
       navigate(e.to);
-      toast(`Geöffnet: ${e.label || e.to}`);
+      toast(tt('Geöffnet: {to}', { to: e.label || e.to }));
     } else if (e.type === 'error') setError(String(e.message ?? 'Fehler'));
-    else if (e.type === 'bridge') setStatus(e.status === 'queued' ? `Bridge: wartet auf ${e.device ?? 'deinen Rechner'} …` : e.status === 'running' ? `Bridge: läuft auf ${e.device ?? 'deinem Rechner'} (dein Abo)` : String(e.text ?? ''));
+    else if (e.type === 'bridge') setStatus(e.status === 'queued' ? tt('Bridge: wartet auf {Rechner} …', { Rechner: e.device ?? tt('deinen Rechner') }) : e.status === 'running' ? tt('Bridge: läuft auf {Rechner} (dein Abo)', { Rechner: e.device ?? 'deinem Rechner' }) : String(e.text ?? ''));
     else if (e.type === 'step') setStatus('');
     else if (e.type === 'done') {
       setStatus('');
-      if (e.status === 'stopped') setError('Gestoppt.');
+      if (e.status === 'stopped') setError(tt('Gestoppt.'));
     }
     setItems((prev) => applyEvent(prev, e));
   }, []);
@@ -434,7 +439,7 @@ export function AgentPanel() {
       const blob = await h.stop();
       if (!blob) return;
       const text = (await transcribe(blob)).text.trim();
-      if (!text) return setError('Ich habe nichts verstanden – bitte noch einmal sprechen.');
+      if (!text) return setError(tt('Ich habe nichts verstanden – bitte noch einmal sprechen.'));
       // The text lands in the box first (editable); with auto-send it goes out as it is. Confirmations stay manual.
       if (autoSend) void send(`${input.trim()} ${text}`.trim());
       else {
@@ -530,13 +535,13 @@ export function AgentPanel() {
     try {
       for (const f of Array.from(list).slice(0, 6)) {
         if (f.size > 8 * 1024 * 1024) {
-          setError(`${f.name}: höchstens 8 MB`);
+          setError(tt('{name}: höchstens 8 MB', { name: f.name }));
           continue;
         }
         const r = await api.post('/api/agent/files', { name: f.name, mime: f.type, data: await fileToBase64(f) });
         setFiles((prev) => [...prev, { id: r.id, name: r.name, mime: r.mime, image: r.image }]);
         const model = modelId ? (boot?.models ?? []).find((m: any) => m.id === modelId) : boot?.connection;
-        if (r.image && model && !model.vision) toast('Hinweis: Das gewählte Modell kann keine Bilder sehen.');
+        if (r.image && model && !model.vision) toast(tt('Hinweis: Das gewählte Modell kann keine Bilder sehen.'));
       }
     } catch (e) {
       setError((e as Error).message);
@@ -615,7 +620,7 @@ export function AgentPanel() {
     if (modelId === 'bridge') return 'Mein Abo (Bridge)';
     const m = (boot?.models ?? []).find((x: any) => x.id === modelId);
     if (m) return `${m.label}${m.model ? ` · ${m.model}` : ''}`;
-    return boot?.connection ? `${boot.connection.label} · ${boot.connection.model}` : 'kein Modell';
+    return boot?.connection ? `${boot.connection.label} · ${boot.connection.model}` : tt('kein Modell');
   })();
 
   if (!open) return null;
@@ -625,14 +630,14 @@ export function AgentPanel() {
   };
 
   return (
-    <aside className={`agent-panel${full ? ' full' : ''}`} data-tour="agent-panel" aria-label="KI-Agent">
+    <aside className={`agent-panel${full ? ' full' : ''}`} data-tour="agent-panel" aria-label={tt('KI-Agent')}>
       <header className="agent-head">
         <div className="agent-who">
           <span className="agent-avatar" style={agent?.color ? { background: agent.color } : undefined}>
             {agent?.emoji ?? '✨'}
           </span>
-          <select className="agent-select" value={agentId ?? ''} onChange={(e) => pickAgent(e.target.value)} aria-label="Agent wählen" data-tour="agent-switch">
-            <option value="">{boot?.default_agent?.name ?? 'V Media CRM Agent'}</option>
+          <select className="agent-select" value={agentId ?? ''} onChange={(e) => pickAgent(e.target.value)} aria-label={tt('Agent wählen')} data-tour="agent-switch">
+            <option value="">{boot?.default_agent?.name ?? tt('V Media CRM Agent')}</option>
             {agents.map((a) => (
               <option key={a.id} value={a.id}>
                 {a.emoji} {a.name}
@@ -641,47 +646,47 @@ export function AgentPanel() {
           </select>
         </div>
         <div className="agent-head-actions">
-          <button className="icon-btn" title="Verlauf" aria-label="Verlauf" onClick={() => setView(view === 'history' ? 'chat' : 'history')}>
+          <button className="icon-btn" title={tt('Verlauf')} aria-label={tt('Verlauf')} onClick={() => setView(view === 'history' ? 'chat' : 'history')}>
             <History size={17} />
           </button>
-          <button className="icon-btn" title="Neuer Chat" aria-label="Neuer Chat" onClick={reset}>
+          <button className="icon-btn" title={tt('Neuer Chat')} aria-label={tt('Neuer Chat')} onClick={reset}>
             <Plus size={17} />
           </button>
-          <button className="icon-btn agent-full-btn" title={full ? 'Verkleinern' : 'Vollbild'} aria-label={full ? 'Verkleinern' : 'Vollbild'} onClick={() => setFull(!full)}>
+          <button className="icon-btn agent-full-btn" title={full ? tt('Verkleinern') : tt('Vollbild')} aria-label={full ? tt('Verkleinern') : tt('Vollbild')} onClick={() => setFull(!full)}>
             {full ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
           </button>
-          <button className="icon-btn" title="Schließen (Esc)" aria-label="Schließen" onClick={() => setOpen(false)}>
+          <button className="icon-btn" title={tt('Schließen (Esc)')} aria-label={tt('Schließen')} onClick={() => setOpen(false)}>
             <X size={18} />
           </button>
         </div>
       </header>
       <div className="agent-subhead">
-        <label className="agent-model" title="Modell für diesen Chat" data-tour="agent-model">
-          <select value={modelId} onChange={(e) => setModelId(e.target.value)} aria-label="Modell wählen">
-            <option value="">Standard{boot?.connection ? ` (${boot.connection.label} · ${boot.connection.model})` : ''}</option>
+        <label className="agent-model" title={tt('Modell für diesen Chat')} data-tour="agent-model">
+          <select value={modelId} onChange={(e) => setModelId(e.target.value)} aria-label={tt('Modell wählen')}>
+            <option value="">{tt('Standard')}{boot?.connection ? ` (${boot.connection.label} · ${boot.connection.model})` : ''}</option>
             {(boot?.models ?? []).map((m: any) => (
               <option key={m.id} value={m.id}>
                 {m.label}
                 {m.model ? ` · ${m.model}` : ''}
               </option>
             ))}
-            {boot?.bridge?.paired && <option value="bridge">Mein Abo über die Bridge{boot.bridge.online ? '' : ' (offline)'}</option>}
+            {boot?.bridge?.paired && <option value="bridge">{tt('Mein Abo über die Bridge')}{boot.bridge.online ? '' : tt(' (offline)')}</option>}
           </select>
           <span className="agent-model-label">{modelLabel}</span>
         </label>
         {modelId === 'sub:chatgpt' && (
-          <a className="agent-plan" href="https://chatgpt.com/settings/usage" target="_blank" rel="noopener noreferrer" title="Diese Unterhaltung nutzt dein ChatGPT-Abo – Nutzung und Limits verwaltest du in ChatGPT">
-            Dein ChatGPT-Abo · Nutzung ↗
+          <a className="agent-plan" href="https://chatgpt.com/settings/usage" target="_blank" rel="noopener noreferrer" title={tt('Diese Unterhaltung nutzt dein ChatGPT-Abo – Nutzung und Limits verwaltest du in ChatGPT')}>
+            {tt('Dein ChatGPT-Abo · Nutzung ↗')}
           </a>
         )}
-        <span className={`agent-mode m-${agent?.mode ?? 'ask'}`} title="Sicherheitsmodus">
-          {MODE_LABEL[agent?.mode ?? 'ask']}
+        <span className={`agent-mode m-${agent?.mode ?? 'ask'}`} title={tt('Sicherheitsmodus')}>
+          {tt(MODE_LABEL[agent?.mode ?? 'ask'])}
         </span>
       </div>
       {ui.route && (
         <div className="agent-context" data-tour="agent-context">
-          <button className={`agent-chip${useCtx ? ' on' : ''}`} onClick={() => setUseCtx(!useCtx)} title={useCtx ? 'Kontext wird mitgeschickt – klicken zum Abschalten' : 'Kontext abgeschaltet'}>
-            {ui.entity?.label ? ui.label : `Seite: ${ui.label || ui.route}`}
+          <button className={`agent-chip${useCtx ? ' on' : ''}`} onClick={() => setUseCtx(!useCtx)} title={useCtx ? tt('Kontext wird mitgeschickt – klicken zum Abschalten') : tt('Kontext abgeschaltet')}>
+            {ui.entity?.label ? ui.label : tt('Seite: {route}', { route: ui.label || ui.route })}
             {useCtx ? <X size={12} /> : null}
           </button>
         </div>
@@ -689,22 +694,22 @@ export function AgentPanel() {
       <div className="agent-body" ref={bodyRef}>
         {view === 'history' ? (
           <div className="agent-history">
-            <div className="agent-label">Deine Unterhaltungen</div>
+            <div className="agent-label">{tt('Deine Unterhaltungen')}</div>
             {!history && <LoaderCircle className="agent-spin" size={18} />}
-            {history?.length === 0 && <p className="muted small">Noch keine Unterhaltungen.</p>}
+            {history?.length === 0 && <p className="muted small">{tt('Noch keine Unterhaltungen.')}</p>}
             {history?.map((c) => (
               <div key={c.id} className={`agent-history-row${c.id === convId ? ' on' : ''}`}>
                 <button className="agent-history-open" onClick={() => openConversation(c.id)}>
                   <span>{c.title}</span>
                   <span className="muted small">
                     {ago(c.updated_at)}
-                    {c.source !== 'chat' ? ` · ${{ workflow: 'Workflow', schedule: 'Zeitplan', inbound: 'Auto-Antwort', mobile: 'App', mcp: 'MCP', focus: 'Fokus' }[c.source as string] ?? c.source}` : ''}
-                    {c.status === 'awaiting' ? ' · wartet auf dich' : ''}
+                    {c.source !== 'chat' ? ` · ${{ workflow: tt('Workflow'), schedule: tt('Zeitplan'), inbound: tt('Auto-Antwort'), mobile: tt('App'), mcp: 'MCP', focus: tt('Fokus') }[c.source as string] ?? c.source}` : ''}
+                    {c.status === 'awaiting' ? tt(' · wartet auf dich') : ''}
                   </span>
                 </button>
                 <button
                   className="icon-btn"
-                  aria-label="Löschen"
+                  aria-label={tt('Löschen')}
                   onClick={async () => {
                     if (await act(() => api.del(`/api/agent/conversations/${c.id}`))) {
                       setHistory((h) => h?.filter((x) => x.id !== c.id) ?? null);
@@ -722,11 +727,11 @@ export function AgentPanel() {
             {!items.length && (
               <div className="agent-empty" data-tour="agent-starters">
                 <div className="agent-empty-avatar">{agent?.emoji ?? '✨'}</div>
-                <h3>{agent?.name ?? 'V Media CRM Agent'}</h3>
+                <h3>{agent?.name ?? tt('V Media CRM Agent')}</h3>
                 <p className="muted small">{agent?.description}</p>
                 {noModel ? (
                   <div className="agent-notice">
-                    Noch kein KI-Modell verbunden. Unter <a href="/app/settings/ai-providers" onClick={(e) => (e.preventDefault(), onNavigate('settings/ai-providers'))}>Einstellungen → KI-Anbieter</a> einen Schlüssel eintragen (OpenAI, Anthropic, Gemini, OpenRouter, Groq, Ollama …) – oder mit deinem eigenen ChatGPT/Claude-Abo über die <a href="/app/agents/bridge" onClick={(e) => (e.preventDefault(), onNavigate('agents/bridge'))}>Bridge</a>.
+                    {tt('Noch kein KI-Modell verbunden. Unter')} <a href="/app/settings/ai-providers" onClick={(e) => (e.preventDefault(), onNavigate('settings/ai-providers'))}>{tt('Einstellungen → KI-Anbieter')}</a> {tt('einen Schlüssel eintragen (OpenAI, Anthropic, Gemini, OpenRouter, Groq, Ollama …) – oder mit deinem eigenen ChatGPT/Claude-Abo über die')} <a href="/app/agents/bridge" onClick={(e) => (e.preventDefault(), onNavigate('agents/bridge'))}>{tt('Bridge')}</a>.
                   </div>
                 ) : (
                   <div className="agent-starters">
@@ -780,7 +785,7 @@ export function AgentPanel() {
             {files.map((f) => (
               <span key={f.id} className="agent-file">
                 <Paperclip size={12} /> {f.name}
-                <button aria-label={`${f.name} entfernen`} onClick={() => setFiles((l) => l.filter((x) => x.id !== f.id))}>
+                <button aria-label={tt('{name} entfernen', { name: f.name })} onClick={() => setFiles((l) => l.filter((x) => x.id !== f.id))}>
                   ×
                 </button>
               </span>
@@ -792,7 +797,7 @@ export function AgentPanel() {
             ref={inputRef}
             value={input}
             rows={1}
-            placeholder={confirm ? 'Oder schreib etwas anderes …' : `Frag ${agent?.name ?? 'den Agenten'} oder gib einen Auftrag …`}
+            placeholder={confirm ? tt('Oder schreib etwas anderes …') : tt('Frag {Agenten} oder gib einen Auftrag …', { Agenten: agent?.name ?? tt('den Agenten') })}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
@@ -801,19 +806,19 @@ export function AgentPanel() {
               }
             }}
             data-tour="agent-input"
-            aria-label="Nachricht an den Agenten"
+            aria-label={tt('Nachricht an den Agenten')}
           />
         </div>
         <div className="agent-tools-row">
           <input ref={fileRef} type="file" hidden multiple accept="image/png,image/jpeg,image/webp,image/gif,.csv,.txt,.md,.json,text/csv" onChange={(e) => void upload(e.target.files)} />
-          <button className="icon-btn" title="Datei anhängen (CSV, Bild, Text)" aria-label="Datei anhängen" onClick={() => fileRef.current?.click()} disabled={uploading}>
+          <button className="icon-btn" title={tt('Datei anhängen (CSV, Bild, Text)')} aria-label={tt('Datei anhängen')} onClick={() => fileRef.current?.click()} disabled={uploading}>
             {uploading ? <LoaderCircle size={17} className="agent-spin" /> : <Paperclip size={17} />}
           </button>
           {serverStt ? (
             <button
               className={`icon-btn agent-mic${rec === 'recording' ? ' agent-rec' : ''}`}
-              title={rec === 'recording' ? 'Aufnahme beenden (tippen oder loslassen)' : 'Sprechen: tippen oder gedrückt halten'}
-              aria-label={rec === 'recording' ? 'Aufnahme beenden' : 'Spracheingabe'}
+              title={rec === 'recording' ? tt('Aufnahme beenden (tippen oder loslassen)') : tt('Sprechen: tippen oder gedrückt halten')}
+              aria-label={rec === 'recording' ? tt('Aufnahme beenden') : tt('Spracheingabe')}
               aria-pressed={rec === 'recording'}
               disabled={rec === 'working'}
               data-tour="agent-mic"
@@ -829,7 +834,7 @@ export function AgentPanel() {
             </button>
           ) : (
             SpeechCtor && (
-              <button className={`icon-btn${listening ? ' agent-rec' : ''}`} title={listening ? 'Aufnahme beenden' : 'Sprechen'} aria-label="Spracheingabe" onClick={toggleVoice}>
+              <button className={`icon-btn${listening ? ' agent-rec' : ''}`} title={listening ? tt('Aufnahme beenden') : tt('Sprechen')} aria-label={tt('Spracheingabe')} onClick={toggleVoice}>
                 {listening ? <MicOff size={17} /> : <Mic size={17} />}
               </button>
             )
@@ -837,8 +842,8 @@ export function AgentPanel() {
           {canSpeak && (
             <button
               className={`icon-btn${readAloud || speaking ? ' agent-on' : ''}`}
-              title={speaking ? 'Vorlesen stoppen' : readAloud ? 'Vorlesen ist an – klicken zum Ausschalten' : 'Antworten vorlesen'}
-              aria-label={speaking ? 'Vorlesen stoppen' : readAloud ? 'Vorlesen ausschalten' : 'Vorlesen einschalten'}
+              title={speaking ? tt('Vorlesen stoppen') : readAloud ? tt('Vorlesen ist an – klicken zum Ausschalten') : tt('Antworten vorlesen')}
+              aria-label={speaking ? tt('Vorlesen stoppen') : readAloud ? tt('Vorlesen ausschalten') : tt('Vorlesen einschalten')}
               aria-pressed={readAloud}
               onClick={() => (speaking ? stopSpeaking() : void setPref({ read_aloud: !readAloud }))}
             >
@@ -847,22 +852,22 @@ export function AgentPanel() {
           )}
           {rec === 'recording' ? (
             <span className="agent-voice-state agent-rec small" role="status">
-              ● Aufnahme · {Math.floor(recMs / 1000)} s
+              {tt('● Aufnahme ·')} {Math.floor(recMs / 1000)} s
             </span>
           ) : rec === 'working' ? (
             <span className="agent-voice-state muted small" role="status">
-              Wird erkannt …
+              {tt('Wird erkannt …')}
             </span>
           ) : (
-            <span className="agent-hint muted small">{serverStt || canSpeak ? 'Enter sendet' : 'Enter senden · Shift+Enter neue Zeile'}</span>
+            <span className="agent-hint muted small">{serverStt || canSpeak ? tt('Enter sendet') : tt('Enter senden · Shift+Enter neue Zeile')}</span>
           )}
           {busy ? (
-            <button className="btn small secondary" onClick={stop} aria-label="Stoppen">
-              <Square size={13} /> Stopp
+            <button className="btn small secondary" onClick={stop} aria-label={tt('Stoppen')}>
+              <Square size={13} /> {tt('Stopp')}
             </button>
           ) : (
-            <button className="btn small" onClick={() => void send()} disabled={!input.trim() && !files.length} aria-label="Senden">
-              <Send size={13} /> Senden
+            <button className="btn small" onClick={() => void send()} disabled={!input.trim() && !files.length} aria-label={tt('Senden')}>
+              <Send size={13} /> {tt('Senden')}
             </button>
           )}
         </div>
@@ -872,8 +877,9 @@ export function AgentPanel() {
 }
 
 function TypingDots(): ReactNode {
+  const t = useT('b4agent');
   return (
-    <div className="agent-typing" aria-label="schreibt">
+    <div className="agent-typing" aria-label={t('schreibt')}>
       <span />
       <span />
       <span />

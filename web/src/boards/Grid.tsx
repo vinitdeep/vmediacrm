@@ -3,6 +3,7 @@ import { reading, limitsAt, type Bp, type Cell, type Limits, type Placed } from 
 import { Icon } from '../icons';
 import { GAP, ROW_H, arrange, cellPx, cellsOf, colWidth, describeCell, heightPx, rowsPx, stackStep } from './layout';
 import type { Widget } from './types';
+import { useT } from '../i18n';
 
 /**
  * The board's grid: pointer-based drag and resize (no library), the same `settle` as the server so the picture while
@@ -46,6 +47,7 @@ const scrollParent = (el: HTMLElement | null): HTMLElement | null => {
 };
 
 export function Grid({ widgets, bp, width, edit, limits, titleOf, onCommit, render }: { widgets: Widget[]; bp: Bp; width: number; edit: boolean; limits: (type: string) => Limits; titleOf: (w: Widget) => string; onCommit: (ops: Record<string, unknown>[], cells: Placed[]) => void; render: (w: Widget, part: CardPart) => ReactNode }) {
+  const t = useT('b4boards');
   const rootRef = useRef<HTMLDivElement>(null);
   const base = useMemo(() => cellsOf(widgets, bp), [widgets, bp]);
   const colW = colWidth(width, bp);
@@ -162,7 +164,7 @@ export function Grid({ widgets, bp, width, edit, limits, titleOf, onCommit, rend
         e.preventDefault();
         const cell = live.current.base.find((c) => c.id === id)!;
         set({ id, mode: 'move', kb: true, origin: cell, dx: 0, dy: 0, target: cell, cursor: cell, cells: live.current.base });
-        say(id, `aufgenommen. Pfeiltasten verschieben, Umschalt und Pfeiltasten ändern die Größe, Leertaste legt ab, Escape bricht ab. Jetzt ${describeCell(cell, b)}.`);
+        say(id, t('aufgenommen. Pfeiltasten verschieben, Umschalt und Pfeiltasten ändern die Größe, Leertaste legt ab, Escape bricht ab. Jetzt {b}.', { b: describeCell(cell, b) }));
       }
       return;
     }
@@ -219,14 +221,14 @@ export function Grid({ widgets, bp, width, edit, limits, titleOf, onCommit, rend
         const next = stackStep(cells, w.id, dir);
         if (next === cells) return;
         live.current.onCommit([{ op: 'move', id: w.id, y: i + dir, bp: 'sm' }], next);
-        say(w.id, `Platz ${i + dir + 1} von ${order.length}`);
+        say(w.id, t('Platz {v1} von {length}', { v1: i + dir + 1, length: order.length }));
       };
       return (
         <span className="bd-stackbtns">
-          <button type="button" className="bd-iconbtn" onClick={() => move(-1)} disabled={i <= 0} aria-label={`${titleOf(w)} nach oben`}>
+          <button type="button" className="bd-iconbtn" onClick={() => move(-1)} disabled={i <= 0} aria-label={t('{w} nach oben', { w: titleOf(w) })}>
             <Icon name="up" size={15} />
           </button>
-          <button type="button" className="bd-iconbtn" onClick={() => move(1)} disabled={i >= order.length - 1} aria-label={`${titleOf(w)} nach unten`}>
+          <button type="button" className="bd-iconbtn" onClick={() => move(1)} disabled={i >= order.length - 1} aria-label={t('{w} nach unten', { w: titleOf(w) })}>
             <Icon name="down" size={15} />
           </button>
         </span>
@@ -239,15 +241,15 @@ export function Grid({ widgets, bp, width, edit, limits, titleOf, onCommit, rend
         onPointerDown={(e) => begin(e, w.id, 'move')}
         onKeyDown={(e) => key(e, w.id)}
         onBlur={() => dragRef.current?.kb && dragRef.current.id === w.id && set(null)}
-        aria-label={`${titleOf(w)} verschieben: Leertaste zum Aufnehmen, dann Pfeiltasten (Umschalt = Größe), Leertaste zum Ablegen`}
+        aria-label={t('{w} verschieben: Leertaste zum Aufnehmen, dann Pfeiltasten (Umschalt = Größe), Leertaste zum Ablegen', { w: titleOf(w) })}
         aria-pressed={lifted}
-        title="Ziehen zum Verschieben"
+        title={t('Ziehen zum Verschieben')}
       >
         <Icon name="grip" size={16} />
       </button>
     );
   };
-  const resizer = (w: Widget): ReactNode => (edit && !stack ? <span className="bd-resize" onPointerDown={(e) => begin(e, w.id, 'size')} aria-hidden="true" title="Ziehen zum Vergrößern" /> : null);
+  const resizer = (w: Widget): ReactNode => (edit && !stack ? <span className="bd-resize" onPointerDown={(e) => begin(e, w.id, 'size')} aria-hidden="true" title={t('Ziehen zum Vergrößern')} /> : null);
 
   const ghost = drag && !stack ? cellPx(drag.target, colW) : null;
   const items = stack ? reading(cells) : cells;

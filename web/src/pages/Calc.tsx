@@ -9,6 +9,7 @@ import { CalcContext, CalcModal, type CalcCtx } from './CalcKit';
 import { CalcInputs } from './CalcInputs';
 import { Detail, Headline, Matrix, type Focus, type Period } from './CalcResults';
 import './calc.css';
+import { useT } from '../i18n';
 
 /**
  * Gewinnrechner: "What do I earn at which price and how many customers – after all costs, fees and taxes?"
@@ -60,6 +61,7 @@ function download(name: string, text: string, type: string) {
 }
 
 export function Calc({ id }: { id?: string }) {
+  const t = useT('b4calc');
   const [input, setInput] = useState<CalcInput>(() => (id ? defaultInput() : (readDraft() ?? defaultInput())));
   const [scenario, setScenario] = useState<{ id: string; name: string; note: string } | null>(null);
   const [baseline, setBaseline] = useState<string>('');
@@ -162,11 +164,11 @@ export function Calc({ id }: { id?: string }) {
     setInput(p);
     setPresetKey(key);
     setFocus({ cell: null });
-    toast(`Vorlage „${PRESETS.find((x) => x.key === key)?.name ?? key}“ geladen`);
+    toast(t('Vorlage „{key}“ geladen', { key: PRESETS.find((x) => x.key === key)?.name ?? key }));
   }, []);
 
   const reset = () => {
-    if (!confirmAsk('Alle Eingaben auf die Standardwerte zurücksetzen?')) return;
+    if (!confirmAsk(t('Alle Eingaben auf die Standardwerte zurücksetzen?'))) return;
     setInput(defaultInput());
     setPresetKey(null);
     setScenario(null);
@@ -183,7 +185,7 @@ export function Calc({ id }: { id?: string }) {
   const copyJson = async () => {
     try {
       await navigator.clipboard.writeText(JSON.stringify(input, null, 2));
-      toast('Eingabe als JSON kopiert – für die API oder den Agenten');
+      toast(t('Eingabe als JSON kopiert – für die API oder den Agenten'));
     } catch (e) {
       toastError(e);
     }
@@ -191,62 +193,62 @@ export function Calc({ id }: { id?: string }) {
 
   const res = calc.res;
   const inp = calc.input;
-  const focusLabel = res && inp ? (calc.cell ? `Bei ${de(res.focus.customers)} Kunden zu ${res.focus.column.label}` : `Deine Rechnung: ${de(res.focus.customers)} Kunden${inp.matrix.columns === 'plan' ? '' : ' zu den eingegebenen Preisen'}`) : '';
+  const focusLabel = res && inp ? (calc.cell ? t('Bei {customers} Kunden zu {label}', { customers: de(res.focus.customers), label: res.focus.column.label }) : t('Deine Rechnung: {customers} Kunden{Preisen}', { customers: de(res.focus.customers), Preisen: inp.matrix.columns === 'plan' ? '' : t(' zu den eingegebenen Preisen') })) : '';
 
   return (
     <CalcContext.Provider value={ctx}>
       <div className="calc" data-pane={pane}>
-        <PageHead title="Gewinnrechner" sub="Was bleibt bei welchem Preis und wie vielen Kunden nach Steuern, Gebühren und Kosten übrig? Werte ändern – die Tabelle rechnet sofort.">
+        <PageHead title={t('Gewinnrechner')} sub={t('Was bleibt bei welchem Preis und wie vielen Kunden nach Steuern, Gebühren und Kosten übrig? Werte ändern – die Tabelle rechnet sofort.')}>
           <div className="calc-actions">
             <button type="button" className="btn secondary small" onClick={() => setModal('scenarios')} data-tour="calc-scenarios">
-              Szenarien{list.data?.length ? ` (${list.data.length})` : ''}
+              {t('Szenarien')}{list.data?.length ? ` (${list.data.length})` : ''}
             </button>
             <button type="button" className="btn small" onClick={() => setModal('save')} data-tour="calc-save">
-              {scenario ? (dirty ? 'Speichern *' : 'Speichern') : 'Als Szenario speichern'}
+              {scenario ? (dirty ? t('Speichern *') : t('Speichern')) : t('Als Szenario speichern')}
             </button>
             <button type="button" className="btn secondary small" onClick={exportCsv} disabled={!res} data-tour="calc-export">
               CSV
             </button>
-            <button type="button" className="btn ghost small" onClick={copyJson} title="Die Eingabe als JSON – zum Einfügen in die API oder für den Agenten">
+            <button type="button" className="btn ghost small" onClick={copyJson} title={t('Die Eingabe als JSON – zum Einfügen in die API oder für den Agenten')}>
               JSON
             </button>
           </div>
         </PageHead>
 
         <p className="calc-disclaimer" role="note" data-tour="calc-disclaimer">
-          <strong>{DISCLAIMER}.</strong> Die Zahlen sind eine Rechenhilfe mit vereinfachten Annahmen; die Steuern ersetzen keine Beratung.
+          <strong>{DISCLAIMER}.</strong> {t('Die Zahlen sind eine Rechenhilfe mit vereinfachten Annahmen; die Steuern ersetzen keine Beratung.')}
         </p>
 
-        <div className="calc-presets" data-tour="calc-presets" role="group" aria-label="Vorlagen">
-          <span className="muted small">Vorlage:</span>
+        <div className="calc-presets" data-tour="calc-presets" role="group" aria-label={t('Vorlagen')}>
+          <span className="muted small">{t('Vorlage:')}</span>
           {PRESETS.map((p) => (
             <button key={p.key} type="button" className={`chip${presetKey === p.key ? ' on' : ''}`} onClick={() => loadPreset(p.key)} title={p.description} aria-pressed={presetKey === p.key}>
-              {SHORT[p.key] ?? p.name}
+              {t(SHORT[p.key] ?? p.name)}
             </button>
           ))}
         </div>
         {scenario && (
           <p className="calc-scenario-line small">
-            Szenario: <strong>{scenario.name}</strong>
-            {dirty && <span className="calc-warn"> – ungespeicherte Änderungen</span>}
+            {t('Szenario:')} <strong>{scenario.name}</strong>
+            {dirty && <span className="calc-warn"> {t('– ungespeicherte Änderungen')}</span>}
           </p>
         )}
 
-        <div className="calc-pane-switch seg" role="group" aria-label="Ansicht">
+        <div className="calc-pane-switch seg" role="group" aria-label={t('Ansicht')}>
           <button type="button" className={pane === 'inputs' ? 'on' : ''} onClick={() => setPane('inputs')} aria-pressed={pane === 'inputs'}>
-            Eingaben
+            {t('Eingaben')}
           </button>
           <button type="button" className={pane === 'results' ? 'on' : ''} onClick={() => setPane('results')} aria-pressed={pane === 'results'}>
-            Ergebnis
+            {t('Ergebnis')}
           </button>
         </div>
 
         <div className="calc-grid">
-          <aside className="calc-inputs card" aria-label="Eingaben">
+          <aside className="calc-inputs card" aria-label={t('Eingaben')}>
             <div className="calc-inputs-head">
-              <h3>Eingaben</h3>
+              <h3>{t('Eingaben')}</h3>
               <button type="button" className="btn ghost small" onClick={reset}>
-                Zurücksetzen
+                {t('Zurücksetzen')}
               </button>
             </div>
             <CalcInputs />
@@ -255,7 +257,7 @@ export function Calc({ id }: { id?: string }) {
           <div className="calc-results">
             {!calc.ok && (
               <p className="calc-callout bad" role="alert">
-                Eingabe prüfen: {calc.error}
+                {t('Eingabe prüfen:')} {calc.error}
               </p>
             )}
             {res && inp ? (
@@ -268,14 +270,14 @@ export function Calc({ id }: { id?: string }) {
               <Spinner />
             )}
             <section className="card calc-agent" data-tour="calc-agent">
-              <h3>Mit dem V Media CRM Agent rechnen</h3>
-              <p className="muted small">Der Agent und externe KI-Clients (Claude, ChatGPT, Codex über MCP) benutzen genau diesen Rechner: Fragen stellen, Szenarien speichern, vergleichen. Ein Klick legt die Frage in den Agenten.</p>
+              <h3>{t('Mit dem V Media CRM Agent rechnen')}</h3>
+              <p className="muted small">{t('Der Agent und externe KI-Clients (Claude, ChatGPT, Codex über MCP) benutzen genau diesen Rechner: Fragen stellen, Szenarien speichern, vergleichen. Ein Klick legt die Frage in den Agenten.')}</p>
               <div className="calc-agent-chips">
                 {[
-                  'Was bleibt bei 300 Kunden im V Media CRM Standort-Modell nach allen Kosten und Steuern übrig?',
-                  'Ab wie vielen Kunden bin ich mit der V Media CRM Staffel im Plus?',
-                  'Welcher Grundpreis bringt bei 200 Kunden 5.000 € Nettogewinn im Monat?',
-                  'Vergleiche meine gespeicherten Szenarien im Gewinnrechner.',
+                  t('Was bleibt bei 300 Kunden im V Media CRM Standort-Modell nach allen Kosten und Steuern übrig?'),
+                  t('Ab wie vielen Kunden bin ich mit der V Media CRM Staffel im Plus?'),
+                  t('Welcher Grundpreis bringt bei 200 Kunden 5.000 € Nettogewinn im Monat?'),
+                  t('Vergleiche meine gespeicherten Szenarien im Gewinnrechner.'),
                 ].map((q) => (
                   <button key={q} type="button" className="chip" onClick={() => window.dispatchEvent(new CustomEvent('pghl:agent', { detail: { prompt: q } }))}>
                     {q}
@@ -331,6 +333,7 @@ export function Calc({ id }: { id?: string }) {
 // --- save -------------------------------------------------------------------------------------------------------------------------
 
 function SaveModal({ input, presetKey, scenario, onClose, onSaved }: { input: CalcInput; presetKey: string | null; scenario: { id: string; name: string; note: string } | null; onClose: () => void; onSaved: (s: any) => void }) {
+  const t = useT('b4calc');
   const [mode, setMode] = useState<'update' | 'new'>(scenario ? 'update' : 'new');
   const [name, setName] = useState(scenario?.name ?? '');
   const [note, setNote] = useState(scenario?.note ?? '');
@@ -340,43 +343,43 @@ function SaveModal({ input, presetKey, scenario, onClose, onSaved }: { input: Ca
     setBusy(true);
     const s = await act(
       () => (update ? api.patch(`/api/calc/scenarios/${scenario!.id}`, { name, note, input }) : api.post('/api/calc/scenarios', { name, note, preset: presetKey ?? undefined, input })),
-      update ? 'Szenario aktualisiert' : 'Szenario gespeichert',
+      update ? t('Szenario aktualisiert') : t('Szenario gespeichert'),
     );
     setBusy(false);
     if (s) onSaved(s);
   };
   return (
     <CalcModal
-      title="Szenario speichern"
+      title={t('Szenario speichern')}
       onClose={onClose}
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn" onClick={save} disabled={busy || !name.trim()}>
-            {update ? 'Aktualisieren' : 'Speichern'}
+            {update ? t('Aktualisieren') : t('Speichern')}
           </button>
         </>
       }
     >
       {scenario && (
-        <div className="seg calc-save-mode" role="group" aria-label="Speichern als">
+        <div className="seg calc-save-mode" role="group" aria-label={t('Speichern als')}>
           <button type="button" className={mode === 'update' ? 'on' : ''} onClick={() => (setMode('update'), setName(scenario.name), setNote(scenario.note))}>
-            „{scenario.name}“ überschreiben
+            „{scenario.name}{t('“ überschreiben')}
           </button>
           <button type="button" className={mode === 'new' ? 'on' : ''} onClick={() => (setMode('new'), setName(`${scenario.name} (Kopie)`))}>
-            Als neues Szenario
+            {t('Als neues Szenario')}
           </button>
         </div>
       )}
       <Field label="Name">
-        <Input value={name} onChange={setName} maxLength={80} placeholder="z. B. Standort-Modell, 300 Kunden" autoFocus />
+        <Input value={name} onChange={setName} maxLength={80} placeholder={t('z. B. Standort-Modell, 300 Kunden')} autoFocus />
       </Field>
-      <Field label="Notiz (optional)" hint="Wofür ist das Szenario? Wer hat es geprüft?">
+      <Field label={t('Notiz (optional)')} hint={t('Wofür ist das Szenario? Wer hat es geprüft?')}>
         <Textarea value={note} onChange={setNote} rows={3} maxLength={500} />
       </Field>
-      <p className="muted small">Gespeichert wird die komplette Eingabe für diesen Sub-Account. Der Agent und die API finden das Szenario unter diesem Namen.</p>
+      <p className="muted small">{t('Gespeichert wird die komplette Eingabe für diesen Sub-Account. Der Agent und die API finden das Szenario unter diesem Namen.')}</p>
     </CalcModal>
   );
 }
@@ -384,6 +387,7 @@ function SaveModal({ input, presetKey, scenario, onClose, onSaved }: { input: Ca
 // --- scenarios, comparison -----------------------------------------------------------------------------------------------------
 
 function ScenariosModal({ items, loading, currentId, onClose, onChanged, onOpen, onDeleted }: { items: ScenarioItem[] | undefined; loading: boolean; currentId?: string; onClose: () => void; onChanged: () => void; onOpen: (id: string) => void; onDeleted: (id: string) => void }) {
+  const t = useT('b4calc');
   const [picked, setPicked] = useState<string[]>([]);
   const [cmp, setCmp] = useState<Comparison | null>(null);
   const toggle = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : p.length >= 6 ? p : [...p, id]));
@@ -392,41 +396,41 @@ function ScenariosModal({ items, loading, currentId, onClose, onChanged, onOpen,
     if (r) setCmp(r);
   };
   const remove = async (s: ScenarioItem) => {
-    if (!confirmAsk(`Szenario „${s.name}“ löschen?`)) return;
-    if (await act(() => api.del(`/api/calc/scenarios/${s.id}`), 'Szenario gelöscht')) {
+    if (!confirmAsk(t('Szenario „{name}“ löschen?', { name: s.name }))) return;
+    if (await act(() => api.del(`/api/calc/scenarios/${s.id}`), t('Szenario gelöscht'))) {
       setPicked((p) => p.filter((x) => x !== s.id));
       onDeleted(s.id);
       onChanged();
     }
   };
   return (
-    <CalcModal title={cmp ? 'Szenarien im Vergleich' : 'Gespeicherte Szenarien'} onClose={onClose} wide footer={cmp ? <button className="btn secondary" onClick={() => setCmp(null)}>Zurück zur Liste</button> : undefined}>
+    <CalcModal title={cmp ? t('Szenarien im Vergleich') : t('Gespeicherte Szenarien')} onClose={onClose} wide footer={cmp ? <button className="btn secondary" onClick={() => setCmp(null)}>{t('Zurück zur Liste')}</button> : undefined}>
       {cmp ? (
         <CompareTable cmp={cmp} />
       ) : loading && !items ? (
         <Spinner />
       ) : !items?.length ? (
-        <Empty>Noch kein Szenario gespeichert. Stelle links Preise und Kosten ein und speichere die Rechnung mit „Als Szenario speichern“.</Empty>
+        <Empty>{t('Noch kein Szenario gespeichert. Stelle links Preise und Kosten ein und speichere die Rechnung mit „Als Szenario speichern“.')}</Empty>
       ) : (
         <>
           <div className="table-wrap">
             <table className="t calc-scn">
               <thead>
                 <tr>
-                  <th aria-label="Zum Vergleich wählen" />
+                  <th aria-label={t('Zum Vergleich wählen')} />
                   <th>Name</th>
-                  <th className="num">Kunden</th>
-                  <th className="num">Nettogewinn/Monat</th>
-                  <th className="num">Break-even</th>
-                  <th>Geändert</th>
-                  <th aria-label="Aktionen" />
+                  <th className="num">{t('Kunden')}</th>
+                  <th className="num">{t('Nettogewinn/Monat')}</th>
+                  <th className="num">{t('Break-even')}</th>
+                  <th>{t('Geändert')}</th>
+                  <th aria-label={t('Aktionen')} />
                 </tr>
               </thead>
               <tbody>
                 {items.map((s) => (
                   <tr key={s.id} className={s.id === currentId ? 'cur' : ''}>
                     <td>
-                      <input type="checkbox" checked={picked.includes(s.id)} onChange={() => toggle(s.id)} aria-label={`${s.name} zum Vergleich wählen`} />
+                      <input type="checkbox" checked={picked.includes(s.id)} onChange={() => toggle(s.id)} aria-label={t('{name} zum Vergleich wählen', { name: s.name })} />
                     </td>
                     <td className="strong">
                       {s.name}
@@ -434,16 +438,16 @@ function ScenariosModal({ items, loading, currentId, onClose, onChanged, onOpen,
                     </td>
                     <td className="num">{s.summary ? de(s.summary.customers) : '–'}</td>
                     <td className={`num${s.summary && s.summary.net_profit_month < 0 ? ' neg' : ''}`}>{s.summary ? formatKpi(s.summary.net_profit_month, 'eur') : '–'}</td>
-                    <td className="num">{s.summary?.breakeven_customers == null ? 'nie' : `ab ${de(s.summary.breakeven_customers)}`}</td>
+                    <td className="num">{s.summary?.breakeven_customers == null ? t('nie') : t('ab {breakeven_customers}', { breakeven_customers: de(s.summary.breakeven_customers) })}</td>
                     <td className="small muted">
                       {dt(s.updated_at)}
                       {s.created_by ? ` · ${s.created_by}` : ''}
                     </td>
                     <td className="calc-scn-actions">
                       <button className="btn secondary small" onClick={() => onOpen(s.id)}>
-                        Öffnen
+                        {t('Öffnen')}
                       </button>
-                      <button className="icon-btn" onClick={() => remove(s)} aria-label={`${s.name} löschen`} title="Löschen">
+                      <button className="icon-btn" onClick={() => remove(s)} aria-label={t('{name} löschen', { name: s.name })} title={t('Löschen')}>
                         ✕
                       </button>
                     </td>
@@ -454,9 +458,9 @@ function ScenariosModal({ items, loading, currentId, onClose, onChanged, onOpen,
           </div>
           <div className="calc-scn-foot">
             <button className="btn" onClick={compare} disabled={picked.length < 2}>
-              {picked.length < 2 ? 'Zum Vergleich mindestens zwei wählen' : `${picked.length} Szenarien vergleichen`}
+              {picked.length < 2 ? t('Zum Vergleich mindestens zwei wählen') : t('{length} Szenarien vergleichen', { length: picked.length })}
             </button>
-            <span className="muted small">Bis zu sechs nebeneinander.</span>
+            <span className="muted small">{t('Bis zu sechs nebeneinander.')}</span>
           </div>
         </>
       )}
@@ -465,6 +469,7 @@ function ScenariosModal({ items, loading, currentId, onClose, onChanged, onOpen,
 }
 
 function CompareTable({ cmp }: { cmp: Comparison }) {
+  const t = useT('b4calc');
   const unit = (k: keyof Kpis) => KPI_ROWS.find((r) => r.key === k)!.unit;
   return (
     <>
@@ -472,7 +477,7 @@ function CompareTable({ cmp }: { cmp: Comparison }) {
         <table className="t calc-cmp">
           <thead>
             <tr>
-              <th>Kennzahl</th>
+              <th>{t('Kennzahl')}</th>
               {cmp.scenarios.map((s) => (
                 <th key={s.id} className="num">
                   {s.name}
@@ -500,7 +505,7 @@ function CompareTable({ cmp }: { cmp: Comparison }) {
           </tbody>
         </table>
       </div>
-      <p className="muted small calc-foot">Unterschied jeweils zum ersten Szenario; das beste Ergebnis je Zeile ist hervorgehoben. {cmp.disclaimer}.</p>
+      <p className="muted small calc-foot">{t('Unterschied jeweils zum ersten Szenario; das beste Ergebnis je Zeile ist hervorgehoben.')} {cmp.disclaimer}.</p>
     </>
   );
 }

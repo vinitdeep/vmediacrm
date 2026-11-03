@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { api, dt, money } from '../api';
 import { Icon } from '../icons';
 import { Badge, Check, Empty, Field, Input, Modal, Select, Spinner, act, confirmAsk, useLoad } from '../ui';
+import { useT } from '../i18n';
 
 /**
  * Apps → Buchhaltung: live sync with Lexware Office or sevDesk. Connect with the API key (sealed on the server, never shown
@@ -26,6 +27,7 @@ const BLURB: Record<Provider, string> = {
 };
 
 export function BooksSync() {
+  const t = useT('b4acct');
   const st = useLoad(() => api.get<Json>('/api/books-sync'), []);
   const jobs = useLoad(() => api.get<Json[]>('/api/books-sync/jobs?limit=50'), []);
   const log = useLoad(() => api.get<Json[]>('/api/books-sync/log?limit=50'), []);
@@ -48,7 +50,7 @@ export function BooksSync() {
   return (
     <div className="books" data-tour="books-sync">
       <p className="muted">
-        Rechnungen bleiben in V Media CRM – deine Buchhaltung bekommt sie automatisch: festgeschriebene Rechnungen und Gutschriften gehen sofort rüber, Zahlungseingänge kommen zurück und werden hier als Zahlung verbucht. Der API-Schlüssel wird verschlüsselt gespeichert und nie wieder angezeigt.
+        {t('Rechnungen bleiben in V Media CRM – deine Buchhaltung bekommt sie automatisch: festgeschriebene Rechnungen und Gutschriften gehen sofort rüber, Zahlungseingänge kommen zurück und werden hier als Zahlung verbucht. Der API-Schlüssel wird verschlüsselt gespeichert und nie wieder angezeigt.')}
       </p>
       <div className="books-providers">
         {(s.providers as Json[]).map((p) => {
@@ -61,32 +63,32 @@ export function BooksSync() {
                   <Icon name="invoices" size={18} />
                 </span>
                 <strong>{p.name}</strong>
-                {on ? <Badge tone={!s.enabled ? 'gray' : s.last_test_ok === false || counts.failed ? 'red' : 'green'}>{!s.enabled ? 'pausiert' : s.last_test_ok === false ? 'Test fehlgeschlagen' : counts.failed ? `${counts.failed} Fehler` : 'verbunden'}</Badge> : <Badge>nicht verbunden</Badge>}
+                {on ? <Badge tone={!s.enabled ? 'gray' : s.last_test_ok === false || counts.failed ? 'red' : 'green'}>{!s.enabled ? t('pausiert') : s.last_test_ok === false ? t('Test fehlgeschlagen') : counts.failed ? t('{failed} Fehler', { failed: counts.failed }) : t('verbunden')}</Badge> : <Badge>{t('nicht verbunden')}</Badge>}
               </div>
-              <p className="small">{BLURB[p.key as Provider]}</p>
+              <p className="small">{t(BLURB[p.key as Provider])}</p>
               {on && s.last_test_at && (
                 <p className="muted small">
-                  Letzter Test {dt(s.last_test_at)}: {s.last_test_result}
+                  {t('Letzter Test')} {dt(s.last_test_at)}: {s.last_test_result}
                 </p>
               )}
-              {on && s.last_pull_at && <p className="muted small">Zahlungen zuletzt abgeglichen {dt(s.last_pull_at)}</p>}
+              {on && s.last_pull_at && <p className="muted small">{t('Zahlungen zuletzt abgeglichen')} {dt(s.last_pull_at)}</p>}
               <div className="books-actions">
-                <button className={on ? 'btn secondary' : 'btn'} disabled={other} title={other ? 'Es ist schon ein anderes Programm verbunden' : undefined} onClick={() => setEdit(p.key)}>
-                  {on ? 'Einstellungen' : 'Verbinden'}
+                <button className={on ? 'btn secondary' : 'btn'} disabled={other} title={other ? t('Es ist schon ein anderes Programm verbunden') : undefined} onClick={() => setEdit(p.key)}>
+                  {on ? t('Einstellungen') : t('Verbinden')}
                 </button>
                 {on && (
                   <>
                     <button className="btn secondary" disabled={!!busy} onClick={() => run('test', () => api.post('/api/books-sync/test'), 'Verbindung klappt')}>
-                      Verbindung testen
+                      {t('Verbindung testen')}
                     </button>
                     <button className="btn secondary" disabled={!!busy || !s.options.pull_payments} onClick={() => run('pull', () => api.post('/api/books-sync/pull'), 'Zahlungen abgeglichen')}>
-                      <Icon name="refresh" /> Zahlungen abgleichen
+                      <Icon name="refresh" /> {t('Zahlungen abgleichen')}
                     </button>
                     <button className="btn secondary" disabled={!!busy} onClick={() => setBackfill(true)}>
-                      Ältere Rechnungen übertragen
+                      {t('Ältere Rechnungen übertragen')}
                     </button>
-                    <button className="btn ghost" disabled={!!busy} onClick={() => confirmAsk(`${p.name} trennen? Bereits übertragene Belege bleiben dort, neue gehen nicht mehr rüber.`) && run('del', () => api.del('/api/books-sync'), 'Getrennt')}>
-                      Trennen
+                    <button className="btn ghost" disabled={!!busy} onClick={() => confirmAsk(t('{name} trennen? Bereits übertragene Belege bleiben dort, neue gehen nicht mehr rüber.', { name: p.name })) && run('del', () => api.del('/api/books-sync'), 'Getrennt')}>
+                      {t('Trennen')}
                     </button>
                   </>
                 )}
@@ -94,7 +96,7 @@ export function BooksSync() {
               <p className="muted small">
                 {p.key_help}{' '}
                 <a href={p.docs} target="_blank" rel="noreferrer noopener">
-                  API-Doku ↗
+                  {t('API-Doku ↗')}
                 </a>
               </p>
             </div>
@@ -105,24 +107,24 @@ export function BooksSync() {
       {active && (
         <div className="card" data-tour="books-queue">
           <div className="books-head">
-            <h2 style={{ margin: 0 }}>Übertragungen</h2>
+            <h2 style={{ margin: 0 }}>{t('Übertragungen')}</h2>
             <span className="muted small">
-              {counts.done ?? 0} übertragen · {(counts.pending ?? 0) + (counts.running ?? 0) + (counts.retry ?? 0)} in Arbeit · {counts.failed ?? 0} Fehler
+              {counts.done ?? 0} {t('übertragen ·')} {(counts.pending ?? 0) + (counts.running ?? 0) + (counts.retry ?? 0)} {t('in Arbeit ·')} {counts.failed ?? 0} {t('Fehler')}
             </span>
           </div>
           {!jobs.data ? (
             <Spinner />
           ) : !jobs.data.length ? (
-            <p className="muted">Noch nichts übertragen – die nächste festgeschriebene Rechnung geht automatisch rüber.</p>
+            <p className="muted">{t('Noch nichts übertragen – die nächste festgeschriebene Rechnung geht automatisch rüber.')}</p>
           ) : (
             <div className="table-wrap">
               <table className="t">
                 <thead>
                   <tr>
-                    <th>Beleg</th>
-                    <th>Betrag</th>
+                    <th>{t('Beleg')}</th>
+                    <th>{t('Betrag')}</th>
                     <th>Status</th>
-                    <th>Hinweis</th>
+                    <th>{t('Hinweis')}</th>
                     <th />
                   </tr>
                 </thead>
@@ -130,19 +132,19 @@ export function BooksSync() {
                   {jobs.data.map((j) => (
                     <tr key={j.id}>
                       <td>
-                        {j.kind === 'credit_note' ? 'Gutschrift' : 'Rechnung'} {j.number}
+                        {j.kind === 'credit_note' ? t('Gutschrift') : t('Rechnung')} {j.number}
                         <div className="muted small">{dt(j.created_at)}</div>
                       </td>
                       <td>{money(j.total_cents, j.currency)}</td>
                       <td>
-                        <Badge tone={STATUS[j.status]?.[1] ?? 'gray'}>{STATUS[j.status]?.[0] ?? j.status}</Badge>
-                        {j.status === 'retry' && <div className="muted small">nächster Versuch {dt(j.next_at)}</div>}
+                        <Badge tone={STATUS[j.status]?.[1] ?? 'gray'}>{t(STATUS[j.status]?.[0] ?? j.status)}</Badge>
+                        {j.status === 'retry' && <div className="muted small">{t('nächster Versuch')} {dt(j.next_at)}</div>}
                       </td>
-                      <td className="small">{j.last_error || (j.remote_id ? `ID ${j.remote_id}` : '')}</td>
+                      <td className="small">{j.last_error || (j.remote_id ? t('ID {remote_id}', { remote_id: j.remote_id }) : '')}</td>
                       <td>
                         {['failed', 'retry', 'skipped'].includes(j.status) && (
-                          <button className="btn secondary" disabled={!!busy} onClick={() => run(`retry-${j.id}`, () => api.post(`/api/books-sync/jobs/${j.id}/retry`), 'Neuer Versuch gestartet')}>
-                            Erneut versuchen
+                          <button className="btn secondary" disabled={!!busy} onClick={() => run(`retry-${j.id}`, () => api.post(`/api/books-sync/jobs/${j.id}/retry`), t('Neuer Versuch gestartet'))}>
+                            {t('Erneut versuchen')}
                           </button>
                         )}
                       </td>
@@ -157,14 +159,14 @@ export function BooksSync() {
 
       {active && (
         <div className="card" data-tour="books-log">
-          <h2>Protokoll</h2>
+          <h2>{t('Protokoll')}</h2>
           {!log.data?.length ? (
-            <p className="muted">Noch keine Einträge.</p>
+            <p className="muted">{t('Noch keine Einträge.')}</p>
           ) : (
             <ul className="books-log">
               {log.data.map((l) => (
                 <li key={l.id} className={l.level === 'error' ? 'err' : ''}>
-                  <span className="muted small">{dt(l.created_at)}</span> <Badge tone={l.level === 'error' ? 'red' : 'gray'}>{l.level === 'error' ? 'Fehler' : 'Info'}</Badge> {l.message}
+                  <span className="muted small">{dt(l.created_at)}</span> <Badge tone={l.level === 'error' ? 'red' : 'gray'}>{l.level === 'error' ? t('Fehler') : t('Info')}</Badge> {l.message}
                 </li>
               ))}
             </ul>
@@ -179,6 +181,7 @@ export function BooksSync() {
 }
 
 function ConnectModal({ provider, state, onClose, onSaved }: { provider: Provider; state: Json; onClose: () => void; onSaved: () => void }) {
+  const t = useT('b4acct');
   const def = (state.providers as Json[]).find((p) => p.key === provider)!;
   const same = state.provider === provider && state.connected;
   const [key, setKey] = useState('');
@@ -189,81 +192,82 @@ function ConnectModal({ provider, state, onClose, onSaved }: { provider: Provide
   const set = (k: string, v: unknown) => setO({ ...o, [k]: v });
   const save = async (test: boolean) => {
     setBusy(true);
-    const r = await act(() => api.put('/api/books-sync', { provider, enabled, options: o, ...(key ? { api_key: key } : {}) }), test ? undefined : 'Gespeichert');
-    if (r && test) await act(() => api.post('/api/books-sync/test'), 'Verbindung klappt');
+    const r = await act(() => api.put('/api/books-sync', { provider, enabled, options: o, ...(key ? { api_key: key } : {}) }), test ? undefined : t('Gespeichert'));
+    if (r && test) await act(() => api.post('/api/books-sync/test'), t('Verbindung klappt'));
     setBusy(false);
     onSaved();
     if (r) onClose();
   };
   return (
     <Modal
-      title={`${def.name} verbinden`}
+      title={t('{name} verbinden', { name: def.name })}
       onClose={onClose}
       wide
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button className="btn secondary" disabled={busy || (!same && !key)} onClick={() => save(false)}>
-            Speichern
+            {t('Speichern')}
           </button>
           <button className="btn" disabled={busy || (!same && !key)} onClick={() => save(true)}>
-            Speichern & testen
+            {t('Speichern & testen')}
           </button>
         </>
       }
     >
       <div className="books-form" data-tour="books-connect">
         <Field label={def.key_label} hint={def.key_help}>
-          <Input type="password" autoComplete="off" value={key} onChange={setKey} placeholder={same ? `•••••••• gespeichert (${state.hint})` : 'Schlüssel einfügen'} />
+          <Input type="password" autoComplete="off" value={key} onChange={setKey} placeholder={same ? t('•••••••• gespeichert ({hint})', { hint: state.hint }) : t('Schlüssel einfügen')} />
         </Field>
-        <Check checked={enabled} onChange={setEnabled} label="Automatisch übertragen (aus = pausiert, nichts geht rüber)" />
-        <h4>Zuordnung</h4>
+        <Check checked={enabled} onChange={setEnabled} label={t('Automatisch übertragen (aus = pausiert, nichts geht rüber)')} />
+        <h4>{t('Zuordnung')}</h4>
         <div className="grid2">
-          <Field label="Kunde in der Buchhaltung" hint="Erst die gespeicherte Verknüpfung, dann Kundennummer, dann E-Mail – sonst wird der Kunde angelegt.">
-            <Select value={o.contact_match} onChange={(v) => set('contact_match', v)} options={provider === 'lexware' ? [['auto', 'Kunden abgleichen oder anlegen'], ['collective', 'Sammelkunde (ohne Kundendaten)']] : [['auto', 'Kunden abgleichen oder anlegen']]} />
+          <Field label={t('Kunde in der Buchhaltung')} hint={t('Erst die gespeicherte Verknüpfung, dann Kundennummer, dann E-Mail – sonst wird der Kunde angelegt.')}>
+            <Select value={o.contact_match} onChange={(v) => set('contact_match', v)} options={provider === 'lexware' ? [['auto', t('Kunden abgleichen oder anlegen')], ['collective', t('Sammelkunde (ohne Kundendaten)')]] : [['auto', t('Kunden abgleichen oder anlegen')]]} />
           </Field>
-          <Field label="Eigenes Feld mit der Kundennummer" hint="Schlüssel des eigenen Kontaktfelds (der Umzug füllt customer_number)">
+          <Field label={t('Eigenes Feld mit der Kundennummer')} hint={t('Schlüssel des eigenen Kontaktfelds (der Umzug füllt customer_number)')}>
             <Input value={o.customer_number_field} onChange={(v) => set('customer_number_field', v)} placeholder="customer_number" />
           </Field>
           {provider === 'lexware' && (
-            <Field label="Buchungskategorie (ID)" hint="Standard: Einnahmen. Andere IDs liefert GET /v1/posting-categories.">
+            <Field label={t('Buchungskategorie (ID)')} hint={t('Standard: Einnahmen. Andere IDs liefert GET /v1/posting-categories.')}>
               <Input value={o.category_id} onChange={(v) => set('category_id', v)} />
             </Field>
           )}
           {provider === 'sevdesk' && (
             <>
-              <Field label="Ansprechpartner (sevDesk-Benutzer-ID)" hint="Leer = wird beim Test automatisch gesetzt">
+              <Field label={t('Ansprechpartner (sevDesk-Benutzer-ID)')} hint={t('Leer = wird beim Test automatisch gesetzt')}>
                 <Input value={o.sev_user_id} onChange={(v) => set('sev_user_id', v)} />
               </Field>
-              <Field label="Einheit der Positionen (ID)" hint="1 = Stück">
+              <Field label={t('Einheit der Positionen (ID)')} hint={t('1 = Stück')}>
                 <Input value={o.unity_id} onChange={(v) => set('unity_id', v)} />
               </Field>
             </>
           )}
         </div>
-        <Check checked={!!o.push_credit_notes} onChange={(v) => set('push_credit_notes', v)} label="Gutschriften und Stornorechnungen übertragen" />
-        <Check checked={!!o.pull_payments} onChange={(v) => set('pull_payments', v)} label="Zahlungseingänge zurückholen und hier als Zahlung verbuchen (alle 2 Stunden)" />
-        {provider === 'lexware' && <Check checked={!!o.attach_pdf} onChange={(v) => set('attach_pdf', v)} label="PDF der Rechnung an den Beleg hängen" />}
-        {provider === 'sevdesk' && <Check checked={!!o.mark_sent} onChange={(v) => set('mark_sent', v)} label="In sevDesk als versendet markieren (es wird nichts verschickt)" />}
-        <p className="muted small">Übertragen werden nur festgeschriebene Belege – nie doppelt: jede Rechnung hat genau einen Auftrag, und vor dem Anlegen wird nach der Rechnungsnummer gesucht.</p>
+        <Check checked={!!o.push_credit_notes} onChange={(v) => set('push_credit_notes', v)} label={t('Gutschriften und Stornorechnungen übertragen')} />
+        <Check checked={!!o.pull_payments} onChange={(v) => set('pull_payments', v)} label={t('Zahlungseingänge zurückholen und hier als Zahlung verbuchen (alle 2 Stunden)')} />
+        {provider === 'lexware' && <Check checked={!!o.attach_pdf} onChange={(v) => set('attach_pdf', v)} label={t('PDF der Rechnung an den Beleg hängen')} />}
+        {provider === 'sevdesk' && <Check checked={!!o.mark_sent} onChange={(v) => set('mark_sent', v)} label={t('In sevDesk als versendet markieren (es wird nichts verschickt)')} />}
+        <p className="muted small">{t('Übertragen werden nur festgeschriebene Belege – nie doppelt: jede Rechnung hat genau einen Auftrag, und vor dem Anlegen wird nach der Rechnungsnummer gesucht.')}</p>
       </div>
     </Modal>
   );
 }
 
 function BackfillModal({ onClose, onDone }: { onClose: () => void; onDone: () => void }) {
+  const t = useT('b4acct');
   const [since, setSince] = useState(`${new Date().getFullYear()}-01-01`);
   const [busy, setBusy] = useState(false);
   return (
     <Modal
-      title="Ältere Rechnungen übertragen"
+      title={t('Ältere Rechnungen übertragen')}
       onClose={onClose}
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
-            Abbrechen
+            {t('Abbrechen')}
           </button>
           <button
             className="btn"
@@ -278,12 +282,12 @@ function BackfillModal({ onClose, onDone }: { onClose: () => void; onDone: () =>
               }
             }}
           >
-            Übertragen
+            {t('Übertragen')}
           </button>
         </>
       }
     >
-      <Field label="Rechnungsdatum ab" hint="Festgeschriebene Rechnungen ab diesem Datum, die noch nirgends verknüpft sind (höchstens 200 auf einmal).">
+      <Field label={t('Rechnungsdatum ab')} hint={t('Festgeschriebene Rechnungen ab diesem Datum, die noch nirgends verknüpft sind (höchstens 200 auf einmal).')}>
         <Input type="date" value={since} onChange={setSince} />
       </Field>
     </Modal>

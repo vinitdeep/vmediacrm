@@ -1,5 +1,6 @@
 import { api } from '../api';
 import { downsample, floatToPcm16, pcm16ToFloat, pcmBytes } from './pcm';
+import { tr } from '../i18n';
 
 /**
  * Echtzeit-Stimme (1.0.54): a pluggable realtime engine – audio in, audio out, both at once, the model's own turn-taking and barge-in.
@@ -53,6 +54,7 @@ export class GeminiLiveEngine implements RealtimeEngine {
   }
 
   async start(): Promise<void> {
+  const t = tr('b4agent');
     if (this.alive) return;
     this.alive = true;
     this.ending = false;
@@ -64,11 +66,11 @@ export class GeminiLiveEngine implements RealtimeEngine {
       return this.fail((e as Error).message);
     }
     const Ctx: typeof AudioContext | undefined = (window as any).AudioContext ?? (window as any).webkitAudioContext;
-    if (!Ctx || !navigator.mediaDevices?.getUserMedia || typeof WebSocket === 'undefined') return this.fail('Dieser Browser kann keine Echtzeit-Stimme.');
+    if (!Ctx || !navigator.mediaDevices?.getUserMedia || typeof WebSocket === 'undefined') return this.fail(t('Dieser Browser kann keine Echtzeit-Stimme.'));
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
     } catch {
-      return this.fail('Der Browser darf das Mikrofon nicht benutzen.');
+      return this.fail(t('Der Browser darf das Mikrofon nicht benutzen.'));
     }
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
     const ws = new WebSocket(`${proto}//${location.host}${session.path}`);
@@ -76,7 +78,7 @@ export class GeminiLiveEngine implements RealtimeEngine {
     this.ws = ws;
     ws.onmessage = (ev) => (typeof ev.data === 'string' ? this.onJson(ev.data) : this.play(new Uint8Array(ev.data as ArrayBuffer)));
     ws.onclose = () => {
-      if (this.alive && !this.ending) this.fail('Die Echtzeit-Verbindung ist abgebrochen.');
+      if (this.alive && !this.ending) this.fail(t('Die Echtzeit-Verbindung ist abgebrochen.'));
       else this.cleanup();
     };
     ws.onerror = () => undefined;

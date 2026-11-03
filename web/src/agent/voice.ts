@@ -1,4 +1,5 @@
 import { currentLocation } from '../api';
+import { tr } from '../i18n';
 
 /**
  * Voice in the browser, Android WebView and PWA: recording with MediaRecorder (→ the server's speech to text, see
@@ -18,11 +19,12 @@ export function recordingMime(): string {
 
 /** Why recording failed, in words for people. */
 export function micError(e: unknown): string {
+  const t = tr('b4agent');
   const name = (e as DOMException)?.name;
-  if (name === 'NotAllowedError' || name === 'SecurityError') return 'Der Browser darf das Mikrofon nicht benutzen – bitte in den Seiteneinstellungen erlauben.';
-  if (name === 'NotFoundError' || name === 'OverconstrainedError') return 'Kein Mikrofon gefunden.';
-  if (name === 'NotReadableError') return 'Das Mikrofon wird gerade von einer anderen App benutzt.';
-  return (e as Error)?.message || 'Aufnahme nicht möglich.';
+  if (name === 'NotAllowedError' || name === 'SecurityError') return t('Der Browser darf das Mikrofon nicht benutzen – bitte in den Seiteneinstellungen erlauben.');
+  if (name === 'NotFoundError' || name === 'OverconstrainedError') return t('Kein Mikrofon gefunden.');
+  if (name === 'NotReadableError') return t('Das Mikrofon wird gerade von einer anderen App benutzt.');
+  return (e as Error)?.message || t('Aufnahme nicht möglich.');
 }
 
 export interface RecordingHandle {

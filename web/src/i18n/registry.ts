@@ -184,6 +184,18 @@ export const NAMESPACES = {
   b3tour: { complete: true, files: ['tour/engine.tsx', 'tour/learn.tsx', 'tour/welcome.tsx', 'tour/help.tsx', 'tour/docs.tsx'] },
   b3tourbook: { complete: true, files: ['tour/handbook.ts'] },
   b3tourhandover: { complete: true, files: ['tour/handover.tsx'] },
+
+  // b4: batch 4 (agent, areas, boards, canvas, companion, pages A..Calc)
+  b4agency: { complete: true, files: ['pages/Agency.tsx', 'pages/AgencyLists.tsx', 'pages/AgencyPlatform.tsx', 'areas/settings-nav.ts'] },
+  b4agent: { complete: true, files: ['agent/AgentEditor.tsx', 'agent/AgentsPage.tsx', 'agent/context.ts', 'agent/Panel.tsx#MODE_LABEL,isMac,store,applyEvent,StatusIcon,STATUS_TEXT,argSummary,ToolCardView,prettyResult,ConfirmCard,AgentPanel,TypingDots', 'agent/stream.ts', 'agent/tour.ts', 'agent/voice.ts', 'agent/WorkflowStep.tsx', 'companion/realtime.ts', 'companion/spoken.ts', 'companion/vad.ts', 'companion/voice-plan.ts'] },
+  b4ai: { complete: true, files: ['pages/AiAssistant.tsx', 'pages/ai-gallery-filter.ts', 'pages/AiConnections.tsx', 'pages/AiGallery.tsx', 'pages/AiProvider.tsx', 'pages/AiSubscriptions.tsx', 'pages/AiTools.tsx'] },
+  b4acct: { complete: true, files: ['pages/Accounting.tsx', 'pages/AccountingMore.tsx', 'pages/BooksSync.tsx', 'pages/boCommon.tsx', 'pages/BuyOffers.tsx'] },
+  b4ads: { complete: true, files: ['pages/Ads.tsx', 'pages/AdsAudiences.tsx', 'pages/AdsConnect.tsx', 'pages/AdsConversions.tsx', 'pages/AdsKit.tsx', 'pages/AdsManager.tsx', 'pages/AdsRules.tsx', 'pages/AdsWizard.tsx'] },
+  b4boards: { complete: true, files: ['boards/Actions.tsx', 'boards/BoardList.tsx', 'boards/BoardSettings.tsx', 'boards/BoardView.tsx', 'boards/EmbedHosts.tsx', 'boards/Grid.tsx', 'boards/History.tsx', 'boards/PatchCard.tsx', 'boards/Picker.tsx', 'boards/PromptBar.tsx', 'boards/Settings.tsx', 'boards/store.ts', 'boards/Templates.tsx', 'boards/TemplateSave.tsx', 'boards/WidgetCard.tsx'] },
+  b4canvas: { complete: true, files: ['canvas/ai.tsx', 'canvas/CanvasPage.tsx', 'canvas/comments.tsx', 'canvas/dialogs-crm.tsx', 'canvas/dialogs-help.tsx', 'canvas/dialogs-insert.tsx', 'canvas/dialogs-share.tsx', 'canvas/Editor.tsx', 'canvas/media.ts', 'canvas/panels.tsx', 'canvas/tour.ts'] },
+  b4misc: { complete: true, files: ['ios/InstallSheet.tsx', 'ios/shortcuts.ts', 'pages/Academy.tsx', 'pages/Affiliates.tsx', 'pages/Attribution.tsx#srcLabel,KIND,GROUPS,MODELS,Attribution,Report,TrackingSettings,ContactAttribution,attrQs,pickAttr', 'pages/BookingExtras.tsx'] },
+  b4calc: { complete: true, files: ['pages/Calc.tsx', 'pages/CalcCharts.tsx', 'pages/CalcInputs.tsx', 'pages/CalcResults.tsx'] },
+  // end b4
 } as const satisfies Record<string, { complete: boolean; server?: boolean; files: readonly string[] }>;
 export type Namespace = keyof typeof NAMESPACES;
 
@@ -255,5 +267,17 @@ export const CATALOGS: { [L in Exclude<Locale, typeof SOURCE_LOCALE>]: Partial<R
     b3tour: () => import('./en/b3tour'),
     b3tourbook: () => import('./en/b3tourbook'),
     b3tourhandover: () => import('./en/b3tourhandover'),
+
+    // b4 catalogs
+    b4agency: () => import('./en/b4agency'),
+    b4agent: () => import('./en/b4agent'),
+    b4ai: () => import('./en/b4ai'),
+    b4acct: () => import('./en/b4acct'),
+    b4ads: () => import('./en/b4ads'),
+    b4boards: () => import('./en/b4boards'),
+    b4canvas: () => import('./en/b4canvas'),
+    b4misc: () => import('./en/b4misc'),
+    b4calc: () => import('./en/b4calc'),
+    // end b4
   },
 };
