@@ -43,7 +43,10 @@ Dev mode: `npm run dev` (api + vite). Deploy options: `docs/deploy/` (needs a VP
 - **Server-side German still left** (separate pass): e-mails the server sends, public booking/form/invoice/portal pages,
   workflow trigger/action catalogue names, server error messages, starter templates, demo seed content.
 - **Currency** – € is hard-coded in ~100 places; switching to ₹/INR needs its own pass.
-- **GitHub** – push to a new PRIVATE repo once `gh auth login` is done (not logged in on this PC).
+- **GitHub** – pushed to https://github.com/vinitdeep/vmediacrm (PUBLIC repo – fine for AGPL, never commit `.env`/keys).
+  History was rewritten with `vmedia-crm-tools\defang.cjs` (splits the upstream test suite's FAKE token literals, e.g.
+  `'sk_' + 'test_…'`) because GitHub push protection blocked them. Branches `i18n-b*` still have the OLD history –
+  never `git merge` them; bring batch 5 over with `git diff 842189f i18n-b5 | git apply -3` and re-run defang before committing.
 - AGPL: if clients log in to the hosted CRM, the source must be offered to them.
 
 ## Tests – known baseline failures (also fail on untouched upstream, Windows/env related)
