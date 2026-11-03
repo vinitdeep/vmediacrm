@@ -174,6 +174,9 @@ export const NAMESPACES = {
   // batch 1: guided-tour helpers and tour content (content data is looked up by the tour engine in toursA, not wrapped in t())
   b1tour: { complete: true, files: ['tour/catalog.ts'] },
   toursA: { complete: false, files: ['tour/content/ads.ts', 'tour/content/agency.ts', 'tour/content/ai.ts', 'tour/content/backoffice.ts', 'tour/content/boards.ts', 'tour/content/calc.ts', 'tour/content/calls.ts', 'tour/content/company.ts', 'tour/content/connect.ts', 'tour/content/creator.ts', 'tour/content/crm.ts'] },
+
+  // guided-tour data of batch 2 (tour/content/*.ts): keys are the German tour strings, looked up by the tour engine
+  toursB: { complete: false, files: ['tour/content/data.ts', 'tour/content/feedback.ts', 'tour/content/genmedia.ts', 'tour/content/journey.ts', 'tour/content/mailbox.ts', 'tour/content/marketing.ts', 'tour/content/memory.ts', 'tour/content/pm.ts', 'tour/content/revenue.ts'] },
 } as const satisfies Record<string, { complete: boolean; server?: boolean; files: readonly string[] }>;
 export type Namespace = keyof typeof NAMESPACES;
 
@@ -238,5 +241,7 @@ export const CATALOGS: { [L in Exclude<Locale, typeof SOURCE_LOCALE>]: Partial<R
     portalfiles: () => import('./en/portalfiles'),
     b1tour: () => import('./en/b1tour'),
     toursA: () => import('./en/toursA'),
+
+    toursB: () => import('./en/toursB'),
   },
 };
