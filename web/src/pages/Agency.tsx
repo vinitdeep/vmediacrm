@@ -34,19 +34,21 @@ import { Slot } from '../slots';
 import { AgencyTabs } from '../areas/SettingsTabs';
 import { MoreFields } from '../areas/fields';
 import { DEFAULT_CLIENT_PERMS, PermissionPicker } from './PermissionPicker';
+import { useT } from '../i18n';
 const { AgencyFeedback } = lazyPages(() => import('./FeedbackAdmin'), 'AgencyFeedback');
 const { SystemHealth } = lazyPages(() => import('./SystemHealth'), 'SystemHealth');
 const { UmzugAssistent } = lazyPages(() => import('./UmzugAssistent'), 'UmzugAssistent');
 
 
 export function DomainBadge({ status }: { status?: { status: string; message?: string } }) {
+  const t = useT('b4agency');
   if (!status) return null;
   const map: Record<string, [string, any]> = {
     active: ['HTTPS aktiv', 'green'],
-    pending_dns: ['wartet auf DNS', 'yellow'],
-    pending: ['wird eingerichtet', 'blue'],
-    unverified: ['nicht bestätigt', 'yellow'],
-    error: ['Fehler', 'red'],
+    pending_dns: [t('wartet auf DNS'), 'yellow'],
+    pending: [t('wird eingerichtet'), 'blue'],
+    unverified: [t('nicht bestätigt'), 'yellow'],
+    error: [t('Fehler'), 'red'],
   };
   const [label, tone] = map[status.status] ?? [status.status, 'gray'];
   return (
@@ -63,6 +65,7 @@ function randomPassword() {
 
 
 function NewClient({ snapshots, onClose, onDone }: { snapshots: any[]; onClose: () => void; onDone: (r: any) => void }) {
+  const t = useT('b4agency');
   const [f, setF] = useState<any>({ name: '', timezone: 'Asia/Kolkata', email: '', phone: '', website: '', snapshot_id: '', activate_workflows: false });
   const [login, setLogin] = useState(false);
   const [u, setU] = useState<any>({ email: '', name: '', password: randomPassword(), permissions: DEFAULT_CLIENT_PERMS });
@@ -75,39 +78,39 @@ function NewClient({ snapshots, onClose, onDone }: { snapshots: any[]; onClose: 
   };
   return (
     <Modal
-      title="Neuer Kunde"
+      title={t('Neuer Kunde')}
       onClose={onClose}
       wide
       footer={
         <button className="btn" disabled={!f.name || busy} onClick={save}>
-          Kunde anlegen
+          {t('Kunde anlegen')}
         </button>
       }
     >
       <div className="grid2">
-        <Field label="Firmenname *">
+        <Field label={t('Firmenname *')}>
           <Input value={f.name} onChange={(v) => setF({ ...f, name: v })} autoFocus />
         </Field>
-        <Field label="E-Mail der Firma (bekommt Benachrichtigungen)">
+        <Field label={t('E-Mail der Firma (bekommt Benachrichtigungen)')}>
           <Input value={f.email} onChange={(v) => setF({ ...f, email: v })} />
         </Field>
       </div>
       <MoreFields id="agency-new-client" values={[f.website, f.timezone !== 'Asia/Kolkata' && f.timezone]}>
         <div className="grid2">
-          <Field label="Zeitzone">
+          <Field label={t('Zeitzone')}>
             <Input value={f.timezone} onChange={(v) => setF({ ...f, timezone: v })} />
           </Field>
-          <Field label="Webseite">
+          <Field label={t('Webseite')}>
             <Input value={f.website} onChange={(v) => setF({ ...f, website: v })} />
           </Field>
         </div>
       </MoreFields>
-      <Field label="Startpaket (Snapshot)" hint="Kopiert Websites (mit Blog), Funnels, Formulare, Kalender, Workflows, Pipelines, Vorlagen, Kurse und Community-Gruppen – keine Kontakte, Teilnehmer oder Beiträge.">
-        <Select value={f.snapshot_id} onChange={(v) => setF({ ...f, snapshot_id: v })} placeholder="– leer starten –" options={snapshots.map((s) => [s.id, `${s.name} (${s.summary.funnels} Seiten-Projekte, ${s.summary.workflows} Workflows)`])} />
+      <Field label={t('Startpaket (Snapshot)')} hint={t('Kopiert Websites (mit Blog), Funnels, Formulare, Kalender, Workflows, Pipelines, Vorlagen, Kurse und Community-Gruppen – keine Kontakte, Teilnehmer oder Beiträge.')}>
+        <Select value={f.snapshot_id} onChange={(v) => setF({ ...f, snapshot_id: v })} placeholder={t('– leer starten –')} options={snapshots.map((s) => [s.id, `${s.name} (${s.summary.funnels} Seiten-Projekte, ${s.summary.workflows} Workflows)`])} />
       </Field>
-      {f.snapshot_id && <Check checked={f.activate_workflows} onChange={(v) => setF({ ...f, activate_workflows: v })} label="Workflows gleich aktivieren (sonst als Entwurf)" />}
+      {f.snapshot_id && <Check checked={f.activate_workflows} onChange={(v) => setF({ ...f, activate_workflows: v })} label={t('Workflows gleich aktivieren (sonst als Entwurf)')} />}
       <hr />
-      <Check checked={login} onChange={setLogin} label="Login für den Kunden anlegen" />
+      <Check checked={login} onChange={setLogin} label={t('Login für den Kunden anlegen')} />
       {login && (
         <>
           <div className="grid3">
@@ -117,12 +120,12 @@ function NewClient({ snapshots, onClose, onDone }: { snapshots: any[]; onClose: 
             <Field label="Name">
               <Input value={u.name} onChange={(v) => setU({ ...u, name: v })} />
             </Field>
-            <Field label="Passwort">
+            <Field label={t('Passwort')}>
               <Input value={u.password} onChange={(v) => setU({ ...u, password: v })} />
             </Field>
           </div>
-          <MoreFields id="agency-new-client-perms" label="Bereiche einschränken">
-            <Field label="Darf sehen">
+          <MoreFields id="agency-new-client-perms" label={t('Bereiche einschränken')}>
+            <Field label={t('Darf sehen')}>
               <PermissionPicker value={u.permissions} onChange={(v) => setU({ ...u, permissions: v })} />
             </Field>
           </MoreFields>
@@ -133,6 +136,7 @@ function NewClient({ snapshots, onClose, onDone }: { snapshots: any[]; onClose: 
 }
 
 function Clients() {
+  const t = useT('b4agency');
   const session = useSession();
   const overview = useLoad(() => api.get<any[]>('/api/agency/overview'), []);
   const snapshots = useLoad(() => api.get<any[]>('/api/snapshots'), []);
@@ -146,24 +150,24 @@ function Clients() {
     <>
       <div className="row" style={{ marginBottom: 12, justifyContent: 'space-between' }}>
         <span className="muted">
-          {list.length} Kunden · {list.reduce((n, l) => n + l.contacts, 0)} Kontakte · {list.reduce((n, l) => n + l.funnels.length, 0)} Websites/Funnels
+          {list.length} {t('Kunden ·')} {list.reduce((n, l) => n + l.contacts, 0)} {t('Kontakte ·')} {list.reduce((n, l) => n + l.funnels.length, 0)} {t('Websites/Funnels')}
         </span>
         <button className="btn" data-tour="clients-new" onClick={() => setModal(true)}>
-          + Neuer Kunde
+          {t('+ Neuer Kunde')}
         </button>
       </div>
       <div className="table-wrap" data-tour="clients-list">
         <table className="t">
           <thead>
             <tr>
-              <th>Kunde</th>
-              <th>Kontakte</th>
-              <th>Leads (30 T.)</th>
+              <th>{t('Kunde')}</th>
+              <th>{t('Kontakte')}</th>
+              <th>{t('Leads (30 T.)')}</th>
               <th>Pipeline</th>
-              <th>Termine</th>
-              <th>Websites & Funnels</th>
-              <th>Logins</th>
-              <th>Aktiv</th>
+              <th>{t('Termine')}</th>
+              <th>{t('Websites & Funnels')}</th>
+              <th>{t('Logins')}</th>
+              <th>{t('Aktiv')}</th>
               <th></th>
             </tr>
           </thead>
@@ -175,14 +179,14 @@ function Clients() {
                   {l.unread > 0 && (
                     <>
                       {' '}
-                      <Badge tone="blue">{l.unread} ungelesen</Badge>
+                      <Badge tone="blue">{l.unread} {t('ungelesen')}</Badge>
                     </>
                   )}
-                  <div className="muted small">seit {d(l.created_at)}</div>
+                  <div className="muted small">{t('seit')} {d(l.created_at)}</div>
                 </td>
                 <td>{l.contacts}</td>
                 <td>
-                  {l.new_contacts} <span className="muted small">· {l.submissions} Formulare</span>
+                  {l.new_contacts} <span className="muted small">· {l.submissions} {t('Formulare')}</span>
                 </td>
                 <td>{euro(l.open_value)}</td>
                 <td>{l.appointments}</td>
@@ -201,19 +205,19 @@ function Clients() {
                 <td className="muted small">{l.last_activity ? ago(l.last_activity) : '–'}</td>
                 <td className="actions">
                   <button className="btn small" onClick={() => open(l.id)}>
-                    Öffnen
+                    {t('Öffnen')}
                   </button>
                   <button
                     className="btn small secondary"
                     onClick={async () => {
-                      const r = await act(() => api.post('/api/snapshots', { location_id: l.id, name: `${l.name} – Vorlage` }), 'Snapshot erstellt');
+                      const r = await act(() => api.post('/api/snapshots', { location_id: l.id, name: `${l.name} – Vorlage` }), t('Snapshot erstellt'));
                       if (r) snapshots.reload();
                     }}
                   >
-                    Als Vorlage
+                    {t('Als Vorlage')}
                   </button>
                   <button className="btn small secondary" onClick={() => setBrand(l)}>
-                    Branding
+                    {t('Branding')}
                   </button>
                 </td>
               </tr>
@@ -222,7 +226,7 @@ function Clients() {
         </table>
       </div>
       {brand && (
-        <Modal title={`Branding: ${brand.name}`} onClose={() => setBrand(null)} wide>
+        <Modal title={t('Branding: {name}', { name: brand.name })} onClose={() => setBrand(null)} wide>
           <BrandingSettings locationId={brand.id} onSaved={() => setBrand(null)} />
         </Modal>
       )}
@@ -239,19 +243,19 @@ function Clients() {
         />
       )}
       {done && (
-        <Modal title={`${done.location.name} ist angelegt`} onClose={() => setDone(null)} footer={<button className="btn" onClick={() => (setDone(null), open(done.location.id))}>Zum Kunden wechseln</button>}>
+        <Modal title={t('{name} ist angelegt', { name: done.location.name })} onClose={() => setDone(null)} footer={<button className="btn" onClick={() => (setDone(null), open(done.location.id))}>{t('Zum Kunden wechseln')}</button>}>
           {done.created && (
             <p>
-              Aus dem Snapshot: {done.created.funnels.length} Websites/Funnels, {done.created.forms.length} Formulare, {done.created.calendars.length} Kalender, {done.created.workflows.length} Workflows.
+              {t('Aus dem Snapshot:')} {done.created.funnels.length} {t('Websites/Funnels,')} {done.created.forms.length} {t('Formulare,')} {done.created.calendars.length} {t('Kalender,')} {done.created.workflows.length} {t('Workflows.')}
             </p>
           )}
           {done.user && (
             <>
-              <p>Zugang für den Kunden (jetzt notieren, das Passwort wird nicht noch mal angezeigt):</p>
-              <CodeBox text={`${location.origin}/app  ·  ${done.user.email}  ·  ${done.password}`} />
+              <p>{t('Zugang für den Kunden (jetzt notieren, das Passwort wird nicht noch mal angezeigt):')}</p>
+              <CodeBox text={t('{origin}/app  ·  {email}  ·  {password}', { origin: location.origin, email: done.user.email, password: done.password })} />
             </>
           )}
-          <p className="muted">Nächster Schritt: beim Kunden unter Funnels & Websites die Domain eintragen.</p>
+          <p className="muted">{t('Nächster Schritt: beim Kunden unter Funnels & Websites die Domain eintragen.')}</p>
         </Modal>
       )}
     </>
@@ -259,6 +263,7 @@ function Clients() {
 }
 
 function Snapshots() {
+  const t = useT('b4agency');
   const session = useSession();
   const list = useLoad(() => api.get<any[]>('/api/snapshots'), []);
   const [src, setSrc] = useState(session.locationId);
@@ -274,27 +279,27 @@ function Snapshots() {
     } catch {
       /* the server reports bad files */
     }
-    const r = await act(() => api.post('/api/snapshots/import', { name, data: text }), 'Snapshot importiert');
+    const r = await act(() => api.post('/api/snapshots/import', { name, data: text }), t('Snapshot importiert'));
     if (r) list.reload();
   };
   return (
     <>
       <SnapshotTemplates />
-      <p className="muted">Ein Snapshot ist ein Startpaket: Websites mit Blog-Beiträgen, Funnels, Formulare, Kalender, Workflows, Pipelines, Vorlagen, Produkte, eigene Felder, Kurse (Module & Lektionen) und die Struktur der Community-Gruppen eines Sub-Accounts – ohne Kontakte, Kursteilnehmer oder Community-Beiträge. Damit legst du neue Kunden in Sekunden an.</p>
+      <p className="muted">{t('Ein Snapshot ist ein Startpaket: Websites mit Blog-Beiträgen, Funnels, Formulare, Kalender, Workflows, Pipelines, Vorlagen, Produkte, eigene Felder, Kurse (Module & Lektionen) und die Struktur der Community-Gruppen eines Sub-Accounts – ohne Kontakte, Kursteilnehmer oder Community-Beiträge. Damit legst du neue Kunden in Sekunden an.')}</p>
       <div className="card row" style={{ alignItems: 'flex-end' }} data-tour="snapshots-create">
-        <Field label="Aus Sub-Account">
+        <Field label={t('Aus Sub-Account')}>
           <Select value={src} onChange={setSrc} options={session.locations.map((l) => [l.id, l.name])} />
         </Field>
         <div className="grow">
           <Field label="Name">
-            <Input value={nameV} onChange={setName} placeholder="z. B. Handwerker-Website" />
+            <Input value={nameV} onChange={setName} placeholder={t('z. B. Handwerker-Website')} />
           </Field>
         </div>
-        <button className="btn" style={{ marginBottom: 12 }} onClick={() => act(() => api.post('/api/snapshots', { location_id: src, name: nameV }), 'Snapshot erstellt').then(() => (setName(''), list.reload()))}>
-          Snapshot erstellen
+        <button className="btn" style={{ marginBottom: 12 }} onClick={() => act(() => api.post('/api/snapshots', { location_id: src, name: nameV }), t('Snapshot erstellt')).then(() => (setName(''), list.reload()))}>
+          {t('Snapshot erstellen')}
         </button>
         <label className="btn secondary" style={{ marginBottom: 12 }}>
-          JSON importieren
+          {t('JSON importieren')}
           <input type="file" accept="application/json,.json" hidden onChange={(e) => e.target.files?.[0] && importFile(e.target.files[0])} />
         </label>
       </div>
@@ -304,8 +309,8 @@ function Snapshots() {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Inhalt</th>
-                <th>Erstellt</th>
+                <th>{t('Inhalt')}</th>
+                <th>{t('Erstellt')}</th>
                 <th></th>
               </tr>
             </thead>
@@ -317,21 +322,21 @@ function Snapshots() {
                     {s.description && <div className="muted small">{s.description}</div>}
                   </td>
                   <td className="small">
-                    {s.summary.funnels} Websites/Funnels ({s.summary.pages} Seiten) · {s.summary.forms} Formulare · {s.summary.calendars} Kalender · {s.summary.workflows} Workflows · {s.summary.pipelines} Pipelines · {s.summary.templates} Vorlagen
-                    {s.summary.blog_posts ? ` · ${s.summary.blog_posts} Blog-Beiträge` : ''}
-                    {s.summary.courses ? ` · ${s.summary.courses} Kurse (${s.summary.lessons} Lektionen)` : ''}
-                    {s.summary.community_groups ? ` · ${s.summary.community_groups} Community-Gruppen` : ''}
+                    {s.summary.funnels} {t('Websites/Funnels (')}{s.summary.pages} {t('Seiten) ·')} {s.summary.forms} {t('Formulare ·')} {s.summary.calendars} {t('Kalender ·')} {s.summary.workflows} {t('Workflows ·')} {s.summary.pipelines} {t('Pipelines ·')} {s.summary.templates} {t('Vorlagen')}
+                    {s.summary.blog_posts ? t(' · {blog_posts} Blog-Beiträge', { blog_posts: s.summary.blog_posts }) : ''}
+                    {s.summary.courses ? t(' · {courses} Kurse ({lessons} Lektionen)', { courses: s.summary.courses, lessons: s.summary.lessons }) : ''}
+                    {s.summary.community_groups ? t(' · {community_groups} Community-Gruppen', { community_groups: s.summary.community_groups }) : ''}
                   </td>
                   <td className="muted">{dt(s.created_at)}</td>
                   <td className="actions">
                     <button className="btn small" onClick={() => (setApply(s), setTarget(''))}>
-                      Anwenden
+                      {t('Anwenden')}
                     </button>
                     <a className="btn small secondary" href={`/api/snapshots/${s.id}/download`}>
-                      Download
+                      {t('Download')}
                     </a>
-                    <button className="btn small ghost" onClick={() => confirmAsk('Snapshot löschen?') && act(() => api.del(`/api/snapshots/${s.id}`)).then(list.reload)}>
-                      Löschen
+                    <button className="btn small ghost" onClick={() => confirmAsk(t('Snapshot löschen?')) && act(() => api.del(`/api/snapshots/${s.id}`)).then(list.reload)}>
+                      {t('Löschen')}
                     </button>
                   </td>
                 </tr>
@@ -340,11 +345,11 @@ function Snapshots() {
           </table>
         </div>
       ) : (
-        <Empty>Noch keine Snapshots. Bau einen Muster-Kunden mit Website & Workflows auf und speichere ihn als Vorlage.</Empty>
+        <Empty>{t('Noch keine Snapshots. Bau einen Muster-Kunden mit Website & Workflows auf und speichere ihn als Vorlage.')}</Empty>
       )}
       {apply && (
         <Modal
-          title={`„${apply.name}“ anwenden`}
+          title={t('„{name}“ anwenden', { name: apply.name })}
           onClose={() => setApply(null)}
           footer={
             <button
@@ -353,20 +358,20 @@ function Snapshots() {
               onClick={async () => {
                 const r = await act(() => api.post(`/api/snapshots/${apply.id}/apply`, { location_id: target, activate_workflows: activate }));
                 if (r) {
-                  toast(`Kopiert: ${r.funnels.length} Websites/Funnels, ${r.forms.length} Formulare, ${r.workflows.length} Workflows`);
+                  toast(t('Kopiert: {length} Websites/Funnels, {length2} Formulare, {length3} Workflows', { length: r.funnels.length, length2: r.forms.length, length3: r.workflows.length }));
                   setApply(null);
                 }
               }}
             >
-              Hinzufügen
+              {t('Hinzufügen')}
             </button>
           }
         >
-          <p className="muted">Fügt alles als Kopie zum Sub-Account hinzu. Bestehendes bleibt unverändert.</p>
-          <Field label="Ziel-Sub-Account">
-            <Select value={target} onChange={setTarget} placeholder="wählen…" options={session.locations.map((l) => [l.id, l.name])} />
+          <p className="muted">{t('Fügt alles als Kopie zum Sub-Account hinzu. Bestehendes bleibt unverändert.')}</p>
+          <Field label={t('Ziel-Sub-Account')}>
+            <Select value={target} onChange={setTarget} placeholder={t('wählen…')} options={session.locations.map((l) => [l.id, l.name])} />
           </Field>
-          <Check checked={activate} onChange={setActivate} label="Workflows gleich aktivieren" />
+          <Check checked={activate} onChange={setActivate} label={t('Workflows gleich aktivieren')} />
         </Modal>
       )}
     </>
@@ -374,31 +379,32 @@ function Snapshots() {
 }
 
 function Domains() {
+  const t = useT('b4agency');
   const data = useLoad(() => api.get('/api/agency/domains'), []);
   if (!data.data) return <Spinner />;
   const { server_ip, agent, domains } = data.data;
   return (
     <>
       <div className="card" data-tour="domains-howto">
-        <h2>So kommt eine Kundendomain online</h2>
+        <h2>{t('So kommt eine Kundendomain online')}</h2>
         <ol>
-          <li>Beim Kunden unter Funnels & Websites → Einstellungen & Domain die Domain eintragen (z. B. <code>malerbetrieb-meier.de</code>).</li>
+          <li>{t('Beim Kunden unter Funnels & Websites → Einstellungen & Domain die Domain eintragen (z. B.')} <code>malerbetrieb-meier.de</code>).</li>
           <li>
-            Beim Domain-Anbieter einen <strong>A-Record</strong> auf <code>{server_ip || 'die Server-IP'}</code> setzen – für <code>@</code> und <code>www</code>.
+            {t('Beim Domain-Anbieter einen')} <strong>{t('A-Record')}</strong> {t('auf')} <code>{server_ip || t('die Server-IP')}</code> {t('setzen – für')} <code>@</code> {t('und')} <code>www</code>.
           </li>
-          <li>Fertig: Innerhalb weniger Minuten richtet der Domain-Agent nginx und das SSL-Zertifikat ein. Der Status steht unten.</li>
+          <li>{t('Fertig: Innerhalb weniger Minuten richtet der Domain-Agent nginx und das SSL-Zertifikat ein. Der Status steht unten.')}</li>
         </ol>
-        {!agent && <p style={{ color: 'var(--red)' }}>Der Domain-Agent ist auf diesem Server nicht eingerichtet (PGHL_AGENT_TOKEN fehlt) – Domains müssen dann von Hand im Proxy eingetragen werden.</p>}
+        {!agent && <p style={{ color: 'var(--red)' }}>{t('Der Domain-Agent ist auf diesem Server nicht eingerichtet (PGHL_AGENT_TOKEN fehlt) – Domains müssen dann von Hand im Proxy eingetragen werden.')}</p>}
       </div>
       <div className="table-wrap" style={{ marginTop: 12 }} data-tour="domains-list">
         <table className="t">
           <thead>
             <tr>
-              <th>Domain</th>
-              <th>Art</th>
-              <th>Kunde</th>
+              <th>{t('Domain')}</th>
+              <th>{t('Art')}</th>
+              <th>{t('Kunde')}</th>
               <th>Status</th>
-              <th>Geprüft</th>
+              <th>{t('Geprüft')}</th>
             </tr>
           </thead>
           <tbody>
@@ -410,7 +416,7 @@ function Domains() {
                   </a>
                   {x.alias && <div className="muted small">+ {x.alias}</div>}
                 </td>
-                <td>{x.kind === 'app' ? 'Agentur-App' : 'Website/Funnel'}</td>
+                <td>{x.kind === 'app' ? t('Agentur-App') : t('Website/Funnel')}</td>
                 <td>{x.location ?? '–'}</td>
                 <td>
                   <DomainBadge status={x} />
@@ -421,11 +427,11 @@ function Domains() {
             ))}
           </tbody>
         </table>
-        {!domains.length && <Empty>Noch keine eigenen Domains.</Empty>}
+        {!domains.length && <Empty>{t('Noch keine eigenen Domains.')}</Empty>}
       </div>
       <p>
         <button className="btn small secondary" onClick={() => data.reload()}>
-          Aktualisieren
+          {t('Aktualisieren')}
         </button>
       </p>
     </>
@@ -433,6 +439,7 @@ function Domains() {
 }
 
 function BrandingSettings({ locationId, onSaved }: { locationId?: string; onSaved?: () => void }) {
+  const t = useT('b4agency');
   const session = useSession();
   const url = locationId ? `/api/agency/locations/${locationId}/branding` : '/api/agency/branding';
   const b = useLoad(() => api.get(url), [url]);
@@ -450,42 +457,42 @@ function BrandingSettings({ locationId, onSaved }: { locationId?: string; onSave
     <div className="row" style={{ alignItems: 'flex-start' }}>
       <div className="card" style={{ flex: '2 1 420px' }} data-tour="branding-form">
         <div className="grid2">
-          <Field label={locationId ? 'App-Name für diesen Kunden' : 'Name deiner Agentur / App'}>
+          <Field label={locationId ? t('App-Name für diesen Kunden') : t('Name deiner Agentur / App')}>
             <Input value={v.name} onChange={(x) => set({ name: x })} placeholder={fb.name} />
           </Field>
-          <Field label="Markenfarbe">
+          <Field label={t('Markenfarbe')}>
             <input type="color" value={shown.color} onChange={(e) => set({ color: e.target.value })} />
             {locationId && v.color && (
               <button className="btn small secondary" onClick={() => set({ color: '' })}>
-                Agentur-Farbe
+                {t('Agentur-Farbe')}
               </button>
             )}
           </Field>
         </div>
-        <h3 style={{ margin: '4px 0 8px' }}>Logos und Favicon</h3>
+        <h3 style={{ margin: '4px 0 8px' }}>{t('Logos und Favicon')}</h3>
         <LogoSet v={v as Branding} fb={fb} set={set} client={!!locationId} />
-        <MoreFields id="agency-branding-login" label="Texte der Login-Seite" values={[v.login_title, v.login_text, v.support_email]}>
-          <Field label="Login: Überschrift">
-            <Input value={v.login_title} onChange={(x) => set({ login_title: x })} placeholder={`Anmelden bei ${shown.name}`} />
+        <MoreFields id="agency-branding-login" label={t('Texte der Login-Seite')} values={[v.login_title, v.login_text, v.support_email]}>
+          <Field label={t('Login: Überschrift')}>
+            <Input value={v.login_title} onChange={(x) => set({ login_title: x })} placeholder={t('Anmelden bei {name}', { name: shown.name })} />
           </Field>
-          <Field label="Login: Text">
-            <Textarea value={v.login_text} onChange={(x) => set({ login_text: x })} rows={2} placeholder="Willkommen in deinem Kundenportal." />
+          <Field label={t('Login: Text')}>
+            <Textarea value={v.login_text} onChange={(x) => set({ login_text: x })} rows={2} placeholder={t('Willkommen in deinem Kundenportal.')} />
           </Field>
-          <Field label="Support-E-Mail (auf der Login-Seite)">
+          <Field label={t('Support-E-Mail (auf der Login-Seite)')}>
             <Input value={v.support_email} onChange={(x) => set({ support_email: x })} />
           </Field>
         </MoreFields>
         <Field
           tour="branding-domain"
-          label={locationId ? 'Login-Domain des Kunden (optional)' : 'Eigene App-Domain'}
+          label={locationId ? t('Login-Domain des Kunden (optional)') : t('Eigene App-Domain')}
           hint={
             locationId ? (
               <>
-                z. B. <code>crm.kunde.de</code> – A-Record auf <code>{info.data?.server_ip || 'die Server-IP'}</code>. Die Login-Seite dort zeigt das Branding des Kunden.
+                {t('z. B.')} <code>crm.kunde.de</code> {t('– A-Record auf')} <code>{info.data?.server_ip || t('die Server-IP')}</code>{t('. Die Login-Seite dort zeigt das Branding des Kunden.')}
               </>
             ) : (
               <>
-                z. B. <code>app.deine-agentur.de</code> – A-Record auf <code>{info.data?.server_ip || 'die Server-IP'}</code>. Kunden loggen sich dann dort ein, und Links in Mails (Buchung, Rechnung) nutzen diese Domain, sobald HTTPS aktiv ist.
+                {t('z. B.')} <code>app.deine-agentur.de</code> {t('– A-Record auf')} <code>{info.data?.server_ip || t('die Server-IP')}</code>{t('. Kunden loggen sich dann dort ein, und Links in Mails (Buchung, Rechnung) nutzen diese Domain, sobald HTTPS aktiv ist.')}
               </>
             )
           }
@@ -497,7 +504,7 @@ function BrandingSettings({ locationId, onSaved }: { locationId?: string; onSave
           <button
             className="btn"
             onClick={async () => {
-              const r = await act(() => api.patch(url, v), 'Branding gespeichert');
+              const r = await act(() => api.patch(url, v), t('Branding gespeichert'));
               if (r) {
                 b.setData(r);
                 if (onSaved) onSaved();
@@ -505,14 +512,14 @@ function BrandingSettings({ locationId, onSaved }: { locationId?: string; onSave
               }
             }}
           >
-            Speichern
+            {t('Speichern')}
           </button>
         </p>
       </div>
       <div className="card" style={{ flex: '1 1 260px' }} data-tour="branding-preview">
-        <h2>Vorschau</h2>
+        <h2>{t('Vorschau')}</h2>
         <LogoPreview shown={{ ...merged, name: shown.name, color: shown.color }} />
-        <p className="muted small">{locationId ? 'Das sehen die Logins dieses Kunden. Leere Felder = dein Agentur-Branding.' : '„V Media CRM“ taucht danach nirgends mehr auf – auch nicht für Kunden-Logins.'}</p>
+        <p className="muted small">{locationId ? t('Das sehen die Logins dieses Kunden. Leere Felder = dein Agentur-Branding.') : t('„V Media CRM“ taucht danach nirgends mehr auf – auch nicht für Kunden-Logins.')}</p>
       </div>
     </div>
     <BrandingLook locationId={locationId} />
@@ -521,6 +528,7 @@ function BrandingSettings({ locationId, onSaved }: { locationId?: string; onSave
 }
 
 function Integrations() {
+  const t = useT('b4agency');
   const s = useLoad(() => api.get<any>('/api/agency/social'), []);
   const locs = useLoad(() => api.get<any[]>('/api/agency/overview'), []);
   const [url, setUrl] = useState<string | null>(null);
@@ -530,31 +538,31 @@ function Integrations() {
   return (
     <div className="row" style={{ alignItems: 'flex-start' }}>
       <div className="card" style={{ flex: '1 1 340px' }} data-tour="integrations-postiz">
-        <h2>Postiz (Social Planner) <SignupLink id="postiz" /></h2>
-        <p className="muted small">Postiz veröffentlicht die Posts. Deine Kunden planen im Social Planner, ohne Postiz zu sehen.</p>
-        <Field label="Adresse">
+        <h2>{t('Postiz (Social Planner)')} <SignupLink id="postiz" /></h2>
+        <p className="muted small">{t('Postiz veröffentlicht die Posts. Deine Kunden planen im Social Planner, ohne Postiz zu sehen.')}</p>
+        <Field label={t('Adresse')}>
           <Input value={url ?? v.url} onChange={setUrl} placeholder="https://postiz.deine-domain.de" />
         </Field>
-        <Field label="API-Schlüssel" hint="Postiz → Einstellungen → Public API">
-          <Input type="password" value={key} onChange={setKey} placeholder={v.key_set ? '•••••••• (gespeichert)' : ''} autoComplete="off" />
+        <Field label={t('API-Schlüssel')} hint={t('Postiz → Einstellungen → Public API')}>
+          <Input type="password" value={key} onChange={setKey} placeholder={v.key_set ? t('•••••••• (gespeichert)') : ''} autoComplete="off" />
         </Field>
         <p>
           <button
             className="btn"
             onClick={async () => {
-              const r = await act(() => api.patch('/api/agency/social', { url: url ?? v.url, ...(key ? { api_key: key } : {}) }), 'Verbunden');
+              const r = await act(() => api.patch('/api/agency/social', { url: url ?? v.url, ...(key ? { api_key: key } : {}) }), t('Verbunden'));
               if (r) (setKey(''), setUrl(null), s.reload());
             }}
           >
-            Speichern & testen
+            {t('Speichern & testen')}
           </button>{' '}
-          {v.key_set && (v.connected ? <Badge tone="green">verbunden</Badge> : <Badge tone="red">{v.error || 'nicht erreichbar'}</Badge>)}
+          {v.key_set && (v.connected ? <Badge tone="green">{t('verbunden')}</Badge> : <Badge tone="red">{v.error || t('nicht erreichbar')}</Badge>)}
         </p>
       </div>
       {v.connected && (
         <div className="card" style={{ flex: '2 1 480px' }}>
-          <h2>Kanäle → Projekte</h2>
-          <p className="muted small">Ein Kanal kann mehreren Projekten dienen (z. B. dein X-Account für die Agentur und ein Produkt). Verbindet ein Kunde selbst einen Kanal, wird er automatisch zugeordnet.</p>
+          <h2>{t('Kanäle → Projekte')}</h2>
+          <p className="muted small">{t('Ein Kanal kann mehreren Projekten dienen (z. B. dein X-Account für die Agentur und ein Produkt). Verbindet ein Kunde selbst einen Kanal, wird er automatisch zugeordnet.')}</p>
           {v.channels.length ? (
             <table className="t">
               <tbody>
@@ -562,7 +570,7 @@ function Integrations() {
                   <tr key={c.id}>
                     <td>
                       <strong>{c.name}</strong> <span className="muted small">{c.identifier}{c.profile ? ` · ${c.profile}` : ''}</span>
-                      {!c.supported && <div className="muted small">Planen nur in Postiz (Video/Newsletter)</div>}
+                      {!c.supported && <div className="muted small">{t('Planen nur in Postiz (Video/Newsletter)')}</div>}
                     </td>
                     <td style={{ width: 280 }}>
                       <div className="row" style={{ gap: 4, flexWrap: 'wrap' }}>
@@ -572,8 +580,8 @@ function Integrations() {
                             <button
                               className="btn small ghost"
                               style={{ padding: '0 4px' }}
-                              aria-label="Zuordnung entfernen"
-                              onClick={async () => (await act(() => api.put(`/api/agency/social/channels/${c.id}`, { location_ids: c.location_ids.filter((x: string) => x !== id) }), 'Entfernt')) && s.reload()}
+                              aria-label={t('Zuordnung entfernen')}
+                              onClick={async () => (await act(() => api.put(`/api/agency/social/channels/${c.id}`, { location_ids: c.location_ids.filter((x: string) => x !== id) }), t('Entfernt'))) && s.reload()}
                             >
                               ✕
                             </button>
@@ -582,9 +590,9 @@ function Integrations() {
                       </div>
                       <Select
                         value=""
-                        placeholder="+ Projekt zuordnen"
+                        placeholder={t('+ Projekt zuordnen')}
                         onChange={async (loc) => {
-                          if (loc && (await act(() => api.put(`/api/agency/social/channels/${c.id}`, { location_ids: [...(c.location_ids ?? []), loc] }), 'Zugeordnet'))) s.reload();
+                          if (loc && (await act(() => api.put(`/api/agency/social/channels/${c.id}`, { location_ids: [...(c.location_ids ?? []), loc] }), t('Zugeordnet')))) s.reload();
                         }}
                         options={locs.data!.filter((l: any) => !(c.location_ids ?? []).includes(l.id)).map((l: any) => [l.id, l.name])}
                       />
@@ -594,7 +602,7 @@ function Integrations() {
               </tbody>
             </table>
           ) : (
-            <Empty>In Postiz sind noch keine Kanäle verbunden.</Empty>
+            <Empty>{t('In Postiz sind noch keine Kanäle verbunden.')}</Empty>
           )}
         </div>
       )}
@@ -603,15 +611,16 @@ function Integrations() {
 }
 
 export function Agency({ tab = 'projects' }: { tab?: string }) {
+  const t = useT('b4agency');
   const cloud = !!useAppInfo()?.cloud?.enabled;
   return (
     <>
-      <PageHead title="Agentur" sub="Alle Projekte und Kunden, Vorlagen, Domains, White-Label, API und Protokoll an einem Ort">
+      <PageHead title={t('Agentur')} sub={t('Alle Projekte und Kunden, Vorlagen, Domains, White-Label, API und Protokoll an einem Ort')}>
         <LearnLink label="learn" />
       </PageHead>
       {tab === 'projects' && <AcademyWelcome />}
       <AgencyTabs
-        tabs={[
+        tabs={([
           ['projects', 'Projekte'],
           ['contacts', 'Kontakte'],
           ['deals', 'Deals'],
@@ -634,7 +643,7 @@ export function Agency({ tab = 'projects' }: { tab?: string }) {
           ['feedback', 'Fehler & Wünsche'],
           ['audit', 'Protokoll'],
           ['system', 'System'],
-        ]}
+        ] as [string, string][]).map(([k, l]) => [k, t(l)])}
         value={tab}
         onChange={(t) => navigate(`agency/${t}`)}
       />

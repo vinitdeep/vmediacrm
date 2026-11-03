@@ -5,6 +5,7 @@ import { Icon } from '../icons';
 import { Link, toastError } from '../ui';
 import { PatchCard } from './PatchCard';
 import type { BoardFull, Catalogue, ComposeResult } from './types';
+import { useT } from '../i18n';
 
 const EXAMPLES = ['Zeig mir die offenen Angebote und die heutigen Aufgaben', 'Mach das Umsatz-Diagramm größer und setz es nach oben', 'Füge einen Kalender neben der Pipeline hinzu', 'Entferne die Notizen und nenne das Board „Montag“', 'Färbe das Board violett'];
 
@@ -14,6 +15,7 @@ const EXAMPLES = ['Zeig mir die offenen Angebote und die heutigen Aufgaben', 'Ma
  * never confirm anything themselves.
  */
 export function PromptBar({ board, catalogue, call, onUndo, canEdit, wish }: { board: BoardFull; catalogue: Catalogue | null; call: <T extends { board?: BoardFull }>(path: string, body?: Record<string, unknown>) => Promise<T>; onUndo: () => Promise<unknown>; canEdit: boolean; wish?: { text: string; n: number } }) {
+  const t = useT('b4boards');
   const [text, setText] = useState(wish?.text ?? '');
   const [busy, setBusy] = useState(false);
   const [card, setCard] = useState<ComposeResult | null>(null);
@@ -64,7 +66,7 @@ export function PromptBar({ board, catalogue, call, onUndo, canEdit, wish }: { b
     try {
       const r = await call<ComposeResult>('compose', { prompt: p, voice });
       setText('');
-      if (r.applied) setApplied({ summary: r.proposal?.summary || r.message || 'Übernommen', id: Date.now() });
+      if (r.applied) setApplied({ summary: r.proposal?.summary || r.message || t('Übernommen'), id: Date.now() });
       else setCard(r);
     } catch (e) {
       const m = (e as Error).message;
@@ -81,7 +83,7 @@ export function PromptBar({ board, catalogue, call, onUndo, canEdit, wish }: { b
     try {
       if (apply) {
         const r = await call<{ summary: string; board: BoardFull }>(`proposals/${id}/apply`);
-        setApplied({ summary: r.summary || 'Übernommen', id: Date.now() });
+        setApplied({ summary: r.summary || t('Übernommen'), id: Date.now() });
       } else await call(`proposals/${id}/reject`);
       setCard(null);
     } catch (e) {
@@ -119,7 +121,7 @@ export function PromptBar({ board, catalogue, call, onUndo, canEdit, wish }: { b
       const blob = await h.stop();
       if (!blob) return;
       const said = (await transcribe(blob)).text.trim();
-      if (!said) return setError({ text: 'Ich habe nichts verstanden – bitte noch einmal sprechen.', setup: false });
+      if (!said) return setError({ text: t('Ich habe nichts verstanden – bitte noch einmal sprechen.'), setup: false });
       if (autoSend) void send(said, true);
       else {
         setText(said);
@@ -147,7 +149,7 @@ export function PromptBar({ board, catalogue, call, onUndo, canEdit, wish }: { b
     return (
       <div className="bd-dock">
         <p className="bd-dock-ro">
-          <Icon name="lock" size={14} /> Du darfst dieses Board ansehen, aber nicht ändern.
+          <Icon name="lock" size={14} /> {t('Du darfst dieses Board ansehen, aber nicht ändern.')}
         </p>
       </div>
     );
@@ -167,7 +169,7 @@ export function PromptBar({ board, catalogue, call, onUndo, canEdit, wish }: { b
               await onUndo();
             }}
           >
-            <Icon name="undo" size={14} /> Rückgängig
+            <Icon name="undo" size={14} /> {t('Rückgängig')}
           </button>
         </div>
       )}
@@ -175,7 +177,7 @@ export function PromptBar({ board, catalogue, call, onUndo, canEdit, wish }: { b
         <p className="bd-error" role="alert">
           {error.text}{' '}
           {error.setup && (
-            <Link to="settings/ai">KI-Assistent einrichten</Link>
+            <Link to="settings/ai">{t('KI-Assistent einrichten')}</Link>
           )}
         </p>
       )}
@@ -191,8 +193,8 @@ export function PromptBar({ board, catalogue, call, onUndo, canEdit, wish }: { b
           ref={input}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={rec === 'recording' ? `Ich höre zu … ${Math.floor(recMs / 1000)} s` : rec === 'working' ? 'Ich schreibe mit …' : (typeof matchMedia !== 'undefined' && matchMedia('(max-width: 720px)').matches ? 'Sag dem Board, was du willst …' : `Sag dem Board, was du sehen willst – z. B. „${EXAMPLES[ex % EXAMPLES.length]}“`)}
-          aria-label="Wunsch an das Board"
+          placeholder={rec === 'recording' ? t('Ich höre zu … {v1} s', { v1: Math.floor(recMs / 1000) }) : rec === 'working' ? t('Ich schreibe mit …') : (typeof matchMedia !== 'undefined' && matchMedia('(max-width: 720px)').matches ? t('Sag dem Board, was du willst …') : t('Sag dem Board, was du sehen willst – z. B. „{v1}“', { v1: t(EXAMPLES[ex % EXAMPLES.length]) }))}
+          aria-label={t('Wunsch an das Board')}
           maxLength={1000}
           disabled={busy || rec !== 'idle'}
           autoComplete="off"
@@ -214,16 +216,16 @@ export function PromptBar({ board, catalogue, call, onUndo, canEdit, wish }: { b
               }
             }}
             disabled={busy || rec === 'working'}
-            aria-label={rec === 'recording' ? 'Aufnahme beenden' : 'Sprechen (Taste halten oder tippen)'}
+            aria-label={rec === 'recording' ? t('Aufnahme beenden') : t('Sprechen (Taste halten oder tippen)')}
             aria-pressed={rec === 'recording'}
-            title="Sprechen: Taste halten oder tippen"
+            title={t('Sprechen: Taste halten oder tippen')}
           >
             <Icon name={rec === 'recording' ? 'micOff' : 'mic'} size={17} />
           </button>
         )}
-        <button type="submit" className="btn bd-send" disabled={busy || !text.trim() || rec !== 'idle'} aria-label="Senden">
+        <button type="submit" className="btn bd-send" disabled={busy || !text.trim() || rec !== 'idle'} aria-label={t('Senden')}>
           {busy ? <span className="bd-spin" aria-hidden="true" /> : <Icon name="send" size={16} />}
-          <span className="bd-send-text">Los</span>
+          <span className="bd-send-text">{t('Los')}</span>
         </button>
       </form>
     </div>

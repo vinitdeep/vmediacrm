@@ -25,14 +25,15 @@ const MODELS: [string, string][] = [
 ];
 
 export function Attribution({ tab }: { tab?: string }) {
+  const tt = useT('b4misc');
   const t = ['report', 'ads', 'settings'].includes(tab ?? '') ? tab! : 'report';
   const [range, setRange] = useState({ from: ymd(new Date(Date.now() - 29 * 864e5)), to: ymd(new Date()) });
   return (
     <>
-      <PageHead title="Attribution" sub="Woher Leads, Kunden und Umsatz kommen – erster und letzter Kontaktpunkt, ganz ohne Fremd-Tracking." />
+      <PageHead title="Attribution" sub={tt('Woher Leads, Kunden und Umsatz kommen – erster und letzter Kontaktpunkt, ganz ohne Fremd-Tracking.')} />
       <Tabs
         tabs={[
-          ['report', 'Bericht'],
+          ['report', tt('Bericht')],
           ['ads', 'Werbung: CPL & ROAS'],
           ['settings', 'Tracking & Werbekonten'],
         ]}
@@ -55,6 +56,7 @@ export function Attribution({ tab }: { tab?: string }) {
 }
 
 function Report({ range, setRange }: { range: { from: string; to: string }; setRange: (from: string, to: string) => void }) {
+  const tt = useT('b4misc');
   const [group, setGroup] = useState('source_medium');
   const [model, setModel] = useState('first');
   const qs = `from=${range.from}&to=${range.to}&group=${group}&model=${model}`;
@@ -69,16 +71,16 @@ function Report({ range, setRange }: { range: { from: string; to: string }; setR
     <>
       <RangePicker from={range.from} to={range.to} onChange={setRange}>
         <div style={{ width: 168 }}>
-          <Field label="Gruppieren nach" tour="attribution-group">
-            <Select value={group} onChange={setGroup} options={GROUPS} />
+          <Field label={tt('Gruppieren nach')} tour="attribution-group">
+            <Select value={group} onChange={setGroup} options={GROUPS.map(([k, l]) => [k, tt(l)] as [string, string])} />
           </Field>
         </div>
         <div style={{ width: 150 }}>
-          <Field label="Zuordnung" tour="attribution-model">
-            <Select value={model} onChange={setModel} options={MODELS} />
+          <Field label={tt('Zuordnung')} tour="attribution-model">
+            <Select value={model} onChange={setModel} options={MODELS.map(([k, l]) => [k, tt(l)] as [string, string])} />
           </Field>
         </div>
-        <a className="btn secondary attr-export" data-tour="attribution-csv" title="Tabelle als CSV herunterladen" href={`/api/attribution/report.csv?${qs}&locationId=${encodeURIComponent(currentLocation())}`}>
+        <a className="btn secondary attr-export" data-tour="attribution-csv" title={tt('Tabelle als CSV herunterladen')} href={`/api/attribution/report.csv?${qs}&locationId=${encodeURIComponent(currentLocation())}`}>
           <Icon name="download" /> CSV
         </a>
       </RangePicker>
@@ -88,23 +90,23 @@ function Report({ range, setRange }: { range: { from: string; to: string }; setR
       ) : (
         <>
           <SortableGrid id="attribution.stats" className="stats">
-            <Stat label="Neue Leads" value={tot?.leads ?? 0} sub="Kontakte, die im Zeitraum dazukamen" />
-            <Stat label="Gewonnene Deals" value={tot?.deals_won ?? 0} sub={`Deal-Wert ${euro(tot?.deal_value ?? 0)}`} />
-            <Stat label="Zahlende Kunden" value={tot?.customers ?? 0} sub="mit bezahlter Rechnung" />
-            <Stat label="Umsatz" value={money(tot?.revenue_cents ?? 0)} sub="bezahlte Rechnungen inkl. Stripe" />
+            <Stat label={tt('Neue Leads')} value={tot?.leads ?? 0} sub={tt('Kontakte, die im Zeitraum dazukamen')} />
+            <Stat label={tt('Gewonnene Deals')} value={tot?.deals_won ?? 0} sub={tt('Deal-Wert {v1}', { v1: euro(tot?.deal_value ?? 0) })} />
+            <Stat label={tt('Zahlende Kunden')} value={tot?.customers ?? 0} sub={tt('mit bezahlter Rechnung')} />
+            <Stat label={tt('Umsatz')} value={money(tot?.revenue_cents ?? 0)} sub={tt('bezahlte Rechnungen inkl. Stripe')} />
           </SortableGrid>
           {rows.length ? (
             <div className="table-wrap">
               <table className="t attr-table">
                 <thead>
                   <tr>
-                    <th>{GROUPS.find((g) => g[0] === group)?.[1]}</th>
-                    <th className="num">Leads</th>
-                    <th className="num">Deals</th>
-                    <th className="num">Deal-Wert</th>
-                    <th className="num">Kunden</th>
-                    <th className="num">Umsatz</th>
-                    <th style={{ width: '24%' }}>{metric === 'revenue_cents' ? 'Anteil am Umsatz' : 'Anteil an Leads'}</th>
+                    <th>{tt(GROUPS.find((g) => g[0] === group)?.[1] ?? '')}</th>
+                    <th className="num">{tt('Leads')}</th>
+                    <th className="num">{tt('Deals')}</th>
+                    <th className="num">{tt('Deal-Wert')}</th>
+                    <th className="num">{tt('Kunden')}</th>
+                    <th className="num">{tt('Umsatz')}</th>
+                    <th style={{ width: '24%' }}>{metric === 'revenue_cents' ? tt('Anteil am Umsatz') : tt('Anteil an Leads')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -133,10 +135,10 @@ function Report({ range, setRange }: { range: { from: string; to: string }; setR
               </table>
             </div>
           ) : (
-            <Empty>Im Zeitraum gibt es noch keine Leads oder Umsätze.</Empty>
+            <Empty>{tt('Im Zeitraum gibt es noch keine Leads oder Umsätze.')}</Empty>
           )}
           <p className="muted small">
-            „Erster Kontakt“ rechnet jeden Lead der Quelle zu, über die er zum ersten Mal kam; „Letzter Kontakt“ der letzten Quelle vor dem Abschluss (direkte Aufrufe zählen dabei nicht). Deals zählen nach dem Datum, an dem sie gewonnen wurden, Umsatz nach dem Zahlungsdatum.
+            {tt('„Erster Kontakt“ rechnet jeden Lead der Quelle zu, über die er zum ersten Mal kam; „Letzter Kontakt“ der letzten Quelle vor dem Abschluss (direkte Aufrufe zählen dabei nicht). Deals zählen nach dem Datum, an dem sie gewonnen wurden, Umsatz nach dem Zahlungsdatum.')}
           </p>
         </>
       )}
@@ -145,6 +147,7 @@ function Report({ range, setRange }: { range: { from: string; to: string }; setR
 }
 
 function TrackingSettings() {
+  const tt = useT('b4misc');
   const s = useLoad(() => api.get('/api/attribution/settings'), []);
   const [f, setF] = useState<any>(null);
   useEffect(() => {
@@ -152,49 +155,49 @@ function TrackingSettings() {
   }, [s.data]);
   if (!f) return <Spinner />;
   const save = async () => {
-    const r = await act(() => api.put('/api/attribution/settings', { enabled: f.enabled, cookie: f.cookie, cookie_days: Number(f.cookie_days), banner: f.banner, banner_text: f.banner_text }), 'Gespeichert');
+    const r = await act(() => api.put('/api/attribution/settings', { enabled: f.enabled, cookie: f.cookie, cookie_days: Number(f.cookie_days), banner: f.banner, banner_text: f.banner_text }), tt('Gespeichert'));
     if (r) s.setData({ ...s.data, ...r });
   };
   return (
     <div className="card" data-tour="attribution-tracking">
-      <h2>Tracking</h2>
+      <h2>{tt('Tracking')}</h2>
       <p className="muted" style={{ marginTop: 0 }}>
-        Funnels, Websites und Kauflinks erfassen UTM-Parameter, gclid/fbclid, Verweis-Seite und Einstiegsseite selbst – auf deinem Server, ohne Google Analytics oder Meta-Pixel. Formulare, Termine, Chat und Käufe übernehmen die Herkunft in den Kontakt.
+        {tt('Funnels, Websites und Kauflinks erfassen UTM-Parameter, gclid/fbclid, Verweis-Seite und Einstiegsseite selbst – auf deinem Server, ohne Google Analytics oder Meta-Pixel. Formulare, Termine, Chat und Käufe übernehmen die Herkunft in den Kontakt.')}
       </p>
-      <Check checked={f.enabled} onChange={(v) => setF({ ...f, enabled: v })} label="Herkunft erfassen" />
+      <Check checked={f.enabled} onChange={(v) => setF({ ...f, enabled: v })} label={tt('Herkunft erfassen')} />
       <div className="grid2">
-        <Field label="Besucher-Cookie" hint="Ohne Cookie zählt nur der Seitenaufruf, auf dem das Formular abgeschickt wird.">
+        <Field label={tt('Besucher-Cookie')} hint={tt('Ohne Cookie zählt nur der Seitenaufruf, auf dem das Formular abgeschickt wird.')}>
           <Select
             value={f.cookie}
             onChange={(v) => setF({ ...f, cookie: v })}
             options={[
-              ['consent', 'Nur mit Einwilligung (empfohlen)'],
-              ['always', 'Immer – nur mit eigener Rechtsgrundlage'],
-              ['never', 'Nie'],
+              ['consent', tt('Nur mit Einwilligung (empfohlen)')],
+              ['always', tt('Immer – nur mit eigener Rechtsgrundlage')],
+              ['never', tt('Nie')],
             ]}
           />
         </Field>
-        <Field label="Cookie-Laufzeit (Tage)">
+        <Field label={tt('Cookie-Laufzeit (Tage)')}>
           <Input type="number" min={1} max={730} value={f.cookie_days} onChange={(v) => setF({ ...f, cookie_days: v })} />
         </Field>
       </div>
-      <Check checked={f.banner} onChange={(v) => setF({ ...f, banner: v })} label="Eigenen kleinen Hinweis mit „Einverstanden / Nein“ auf Funnel-Seiten zeigen (nur bei „Nur mit Einwilligung“)" />
+      <Check checked={f.banner} onChange={(v) => setF({ ...f, banner: v })} label={tt('Eigenen kleinen Hinweis mit „Einverstanden / Nein“ auf Funnel-Seiten zeigen (nur bei „Nur mit Einwilligung“)')} />
       {f.banner && (
-        <Field label="Text des Hinweises">
+        <Field label={tt('Text des Hinweises')}>
           <Textarea value={f.banner_text} onChange={(v) => setF({ ...f, banner_text: v })} />
         </Field>
       )}
       <p>
         <button className="btn" onClick={save}>
-          Speichern
+          {tt('Speichern')}
         </button>
       </p>
       <hr />
-      <h3>Andere Websites (WordPress & Co.)</h3>
-      <p className="muted small">Dieses Skript erfasst die Herkunft auch dort und gibt sie an eingebettete Formulare, Termin-Buchungen, Kauflinks und den Live-Chat weiter:</p>
+      <h3>{tt('Andere Websites (WordPress & Co.)')}</h3>
+      <p className="muted small">{tt('Dieses Skript erfasst die Herkunft auch dort und gibt sie an eingebettete Formulare, Termin-Buchungen, Kauflinks und den Live-Chat weiter:')}</p>
       <CodeBox text={s.data.snippet} />
       <p className="muted small">
-        Einwilligung: Dein Cookie-Banner setzt <code>window.pghlConsent = true</code> (oder ruft <code>pghl.consent(true)</code> auf) bzw. das Cookie <code>pghl_consent=1</code>; <code>false</code>/<code>0</code> heißt Nein. Global Privacy Control des Browsers gilt als Nein. Auf Funnel-Seiten setzt der Link <code>/pghl-consent?v=1</code> (bzw. <code>?v=0</code>) die Wahl.
+        {tt('Einwilligung: Dein Cookie-Banner setzt')} <code>{tt('window.pghlConsent = true')}</code> {tt('(oder ruft')} <code>{tt('pghl.consent(true)')}</code> {tt('auf) bzw. das Cookie')} <code>pghl_consent=1</code>; <code>false</code>/<code>0</code> {tt('heißt Nein. Global Privacy Control des Browsers gilt als Nein. Auf Funnel-Seiten setzt der Link')} <code>/pghl-consent?v=1</code> {tt('(bzw.')} <code>?v=0</code>{tt(') die Wahl.')}
       </p>
     </div>
   );
@@ -202,14 +205,15 @@ function TrackingSettings() {
 
 /** Card on the contact page: first/last touch and the visit history. */
 export function ContactAttribution({ contactId }: { contactId: string }) {
+  const tt = useT('b4misc');
   const { data } = useLoad(() => api.get(`/api/contacts/${contactId}/attribution`).catch(() => null), [contactId]);
   if (!data) return null;
   const s = data.summary;
   const touch = (p: 'first' | 'last') => (
     <div style={{ marginBottom: 10 }}>
-      <div className="muted small">{p === 'first' ? 'Erster Kontakt' : 'Letzter Kontakt'}</div>
+      <div className="muted small">{p === 'first' ? tt('Erster Kontakt') : tt('Letzter Kontakt')}</div>
       <div>
-        <strong>{srcLabel(s[`${p}_source`])}</strong> / {srcLabel(s[`${p}_medium`])} {s[`${p}_campaign`] ? <Badge tone="blue">{s[`${p}_campaign`]}</Badge> : null}
+        <strong>{tt(srcLabel(s[`${p}_source`]))}</strong> / {tt(srcLabel(s[`${p}_medium`]))} {s[`${p}_campaign`] ? <Badge tone="blue">{s[`${p}_campaign`]}</Badge> : null}
       </div>
       <div className="muted small">
         {dt(s[`${p}_at`])}
@@ -219,13 +223,13 @@ export function ContactAttribution({ contactId }: { contactId: string }) {
   );
   return (
     <div className="card">
-      <h2>Herkunft</h2>
+      <h2>{tt('Herkunft')}</h2>
       {s ? (
         <>
           {touch('first')}
           {s.last_touch_id !== s.first_touch_id && touch('last')}
           <details className="attr-history">
-            <summary>Verlauf ({data.touches.length})</summary>
+            <summary>{tt('Verlauf (')}{data.touches.length})</summary>
             <ul className="timeline">
               {data.touches.map((t: any) => (
                 <li key={t.id}>
@@ -233,10 +237,10 @@ export function ContactAttribution({ contactId }: { contactId: string }) {
                     {dt(t.created_at)}
                   </span>
                   <span>
-                    <Badge>{KIND[t.kind] ?? t.kind}</Badge> {srcLabel(t.source)} / {srcLabel(t.medium)}
+                    <Badge>{tt(KIND[t.kind] ?? t.kind)}</Badge> {tt(srcLabel(t.source))} / {tt(srcLabel(t.medium))}
                     {t.campaign ? ` · ${t.campaign}` : ''}
-                    {t.ref ? ` · Affiliate ${t.ref}` : ''}
-                    <div className="muted small attr-url">{[t.landing_page, t.referrer && `von ${t.referrer}`, t.gclid && 'gclid', t.fbclid && 'fbclid'].filter(Boolean).join(' · ')}</div>
+                    {t.ref ? tt(' · Affiliate {ref}', { ref: t.ref }) : ''}
+                    <div className="muted small attr-url">{[t.landing_page, t.referrer && tt('von {referrer}', { referrer: t.referrer }), t.gclid && 'gclid', t.fbclid && 'fbclid'].filter(Boolean).join(' · ')}</div>
                   </span>
                 </li>
               ))}
@@ -244,7 +248,7 @@ export function ContactAttribution({ contactId }: { contactId: string }) {
           </details>
         </>
       ) : (
-        <p className="muted">Keine Angaben – z. B. importiert, manuell angelegt oder ohne Einwilligung.</p>
+        <p className="muted">{tt('Keine Angaben – z. B. importiert, manuell angelegt oder ohne Einwilligung.')}</p>
       )}
     </div>
   );

@@ -38,34 +38,34 @@ export const SETTINGS_GROUPS: readonly TabGroup[] = [
 
 /** What people type when they look for a setting, beyond the section's (translated) label. */
 export const SETTINGS_KEYWORDS: Readonly<Record<string, string>> = {
-  company: 'Firma Logo Adresse Zeitzone Impressum Webseite Telefon company address logo timezone',
-  messaging: 'SMTP Absender Postfach Gmail Outlook Tracking Öffnungen Klicks SMS Twilio Gateway Test eingehend sender mailbox',
-  deliverability: 'SPF DKIM DMARC DNS Domain Zustellbarkeit Spam deliverability',
-  channels: 'WhatsApp Facebook Instagram Messenger Meta',
-  'more-channels': 'Telegram Discord Slack LinkedIn TikTok Google Business',
-  telephony: 'Telefon Anrufe Nummer Voicemail Browser-Telefon Voice phone calls',
-  billing: 'Rechnung Steuernummer USt-IdNr IBAN Bank Nummernkreis XRechnung ZUGFeRD Kleinunternehmer Zahlungsziel invoice tax',
-  stripe: 'Stripe Zahlung PayPal Mollie bezahlen Checkout payments',
-  reviews: 'Bewertung Google Rezension Sterne reviews',
-  chat: 'Live-Chat Widget Website Einbau embed',
-  ai: 'KI Assistent Antworten Bot assistant',
-  'ai-tools': 'KI Werkzeuge MCP Tools',
-  helpdesk: 'Service Tickets SLA Wissensdatenbank Kundenportal helpdesk',
-  inbox: 'Team-Posteingang Zuweisung Round Robin SLA inbox',
-  fields: 'Eigene Felder Tags Eigenschaften custom fields',
-  'custom-values': 'Platzhalter Variablen Custom Values',
-  consent: 'DSGVO Einwilligung Datenschutz Double-Opt-in Recht GDPR consent privacy',
-  api: 'API-Schlüssel Webhooks Zapier Make n8n Signatur REST keys',
-  'ai-providers': 'KI-Anbieter OpenAI Anthropic Claude Gemini Ollama OpenRouter Schlüssel BYOK Modell model key',
-  voice: 'Stimme Sprachausgabe TTS ElevenLabs voice',
-  memory: 'Gedächtnis Cognee Wissen memory',
-  import: 'Import HubSpot GoHighLevel CSV',
-  umzug: 'Umzug Wechsel Migration GoHighLevel move',
-  team: 'Benutzer Mitarbeiter Rollen Rechte 2FA users roles',
-  locations: 'Sub-Accounts Kunden Backups clients',
-  subscription: 'Abo Tarif Cloud Plan subscription',
-  appearance: 'Darstellung Theme Farbe Dunkel Einfach-Modus Profi Ziele Menü appearance dark',
-  account: 'Passwort 2FA Geräte Sprache Kalender Push password devices language',
+  company: 'Firma Logo Adresse Zeitzone Impressum Webseite Telefon company address logo timezone', // i18n-ignore
+  messaging: 'SMTP Absender Postfach Gmail Outlook Tracking Öffnungen Klicks SMS Twilio Gateway Test eingehend sender mailbox', // i18n-ignore
+  deliverability: 'SPF DKIM DMARC DNS Domain Zustellbarkeit Spam deliverability', // i18n-ignore
+  channels: 'WhatsApp Facebook Instagram Messenger Meta', // i18n-ignore
+  'more-channels': 'Telegram Discord Slack LinkedIn TikTok Google Business', // i18n-ignore
+  telephony: 'Telefon Anrufe Nummer Voicemail Browser-Telefon Voice phone calls', // i18n-ignore
+  billing: 'Rechnung Steuernummer USt-IdNr IBAN Bank Nummernkreis XRechnung ZUGFeRD Kleinunternehmer Zahlungsziel invoice tax', // i18n-ignore
+  stripe: 'Stripe Zahlung PayPal Mollie bezahlen Checkout payments', // i18n-ignore
+  reviews: 'Bewertung Google Rezension Sterne reviews', // i18n-ignore
+  chat: 'Live-Chat Widget Website Einbau embed', // i18n-ignore
+  ai: 'KI Assistent Antworten Bot assistant', // i18n-ignore
+  'ai-tools': 'KI Werkzeuge MCP Tools', // i18n-ignore
+  helpdesk: 'Service Tickets SLA Wissensdatenbank Kundenportal helpdesk', // i18n-ignore
+  inbox: 'Team-Posteingang Zuweisung Round Robin SLA inbox', // i18n-ignore
+  fields: 'Eigene Felder Tags Eigenschaften custom fields', // i18n-ignore
+  'custom-values': 'Platzhalter Variablen Custom Values', // i18n-ignore
+  consent: 'DSGVO Einwilligung Datenschutz Double-Opt-in Recht GDPR consent privacy', // i18n-ignore
+  api: 'API-Schlüssel Webhooks Zapier Make n8n Signatur REST keys', // i18n-ignore
+  'ai-providers': 'KI-Anbieter OpenAI Anthropic Claude Gemini Ollama OpenRouter Schlüssel BYOK Modell model key', // i18n-ignore
+  voice: 'Stimme Sprachausgabe TTS ElevenLabs voice', // i18n-ignore
+  memory: 'Gedächtnis Cognee Wissen memory', // i18n-ignore
+  import: 'Import HubSpot GoHighLevel CSV', // i18n-ignore
+  umzug: 'Umzug Wechsel Migration GoHighLevel move', // i18n-ignore
+  team: 'Benutzer Mitarbeiter Rollen Rechte 2FA users roles', // i18n-ignore
+  locations: 'Sub-Accounts Kunden Backups clients', // i18n-ignore
+  subscription: 'Abo Tarif Cloud Plan subscription', // i18n-ignore
+  appearance: 'Darstellung Theme Farbe Dunkel Einfach-Modus Profi Ziele Menü appearance dark', // i18n-ignore
+  account: 'Passwort 2FA Geräte Sprache Kalender Push password devices language', // i18n-ignore
 };
 
 // --- Agentur ---------------------------------------------------------------------------------------------------------
@@ -82,28 +82,28 @@ export const AGENCY_GROUPS: readonly TabGroup[] = [
 ];
 
 export const AGENCY_KEYWORDS: Readonly<Record<string, string>> = {
-  projects: 'Projekte Sub-Accounts Übersicht projects',
-  contacts: 'Alle Kontakte contacts',
-  deals: 'Alle Deals Opportunities',
-  tasks: 'Alle Aufgaben tasks',
-  docs: 'Dokumente Artefakte docs',
-  clients: 'Kunden Sub-Account anlegen Branding clients',
-  saas: 'SaaS Tarife Abo Preise Rebilling plans',
-  cloud: 'Cloud Konsole',
-  snapshots: 'Snapshots Vorlagen Startpaket templates',
-  umzug: 'Umzug Migration GoHighLevel',
-  domains: 'Domains DNS SSL HTTPS',
-  branding: 'White-Label Logo Farbe Login-Seite Favicon branding',
-  login: 'Anmeldung SSO OIDC Google Microsoft Passkey 2FA login',
-  integrations: 'Integrationen Postiz Google Microsoft OAuth Supabase Todoist Nango Composio',
-  'partner-links': 'Partner-Links Affiliate',
-  api: 'API MCP Schlüssel keys',
-  'mcp-servers': 'MCP-Server Werkzeuge',
-  'ai-tools': 'KI-Werkzeuge tools',
-  'ai-providers': 'KI-Anbieter OpenAI Anthropic Claude Gemini Ollama BYOK Schlüssel',
-  feedback: 'Fehler Wünsche Feedback bugs',
-  audit: 'Protokoll Audit Log',
-  system: 'System Gesundheit Backups Updates health',
+  projects: 'Projekte Sub-Accounts Übersicht projects', // i18n-ignore
+  contacts: 'Alle Kontakte contacts', // i18n-ignore
+  deals: 'Alle Deals Opportunities', // i18n-ignore
+  tasks: 'Alle Aufgaben tasks', // i18n-ignore
+  docs: 'Dokumente Artefakte docs', // i18n-ignore
+  clients: 'Kunden Sub-Account anlegen Branding clients', // i18n-ignore
+  saas: 'SaaS Tarife Abo Preise Rebilling plans', // i18n-ignore
+  cloud: 'Cloud Konsole', // i18n-ignore
+  snapshots: 'Snapshots Vorlagen Startpaket templates', // i18n-ignore
+  umzug: 'Umzug Migration GoHighLevel', // i18n-ignore
+  domains: 'Domains DNS SSL HTTPS', // i18n-ignore
+  branding: 'White-Label Logo Farbe Login-Seite Favicon branding', // i18n-ignore
+  login: 'Anmeldung SSO OIDC Google Microsoft Passkey 2FA login', // i18n-ignore
+  integrations: 'Integrationen Postiz Google Microsoft OAuth Supabase Todoist Nango Composio', // i18n-ignore
+  'partner-links': 'Partner-Links Affiliate', // i18n-ignore
+  api: 'API MCP Schlüssel keys', // i18n-ignore
+  'mcp-servers': 'MCP-Server Werkzeuge', // i18n-ignore
+  'ai-tools': 'KI-Werkzeuge tools', // i18n-ignore
+  'ai-providers': 'KI-Anbieter OpenAI Anthropic Claude Gemini Ollama BYOK Schlüssel', // i18n-ignore
+  feedback: 'Fehler Wünsche Feedback bugs', // i18n-ignore
+  audit: 'Protokoll Audit Log', // i18n-ignore
+  system: 'System Gesundheit Backups Updates health', // i18n-ignore
 };
 
 // --- shared rules ------------------------------------------------------------------------------------------------------

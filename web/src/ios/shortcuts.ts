@@ -4,6 +4,7 @@
  * with their features (nav.tsx, theme/Sidebar.tsx, undo/Undo.tsx, the composers). Tests: tests/ios-logic.test.ts.
  */
 
+import { tr } from '../i18n';
 export interface KeyLike {
   key: string;
   metaKey?: boolean;
@@ -35,28 +36,28 @@ export interface ShortcutRow {
 }
 
 /** What the sheet lists. `mod` = ⌘ or Strg. */
-export const shortcutRows = (mod: string): { group: string; rows: ShortcutRow[] }[] => [
+export const shortcutRows = (mod: string): { group: string; rows: ShortcutRow[] }[] => { const t = tr('b4misc'); return [
   {
-    group: 'Überall',
+    group: t('Überall'),
     rows: [
       { keys: `${mod} K`, text: 'Springen: Projekt, Seite, Claude-Sitzung' },
-      { keys: `${mod} N`, text: 'Neu anlegen (die Hauptaktion der Seite)' },
-      { keys: `${mod} B`, text: 'Seitenleiste ein- oder ausklappen' },
-      { keys: `${mod} Z`, text: 'Rückgängig' },
-      { keys: `${mod} /`, text: 'Diese Übersicht' },
-      { keys: 'Esc', text: 'Fenster, Menü oder Übersicht schließen' },
-      { keys: 'Tab · ⇧ Tab', text: 'Zum nächsten · vorigen Element' },
+      { keys: `${mod} N`, text: t('Neu anlegen (die Hauptaktion der Seite)') },
+      { keys: `${mod} B`, text: t('Seitenleiste ein- oder ausklappen') },
+      { keys: `${mod} Z`, text: t('Rückgängig') },
+      { keys: `${mod} /`, text: t('Diese Übersicht') },
+      { keys: t('Esc'), text: t('Fenster, Menü oder Übersicht schließen') },
+      { keys: 'Tab · ⇧ Tab', text: t('Zum nächsten · vorigen Element') },
     ],
   },
   {
-    group: 'In Textfeldern',
+    group: t('In Textfeldern'),
     rows: [
-      { keys: `${mod} ⏎`, text: 'Senden bzw. Speichern' },
-      { keys: 'Apple Pencil', text: 'Mit dem Stift in ein Feld schreiben (Scribble) – er wird zu Text' },
+      { keys: `${mod} ⏎`, text: t('Senden bzw. Speichern') },
+      { keys: t('Apple Pencil'), text: t('Mit dem Stift in ein Feld schreiben (Scribble) – er wird zu Text') },
     ],
   },
-  { group: 'Im Posteingang', rows: [{ keys: '?', text: 'Zeigt die Kürzel des Posteingangs (J/K, E, …)' }] },
-];
+  { group: t('Im Posteingang'), rows: [{ keys: '?', text: t('Zeigt die Kürzel des Posteingangs (J/K, E, …)') }] },
+]; };
 
 /** Time holding Cmd/Ctrl alone before the hint appears (ms). */
 export const HOLD_HINT_MS = 900;

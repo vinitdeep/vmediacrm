@@ -7,6 +7,7 @@ import { elementBox } from '../../../server/services/canvas-model';
 import { toScreen } from './geometry';
 import type { Comment } from './store';
 import type { EditorApi } from './Editor';
+import { useT } from '../i18n';
 
 /** Comments pinned to elements (or spots), with replies, resolving and @mentions. */
 
@@ -27,6 +28,7 @@ function usePeople(boardId: string) {
 }
 
 function Composer({ boardId, people, placeholder, onSend, autoFocus }: { boardId: string; people: Person[]; placeholder: string; onSend: (body: string, mentions: string[]) => Promise<unknown>; autoFocus?: boolean }) {
+  const t = useT('b4canvas');
   const [text, setText] = useState('');
   const [mentions, setMentions] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
@@ -82,13 +84,14 @@ function Composer({ boardId, people, placeholder, onSend, autoFocus }: { boardId
         </div>
       )}
       <button className="btn small" onClick={() => void send()} disabled={!text.trim() || busy}>
-        Senden
+        {t('Senden')}
       </button>
     </div>
   );
 }
 
 export function CommentsPanel({ api: ed, draft, focusId, onDraftDone, onClose }: { api: EditorApi; draft: { x: number; y: number; elementId: string | null } | null; focusId: string | null; onDraftDone: () => void; onClose: () => void }) {
+  const t = useT('b4canvas');
   const session = useSession();
   const people = usePeople(ed.board.id);
   const [filter, setFilter] = useState<'open' | 'done'>('open');
@@ -107,28 +110,28 @@ export function CommentsPanel({ api: ed, draft, focusId, onDraftDone, onClose }:
   }, [focusId, comments.length]); // eslint-disable-line react-hooks/exhaustive-deps
   const target = (c: Comment) => {
     const el = c.element_id ? ed.store.els.get(c.element_id) : null;
-    return el ? (el.text || el.name || 'Element').split('\n')[0].slice(0, 40) : 'Stelle auf dem Board';
+    return el ? (el.text || el.name || 'Element').split('\n')[0].slice(0, 40) : t('Stelle auf dem Board');
   };
   return (
     <aside className="cv-comments cv-panel" data-tour="canvas-comments-panel">
       <div className="cv-insp-head">
-        <b>Kommentare</b>
+        <b>{t('Kommentare')}</b>
         <div className="cv-seg small">
           <button className={filter === 'open' ? 'on' : ''} onClick={() => setFilter('open')}>
-            Offen
+            {t('Offen')}
           </button>
           <button className={filter === 'done' ? 'on' : ''} onClick={() => setFilter('done')}>
-            Erledigt
+            {t('Erledigt')}
           </button>
         </div>
-        <button className="icon-btn" onClick={onClose} aria-label="Schließen">
+        <button className="icon-btn" onClick={onClose} aria-label={t('Schließen')}>
           ✕
         </button>
       </div>
       {draft && (
         <div className="cv-thread new">
-          <div className="muted small">Neuer Kommentar · {draft.elementId ? target({ element_id: draft.elementId } as Comment) : 'an dieser Stelle'}</div>
-          <Composer boardId={ed.board.id} people={people} autoFocus placeholder="Kommentar … mit @Name erwähnen" onSend={async (body, mentions) => {
+          <div className="muted small">{t('Neuer Kommentar ·')} {draft.elementId ? target({ element_id: draft.elementId } as Comment) : t('an dieser Stelle')}</div>
+          <Composer boardId={ed.board.id} people={people} autoFocus placeholder={t('Kommentar … mit @Name erwähnen')} onSend={async (body, mentions) => {
             const r = await post(body, mentions, { element_id: draft.elementId, x: Math.round(draft.x), y: Math.round(draft.y) });
             if (r) onDraftDone();
             return r;
@@ -136,7 +139,7 @@ export function CommentsPanel({ api: ed, draft, focusId, onDraftDone, onClose }:
         </div>
       )}
       <div className="cv-thread-list">
-        {!threads.length && !draft && <p className="muted small">{filter === 'open' ? 'Keine offenen Kommentare. Mit dem Kommentar-Werkzeug (C) auf ein Element klicken.' : 'Nichts erledigt.'}</p>}
+        {!threads.length && !draft && <p className="muted small">{filter === 'open' ? t('Keine offenen Kommentare. Mit dem Kommentar-Werkzeug (C) auf ein Element klicken.') : t('Nichts erledigt.')}</p>}
         {threads.map((c) => (
           <div key={c.id} id={`cm-${c.id}`} className={`cv-thread${focusId === c.id ? ' focus' : ''}`}>
             <button className="cv-thread-target" onClick={() => ed.comments.focus(c)}>
@@ -147,7 +150,7 @@ export function CommentsPanel({ api: ed, draft, focusId, onDraftDone, onClose }:
                 <div className="cv-msg-head">
                   <b>{m.author_name}</b> <span className="muted small">{ago(m.created_at)}</span>
                   {(m.author_id === session.user.id || ed.board.access === 'owner') && (
-                    <button className="icon-btn" title="Löschen" onClick={() => void act(() => api.del(`/api/canvas/${ed.board.id}/comments/${m.id}`))}>
+                    <button className="icon-btn" title={t('Löschen')} onClick={() => void act(() => api.del(`/api/canvas/${ed.board.id}/comments/${m.id}`))}>
                       <Icon name="trash" size={13} />
                     </button>
                   )}
@@ -156,9 +159,9 @@ export function CommentsPanel({ api: ed, draft, focusId, onDraftDone, onClose }:
               </div>
             ))}
             <div className="cv-thread-actions">
-              <Composer boardId={ed.board.id} people={people} placeholder="Antworten …" onSend={(body, mentions) => post(body, mentions, { parent_id: c.id })} />
+              <Composer boardId={ed.board.id} people={people} placeholder={t('Antworten …')} onSend={(body, mentions) => post(body, mentions, { parent_id: c.id })} />
               <button className="btn small secondary" onClick={() => void act(() => api.patch(`/api/canvas/${ed.board.id}/comments/${c.id}`, { resolved: !c.resolved_at }))}>
-                {c.resolved_at ? 'Wieder öffnen' : '✓ Erledigt'}
+                {c.resolved_at ? t('Wieder öffnen') : t('✓ Erledigt')}
               </button>
             </div>
           </div>

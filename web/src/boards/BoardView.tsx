@@ -17,6 +17,7 @@ import { arrange, cellsOf, sameCells, withCells } from './layout';
 import { MoveMenu } from '../xr/MoveMenu';
 import { XrButton } from '../xr/XrButton';
 import type { Widget, WidgetType } from './types';
+import { useT } from '../i18n';
 
 const BP_NAME = { lg: 'Desktop', md: 'Tablet', sm: 'Handy' } as const;
 const WIDGET_MOVES = [
@@ -59,6 +60,7 @@ const initials = (n: string) =>
 
 /** One board: the grid with its widgets, the editor around it, the prompt bar below. */
 export function BoardView({ id }: { id: string }) {
+  const t = useT('b4boards');
   const session = useSession();
   const { board, setBoard, error, viewers, live, online, reload, patch, call, undo, redo, restore } = useBoard(id);
   const catalogue = useCatalogue();
@@ -205,7 +207,7 @@ export function BoardView({ id }: { id: string }) {
 
   if (error)
     return (
-      <Empty action={<Link to="boards" className="btn secondary">Zu allen Boards</Link>}>
+      <Empty action={<Link to="boards" className="btn secondary">{t('Zu allen Boards')}</Link>}>
         {error}
       </Empty>
     );
@@ -233,50 +235,50 @@ export function BoardView({ id }: { id: string }) {
             <Icon name={(board.icon || 'boards') as IconName} size={20} />
           </span>
           <h1>{board.name}</h1>
-          <span className={`bd-badge${board.scope === 'shared' ? ' tone-blue' : ''}`} title={board.scope === 'shared' ? 'Das Team sieht dieses Board' : 'Nur du siehst dieses Board'}>
-            {board.scope === 'shared' ? 'Team' : 'Persönlich'}
+          <span className={`bd-badge${board.scope === 'shared' ? ' tone-blue' : ''}`} title={board.scope === 'shared' ? t('Das Team sieht dieses Board') : t('Nur du siehst dieses Board')}>
+            {board.scope === 'shared' ? 'Team' : t('Persönlich')}
           </span>
           {board.home && (
-            <span className="bd-badge tone-green" title="Deine Startseite">
-              <Icon name="house" size={12} /> Startseite
+            <span className="bd-badge tone-green" title={t('Deine Startseite')}>
+              <Icon name="house" size={12} /> {t('Startseite')}
             </span>
           )}
           {!canEdit && (
-            <span className="bd-badge" title="Du darfst dieses Board ansehen, aber nicht ändern">
-              <Icon name="lock" size={12} /> Nur Ansicht
+            <span className="bd-badge" title={t('Du darfst dieses Board ansehen, aber nicht ändern')}>
+              <Icon name="lock" size={12} /> {t('Nur Ansicht')}
             </span>
           )}
         </div>
         <div className="bd-tools">
           {others.length > 0 && (
-            <span className="bd-viewers" title={`${others.map((v) => v.name).join(', ')} ${others.length === 1 ? 'sieht' : 'sehen'} gerade zu`}>
+            <span className="bd-viewers" title={others.length === 1 ? t('{join} sieht gerade zu', { join: others[0].name }) : t('{join} sehen gerade zu', { join: others.map((v) => v.name).join(', ') })}>
               {others.slice(0, 4).map((v, i) => (
                 <i key={`${v.user_id}${i}`}>{initials(v.name)}</i>
               ))}
               {others.length > 4 && <i>+{others.length - 4}</i>}
             </span>
           )}
-          {!online && <span className="bd-badge tone-yellow">Verbindung wird neu aufgebaut …</span>}
+          {!online && <span className="bd-badge tone-yellow">{t('Verbindung wird neu aufgebaut …')}</span>}
           {canEdit && (
             <>
-              <button type="button" className="bd-iconbtn lg" onClick={() => void undo()} disabled={!board.can_undo} aria-label="Rückgängig (Strg+Z)" title="Rückgängig (Strg+Z)">
+              <button type="button" className="bd-iconbtn lg" onClick={() => void undo()} disabled={!board.can_undo} aria-label={t('Rückgängig (Strg+Z)')} title={t('Rückgängig (Strg+Z)')}>
                 <Icon name="undo" size={16} />
               </button>
-              <button type="button" className="bd-iconbtn lg" onClick={() => void redo()} disabled={!board.can_redo} aria-label="Wiederholen (Strg+Umschalt+Z)" title="Wiederholen (Strg+Umschalt+Z)">
+              <button type="button" className="bd-iconbtn lg" onClick={() => void redo()} disabled={!board.can_redo} aria-label={t('Wiederholen (Strg+Umschalt+Z)')} title={t('Wiederholen (Strg+Umschalt+Z)')}>
                 <Icon name="redo" size={16} />
               </button>
             </>
           )}
           <XrButton kind="board" id={id} name={board.name} />
           <button type="button" className="btn secondary small" onClick={() => setShowHistory(true)} data-tour="board-history-btn">
-            <Icon name="history" size={14} /> Verlauf
+            <Icon name="history" size={14} /> {t('Verlauf')}
           </button>
-          <button type="button" className="btn secondary small" onClick={() => setCfg(true)} aria-label="Board-Einstellungen" data-tour="board-config">
-            <Icon name="settings" size={14} /> <span className="bd-hide-s">Einstellungen</span>
+          <button type="button" className="btn secondary small" onClick={() => setCfg(true)} aria-label={t('Board-Einstellungen')} data-tour="board-config">
+            <Icon name="settings" size={14} /> <span className="bd-hide-s">{t('Einstellungen')}</span>
           </button>
           {canEdit && (
             <button type="button" className={`btn small${edit ? '' : ' secondary'}`} onClick={() => setEdit(!edit)} aria-pressed={edit} data-tour="board-edit">
-              <Icon name={edit ? 'check' : 'edit'} size={14} /> {edit ? 'Fertig' : 'Anpassen'}
+              <Icon name={edit ? 'check' : 'edit'} size={14} /> {edit ? t('Fertig') : t('Anpassen')}
             </button>
           )}
         </div>
@@ -286,7 +288,7 @@ export function BoardView({ id }: { id: string }) {
         <p className="bd-live" role="status">
           <Icon name="sparkles" size={14} />
           <span>
-            <b>{live.actor}</b> {live.via === 'agent' ? '(KI) ' : ''}hat das Board geändert: {live.summary}
+            <b>{live.actor}</b> {live.via === 'agent' ? t('(KI) ') : ''}{t('hat das Board geändert:')} {live.summary}
           </span>
         </p>
       )}
@@ -294,10 +296,10 @@ export function BoardView({ id }: { id: string }) {
       {edit && (
         <div className="bd-editbar" data-tour="board-editbar">
           <button type="button" className="btn small" onClick={() => setPicker(true)} data-tour="board-add">
-            <Icon name="plus" size={14} /> Widget hinzufügen
+            <Icon name="plus" size={14} /> {t('Widget hinzufügen')}
           </button>
           <span className="muted small bd-editbar-tip">
-            {bp === 'sm' ? 'Mit den Pfeilen sortierst du die Widgets.' : 'Am Griff ziehen, an der Ecke unten rechts die Größe ändern. Tastatur: Griff wählen, Leertaste, Pfeile (Umschalt = Größe), Leertaste.'} Du bearbeitest die Ansicht „{BP_NAME[bp]}“.
+            {bp === 'sm' ? t('Mit den Pfeilen sortierst du die Widgets.') : t('Am Griff ziehen, an der Ecke unten rechts die Größe ändern. Tastatur: Griff wählen, Leertaste, Pfeile (Umschalt = Größe), Leertaste.')} {t('Du bearbeitest die Ansicht „')}{BP_NAME[bp]}“.
           </span>
           {custom && (
             <button
@@ -310,9 +312,9 @@ export function BoardView({ id }: { id: string }) {
                   toastError(e);
                 }
               }}
-              title="Die Anordnung wieder aus der Desktop-Ansicht ableiten"
+              title={t('Die Anordnung wieder aus der Desktop-Ansicht ableiten')}
             >
-              <Icon name="reset" size={14} /> {BP_NAME[bp]}-Anordnung zurücksetzen
+              <Icon name="reset" size={14} /> {t(BP_NAME[bp])}{t('-Anordnung zurücksetzen')}
             </button>
           )}
         </div>
@@ -323,15 +325,15 @@ export function BoardView({ id }: { id: string }) {
         {empty ? (
           <div className="bd-empty" data-tour="board-empty">
             <Icon name="boards" size={30} />
-            <h2>Dieses Board ist noch leer</h2>
-            <p className="muted">Füge Widgets hinzu – oder sag dem Board unten, was du sehen willst.</p>
+            <h2>{t('Dieses Board ist noch leer')}</h2>
+            <p className="muted">{t('Füge Widgets hinzu – oder sag dem Board unten, was du sehen willst.')}</p>
             {canEdit && (
               <div className="bd-empty-actions">
                 <button type="button" className="btn" onClick={() => (setEdit(true), setPicker(true))}>
-                  <Icon name="plus" size={15} /> Widget hinzufügen
+                  <Icon name="plus" size={15} /> {t('Widget hinzufügen')}
                 </button>
                 <Link to="boards/vorlagen" className="btn secondary">
-                  <Icon name="template" size={15} /> Vorlagen ansehen
+                  <Icon name="template" size={15} /> {t('Vorlagen ansehen')}
                 </Link>
               </div>
             )}
@@ -339,7 +341,7 @@ export function BoardView({ id }: { id: string }) {
               <div className="chips bd-wishes">
                 {WISHES.map((w) => (
                   <button key={w} type="button" className="chip" onClick={() => setWish({ text: w, n: Date.now() })}>
-                    „{w}“
+                    „{t(w)}“
                   </button>
                 ))}
               </div>
@@ -354,7 +356,7 @@ export function BoardView({ id }: { id: string }) {
             limits={limits}
             titleOf={titleOf}
             onCommit={commit}
-            render={(w, part) => <WidgetCard w={w} type={types.get(w.type)} data={data[w.id]} loading={loading} part={part} edit={edit} selected={settings === w.id} fresh={fresh === w.id} onSettings={() => setSettings(w.id)} onRemove={() => void remove(w)} onRefresh={() => void refresh([w.id])} moveMenu={bp !== 'sm' ? <MoveMenu what={`Widget „${titleOf(w)}“`} title="Widget verschieben oder anpassen" targets={WIDGET_MOVES} onMove={(a) => nudge(w, a)} /> : undefined} />}
+            render={(w, part) => <WidgetCard w={w} type={types.get(w.type)} data={data[w.id]} loading={loading} part={part} edit={edit} selected={settings === w.id} fresh={fresh === w.id} onSettings={() => setSettings(w.id)} onRemove={() => void remove(w)} onRefresh={() => void refresh([w.id])} moveMenu={bp !== 'sm' ? <MoveMenu what={`Widget „${titleOf(w)}“`} title={t('Widget verschieben oder anpassen')} targets={WIDGET_MOVES.map((m) => ({ ...m, label: t(m.label), hint: 'hint' in m ? t(m.hint as string) : undefined }))} onMove={(a) => nudge(w, a)} /> : undefined} />}
           />
         )}
       </div>
@@ -370,7 +372,7 @@ export function BoardView({ id }: { id: string }) {
               await undo();
             }}
           >
-            <Icon name="undo" size={14} /> Rückgängig
+            <Icon name="undo" size={14} /> {t('Rückgängig')}
           </button>
         </div>
       )}

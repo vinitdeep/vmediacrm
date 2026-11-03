@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import type { Month, Projection, Step, Tornado } from '../../../server/services/calc-engine';
 import { money } from '../../../server/services/calc-engine';
+import { useT } from '../i18n';
 
 /**
  * Hand-made SVG charts of the Gewinnrechner (no chart library): waterfall, tornado and the projection lines.
@@ -135,6 +136,7 @@ export function Waterfall({ steps, title, caption }: { steps: Step[]; title: str
 
 /** Which input moves the yearly net profit most: every bar spans the profit with the input −x % and +x %. */
 export function TornadoChart({ t, title, caption }: { t: Tornado; title: string; caption?: string }) {
+  const tt = useT('b4calc');
   const [ref, w] = useWidth<HTMLDivElement>();
   const narrow = w < 520;
   const labelW = narrow ? Math.min(130, Math.round(w * 0.36)) : 196;
@@ -149,15 +151,15 @@ export function TornadoChart({ t, title, caption }: { t: Tornado; title: string;
   const x0 = labelW + pad;
   const x1 = w - pad;
   const x = (v: number) => x0 + ((v - lo) / span) * (x1 - x0);
-  const alt = bars.map((b) => `${b.label}: ${eur(Math.min(b.low, b.high))} bis ${eur(Math.max(b.low, b.high))}`).join('; ');
-  if (!bars.length) return <p className="muted small">Keine Hebel mit Wirkung – es gibt nichts zu vergleichen.</p>;
+  const alt = bars.map((b) => tt('{label}: {high} bis {high2}', { label: b.label, high: eur(Math.min(b.low, b.high)), high2: eur(Math.max(b.low, b.high)) })).join('; ');
+  if (!bars.length) return <p className="muted small">{tt('Keine Hebel mit Wirkung – es gibt nichts zu vergleichen.')}</p>;
   return (
     <Figure title={title} caption={caption} tour="calc-tornado">
       <div ref={ref} className="calc-chart">
-        <svg width={w} height={H} role="img" aria-label={`${title}. Basis ${eur(t.base)} pro Jahr. ${alt}`}>
+        <svg width={w} height={H} role="img" aria-label={tt('{title}. Basis {base} pro Jahr. {alt}', { title, base: eur(t.base), alt })}>
           <title>{title}</title>
           <text x={x(t.base)} y={11} textAnchor="middle" fontSize={11} fill="var(--viz-ink2)">
-            Basis {eur(t.base)}
+            {tt('Basis')} {eur(t.base)}
           </text>
           <line x1={x(t.base)} x2={x(t.base)} y1={16} y2={H - 2} stroke="var(--viz-axis)" strokeWidth={1.5} />
           {spans.map(({ b, lo: l, hi: h, lowIsMinus }, i) => {
@@ -169,10 +171,10 @@ export function TornadoChart({ t, title, caption }: { t: Tornado; title: string;
                   <title>{b.label}</title>
                 </text>
                 <rect x={x(l)} y={y + 2} width={Math.max(1, x(t.base) - x(l))} height={18} fill="var(--red)" opacity={0.9} rx={2}>
-                  <title>{`${b.label} ${lowIsMinus ? '−' : '+'}${Math.round(t.pct)} %: Nettogewinn ${eur(l)} pro Jahr`}</title>
+                  <title>{tt('{label} {lowIsMinus}{pct} %: Nettogewinn {l} pro Jahr', { label: b.label, lowIsMinus: lowIsMinus ? '−' : '+', pct: Math.round(t.pct), l: eur(l) })}</title>
                 </rect>
                 <rect x={x(t.base)} y={y + 2} width={Math.max(1, x(h) - x(t.base))} height={18} fill="var(--viz-3)" rx={2}>
-                  <title>{`${b.label} ${lowIsMinus ? '+' : '−'}${Math.round(t.pct)} %: Nettogewinn ${eur(h)} pro Jahr`}</title>
+                  <title>{tt('{label} {lowIsMinus}{pct} %: Nettogewinn {h} pro Jahr', { label: b.label, lowIsMinus: lowIsMinus ? '+' : '−', pct: Math.round(t.pct), h: eur(h) })}</title>
                 </rect>
                 <text x={x(l) - 4} y={y + 15} textAnchor="end" fontSize={11} fill="var(--viz-ink2)">
                   {axisLabel(l)}
@@ -185,7 +187,7 @@ export function TornadoChart({ t, title, caption }: { t: Tornado; title: string;
           })}
         </svg>
       </div>
-      <Legend items={[['var(--red)', 'schlechter als die Basis'], ['var(--viz-3)', 'besser als die Basis']]} />
+      <Legend items={[['var(--red)', tt('schlechter als die Basis')], ['var(--viz-3)', tt('besser als die Basis')]]} />
     </Figure>
   );
 }
@@ -213,6 +215,7 @@ interface LineSeries {
 }
 
 function LineChart({ title, caption, series, months, marker, readout, tour }: { title: string; caption?: string; series: LineSeries[]; months: number[]; marker?: { x: number; label: string } | null; readout: (i: number) => string; tour?: string }) {
+  const tt = useT('b4calc');
   const [ref, w] = useWidth<HTMLDivElement>();
   const [hover, setHover] = useState<number | null>(null);
   const H = 210;
@@ -231,7 +234,7 @@ function LineChart({ title, caption, series, months, marker, readout, tour }: { 
     const f = (e.clientX - r.left - m.l) / Math.max(1, r.width - m.l - m.r);
     setHover(Math.min(n - 1, Math.max(0, Math.round(f * (n - 1)))));
   };
-  const alt = `${title}. ${series.map((s) => `${s.label}: Monat 1 ${eur(s.values[0])}, Monat ${n} ${eur(s.values[n - 1])}`).join('; ')}`;
+  const alt = `${title}. ${series.map((s) => tt('{label}: Monat 1 {v2}, Monat {n} {v4}', { label: s.label, v2: eur(s.values[0]), n, v4: eur(s.values[n - 1]) })).join('; ')}`;
   return (
     <Figure title={title} caption={caption} tour={tour}>
       <div className="calc-readout" aria-live="polite">
@@ -283,29 +286,30 @@ const de = (v: number, d = 0) => new Intl.NumberFormat('de-DE', { maximumFractio
 
 /** MRR and monthly net profit, and the cumulative result with the break-even month. */
 export function ProjectionCharts({ p }: { p: Projection }) {
+  const tt = useT('b4calc');
   const ms: Month[] = p.months;
   if (!ms.length) return null;
   const t = ms.map((x) => x.t);
   return (
     <>
       <LineChart
-        title="Monatlicher Umsatz und Gewinn"
-        caption="Prognose nach Monaten"
+        title={tt('Monatlicher Umsatz und Gewinn')}
+        caption={tt('Prognose nach Monaten')}
         tour="calc-projection"
         months={t}
         series={[
           { key: 'mrr', label: 'Wiederkehrender Umsatz (MRR)', color: 'var(--viz-1)', values: ms.map((x) => x.mrr) },
-          { key: 'net', label: 'Nettogewinn im Monat', color: 'var(--viz-3)', values: ms.map((x) => x.net_profit) },
+          { key: 'net', label: tt('Nettogewinn im Monat'), color: 'var(--viz-3)', values: ms.map((x) => x.net_profit) },
         ]}
-        readout={(i) => `Monat ${ms[i].t}: ${de(ms[i].customers)} Kunden · MRR ${eur(ms[i].mrr)} · Nettogewinn ${eur(ms[i].net_profit)}`}
+        readout={(i) => tt('Monat {v1}: {customers} Kunden · MRR {mrr} · Nettogewinn {net_profit}', { v1: ms[i].t, customers: de(ms[i].customers), mrr: eur(ms[i].mrr), net_profit: eur(ms[i].net_profit) })}
       />
       <LineChart
-        title="Gewinn kumuliert"
-        caption="inklusive einmaliger Investition"
+        title={tt('Gewinn kumuliert')}
+        caption={tt('inklusive einmaliger Investition')}
         months={t}
-        marker={p.breakeven_month ? { x: p.breakeven_month, label: `im Plus ab Monat ${p.breakeven_month}` } : null}
-        series={[{ key: 'cum', label: 'Gewinn seit Start', color: 'var(--viz-2)', values: ms.map((x) => x.cum_net) }]}
-        readout={(i) => `Monat ${ms[i].t}: seit Start ${eur(ms[i].cum_net)} · EBIT im Monat ${eur(ms[i].ebit)}`}
+        marker={p.breakeven_month ? { x: p.breakeven_month, label: tt('im Plus ab Monat {breakeven_month}', { breakeven_month: p.breakeven_month }) } : null}
+        series={[{ key: 'cum', label: tt('Gewinn seit Start'), color: 'var(--viz-2)', values: ms.map((x) => x.cum_net) }]}
+        readout={(i) => tt('Monat {v1}: seit Start {cum_net} · EBIT im Monat {ebit}', { v1: ms[i].t, cum_net: eur(ms[i].cum_net), ebit: eur(ms[i].ebit) })}
       />
     </>
   );
