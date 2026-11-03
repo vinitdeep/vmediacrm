@@ -180,7 +180,7 @@ export const NAMESPACES = {
 
   // guided tours (batch 3 wiring): the tour data catalogs (toursA/B/C, keys = the exact German strings, merged from three agents; read via tour/text.ts) and the UI of the tour layer
   // complete:false = nothing is enforced; the files are listed only so the check sees the German strings as "used" (the catalog's keys)
-  toursC: { complete: false, files: ['tour/content/sales.ts', 'tour/content/sepa.ts', 'tour/content/service.ts', 'tour/content/settings.ts', 'tour/content/sites.ts', 'tour/content/start.ts', 'tour/content/teamtools.ts', 'tour/content/umzug.ts', 'tour/content/undo.ts', 'tour/content/voice.ts', 'tour/content/webinars.ts', 'tour/content/workflow-tools.ts', 'tour/content/xr.ts', 'tour/catalog.ts'] },
+  toursC: { complete: false, files: ['tour/content/sales.ts', 'tour/content/sepa.ts', 'tour/content/service.ts', 'tour/content/settings.ts', 'tour/content/sites.ts', 'tour/content/start.ts', 'tour/content/teamtools.ts', 'tour/content/umzug.ts', 'tour/content/undo.ts', 'tour/content/voice.ts', 'tour/content/webinars.ts', 'tour/content/workflow-tools.ts', 'tour/content/xr.ts', 'tour/catalog.ts', 'werkstatt/tour.ts'] },
   b3tour: { complete: true, files: ['tour/engine.tsx', 'tour/learn.tsx', 'tour/welcome.tsx', 'tour/help.tsx', 'tour/docs.tsx'] },
   b3tourbook: { complete: true, files: ['tour/handbook.ts'] },
   b3tourhandover: { complete: true, files: ['tour/handover.tsx'] },
