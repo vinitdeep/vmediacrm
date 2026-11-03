@@ -196,6 +196,17 @@ export const NAMESPACES = {
   b4misc: { complete: true, files: ['ios/InstallSheet.tsx', 'ios/shortcuts.ts', 'pages/Academy.tsx', 'pages/Affiliates.tsx', 'pages/Attribution.tsx#srcLabel,KIND,GROUPS,MODELS,Attribution,Report,TrackingSettings,ContactAttribution,attrQs,pickAttr', 'pages/BookingExtras.tsx'] },
   b4calc: { complete: true, files: ['pages/Calc.tsx', 'pages/CalcCharts.tsx', 'pages/CalcInputs.tsx', 'pages/CalcResults.tsx'] },
   // end b4
+
+  b7theme: { complete: true, files: ['theme/Appearance.tsx', 'theme/BrandingLook.tsx', 'theme/depts.ts', 'theme/Profiles.tsx', 'theme/themes.ts'] },
+  b7undo: { complete: true, files: ['undo/shared.ts', 'undo/Undo.tsx#ConflictDialog,Changes,Row,HistoryPanel,UndoLayer'] },
+  b7team: { complete: true, files: ['pages/TeamCalendarEditor.tsx', 'pages/TeamCalendarKit.tsx', 'pages/TeamInboxSettings.tsx'] },
+  b7video: { complete: true, files: ['pages/VideoStudio.tsx', 'pages/VideoRecycle.tsx'] },
+  b7umzug: { complete: true, files: ['pages/umzug-format.ts', 'pages/UmzugAssistent.tsx', 'pages/UmzugConnect.tsx', 'pages/UmzugMapping.tsx', 'pages/UmzugPointer.tsx', 'pages/UmzugRun.tsx', 'pages/UmzugZustellung.tsx'] },
+  b7werk: { complete: true, files: ['werkstatt/Admin.tsx', 'werkstatt/badges.tsx', 'werkstatt/Build.tsx', 'werkstatt/ChatCards.tsx', 'werkstatt/Marktplatz.tsx', 'werkstatt/PluginFrame.tsx', 'werkstatt/Plugins.tsx', 'werkstatt/scopes.tsx', 'werkstatt/Werkstatt.tsx'] },
+  b7xr: { complete: true, files: ['xr/engine/board-scene.ts', 'xr/engine/canvas-scene.ts', 'xr/engine/runtime.ts', 'xr/engine/textures.ts', 'xr/install.ts', 'xr/SpatialCard.tsx', 'xr/SpatialSuggest.tsx', 'xr/Workspace.tsx', 'xr/XrButton.tsx', 'xr/XrViewer.tsx'] },
+  b7misc: { complete: true, files: ['pages/Stripe.tsx#stripeStatus,useStripe,EVENTS,SUB_EVENTS,CodeList,StripeSettings,useStripePayments,StripeInvoiceBox,useProductLinks,ProductBuyLink,ProductTriggerField', 'pages/SupabaseMirror.tsx', 'pages/Surveys.tsx', 'pages/SystemHealth.tsx', 'pages/TodoistSync.tsx', 'pages/Trash.tsx', 'pwa.tsx'] },
+  b7voice: { complete: true, files: ['pages/Voice.tsx', 'pages/VoiceAi.tsx'] },
+  b7webinar: { complete: true, files: ['pages/WebinarEditor.tsx', 'pages/WebinarRoomTab.tsx', 'pages/Webinars.tsx', 'pages/WebinarStats.tsx', 'pages/WebinarTabs.tsx', 'pages/Wishes.tsx'] },
 } as const satisfies Record<string, { complete: boolean; server?: boolean; files: readonly string[] }>;
 export type Namespace = keyof typeof NAMESPACES;
 
@@ -279,5 +290,16 @@ export const CATALOGS: { [L in Exclude<Locale, typeof SOURCE_LOCALE>]: Partial<R
     b4misc: () => import('./en/b4misc'),
     b4calc: () => import('./en/b4calc'),
     // end b4
+
+    b7theme: () => import('./en/b7theme'),
+    b7undo: () => import('./en/b7undo'),
+    b7team: () => import('./en/b7team'),
+    b7video: () => import('./en/b7video'),
+    b7umzug: () => import('./en/b7umzug'),
+    b7werk: () => import('./en/b7werk'),
+    b7xr: () => import('./en/b7xr'),
+    b7misc: () => import('./en/b7misc'),
+    b7voice: () => import('./en/b7voice'),
+    b7webinar: () => import('./en/b7webinar'),
   },
 };

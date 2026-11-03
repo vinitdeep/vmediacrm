@@ -3,6 +3,7 @@ import { api, dt } from '../api';
 import { Badge, CodeBox, Empty, Field, Input, Modal, Select, Spinner, act, confirmAsk, navigate, useLoad } from '../ui';
 import { DOMAIN_STATUS } from './umzug-format';
 import './umzug.css';
+import { tr, useT } from '../i18n';
 
 /**
  * E-Mail-Zustellung prüfen: Domain eintragen → SPF, DKIM, DMARC und MX werden per DNS geprüft → die fehlenden Einträge zum Kopieren
@@ -51,29 +52,31 @@ interface Overview {
 }
 
 const statusBadge = (s: string) => {
+  const t = tr('b7umzug');
   const [text, tone] = DOMAIN_STATUS[s] ?? [s, 'gray' as const];
-  return <Badge tone={tone}>{text}</Badge>;
+  return <Badge tone={tone}>{t(text)}</Badge>;
 };
 
 function Records({ records }: { records: DnsRec[] }) {
+  const t = useT('b7umzug');
   return (
     <div className="um-recs" data-tour="dl-records">
       {records.map((r, i) => (
         <div key={i} className="um-rec">
           <div className="um-rec-type">
             <Badge tone="blue">{r.type}</Badge>
-            {r.priority !== undefined && <span className="muted small">Priorität {r.priority}</span>}
+            {r.priority !== undefined && <span className="muted small">{t('Priorität {priority}', { priority: r.priority })}</span>}
           </div>
           <div className="um-rec-f">
-            <span className="muted small">Name / Host</span>
+            <span className="muted small">{t('Name / Host')}</span>
             <CodeBox text={r.host} />
           </div>
           <div className="um-rec-f wide">
-            <span className="muted small">Wert</span>
+            <span className="muted small">{t('Wert')}</span>
             <CodeBox text={r.value} />
           </div>
           <div className="muted small um-rec-note">
-            Vollständiger Name: {r.fqdn}
+            {t('Vollständiger Name: {fqdn}', { fqdn: r.fqdn })}
             {r.note ? ` · ${r.note}` : ''}
           </div>
         </div>
@@ -83,12 +86,13 @@ function Records({ records }: { records: DnsRec[] }) {
 }
 
 function CheckView({ c }: { c: CheckFull }) {
+  const t = useT('b7umzug');
   const todo = c.status !== 'ok';
   return (
     <div className={`um-check ${c.status}`}>
       <div className="um-check-head">
         <strong>{c.label}</strong> {statusBadge(c.status)}
-        {c.optional && <span className="muted small">Empfehlung</span>}
+        {c.optional && <span className="muted small">{t('Empfehlung')}</span>}
       </div>
       <p>{c.summary}</p>
       {c.problems.filter((p) => p !== c.summary).length > 0 && (
@@ -100,7 +104,7 @@ function CheckView({ c }: { c: CheckFull }) {
       )}
       {todo && c.steps.length > 0 && (
         <>
-          <h4>So behebst du es</h4>
+          <h4>{t('So behebst du es')}</h4>
           <ol className="um-steps-list">
             {c.steps.map((s) => (
               <li key={s}>{s}</li>
@@ -108,10 +112,10 @@ function CheckView({ c }: { c: CheckFull }) {
           </ol>
         </>
       )}
-      {c.records.length > 0 && (todo ? <Records records={c.records} /> : <details><summary>Einträge anzeigen</summary><Records records={c.records} /></details>)}
+      {c.records.length > 0 && (todo ? <Records records={c.records} /> : <details><summary>{t('Einträge anzeigen')}</summary><Records records={c.records} /></details>)}
       {c.found.length > 0 && (
         <details className="um-found">
-          <summary>Das habe ich im DNS gefunden</summary>
+          <summary>{t('Das habe ich im DNS gefunden')}</summary>
           <ul>
             {c.found.map((f) => (
               <li key={f}>
@@ -126,12 +130,13 @@ function CheckView({ c }: { c: CheckFull }) {
 }
 
 function SetupModal({ d, providers, onClose, onSaved }: { d: DomainBrief; providers: Overview['providers']; onClose: () => void; onSaved: () => void }) {
+  const t = useT('b7umzug');
   const [provider, setProvider] = useState(d.provider);
   const [selector, setSelector] = useState(d.selector);
   const [busy, setBusy] = useState(false);
   return (
     <Modal
-      title={`Anbieter für ${d.domain}`}
+      title={t('Anbieter für {domain}', { domain: d.domain })}
       onClose={onClose}
       footer={
         <>
@@ -148,23 +153,24 @@ function SetupModal({ d, providers, onClose, onSaved }: { d: DomainBrief; provid
               if (r) onSaved();
             }}
           >
-            Speichern und neu prüfen
+            {t('Speichern und neu prüfen')}
           </button>
         </>
       }
     >
-      <p className="muted small">Der Anbieter bestimmt, welchen DKIM-Eintrag und welchen SPF-Teil ich suche. „Automatisch“ nimmt den Anbieter aus Einstellungen → E-Mail & SMS.</p>
-      <Field label="Versand-Anbieter">
-        <Select value={provider} onChange={setProvider} placeholder="Automatisch" options={providers.map((p) => [p.key, p.configured ? `${p.label} (eingerichtet)` : p.label] as [string, string])} />
+      <p className="muted small">{t('Der Anbieter bestimmt, welchen DKIM-Eintrag und welchen SPF-Teil ich suche. „Automatisch“ nimmt den Anbieter aus Einstellungen → E-Mail & SMS.')}</p>
+      <Field label={t('Versand-Anbieter')}>
+        <Select value={provider} onChange={setProvider} placeholder={t('Automatisch')} options={providers.map((p) => [p.key, p.configured ? `${p.label} (eingerichtet)` : p.label] as [string, string])} />
       </Field>
-      <Field label="DKIM-Selektor (optional)" hint="Nur nötig, wenn dein Anbieter einen eigenen Selektor vergeben hat, z. B. „s1“ oder „mail“. Er steht in der DKIM-Anleitung deines Anbieters vor „._domainkey“.">
-        <Input value={selector} onChange={setSelector} maxLength={80} placeholder="z. B. s1" />
+      <Field label={t('DKIM-Selektor (optional)')} hint={t('Nur nötig, wenn dein Anbieter einen eigenen Selektor vergeben hat, z. B. „s1“ oder „mail“. Er steht in der DKIM-Anleitung deines Anbieters vor „._domainkey“.')}>
+        <Input value={selector} onChange={setSelector} maxLength={80} placeholder={t('z. B. s1')} />
       </Field>
     </Modal>
   );
 }
 
 function DomainCard({ d, providers, onChanged }: { d: DomainBrief; providers: Overview['providers']; onChanged: () => void }) {
+  const t = useT('b7umzug');
   const [open, setOpen] = useState(d.status === 'warn' || d.status === 'fail');
   const [full, setFull] = useState<DomainFull | null>(null);
   const [busy, setBusy] = useState('');
@@ -178,7 +184,7 @@ function DomainCard({ d, providers, onChanged }: { d: DomainBrief; providers: Ov
   const shown = full ?? detail.data ?? null;
   const check = async () => {
     setBusy('check');
-    const r = await act(() => api.post<DomainFull>(`/api/mail-domains/${d.id}/check`), 'Geprüft');
+    const r = await act(() => api.post<DomainFull>(`/api/mail-domains/${d.id}/check`), t('Geprüft'));
     setBusy('');
     if (r) {
       setFull(r);
@@ -187,7 +193,7 @@ function DomainCard({ d, providers, onChanged }: { d: DomainBrief; providers: Ov
     }
   };
   const remove = async () => {
-    if (!confirmAsk(`${d.domain} aus der Liste entfernen? Am DNS ändert sich nichts.`)) return;
+    if (!confirmAsk(t('{domain} aus der Liste entfernen? Am DNS ändert sich nichts.', { domain: d.domain }))) return;
     if (await act(() => api.del(`/api/mail-domains/${d.id}`))) onChanged();
   };
   const result = shown?.result;
@@ -199,17 +205,17 @@ function DomainCard({ d, providers, onChanged }: { d: DomainBrief; providers: Ov
             {d.domain} {statusBadge(d.status)}
           </h3>
           <div className="muted small">
-            {d.provider_label || 'Anbieter automatisch'}
-            {d.selector ? ` · Selektor ${d.selector}` : ''}
-            {d.checked_at ? ` · geprüft ${dt(d.checked_at)}` : ''}
+            {d.provider_label || t('Anbieter automatisch')}
+            {d.selector ? t(' · Selektor {selector}', { selector: d.selector }) : ''}
+            {d.checked_at ? t(' · geprüft {v1}', { v1: dt(d.checked_at) }) : ''}
           </div>
         </div>
         <div className="um-actions">
           <button className="btn" disabled={!!busy} onClick={() => void check()} data-tour="dl-recheck">
-            {busy === 'check' ? 'Prüfe …' : d.checked_at ? 'Erneut prüfen' : 'Jetzt prüfen'}
+            {busy === 'check' ? t('Prüfe …') : d.checked_at ? t('Erneut prüfen') : t('Jetzt prüfen')}
           </button>
           <button className="btn secondary" onClick={() => setSetup(true)}>
-            Anbieter
+            {t('Anbieter')}
           </button>
           <button className="btn ghost" onClick={() => void remove()}>
             Entfernen
@@ -220,7 +226,7 @@ function DomainCard({ d, providers, onChanged }: { d: DomainBrief; providers: Ov
         <div className="um-pills" data-tour="dl-badges">
           {d.checks.map((c) => (
             <span key={c.key} className={`um-pill ${c.status}`} title={c.summary}>
-              {c.label}: {(DOMAIN_STATUS[c.status] ?? [c.status])[0]}
+              {c.label}: {t((DOMAIN_STATUS[c.status] ?? [c.status])[0])}
             </span>
           ))}
         </div>
@@ -228,7 +234,7 @@ function DomainCard({ d, providers, onChanged }: { d: DomainBrief; providers: Ov
       <p className="um-summary">{d.summary}</p>
       {d.checked_at && (
         <button className="btn small ghost um-toggle" onClick={() => setOpen(!open)} aria-expanded={open}>
-          {open ? 'Details ausblenden' : 'Details und Anleitung zeigen'}
+          {open ? t('Details ausblenden') : t('Details und Anleitung zeigen')}
         </button>
       )}
       {open && detail.loading && !shown && <Spinner />}
@@ -264,6 +270,7 @@ function DomainCard({ d, providers, onChanged }: { d: DomainBrief; providers: Ov
 }
 
 export function UmzugZustellung({ embedded }: { embedded?: boolean }) {
+  const t = useT('b7umzug');
   const ov = useLoad(() => api.get<Overview>('/api/mail-domains'), []);
   const [domain, setDomain] = useState('');
   const [provider, setProvider] = useState('');
@@ -278,7 +285,7 @@ export function UmzugZustellung({ embedded }: { embedded?: boolean }) {
     const r = await act(async () => {
       const row = await api.post<DomainBrief>('/api/mail-domains', { domain: name, provider: prov, selector: sel });
       return api.post(`/api/mail-domains/${row.id}/check`);
-    }, 'Domain geprüft');
+    }, t('Domain geprüft'));
     setBusy(false);
     if (r) {
       setDomain('');
@@ -290,21 +297,21 @@ export function UmzugZustellung({ embedded }: { embedded?: boolean }) {
 
   return (
     <div className="um-page" data-tour="dl-page">
-      {!embedded && <h1>E-Mail-Zustellung prüfen</h1>}
+      {!embedded && <h1>{t('E-Mail-Zustellung prüfen')}</h1>}
       <p className="muted um-intro">
-        Gmail, Yahoo und Co. sortieren Mails aus, deren Absender-Domain nicht sauber eingerichtet ist. Hier prüfe ich SPF, DKIM, DMARC und MX deiner Domain und zeige dir die fehlenden Einträge zum Kopieren.
+        {t('Gmail, Yahoo und Co. sortieren Mails aus, deren Absender-Domain nicht sauber eingerichtet ist. Hier prüfe ich SPF, DKIM, DMARC und MX deiner Domain und zeige dir die fehlenden Einträge zum Kopieren.')}
       </p>
 
       <div className="card" data-tour="dl-sender">
-        <h3>Dein Absender</h3>
+        <h3>{t('Dein Absender')}</h3>
         {s.domain ? (
           <p>
-            Mails gehen von <strong>{s.from_email}</strong> über <strong>{s.provider_label}</strong>.
-            {!s.active && <span className="muted"> Der Versand steht auf „Testmodus“ – es wird noch nichts verschickt.</span>}
+            {t('Mails gehen von')} <strong>{s.from_email}</strong> {t('über')} <strong>{s.provider_label}</strong>.
+            {!s.active && <span className="muted"> {t('Der Versand steht auf „Testmodus“ – es wird noch nichts verschickt.')}</span>}
           </p>
         ) : (
           <p>
-            Es ist noch keine Absender-Adresse eingestellt.{' '}
+            {t('Es ist noch keine Absender-Adresse eingestellt.')}{' '}
             <a
               href="#"
               onClick={(e) => {
@@ -312,24 +319,24 @@ export function UmzugZustellung({ embedded }: { embedded?: boolean }) {
                 navigate('settings/messaging');
               }}
             >
-              Einstellungen → E-Mail & SMS
+              {t('Einstellungen → E-Mail & SMS')}
             </a>
           </p>
         )}
         {s.domain && !s.added && (
           <button className="btn" disabled={busy} onClick={() => void add(s.domain!, '', '')} data-tour="dl-check-sender">
-            {busy ? 'Prüfe …' : `${s.domain} jetzt prüfen`}
+            {busy ? t('Prüfe …') : t('{domain} jetzt prüfen', { domain: s.domain })}
           </button>
         )}
       </div>
 
-      {o.domains.length === 0 && !s.domain && <Empty>Noch keine Domain in der Liste. Trag unten die Domain ein, von der du Mails verschickst.</Empty>}
+      {o.domains.length === 0 && !s.domain && <Empty>{t('Noch keine Domain in der Liste. Trag unten die Domain ein, von der du Mails verschickst.')}</Empty>}
       {o.domains.map((d) => (
         <DomainCard key={d.id} d={d} providers={o.providers} onChanged={() => void ov.reload()} />
       ))}
 
       <div className="card" data-tour="dl-add">
-        <h3>Weitere Domain prüfen</h3>
+        <h3>{t('Weitere Domain prüfen')}</h3>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -337,30 +344,30 @@ export function UmzugZustellung({ embedded }: { embedded?: boolean }) {
           }}
         >
           <div className="grid2">
-            <Field label="Domain" hint="Nur der Teil hinter dem @, z. B. meinefirma.de">
+            <Field label={t('Domain')} hint={t('Nur der Teil hinter dem @, z. B. meinefirma.de')}>
               <Input value={domain} onChange={setDomain} placeholder="meinefirma.de" autoComplete="off" spellCheck={false} />
             </Field>
-            <Field label="Versand-Anbieter">
-              <Select value={provider} onChange={setProvider} placeholder="Automatisch" options={o.providers.map((p) => [p.key, p.configured ? `${p.label} (eingerichtet)` : p.label] as [string, string])} />
+            <Field label={t('Versand-Anbieter')}>
+              <Select value={provider} onChange={setProvider} placeholder={t('Automatisch')} options={o.providers.map((p) => [p.key, p.configured ? `${p.label} (eingerichtet)` : p.label] as [string, string])} />
             </Field>
           </div>
-          <Field label="DKIM-Selektor (optional)" hint="Nur wenn dein Anbieter einen eigenen vergeben hat.">
-            <Input value={selector} onChange={setSelector} maxLength={80} placeholder="z. B. s1" />
+          <Field label={t('DKIM-Selektor (optional)')} hint={t('Nur wenn dein Anbieter einen eigenen vergeben hat.')}>
+            <Input value={selector} onChange={setSelector} maxLength={80} placeholder={t('z. B. s1')} />
           </Field>
           <button className="btn" type="submit" disabled={!domain.trim() || busy}>
-            {busy ? 'Prüfe …' : 'Hinzufügen und prüfen'}
+            {busy ? t('Prüfe …') : t('Hinzufügen und prüfen')}
           </button>
         </form>
       </div>
 
       <div className="card" data-tour="dl-rules">
-        <h3>Was die großen Postfach-Anbieter verlangen</h3>
+        <h3>{t('Was die großen Postfach-Anbieter verlangen')}</h3>
         <ul className="um-rules">
           {o.rules.map((r) => (
             <li key={r.key}>{r.label}</li>
           ))}
         </ul>
-        {o.smtp_hint && <p className="muted small">Dein SMTP-Server sieht nach {o.smtp_hint} aus – die Anleitung nimmt darauf Rücksicht.</p>}
+        {o.smtp_hint && <p className="muted small">{t('Dein SMTP-Server sieht nach {smtp_hint} aus – die Anleitung nimmt darauf Rücksicht.', { smtp_hint: o.smtp_hint })}</p>}
       </div>
     </div>
   );

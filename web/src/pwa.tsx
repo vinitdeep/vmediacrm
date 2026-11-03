@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api, currentLocation, setLocation } from './api';
 import { navigate } from './ui';
+import { useT, tr } from './i18n';
 
 /**
  * Installable app: service worker registration, the install prompt and Web Push on this device.
@@ -81,6 +82,7 @@ export async function promptInstall(): Promise<boolean> {
 }
 
 // --- push on this device -----------------------------------------------------------
+// i18n-ignore (feature detection)
 export const pushSupported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 
 function keyBytes(b64url: string): Uint8Array<ArrayBuffer> {
@@ -99,9 +101,10 @@ export async function deviceSubscription(): Promise<PushSubscription | null> {
 }
 
 export async function enablePush(): Promise<PushSubscription> {
-  if (!pushSupported()) throw new Error('Dieser Browser unterstützt keine Push-Benachrichtigungen');
+  const t = tr('b7misc');
+  if (!pushSupported()) throw new Error(t('Dieser Browser unterstützt keine Push-Benachrichtigungen'));
   const permission = await Notification.requestPermission();
-  if (permission !== 'granted') throw new Error(permission === 'denied' ? 'Benachrichtigungen sind im Browser blockiert – bitte in den Website-Einstellungen erlauben' : 'Keine Erlaubnis erteilt');
+  if (permission !== 'granted') throw new Error(permission === 'denied' ? t('Benachrichtigungen sind im Browser blockiert – bitte in den Website-Einstellungen erlauben') : t('Keine Erlaubnis erteilt'));
   if (!(await navigator.serviceWorker.getRegistration(SCOPE))) await navigator.serviceWorker.register('/sw.js', { scope: SCOPE });
   const reg = await navigator.serviceWorker.ready;
   const key = keyBytes((await api.get<{ key: string }>('/api/push/public-key')).key);
@@ -138,6 +141,7 @@ const hintDismissed = () => {
  * the guided "Zum Home-Bildschirm hinzufügen" sheet instead (web/src/ios/InstallSheet.tsx).
  */
 export function InstallHint() {
+  const t = useT('b7misc');
   const prompt = useInstallPrompt();
   const [hidden, setHidden] = useState(() => isStandalone() || hintDismissed());
   const close = () => {
@@ -150,14 +154,14 @@ export function InstallHint() {
   };
   if (hidden || !prompt) return null;
   return (
-    <div className="install-hint" role="dialog" aria-label="App installieren">
+    <div className="install-hint" role="dialog" aria-label={t('App installieren')}>
       <img src="/pwa/icon/icon-180.png" alt="" width={40} height={40} />
       <div className="install-text">
-        <strong>App installieren</strong>
-        <span className="muted small">Startet wie eine App und meldet neue Nachrichten aufs Gerät.</span>
+        <strong>{t('App installieren')}</strong>
+        <span className="muted small">{t('Startet wie eine App und meldet neue Nachrichten aufs Gerät.')}</span>
       </div>
       <button className="btn small" onClick={async () => ((await promptInstall()) ? setHidden(true) : close())}>
-        Installieren
+        {t('Installieren')}
       </button>
       <button className="icon-btn" onClick={close} aria-label="Schließen">
         ✕

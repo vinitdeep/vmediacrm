@@ -4,6 +4,7 @@ import { Icon, type IconName } from '../icons';
 import { useSession } from '../session';
 import { Badge, Check, Copy, Empty, Field, Input, Link, MergeHint, Modal, Select, Spinner, Textarea, act, confirmAsk, toast, useLoad } from '../ui';
 import { ChannelAvatar } from './Social';
+import { useT } from '../i18n';
 
 /**
  * Video-Studio: Content-Recycling (tab "Recycling" of a finished job), the Autopilot (feeds →
@@ -84,11 +85,12 @@ function usePoll(active: boolean, reload: () => unknown, ms = 3000) {
 }
 
 function AiHint({ text }: { text: string }) {
+  const tt = useT('b7video');
   const session = useSession();
   return (
     <p className="vs-warn">
-      {text} Recycling schreibt mit dem KI-Assistenten.
-      {session.user.role === 'admin' ? <Link to="settings/ai">KI-Assistent einrichten</Link> : <span>Bitte die Agentur, ihn einzurichten.</span>}
+      {tt('{text} Recycling schreibt mit dem KI-Assistenten.', { text })}
+      {session.user.role === 'admin' ? <Link to="settings/ai">{tt('KI-Assistent einrichten')}</Link> : <span>{tt('Bitte die Agentur, ihn einzurichten.')}</span>}
     </p>
   );
 }
@@ -96,6 +98,7 @@ function AiHint({ text }: { text: string }) {
 // --- Recycling tab ---------------------------------------------------------------------------------
 
 export function Recycling({ job }: { job: any }) {
+  const tt = useT('b7video');
   const r = useLoad(() => api.get<RecycleData>(`/api/video-studio/jobs/${job.id}/recycle`), [job.id]);
   const d = r.data;
   const generating = !!d?.items.some((i) => i.status === 'generating');
@@ -107,14 +110,14 @@ export function Recycling({ job }: { job: any }) {
   useEffect(() => {
     if (focus && d) document.getElementById(`item-${focus}`)?.scrollIntoView({ block: 'center' });
   }, [focus, !!d]);
-  if (job.status !== 'completed') return <Empty>Recycling geht, sobald der Job fertig ist.</Empty>;
+  if (job.status !== 'completed') return <Empty>{tt('Recycling geht, sobald der Job fertig ist.')}</Empty>;
   if (r.error) return <Empty>{r.error}</Empty>;
   if (!d) return <Spinner />;
   const avail = d.kinds.filter((k) => k.available).map((k) => k.key);
   const done = new Set(d.items.map((i) => i.kind));
   const chosen = pick ?? avail.filter((k) => !done.has(k));
   const start = async (kinds: string[]) => {
-    const res = await act(() => api.post(`/api/video-studio/jobs/${job.id}/recycle`, { kinds, language: lang }), 'Die KI schreibt – das dauert ein, zwei Minuten');
+    const res = await act(() => api.post(`/api/video-studio/jobs/${job.id}/recycle`, { kinds, language: lang }), tt('Die KI schreibt – das dauert ein, zwei Minuten'));
     if (res) {
       setPick([]);
       await r.reload();
@@ -125,10 +128,10 @@ export function Recycling({ job }: { job: any }) {
     <div className="vr">
       <div className="card vr-start" data-tour="vr-start">
         <h2>
-          <Icon name="sparkles" /> Aus diesem Video machen …
+          <Icon name="sparkles" /> {tt('Aus diesem Video machen …')}
         </h2>
         <p className="muted small">
-          Der KI-Assistent schreibt aus dem Transkript und den besten Clips. Nichts wird veröffentlicht, bevor du bei einem Inhalt auf <strong>Übernehmen</strong> klickst. Jeder Inhalt zählt als ein KI-Aufruf.
+          {tt('Der KI-Assistent schreibt aus dem Transkript und den besten Clips. Nichts wird veröffentlicht, bevor du bei einem Inhalt auf')} <strong>{tt('Übernehmen')}</strong> {tt('klickst. Jeder Inhalt zählt als ein KI-Aufruf.')}
         </p>
         {d.ai && <AiHint text={d.ai} />}
         <div className="vr-kinds">
@@ -137,8 +140,8 @@ export function Recycling({ job }: { job: any }) {
               <input type="checkbox" disabled={!k.available} checked={chosen.includes(k.key)} onChange={(e) => toggle(k.key, e.target.checked)} />
               <Icon name={ICON[k.key] ?? 'sparkles'} />
               <span>
-                {k.label}
-                {done.has(k.key) && k.available && <small className="muted">schon erzeugt</small>}
+                {tt(k.label)}
+                {done.has(k.key) && k.available && <small className="muted">{tt('schon erzeugt')}</small>}
                 {!k.available && <small className="muted">{k.reason}</small>}
               </span>
             </label>
@@ -147,11 +150,11 @@ export function Recycling({ job }: { job: any }) {
         <div className="vs-inline">
           <Select value={lang} onChange={setLang} options={Object.entries(d.languages)} />
           <button className="btn" disabled={!!d.ai || !chosen.length || generating} onClick={() => start(chosen)}>
-            <Icon name="sparkles" /> {!chosen.length ? 'Inhalte auswählen' : chosen.length === 1 ? '1 Inhalt erzeugen' : `${chosen.length} Inhalte erzeugen`}
+            <Icon name="sparkles" /> {!chosen.length ? tt('Inhalte auswählen') : chosen.length === 1 ? tt('1 Inhalt erzeugen') : tt('{length} Inhalte erzeugen', { length: chosen.length })}
           </button>
-          {generating && <span className="muted small">läuft – die Liste aktualisiert sich selbst</span>}
+          {generating && <span className="muted small">{tt('läuft – die Liste aktualisiert sich selbst')}</span>}
         </div>
-        {!d.public_base && <p className="muted small vr-note">Clips in Blog, Newsletter und Lektion verlinken auf V Media CRM – damit Leser sie sehen, muss V Media CRM öffentlich per https erreichbar sein.</p>}
+        {!d.public_base && <p className="muted small vr-note">{tt('Clips in Blog, Newsletter und Lektion verlinken auf V Media CRM – damit Leser sie sehen, muss V Media CRM öffentlich per https erreichbar sein.')}</p>}
       </div>
       {d.items.length ? (
         <div className="vr-items" data-tour="vr-items">
@@ -160,7 +163,7 @@ export function Recycling({ job }: { job: any }) {
           ))}
         </div>
       ) : (
-        <Empty>Noch nichts erzeugt. Inhalte oben auswählen und erzeugen lassen.</Empty>
+        <Empty>{tt('Noch nichts erzeugt. Inhalte oben auswählen und erzeugen lassen.')}</Empty>
       )}
       {edit && <EditItem item={edit} onClose={() => setEdit(null)} onSaved={() => (setEdit(null), r.reload())} />}
     </div>
@@ -168,14 +171,15 @@ export function Recycling({ job }: { job: any }) {
 }
 
 function RecycleItem({ item, data, focus, onEdit, onChange, onRegenerate }: { item: Item; data: RecycleData; focus: boolean; onEdit: () => void; onChange: () => void; onRegenerate: () => void }) {
+  const tt = useT('b7video');
   const busy = item.status === 'generating';
   const [label, tone] = STATUS[item.status] ?? [item.status, 'gray'];
   const regen = () => {
-    if ((item.edited || item.status === 'applied') && !confirmAsk(item.status === 'applied' ? 'Neu erzeugen? Das Übernommene bleibt, wo es ist; hier steht danach der neue Text.' : 'Neu erzeugen? Deine Änderungen werden ersetzt.')) return;
+    if ((item.edited || item.status === 'applied') && !confirmAsk(item.status === 'applied' ? tt('Neu erzeugen? Das Übernommene bleibt, wo es ist; hier steht danach der neue Text.') : tt('Neu erzeugen? Deine Änderungen werden ersetzt.'))) return;
     onRegenerate();
   };
   const del = async () => {
-    if (confirmAsk(`„${item.label}“ aus dem Recycling entfernen? Bereits Übernommenes bleibt bestehen.`) && (await act(() => api.del(`/api/video-studio/recycle/${item.id}`), 'Entfernt'))) onChange();
+    if (confirmAsk(tt('„{label}“ aus dem Recycling entfernen? Bereits Übernommenes bleibt bestehen.', { label: item.label })) && (await act(() => api.del(`/api/video-studio/recycle/${item.id}`), tt('Entfernt')))) onChange();
   };
   return (
     <div className={`card vr-item${focus ? ' focus' : ''}`} id={`item-${item.id}`}>
@@ -187,15 +191,15 @@ function RecycleItem({ item, data, focus, onEdit, onChange, onRegenerate }: { it
           <strong>{item.label}</strong>
           <span className="muted small">
             {ago(item.updated_at)}
-            {item.origin && item.origin !== 'manuell' ? ` · über ${item.origin}` : ''}
-            {item.edited ? ' · bearbeitet' : ''}
+            {item.origin && item.origin !== 'manuell' ? tt(' · über {origin}', { origin: item.origin }) : ''}
+            {item.edited ? tt(' · bearbeitet') : ''}
           </span>
         </div>
-        <Badge tone={tone}>{label}</Badge>
+        <Badge tone={tone}>{tt(label)}</Badge>
       </div>
       {busy ? (
         <div className="vr-busy">
-          <Spinner /> <span className="muted small">Die KI schreibt …</span>
+          <Spinner /> <span className="muted small">{tt('Die KI schreibt …')}</span>
         </div>
       ) : item.text ? (
         <Preview item={item} />
@@ -208,7 +212,7 @@ function RecycleItem({ item, data, focus, onEdit, onChange, onRegenerate }: { it
         </button>
         {item.text && <Copy text={item.text} />}
         <button className="btn small ghost" onClick={regen} disabled={busy || !!data.ai}>
-          <Icon name="refresh" /> Neu erzeugen
+          <Icon name="refresh" /> {tt('Neu erzeugen')}
         </button>
         <button className="btn small ghost" onClick={del} disabled={busy} title="Entfernen" aria-label="Entfernen">
           <Icon name="trash" />
@@ -219,6 +223,7 @@ function RecycleItem({ item, data, focus, onEdit, onChange, onRegenerate }: { it
 }
 
 function Preview({ item }: { item: Item }) {
+  const tt = useT('b7video');
   const [more, setMore] = useState(false);
   const c = item.content ?? {};
   if (item.kind === 'x_thread')
@@ -237,7 +242,7 @@ function Preview({ item }: { item: Item }) {
       <div className={`vr-text${more ? ' open' : ''}`}>{item.text}</div>
       {item.text.length > 360 && (
         <button className="btn small ghost vs-more" onClick={() => setMore(!more)}>
-          {more ? 'Weniger anzeigen' : 'Ganzen Text anzeigen'}
+          {more ? tt('Weniger anzeigen') : tt('Ganzen Text anzeigen')}
         </button>
       )}
     </>
@@ -245,6 +250,7 @@ function Preview({ item }: { item: Item }) {
 }
 
 function Apply({ item, data, onDone }: { item: Item; data: RecycleData; onDone: () => void }) {
+  const tt = useT('b7video');
   const t: Targets = data.targets ?? { funnels: [], groups: [], courses: [], channels: [] };
   const platforms = PLATFORMS[item.kind];
   const channels = platforms ? t.channels.filter((c) => platforms.includes(c.identifier)) : [];
@@ -263,7 +269,7 @@ function Apply({ item, data, onDone }: { item: Item; data: RecycleData; onDone: 
     const r = await act(() => api.post<Item>(`/api/video-studio/recycle/${item.id}/apply`, body));
     setBusy(false);
     if (r) {
-      toast(r.applied_label ?? 'Übernommen');
+      toast(r.applied_label ?? tt('Übernommen'));
       setMore(false);
       onDone();
     }
@@ -271,7 +277,7 @@ function Apply({ item, data, onDone }: { item: Item; data: RecycleData; onDone: 
   const again = item.status === 'applied';
   const btn = (text: string, onClick: () => void, disabled = false) => (
     <button className={`btn small${again ? ' secondary' : ''}`} disabled={busy || disabled} onClick={onClick}>
-      <Icon name="ok" /> {again ? `${text} (nochmal)` : text}
+      <Icon name="ok" /> {again ? tt('{text} (nochmal)', { text }) : text}
     </button>
   );
   let body: React.ReactNode = null;
@@ -280,15 +286,15 @@ function Apply({ item, data, onDone }: { item: Item; data: RecycleData; onDone: 
       body = t.funnels.length ? (
         <div className="vs-inline">
           <Select value={funnel} onChange={setFunnel} options={t.funnels.map((f) => [f.id, f.name] as [string, string])} />
-          <Select value={embed} onChange={setEmbed} options={[['auto', data.youtube ? 'YouTube-Video einbetten' : 'Besten Clip einbetten'], ...(data.youtube ? [['clip', 'Besten Clip einbetten'] as [string, string]] : []), ['none', 'Ohne Video']]} />
-          {btn('Als Blog-Entwurf anlegen', () => go({ funnel_id: funnel, embed }), !funnel)}
+          <Select value={embed} onChange={setEmbed} options={[['auto', data.youtube ? tt('YouTube-Video einbetten') : tt('Besten Clip einbetten')], ...(data.youtube ? [['clip', tt('Besten Clip einbetten')] as [string, string]] : []), ['none', tt('Ohne Video')]]} />
+          {btn(tt('Als Blog-Entwurf anlegen'), () => go({ funnel_id: funnel, embed }), !funnel)}
         </div>
       ) : (
-        <p className="muted small">Noch keine Website mit Blog – unter Websites & Funnels eine Website anlegen.</p>
+        <p className="muted small">{tt('Noch keine Website mit Blog – unter Websites & Funnels eine Website anlegen.')}</p>
       );
       break;
     case 'newsletter':
-      body = <div className="vs-inline">{btn('Als Kampagnen-Entwurf anlegen', () => go({}))}</div>;
+      body = <div className="vs-inline">{btn(tt('Als Kampagnen-Entwurf anlegen'), () => go({}))}</div>;
       break;
     case 'linkedin':
     case 'x_thread':
@@ -306,38 +312,38 @@ function Apply({ item, data, onDone }: { item: Item; data: RecycleData; onDone: 
               );
             })}
           </div>
-          {item.kind === 'instagram' && !data.public_base && <p className="muted small">Instagram bekommt den besten Clip als Reel – dafür muss V Media CRM per https erreichbar sein.</p>}
-          {btn('Als Entwurf in den Social Planner', () => go({ integration_ids: sel }), !sel.length || (item.kind === 'instagram' && !data.public_base))}
+          {item.kind === 'instagram' && !data.public_base && <p className="muted small">{tt('Instagram bekommt den besten Clip als Reel – dafür muss V Media CRM per https erreichbar sein.')}</p>}
+          {btn(tt('Als Entwurf in den Social Planner'), () => go({ integration_ids: sel }), !sel.length || (item.kind === 'instagram' && !data.public_base))}
         </div>
       ) : (
-        <p className="muted small">Kein passender Kanal ({platforms?.join(', ')}) im Social Planner dieses Sub-Accounts – Text kopieren oder dort verbinden.</p>
+        <p className="muted small">{tt('Kein passender Kanal (')}{platforms?.join(', ')}{tt(') im Social Planner dieses Sub-Accounts – Text kopieren oder dort verbinden.')}</p>
       );
       break;
     case 'youtube':
-      body = <div className="vs-inline">{btn('Ins YouTube-Studio übernehmen', () => go({}))}</div>;
+      body = <div className="vs-inline">{btn(tt('Ins YouTube-Studio übernehmen'), () => go({}))}</div>;
       break;
     case 'shownotes':
-      body = <div className="vs-inline">{btn('Als Dokument im Projekt speichern', () => go({}), !data.public_base)}</div>;
+      body = <div className="vs-inline">{btn(tt('Als Dokument im Projekt speichern'), () => go({}), !data.public_base)}</div>;
       break;
     case 'community':
       body = t.groups.length ? (
         <div className="vs-inline">
           <Select value={group} onChange={setGroup} options={t.groups.map((g) => [g.id, g.name] as [string, string])} />
-          {btn('In der Community posten', () => go({ group_id: group }, 'Der Beitrag erscheint sofort für die Mitglieder der Gruppe. Jetzt posten?'), !group)}
+          {btn(tt('In der Community posten'), () => go({ group_id: group }, tt('Der Beitrag erscheint sofort für die Mitglieder der Gruppe. Jetzt posten?')), !group)}
         </div>
       ) : (
-        <p className="muted small">Noch keine Community-Gruppe.</p>
+        <p className="muted small">{tt('Noch keine Community-Gruppe.')}</p>
       );
       break;
     case 'lesson':
       body = t.courses.length ? (
         <div className="vs-inline">
           <Select value={course} onChange={(v) => (setCourse(v), setLesson(''))} options={t.courses.map((c) => [c.id, c.title] as [string, string])} />
-          <Select value={lesson} onChange={setLesson} placeholder="Lektion wählen" options={lessons.map((l) => [l.id, l.title] as [string, string])} />
-          {btn('Clip in die Lektion', () => go({ course_id: course, lesson_id: lesson }), !lesson)}
+          <Select value={lesson} onChange={setLesson} placeholder={tt('Lektion wählen')} options={lessons.map((l) => [l.id, l.title] as [string, string])} />
+          {btn(tt('Clip in die Lektion'), () => go({ course_id: course, lesson_id: lesson }), !lesson)}
         </div>
       ) : (
-        <p className="muted small">Noch keine Kurs-Lektion.</p>
+        <p className="muted small">{tt('Noch keine Kurs-Lektion.')}</p>
       );
       break;
   }
@@ -349,7 +355,7 @@ function Apply({ item, data, onDone }: { item: Item; data: RecycleData; onDone: 
           {item.applied_url && <Link to={item.applied_url}>Öffnen</Link>}
           {!more && (
             <button type="button" className="btn small ghost vr-again" onClick={() => setMore(true)}>
-              Nochmal übernehmen
+              {tt('Nochmal übernehmen')}
             </button>
           )}
         </p>
@@ -371,25 +377,26 @@ const toChapters = (s: string) =>
     .map((m) => ({ time: m![1], title: m![2] }));
 
 function EditItem({ item, onClose, onSaved }: { item: Item; onClose: () => void; onSaved: () => void }) {
+  const tt = useT('b7video');
   const [c, setC] = useState<any>(() => ({ ...item.content }));
   const set = (patch: any) => setC((x: any) => ({ ...x, ...patch }));
   const text = (key: string, label: string, rows = 0, hint?: string) => (
-    <Field label={label} hint={hint ?? (rows ? `${String(c[key] ?? '').length} Zeichen` : undefined)}>
+    <Field label={label} hint={hint ?? (rows ? tt('{length} Zeichen', { length: String(c[key] ?? '').length }) : undefined)}>
       {rows ? <Textarea value={c[key]} onChange={(v) => set({ [key]: v })} rows={rows} /> : <Input value={c[key]} onChange={(v) => set({ [key]: v })} />}
     </Field>
   );
-  const listField = (key: string, label: string, rows = 4, hint = 'eine Zeile je Eintrag') => (
+  const listField = (key: string, label: string, rows = 4, hint = tt('eine Zeile je Eintrag')) => (
     <Field label={label} hint={hint}>
       <Textarea value={c[`_${key}`] ?? lines(c[key])} onChange={(v) => set({ [`_${key}`]: v, [key]: toLines(v) })} rows={rows} />
     </Field>
   );
-  const chapters = (label = 'Kapitel') => (
-    <Field label={label} hint="je Zeile „00:00 Titel“ – das erste Kapitel beginnt bei 00:00">
+  const chapters = (label = tt('Kapitel')) => (
+    <Field label={label} hint={tt('je Zeile „00:00 Titel“ – das erste Kapitel beginnt bei 00:00')}>
       <Textarea value={c._chapters ?? chapterLines(c.chapters)} onChange={(v) => set({ _chapters: v, chapters: toChapters(v) })} rows={6} />
     </Field>
   );
-  const tags = (key = 'hashtags', label = 'Hashtags') => (
-    <Field label={label} hint="mit Leerzeichen trennen">
+  const tags = (key = 'hashtags', label = tt('Hashtags')) => (
+    <Field label={label} hint={tt('mit Leerzeichen trennen')}>
       <Input value={c[`_${key}`] ?? (c[key] ?? []).join(' ')} onChange={(v) => set({ [`_${key}`]: v, [key]: v.split(/[\s,]+/).filter(Boolean) })} />
     </Field>
   );
@@ -399,13 +406,13 @@ function EditItem({ item, onClose, onSaved }: { item: Item; onClose: () => void;
       form = (
         <>
           {text('title', 'Titel')}
-          {text('excerpt', 'Kurzbeschreibung', 2)}
-          {text('markdown', 'Text (Markdown, Zwischenüberschriften mit ##)', 16)}
+          {text('excerpt', tt('Kurzbeschreibung'), 2)}
+          {text('markdown', tt('Text (Markdown, Zwischenüberschriften mit ##)'), 16)}
           <div className="grid2">
-            {text('seo_title', 'SEO-Titel', 0, `${String(c.seo_title ?? '').length}/60`)}
+            {text('seo_title', tt('SEO-Titel'), 0, `${String(c.seo_title ?? '').length}/60`)}
             {tags('tags', 'Tags')}
           </div>
-          {text('seo_description', 'Meta-Beschreibung', 2, `${String(c.seo_description ?? '').length}/155`)}
+          {text('seo_description', tt('Meta-Beschreibung'), 2, `${String(c.seo_description ?? '').length}/155`)}
         </>
       );
       break;
@@ -413,20 +420,20 @@ function EditItem({ item, onClose, onSaved }: { item: Item; onClose: () => void;
       form = (
         <>
           <div className="grid2">
-            {text('subject', 'Betreff', 0, `${String(c.subject ?? '').length}/60`)}
-            {text('preheader', 'Vorschautext')}
+            {text('subject', tt('Betreff'), 0, `${String(c.subject ?? '').length}/60`)}
+            {text('preheader', tt('Vorschautext'))}
           </div>
           {text('headline', 'Überschrift')}
-          {text('intro', 'Einleitung (nach „Hallo Vorname,“)', 4)}
-          <h3>Die wichtigsten Punkte</h3>
+          {text('intro', tt('Einleitung (nach „Hallo Vorname,“)'), 4)}
+          <h3>{tt('Die wichtigsten Punkte')}</h3>
           {(c.takeaways ?? []).map((t: any, i: number) => (
             <div className="vr-takeaway" key={i}>
-              <Input value={t.title} onChange={(v) => set({ takeaways: c.takeaways.map((x: any, j: number) => (j === i ? { ...x, title: v } : x)) })} placeholder={`Punkt ${i + 1}`} />
+              <Input value={t.title} onChange={(v) => set({ takeaways: c.takeaways.map((x: any, j: number) => (j === i ? { ...x, title: v } : x)) })} placeholder={tt('Punkt {v1}', { v1: i + 1 })} />
               <Textarea value={t.text} onChange={(v) => set({ takeaways: c.takeaways.map((x: any, j: number) => (j === i ? { ...x, text: v } : x)) })} rows={2} />
             </div>
           ))}
           <div className="grid2">
-            {text('cta_label', 'Button-Text')}
+            {text('cta_label', tt('Button-Text'))}
             {text('cta_url', 'Button-Link (leer = Video)')}
           </div>
         </>
@@ -440,17 +447,17 @@ function EditItem({ item, onClose, onSaved }: { item: Item; onClose: () => void;
       form = (
         <>
           {(c.tweets ?? []).map((t: string, i: number) => (
-            <Field key={i} label={`Post ${i + 1}`} hint={<span className={t.length > 280 ? 'vs-error-text' : undefined}>{t.length}/280</span>}>
+            <Field key={i} label={tt('Post {v1}', { v1: i + 1 })} hint={<span className={t.length > 280 ? 'vs-error-text' : undefined}>{t.length}/280</span>}>
               <div className="vr-tweet">
                 <Textarea value={t} onChange={(v) => set({ tweets: c.tweets.map((x: string, j: number) => (j === i ? v : x)) })} rows={3} />
-                <button type="button" className="btn small ghost" aria-label="Post entfernen" onClick={() => set({ tweets: c.tweets.filter((_: string, j: number) => j !== i) })}>
+                <button type="button" className="btn small ghost" aria-label={tt('Post entfernen')} onClick={() => set({ tweets: c.tweets.filter((_: string, j: number) => j !== i) })}>
                   <Icon name="trash" />
                 </button>
               </div>
             </Field>
           ))}
           <button type="button" className="btn small secondary" onClick={() => set({ tweets: [...(c.tweets ?? []), ''] })}>
-            + Post
+            {tt('+ Post')}
           </button>
         </>
       );
@@ -458,7 +465,7 @@ function EditItem({ item, onClose, onSaved }: { item: Item; onClose: () => void;
     case 'instagram':
       form = (
         <>
-          {text('caption', 'Caption', 10, `${String(c.caption ?? '').length} / 2200 Zeichen inkl. Hashtags`)}
+          {text('caption', tt('Caption'), 10, tt('{n} / 2200 Zeichen inkl. Hashtags', { n: String(c.caption ?? '').length }))}
           {tags()}
         </>
       );
@@ -466,8 +473,8 @@ function EditItem({ item, onClose, onSaved }: { item: Item; onClose: () => void;
     case 'youtube':
       form = (
         <>
-          {listField('titles', 'Titel-Ideen', 10)}
-          {text('intro', 'Einleitung der Beschreibung', 4)}
+          {listField('titles', tt('Titel-Ideen'), 10)}
+          {text('intro', tt('Einleitung der Beschreibung'), 4)}
           {chapters()}
           {tags()}
         </>
@@ -477,10 +484,10 @@ function EditItem({ item, onClose, onSaved }: { item: Item; onClose: () => void;
       form = (
         <>
           {text('title', 'Titel')}
-          {text('summary', 'Zusammenfassung', 5)}
+          {text('summary', tt('Zusammenfassung'), 5)}
           {chapters()}
-          {listField('key_points', 'Kernaussagen')}
-          {listField('quotes', 'Zitate', 3)}
+          {listField('key_points', tt('Kernaussagen'))}
+          {listField('quotes', tt('Zitate'), 3)}
         </>
       );
       break;
@@ -496,7 +503,7 @@ function EditItem({ item, onClose, onSaved }: { item: Item; onClose: () => void;
       form = (
         <>
           {text('title', 'Überschrift')}
-          {text('teaser', 'Teaser', 4)}
+          {text('teaser', tt('Teaser'), 4)}
         </>
       );
       break;
@@ -507,7 +514,7 @@ function EditItem({ item, onClose, onSaved }: { item: Item; onClose: () => void;
   };
   return (
     <Modal
-      title={`${item.label} bearbeiten`}
+      title={tt('{label} bearbeiten', { label: item.label })}
       wide
       onClose={onClose}
       footer={
@@ -579,6 +586,7 @@ async function pump() {
 // --- Autopilot ----------------------------------------------------------------------------------------
 
 export function Autopilot({ publicBase, layouts, subtitles }: { publicBase: boolean; layouts: [string, string][]; subtitles: [string, string][] }) {
+  const tt = useT('b7video');
   const ap = useLoad(() => api.get<any>('/api/video-studio/autopilot'), []);
   const social = useLoad(() => api.get<any>('/api/social').catch(() => ({ configured: false, channels: [] })), []);
   const funnels = useLoad(() => api.get<any[]>('/api/funnels').catch(() => []), []);
@@ -606,12 +614,12 @@ export function Autopilot({ publicBase, layouts, subtitles }: { publicBase: bool
   };
   const check = async () => {
     setBusy(true);
-    const r = await act(() => api.post('/api/video-studio/autopilot/check'), 'Quellen geprüft');
+    const r = await act(() => api.post('/api/video-studio/autopilot/check'), tt('Quellen geprüft'));
     setBusy(false);
     if (r) ap.reload();
   };
   const setMode = (mode: string) => {
-    if (mode === 'auto' && !confirmAsk('Automatisch einplanen: Clips und Social-Texte gehen ohne Freigabe zu den Zeiten raus. Blog und Newsletter bleiben Entwürfe. Einschalten?')) return;
+    if (mode === 'auto' && !confirmAsk(tt('Automatisch einplanen: Clips und Social-Texte gehen ohne Freigabe zu den Zeiten raus. Blog und Newsletter bleiben Entwürfe. Einschalten?'))) return;
     set({ mode });
   };
   const feeds: any[] = s.feeds ?? [];
@@ -622,87 +630,87 @@ export function Autopilot({ publicBase, layouts, subtitles }: { publicBase: bool
       <div className="card vr-ap-form" data-tour="vs-autopilot">
         <div className="vs-head-row">
           <h2>
-            <Icon name="rss" /> Autopilot
+            <Icon name="rss" /> {tt('Autopilot')}
           </h2>
-          <Check checked={s.enabled} onChange={(v) => set({ enabled: v })} label={<strong>{s.enabled ? 'Aktiv' : 'Aus'}</strong>} />
+          <Check checked={s.enabled} onChange={(v) => set({ enabled: v })} label={<strong>{s.enabled ? tt('Aktiv') : tt('Aus')}</strong>} />
         </div>
-        <p className="muted small">Neue Videos eines YouTube-Kanals oder Podcasts werden automatisch zu Shorts. Die besten Clips und die Recycling-Inhalte landen im Social Planner – verteilt auf die nächsten Tage.</p>
+        <p className="muted small">{tt('Neue Videos eines YouTube-Kanals oder Podcasts werden automatisch zu Shorts. Die besten Clips und die Recycling-Inhalte landen im Social Planner – verteilt auf die nächsten Tage.')}</p>
         {ap.data.ai && <AiHint text={ap.data.ai} />}
 
-        <h3>Quellen</h3>
+        <h3>{tt('Quellen')}</h3>
         {feeds.map((f, i) => (
           <div className="vr-feed" key={f.id ?? i}>
-            <Select value={f.type} onChange={(v) => setFeed(i, { type: v })} options={[['youtube', 'YouTube-Kanal'], ['podcast', 'Podcast (RSS)']]} />
-            <Input value={f.url} onChange={(v) => setFeed(i, { url: v })} placeholder={f.type === 'podcast' ? 'https://…/feed.xml' : 'Kanal-ID UC… oder https://www.youtube.com/channel/UC…'} />
+            <Select value={f.type} onChange={(v) => setFeed(i, { type: v })} options={[['youtube', tt('YouTube-Kanal')], ['podcast', 'Podcast (RSS)']]} />
+            <Input value={f.url} onChange={(v) => setFeed(i, { url: v })} placeholder={f.type === 'podcast' ? 'https://…/feed.xml' : tt('Kanal-ID UC… oder https://www.youtube.com/channel/UC…')} />
             <Input value={f.label} onChange={(v) => setFeed(i, { label: v })} placeholder="Name" />
-            <button type="button" className="btn small ghost" aria-label="Quelle entfernen" onClick={() => set({ feeds: feeds.filter((_, j) => j !== i) })}>
+            <button type="button" className="btn small ghost" aria-label={tt('Quelle entfernen')} onClick={() => set({ feeds: feeds.filter((_, j) => j !== i) })}>
               <Icon name="trash" />
             </button>
           </div>
         ))}
         {feeds.length < 5 && (
           <button type="button" className="btn small secondary vr-add" onClick={() => set({ feeds: [...feeds, { type: 'youtube', url: '', label: '' }] })}>
-            + Quelle
+            {tt('+ Quelle')}
           </button>
         )}
         <p className="muted small">
-          YouTube: die Kanal-ID steht unter „Teilen → Kanal-ID kopieren“ (@Namen gehen nicht). Podcasts brauchen Video-Folgen oder einen YouTube-Link – reine Audio-Folgen werden übersprungen. Beim ersten Abruf merkt sich der Autopilot die vorhandenen Videos; verarbeitet werden nur neue.
+          {tt('YouTube: die Kanal-ID steht unter „Teilen → Kanal-ID kopieren“ (@Namen gehen nicht). Podcasts brauchen Video-Folgen oder einen YouTube-Link – reine Audio-Folgen werden übersprungen. Beim ersten Abruf merkt sich der Autopilot die vorhandenen Videos; verarbeitet werden nur neue.')}
         </p>
 
-        <h3>Freigabe</h3>
+        <h3>{tt('Freigabe')}</h3>
         <div className="vr-modes">
           <label className={`vr-mode${s.mode !== 'auto' ? ' on' : ''}`}>
             <input type="radio" name="ap-mode" checked={s.mode !== 'auto'} onChange={() => setMode('approve')} />
             <span>
               <span className="vr-mode-title">
-                <strong>Entwürfe zur Freigabe</strong> <Badge tone="green">empfohlen</Badge>
+                <strong>{tt('Entwürfe zur Freigabe')}</strong> <Badge tone="green">{tt('empfohlen')}</Badge>
               </span>
-              <small className="muted">Alles landet als Entwurf im Social Planner; ihr gebt es in Postiz frei.</small>
+              <small className="muted">{tt('Alles landet als Entwurf im Social Planner; ihr gebt es in Postiz frei.')}</small>
             </span>
           </label>
           <label className={`vr-mode${s.mode === 'auto' ? ' on' : ''}`}>
             <input type="radio" name="ap-mode" checked={s.mode === 'auto'} onChange={() => setMode('auto')} />
             <span>
-              <strong>Automatisch einplanen</strong>
-              <small className="muted">Clips und Social-Texte gehen ohne Freigabe zu den Zeiten raus.</small>
+              <strong>{tt('Automatisch einplanen')}</strong>
+              <small className="muted">{tt('Clips und Social-Texte gehen ohne Freigabe zu den Zeiten raus.')}</small>
             </span>
           </label>
         </div>
 
-        <h3>Clips</h3>
+        <h3>{tt('Clips')}</h3>
         <div className="grid2">
-          <Field label="Beste Clips je Video">
+          <Field label={tt('Beste Clips je Video')}>
             <Select value={String(s.top_n)} onChange={(v) => set({ top_n: Number(v) })} options={Array.from({ length: 11 }, (_, i) => [String(i), i === 0 ? 'keine' : String(i)] as [string, string])} />
           </Field>
-          <Field label="Höchstens Videos pro Tag">
+          <Field label={tt('Höchstens Videos pro Tag')}>
             <Select value={String(s.max_per_day)} onChange={(v) => set({ max_per_day: Number(v) })} options={['1', '2', '3', '5', '10']} />
           </Field>
-          <Field label="Clips je Job (OpenShorts)">
+          <Field label={tt('Clips je Job (OpenShorts)')}>
             <Select value={String(s.options?.clips ?? '')} onChange={(v) => set({ options: { ...s.options, clips: v ? Number(v) : undefined } })} options={[['', 'KI entscheidet'], ...Array.from({ length: 10 }, (_, i) => [String(i + 1), String(i + 1)] as [string, string])]} />
           </Field>
-          <Field label="Untertitel">
-            <Select value={s.options?.subtitles ?? 'default'} onChange={(v) => set({ options: { ...s.options, subtitles: v } })} options={subtitles} />
+          <Field label={tt('Untertitel')}>
+            <Select value={s.options?.subtitles ?? 'default'} onChange={(v) => set({ options: { ...s.options, subtitles: v } })} options={subtitles.map(([k, l]) => [k, tt(l)] as [string, string])} />
           </Field>
-          <Field label="Layout">
-            <Select value={s.options?.layout ?? 'auto'} onChange={(v) => set({ options: { ...s.options, layout: v } })} options={layouts} />
+          <Field label={tt('Layout')}>
+            <Select value={s.options?.layout ?? 'auto'} onChange={(v) => set({ options: { ...s.options, layout: v } })} options={layouts.map(([k, l]) => [k, tt(l)] as [string, string])} />
           </Field>
-          <Field label="Uhrzeiten" hint="z. B. 10:00, 17:30 – ein Beitrag je Zeit">
+          <Field label={tt('Uhrzeiten')} hint={tt('z. B. 10:00, 17:30 – ein Beitrag je Zeit')}>
             <Input value={s._times ?? (s.times ?? []).join(', ')} onChange={(v) => set({ _times: v, times: v.split(/[\s,;]+/).filter(Boolean) })} />
           </Field>
         </div>
-        <Field label="Wochentage">
+        <Field label={tt('Wochentage')}>
           <div className="vr-days">
             {DAYS.map(([k, l]) => {
               const on = (s.days ?? []).includes(k);
               return (
                 <button key={k} type="button" className={`social-chip pick${on ? ' on' : ''}`} onClick={() => toggle('days', k, !on)}>
-                  {l}
+                  {tt(l)}
                 </button>
               );
             })}
           </div>
         </Field>
-        <Field label="Kanäle" hint="Clips gehen an Kanäle mit Video (YouTube Shorts, TikTok, Instagram …), Texte an die passende Plattform">
+        <Field label={tt('Kanäle')} hint={tt('Clips gehen an Kanäle mit Video (YouTube Shorts, TikTok, Instagram …), Texte an die passende Plattform')}>
           {channels.length ? (
             <div className="social-pick">
               {channels.map((c) => {
@@ -715,12 +723,12 @@ export function Autopilot({ publicBase, layouts, subtitles }: { publicBase: bool
               })}
             </div>
           ) : (
-            <p className="muted small">{social.data?.configured ? 'Noch keine Kanäle im Social Planner.' : 'Der Social Planner ist nicht verbunden – Clips bleiben dann im Video-Studio.'}</p>
+            <p className="muted small">{social.data?.configured ? tt('Noch keine Kanäle im Social Planner.') : tt('Der Social Planner ist nicht verbunden – Clips bleiben dann im Video-Studio.')}</p>
           )}
         </Field>
-        {!publicBase && <p className="vs-warn">Postiz holt die Clips bei V Media CRM ab – dafür muss V Media CRM öffentlich per https erreichbar sein.</p>}
+        {!publicBase && <p className="vs-warn">{tt('Postiz holt die Clips bei V Media CRM ab – dafür muss V Media CRM öffentlich per https erreichbar sein.')}</p>}
 
-        <h3>Recycling</h3>
+        <h3>{tt('Recycling')}</h3>
         <div className="vr-kinds">
           {kinds.map((k) => {
             const on = (s.recycle ?? []).includes(k.key);
@@ -728,32 +736,32 @@ export function Autopilot({ publicBase, layouts, subtitles }: { publicBase: bool
               <label key={k.key} className={`vr-kind${k.available ? '' : ' off'}${on ? ' on' : ''}`} title={k.reason || undefined}>
                 <input type="checkbox" disabled={!k.available} checked={on} onChange={(e) => toggle('recycle', k.key, e.target.checked)} />
                 <Icon name={ICON[k.key] ?? 'sparkles'} />
-                <span>{k.label}</span>
+                <span>{tt(k.label)}</span>
               </label>
             );
           })}
         </div>
-        <Field label="Blog-Entwürfe in" hint="Newsletter und Social-Texte werden immer als Entwurf übernommen; YouTube, Shownotes, Community und Lektion warten im Tab „Recycling“ des Jobs.">
-          <Select value={s.funnel_id ?? ''} onChange={(v) => set({ funnel_id: v || null })} placeholder="– Blog nicht übernehmen –" options={websites.map((f: any) => [f.id, f.name] as [string, string])} />
+        <Field label={tt('Blog-Entwürfe in')} hint={tt('Newsletter und Social-Texte werden immer als Entwurf übernommen; YouTube, Shownotes, Community und Lektion warten im Tab „Recycling“ des Jobs.')}>
+          <Select value={s.funnel_id ?? ''} onChange={(v) => set({ funnel_id: v || null })} placeholder={tt('– Blog nicht übernehmen –')} options={websites.map((f: any) => [f.id, f.name] as [string, string])} />
         </Field>
 
-        <h3>Benachrichtigen</h3>
+        <h3>{tt('Benachrichtigen')}</h3>
         <div className="vs-inline">
-          <Check checked={s.notify_push} onChange={(v) => set({ notify_push: v })} label="Push ans Team" />
-          <Check checked={s.notify_email} onChange={(v) => set({ notify_email: v })} label="E-Mail an die Firmenadresse" />
+          <Check checked={s.notify_push} onChange={(v) => set({ notify_push: v })} label={tt('Push ans Team')} />
+          <Check checked={s.notify_email} onChange={(v) => set({ notify_email: v })} label={tt('E-Mail an die Firmenadresse')} />
         </div>
         <div className="vs-inline vr-ap-actions">
           <button className="btn" disabled={busy} onClick={() => save()}>
             Speichern
           </button>
           <button className="btn secondary" disabled={busy || !ap.data.settings.enabled} onClick={check}>
-            <Icon name="refresh" /> Jetzt prüfen
+            <Icon name="refresh" /> {tt('Jetzt prüfen')}
           </button>
         </div>
       </div>
       <div className="card vr-ap-state">
-        <h2>Stand</h2>
-        <p className="muted small">{state.last_run ? `Zuletzt geprüft ${ago(state.last_run)} · alle 10 Minuten` : 'Noch nicht geprüft.'}</p>
+        <h2>{tt('Stand')}</h2>
+        <p className="muted small">{state.last_run ? tt('Zuletzt geprüft {v1} · alle 10 Minuten', { v1: ago(state.last_run) }) : tt('Noch nicht geprüft.')}</p>
         {(ap.data.settings.feeds ?? []).map((f: any) => {
           const fs = state.feeds?.[f.id] ?? {};
           return (
@@ -762,15 +770,15 @@ export function Autopilot({ publicBase, layouts, subtitles }: { publicBase: bool
               <span>
                 <strong>{f.label}</strong>
                 <span className="muted small">
-                  {fs.last_checked ? `geprüft ${ago(fs.last_checked)}` : 'noch nicht geprüft'}
-                  {fs.last_item ? ` · zuletzt „${fs.last_item}“` : ''}
+                  {fs.last_checked ? tt('geprüft {v1}', { v1: ago(fs.last_checked) }) : tt('noch nicht geprüft')}
+                  {fs.last_item ? tt(' · zuletzt „{last_item}“', { last_item: fs.last_item }) : ''}
                 </span>
                 {fs.last_error && <span className="small vs-error-text">{fs.last_error}</span>}
               </span>
             </div>
           );
         })}
-        <h3>Protokoll</h3>
+        <h3>{tt('Protokoll')}</h3>
         {state.log?.length ? (
           <ul className="vr-log">
             {state.log.map((l: any, i: number) => (
@@ -780,7 +788,7 @@ export function Autopilot({ publicBase, layouts, subtitles }: { publicBase: bool
             ))}
           </ul>
         ) : (
-          <p className="muted small">Hier steht, was der Autopilot getan hat – neue Videos, eingeplante Clips, Hinweise.</p>
+          <p className="muted small">{tt('Hier steht, was der Autopilot getan hat – neue Videos, eingeplante Clips, Hinweise.')}</p>
         )}
       </div>
     </div>
@@ -790,27 +798,28 @@ export function Autopilot({ publicBase, layouts, subtitles }: { publicBase: bool
 // --- workflow step ---------------------------------------------------------------------------------------
 
 export function RecycleStep({ step, set }: { step: any; set: (patch: any) => void }) {
+  const tt = useT('b7video');
   const kinds: string[] = step.kinds ?? [];
   return (
     <>
-      <Field label="Job" hint="Nach dem Auslöser „Shorts fertig“ passt {{event.jobId}}">
+      <Field label={tt('Job')} hint={tt('Nach dem Auslöser „Shorts fertig“ passt {{event.jobId}}')}>
         <Input value={step.job_id ?? '{{event.jobId}}'} onChange={(v) => set({ job_id: v })} />
       </Field>
-      <Field label="… oder Video-Link (Platzhalter erlaubt)" hint="Ohne fertigen Job: erst Shorts, dann Recycling">
+      <Field label={tt('… oder Video-Link (Platzhalter erlaubt)')} hint={tt('Ohne fertigen Job: erst Shorts, dann Recycling')}>
         <Input value={step.url} onChange={(v) => set({ url: v })} placeholder="{{contact.custom.video_url}}" />
       </Field>
-      <Field label="Inhalte" hint="Nichts gewählt = alles, was im Sub-Account passt">
+      <Field label={tt('Inhalte')} hint={tt('Nichts gewählt = alles, was im Sub-Account passt')}>
         <div className="vr-kinds">
           {RECYCLE_KINDS.map(([k, l, icon]) => (
             <label key={k} className={`vr-kind${kinds.includes(k) ? ' on' : ''}`}>
               <input type="checkbox" checked={kinds.includes(k)} onChange={(e) => set({ kinds: e.target.checked ? [...kinds, k] : kinds.filter((x) => x !== k) })} />
               <Icon name={icon} />
-              <span>{l}</span>
+              <span>{tt(l)}</span>
             </label>
           ))}
         </div>
       </Field>
-      <p className="muted small">Der KI-Assistent schreibt die Inhalte (zählt aufs KI-Limit). Sie warten im Video-Studio im Tab „Recycling“ auf die Freigabe – veröffentlicht wird nichts automatisch.</p>
+      <p className="muted small">{tt('Der KI-Assistent schreibt die Inhalte (zählt aufs KI-Limit). Sie warten im Video-Studio im Tab „Recycling“ auf die Freigabe – veröffentlicht wird nichts automatisch.')}</p>
       <MergeHint />
     </>
   );

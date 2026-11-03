@@ -3,6 +3,7 @@ import { api, currentLocation } from '../../api';
 import { CANVAS_POSE, fitPlane, HUD_POSE } from './geometry';
 import type { Scene } from './scene';
 import { drawImagePlane, type HudButton, type HudState } from './textures';
+import { tr } from '../../i18n';
 
 /**
  * A Canvas board in XR: one large plane showing the board as an image the server draws (the same renderer as the PNG export, so
@@ -30,7 +31,8 @@ export interface CanvasXrOptions {
 export const EXPORT_SCALES = [1.5, 0.8, 0.4];
 
 export async function fetchCanvasImage(canvasId: string, dark: boolean, fetcher: typeof fetch = fetch): Promise<{ bitmap: ImageBitmap; w: number; h: number }> {
-  let last = 'Das Canvas lässt sich nicht als Bild laden.';
+  const tt = tr('b7xr');
+  let last = tt('Das Canvas lässt sich nicht als Bild laden.');
   for (const scale of EXPORT_SCALES) {
     const r = await fetcher(`/api/canvas/${canvasId}/export?format=png&scale=${scale}&theme=${dark ? 'dark' : 'light'}`, { credentials: 'same-origin', headers: { 'x-pghl': '1', ...(currentLocation() ? { 'x-location-id': currentLocation() } : {}) } });
     if (r.ok) {
@@ -47,6 +49,7 @@ export async function fetchCanvasImage(canvasId: string, dark: boolean, fetcher:
 }
 
 export async function openCanvasXr(o: CanvasXrOptions): Promise<CanvasXr> {
+  const tt = tr('b7xr');
   const { scene, canvasId } = o;
   const cid = clientId();
   const saved = (await api.get<{ layout: CanvasXrLayout | null }>(`/api/canvas/${canvasId}/xr-layout`).catch(() => ({ layout: null }))).layout;
@@ -64,7 +67,7 @@ export async function openCanvasXr(o: CanvasXrOptions): Promise<CanvasXr> {
   };
 
   const hud = () =>
-    scene.setHud({ title: o.name, live: 'Live', mic: 'off', message: message || 'Ziehen verschiebt das Canvas. Daumenstick: näher, ferner, größer, kleiner.', messageTone: tone, buttons: ['refresh', 'theme', 'exit'] }, HUD_POSE);
+    scene.setHud({ title: o.name, live: tt('Live'), mic: 'off', message: message || tt('Ziehen verschiebt das Canvas. Daumenstick: näher, ferner, größer, kleiner.'), messageTone: tone, buttons: ['refresh', 'theme', 'exit'] }, HUD_POSE);
   const say = (text: string, t: HudState['messageTone'] = 'normal') => {
     message = text;
     tone = t;
@@ -90,7 +93,7 @@ export async function openCanvasXr(o: CanvasXrOptions): Promise<CanvasXr> {
       image = await fetchCanvasImage(canvasId, dark);
       build();
       scene.invalidate(PLANE);
-      say('Canvas aktuell.', 'good');
+      say(tt('Canvas aktuell.'), 'good');
     } catch (e) {
       say((e as Error).message, 'error');
     }
@@ -102,7 +105,7 @@ export async function openCanvasXr(o: CanvasXrOptions): Promise<CanvasXr> {
     if (!p) return;
     plane = { ...p, curve: plane.curve };
     if (saveTimer) clearTimeout(saveTimer);
-    saveTimer = later(() => api.put(`/api/canvas/${canvasId}/xr-layout`, { layout: { v: 1, plane } }).catch((e: Error) => o.onError(`Anordnung nicht gespeichert: ${e.message}`)), 800);
+    saveTimer = later(() => api.put(`/api/canvas/${canvasId}/xr-layout`, { layout: { v: 1, plane } }).catch((e: Error) => o.onError(tt('Anordnung nicht gespeichert: {message}', { message: e.message }))), 800);
   };
 
   // changes by anybody (or the agent) redraw the picture – at most every 2 s

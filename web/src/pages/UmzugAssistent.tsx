@@ -6,6 +6,7 @@ import { UmzugMapping, type CustomField, type SourceField } from './UmzugMapping
 import { UmzugHistory, UmzugRun, isLive } from './UmzugRun';
 import { EXISTING_LABELS, PART_NAMES, targetLabel, umzugApi, type Conn, type Job, type PartDef, type SourceInfo, type UFile } from './umzug-format';
 import './umzug.css';
+import { useT } from '../i18n';
 
 /**
  * Umzug zu V Media CRM: vom bisherigen Tool (Mailchimp bis sevDesk, die Liste kommt aus der Registry des Servers) hierher –
@@ -41,6 +42,7 @@ const STEPS: [Step, string][] = [
 ];
 
 export function UmzugAssistent({ embedded }: { embedded?: boolean }) {
+  const t = useT('b7umzug');
   const session = useSession();
   const [target, setTarget] = useState(session.locationId);
   const targetName = session.locations.find((l) => l.id === target)?.name ?? '';
@@ -48,13 +50,13 @@ export function UmzugAssistent({ embedded }: { embedded?: boolean }) {
   return (
     <div className="um-page" data-tour="um-page">
       {embedded ? (
-        <p className="muted um-intro">Hol deine Kontakte, Listen, Deals und Kurse aus dem bisherigen Tool nach {brand} – mit Vorschau, Probelauf und einem Knopf zum Rückgängigmachen.</p>
+        <p className="muted um-intro">{t('Hol deine Kontakte, Listen, Deals und Kurse aus dem bisherigen Tool nach {brand} – mit Vorschau, Probelauf und einem Knopf zum Rückgängigmachen.', { brand })}</p>
       ) : (
-        <PageHead title={`Umzug zu ${brand}`} sub={`Hol deine Kontakte, Listen, Deals und Kurse aus dem bisherigen Tool nach ${brand} – mit Vorschau, Probelauf und einem Knopf zum Rückgängigmachen.`} />
+        <PageHead title={t('Umzug zu {brand}', { brand })} sub={t('Hol deine Kontakte, Listen, Deals und Kurse aus dem bisherigen Tool nach {brand} – mit Vorschau, Probelauf und einem Knopf zum Rückgängigmachen.', { brand })} />
       )}
       {session.locations.length > 1 && (
         <div className="card um-target" data-tour="um-target">
-          <Field label="Ziel: in diesen Sub-Account importieren" hint="Jeder Sub-Account bekommt seine eigenen Verbindungen und Umzüge.">
+          <Field label={t('Ziel: in diesen Sub-Account importieren')} hint={t('Jeder Sub-Account bekommt seine eigenen Verbindungen und Umzüge.')}>
             <Select value={target} onChange={setTarget} options={session.locations.map((l) => [l.id, l.name] as [string, string])} />
           </Field>
         </div>
@@ -65,6 +67,7 @@ export function UmzugAssistent({ embedded }: { embedded?: boolean }) {
 }
 
 function Wizard({ target, targetName }: { target: string; targetName: string }) {
+  const t = useT('b7umzug');
   const api = useMemo(() => umzugApi(target), [target]);
   const ov = useLoad(() => api.get<Overview>('/api/umzug'), [target]);
   const [step, setStep] = useState<Step>('source');
@@ -151,7 +154,7 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
   if (!d) return <Spinner />;
 
   const reachable: Record<Step, boolean> = { source: true, connect: !!src, preview: !!preview, run: !!job };
-  const partDefs: PartDef[] = !preview ? [] : preview.origin === 'api' && src ? src.parts : preview.parts.map((p) => ({ key: p, label: PART_NAMES[p] ?? p }));
+  const partDefs: PartDef[] = !preview ? [] : preview.origin === 'api' && src ? src.parts : preview.parts.map((p) => ({ key: p, label: t(PART_NAMES[p] ?? p) }));
   const counts = (preview?.counts ?? []).filter((c) => parts.includes(c.part));
   const existing = Object.entries(preview?.existing ?? {}).filter(([k, n]) => n > 0 && EXISTING_LABELS[k] !== '');
 
@@ -161,7 +164,7 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
         {STEPS.map(([k, l], i) => (
           <li key={k} className={k === step ? 'on' : reachable[k] && STEPS.findIndex(([s]) => s === step) > i ? 'done' : ''}>
             <button disabled={!reachable[k] || k === step} onClick={() => setStep(k)}>
-              <span className="um-n">{i + 1}</span> {l}
+              <span className="um-n">{i + 1}</span> {t(l)}
             </button>
           </li>
         ))}
@@ -178,8 +181,8 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
                   <strong>{s.label}</strong>
                   <span className="muted small">{s.tagline}</span>
                   <span className="um-source-meta">
-                    {c?.connected && <Badge tone="green">verbunden</Badge>}
-                    {n > 0 && <Badge tone="blue">{n} Datei{n === 1 ? '' : 'en'}</Badge>}
+                    {c?.connected && <Badge tone="green">{t('verbunden')}</Badge>}
+                    {n > 0 && <Badge tone="blue">{t.plural(n, { one: '{n} Datei', other: '{n} Dateien' })}</Badge>}
                   </span>
                 </button>
               );
@@ -208,7 +211,7 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
       {step === 'connect' && busy === 'preview' && (
         <div className="um-reading muted">
           <Spinner />
-          <span>Lese {src?.label} …</span>
+          <span>{t('Lese {label} …', { label: src?.label ?? '' })}</span>
         </div>
       )}
 
@@ -218,11 +221,11 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
             <h3>
               {preview.label} → {targetName}
             </h3>
-            <p className="muted small">Noch wurde nichts übernommen. Prüfe, was mitkommen soll, und starte erst einen Probelauf, wenn du magst.</p>
+            <p className="muted small">{t('Noch wurde nichts übernommen. Prüfe, was mitkommen soll, und starte erst einen Probelauf, wenn du magst.')}</p>
           </div>
 
           <div className="card" data-tour="um-parts">
-            <h3>Was soll mitkommen?</h3>
+            <h3>{t('Was soll mitkommen?')}</h3>
             {partDefs.map((p) => (
               <div key={p.key} className="um-part">
                 <Check checked={parts.includes(p.key)} onChange={(on) => setParts(on ? [...parts, p.key] : parts.filter((x) => x !== p.key))} label={p.label} />
@@ -232,20 +235,20 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
           </div>
 
           <div className="card" data-tour="um-counts">
-            <h3>Das liegt bei {preview.label}</h3>
+            <h3>{t('Das liegt bei {label}', { label: preview.label })}</h3>
             <div className="table-wrap">
               <table className="t">
                 <thead>
                   <tr>
-                    <th>Was</th>
-                    <th className="num">Anzahl</th>
+                    <th>{t('Was')}</th>
+                    <th className="num">{t('Anzahl')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {counts.length === 0 && (
                     <tr>
                       <td colSpan={2} className="muted">
-                        Nichts ausgewählt.
+                        {t('Nichts ausgewählt.')}
                       </td>
                     </tr>
                   )}
@@ -263,14 +266,14 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
             </div>
             {existing.length > 0 && (
               <p className="muted small um-existing">
-                Aus früheren Umzügen kennt V Media CRM schon: {existing.map(([k, n]) => `${n} ${EXISTING_LABELS[k] ?? k}`).join(', ')}. Die werden aktualisiert – nichts wird doppelt angelegt.
+                {t('Aus früheren Umzügen kennt V Media CRM schon:')} {existing.map(([k, n]) => `${n} ${t(EXISTING_LABELS[k] ?? k)}`).join(', ')}{t('. Die werden aktualisiert – nichts wird doppelt angelegt.')}
               </p>
             )}
           </div>
 
           {preview.warnings.length > 0 && (
             <div className="card um-warn">
-              <h3>Bitte beachten</h3>
+              <h3>{t('Bitte beachten')}</h3>
               <ul>
                 {preview.warnings.map((w, i) => (
                   <li key={i}>{w}</li>
@@ -281,10 +284,10 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
 
           {parts.includes('contacts') && preview.fields.length > 0 && (
             <div className="card">
-              <h3>Felder zuordnen</h3>
+              <h3>{t('Felder zuordnen')}</h3>
               <UmzugMapping fields={preview.fields} mapping={mapping} custom={preview.custom_fields} onChange={setMapping} />
               <details className="um-sum">
-                <summary>Zusammenfassung der Zuordnung</summary>
+                <summary>{t('Zusammenfassung der Zuordnung')}</summary>
                 <ul>
                   {preview.fields
                     .filter((f) => mapping[f.ref])
@@ -299,21 +302,21 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
           )}
 
           <div className="card" data-tour="um-options">
-            <h3>Einstellungen</h3>
-            <Field label="Gibt es den Kontakt schon (gleiche E-Mail oder Telefonnummer)?">
+            <h3>{t('Einstellungen')}</h3>
+            <Field label={t('Gibt es den Kontakt schon (gleiche E-Mail oder Telefonnummer)?')}>
               <Select
                 value={options.merge}
                 onChange={(merge) => setOptions({ ...options, merge })}
                 options={[
-                  ['fill', 'Nur leere Felder auffüllen (empfohlen)'],
-                  ['overwrite', 'Vorhandene Werte überschreiben'],
+                  ['fill', t('Nur leere Felder auffüllen (empfohlen)')],
+                  ['overwrite', t('Vorhandene Werte überschreiben')],
                 ]}
               />
             </Field>
-            <Field label="Alle übernommenen Kontakte zusätzlich taggen (optional)" hint="Zum Beispiel „Umzug Mailchimp“ – so findest du sie später wieder.">
+            <Field label={t('Alle übernommenen Kontakte zusätzlich taggen (optional)')} hint={t('Zum Beispiel „Umzug Mailchimp“ – so findest du sie später wieder.')}>
               <Input value={options.tag} maxLength={80} onChange={(tag) => setOptions({ ...options, tag })} />
             </Field>
-            {mode === 'file' && <Check checked={options.keep_files} onChange={(keep_files) => setOptions({ ...options, keep_files })} label="Hochgeladene Dateien nach dem Import behalten (sie enthalten Personendaten, Standard: löschen)" />}
+            {mode === 'file' && <Check checked={options.keep_files} onChange={(keep_files) => setOptions({ ...options, keep_files })} label={t('Hochgeladene Dateien nach dem Import behalten (sie enthalten Personendaten, Standard: löschen)')} />}
           </div>
 
           <div className="um-actions um-sticky">
@@ -321,10 +324,10 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
               Zurück
             </button>
             <button className="btn secondary" disabled={!parts.length || !!busy} onClick={() => void launch('dry-run')} data-tour="um-dryrun">
-              {busy === 'dry-run' ? 'Startet …' : 'Probelauf starten'}
+              {busy === 'dry-run' ? t('Startet …') : t('Probelauf starten')}
             </button>
             <button className="btn" disabled={!parts.length || !!busy} onClick={() => setConfirm(true)} data-tour="um-start-import">
-              Jetzt importieren
+              {t('Jetzt importieren')}
             </button>
           </div>
         </div>
@@ -349,7 +352,7 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
 
       {confirm && preview && (
         <Modal
-          title="Umzug starten?"
+          title={t('Umzug starten?')}
           onClose={() => setConfirm(false)}
           footer={
             <>
@@ -357,17 +360,17 @@ function Wizard({ target, targetName }: { target: string; targetName: string }) 
                 Abbrechen
               </button>
               <button className="btn" disabled={!!busy} onClick={() => void launch('jobs')} data-tour="um-confirm-start">
-                {busy === 'jobs' ? 'Startet …' : 'Umzug starten'}
+                {busy === 'jobs' ? t('Startet …') : t('Umzug starten')}
               </button>
             </>
           }
         >
           <p>
-            <strong>{preview.label}</strong> → Sub-Account <strong>{targetName}</strong>
+            <strong>{preview.label}</strong> {t('→ Sub-Account')} <strong>{targetName}</strong>
           </p>
-          <p>Es kommt mit: {parts.map((p) => PART_NAMES[p] ?? p).join(', ')}.</p>
+          <p>{t('Es kommt mit:')} {parts.map((p) => t(PART_NAMES[p] ?? p)).join(', ')}.</p>
           <p className="muted small">
-            Der Umzug läuft im Hintergrund, du kannst ihn pausieren und später fortsetzen. Schon vorhandene Kontakte werden {options.merge === 'fill' ? 'nur ergänzt' : 'überschrieben'}. Automationen kommen immer als Entwurf. Du kannst den ganzen Umzug danach rückgängig machen.
+            {t('Der Umzug läuft im Hintergrund, du kannst ihn pausieren und später fortsetzen. Schon vorhandene Kontakte werden')} {options.merge === 'fill' ? t('nur ergänzt') : t('überschrieben')}{t('. Automationen kommen immer als Entwurf. Du kannst den ganzen Umzug danach rückgängig machen.')}
           </p>
         </Modal>
       )}

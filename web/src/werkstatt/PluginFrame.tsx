@@ -4,6 +4,7 @@ import { Icon } from '../icons';
 import { Empty, Link, PageHead, Spinner, navigate, toast, toastError, useRoute } from '../ui';
 import { PluginIcon, useActivePlugins, type ActivePlugin } from './shared';
 import { SortableGrid } from '../sortable/lazy';
+import { useT } from '../i18n';
 
 /**
  * Shows a plugin's interface: our trusted host page (/plugin-host/<id>) in an iframe, which in turn embeds the
@@ -22,6 +23,7 @@ function currentTheme(): { theme: 'light' | 'dark'; brand: string } {
 }
 
 export function PluginFrame({ pluginId, entry, entity, height, demo, title, fill }: { pluginId: string; entry: string; entity?: { type: 'contact' | 'deal'; id: string }; height?: number; demo?: boolean; title: string; fill?: boolean }) {
+  const tt = useT('b7werk');
   const ref = useRef<HTMLIFrameElement>(null);
   const [h, setH] = useState(height ?? (fill ? 0 : 160));
   const [dead, setDead] = useState('');
@@ -35,7 +37,7 @@ export function PluginFrame({ pluginId, entry, entity, height, demo, title, fill
       if (m.type === 'resize' && !height && !fill) setH(Math.max(60, Math.min(1600, Number(m.height) || 0)));
       else if (m.type === 'toast') (m.kind === 'error' ? toastError(String(m.text ?? '')) : toast(String(m.text ?? '')));
       else if (m.type === 'navigate' && typeof m.path === 'string' && NAV.test(m.path)) navigate(m.path);
-      else if (m.type === 'dead') setDead(String(m.message ?? 'Das Plugin wurde beendet.'));
+      else if (m.type === 'dead') setDead(String(m.message ?? tt('Das Plugin wurde beendet.')));
     };
     window.addEventListener('message', on);
     return () => window.removeEventListener('message', on);
@@ -50,6 +52,7 @@ export function PluginFrame({ pluginId, entry, entity, height, demo, title, fill
 
 /** Route `plugin/<id>`: a plugin's page in the menu. */
 export function PluginPage() {
+  const tt = useT('b7werk');
   const route = useRoute();
   const id = route[1];
   const plugins = useActivePlugins();
@@ -59,12 +62,12 @@ export function PluginPage() {
     return () => clearTimeout(t);
   }, []);
   const p = plugins.find((x) => x.id === id);
-  if (!p) return waited ? <Empty action={<Link to="marktplatz">Zum Marktplatz</Link>}>Dieses Plugin ist hier nicht aktiv.</Empty> : <Spinner />;
+  if (!p) return waited ? <Empty action={<Link to="marktplatz">{tt('Zum Marktplatz')}</Link>}>{tt('Dieses Plugin ist hier nicht aktiv.')}</Empty> : <Spinner />;
   return (
     <>
-      <PageHead title={p.page?.title ?? p.name} sub={<>Plugin „{p.name}“ · Version {p.version}</>}>
+      <PageHead title={p.page?.title ?? p.name} sub={<>{tt('Plugin „{name}“ · Version {version}', { name: p.name, version: p.version })}</>}>
         <Link to={`werkstatt/plugins/${p.id}`} className="btn secondary small">
-          <Icon name="settings" size={14} /> Verwalten
+          <Icon name="settings" size={14} /> {tt('Verwalten')}
         </Link>
       </PageHead>
       <PluginFrame key={p.id} pluginId={p.id} entry="page" title={p.name} fill />

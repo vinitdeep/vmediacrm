@@ -10,6 +10,7 @@ import { NAMES, PluginIcon, ScopeBadge, refreshPlugins, usd } from './shared';
 import { ConsentModal, ScopeList, scopeInfos, type ScopeInfo } from './scopes';
 import { DiffList, ProMark, SignatureNotice, VersionBadges, type DiffData, type SignatureData, type VersionBadgesData } from './badges';
 import { SortableGrid } from '../sortable/Sortable';
+import { tr, useT } from '../i18n';
 
 /** „Meine Plugins“ (list, examples, import) and the page of one plugin (versions, rollout, health, change). */
 
@@ -99,13 +100,14 @@ export const STATUS_LABEL: Record<string, string> = { active: 'aktiv', killed: '
 const SOURCE_LABEL: Record<string, string> = { ai: 'KI', change: 'Änderung', example: 'Beispiel', import: 'Import', manual: 'von Hand' };
 
 export function entrySummary(e: Entries | null): string[] {
+  const t = tr('b7werk');
   if (!e) return [];
   const out: string[] = [];
-  if (e.page) out.push(`Seite „${e.page.title}“`);
-  for (const p of e.panels ?? []) out.push(`Panel „${p.title}“ (${p.on === 'contact' ? 'Kontakt' : 'Deal'})`);
-  for (const w of e.widgets ?? []) out.push(`Widget „${w.title}“`);
-  for (const a of e.actions ?? []) out.push(`Automations-Schritt „${a.label}“`);
-  for (const j of e.jobs ?? []) out.push(`Job „${j.label}“`);
+  if (e.page) out.push(t('Seite „{title}“', { title: e.page.title }));
+  for (const p of e.panels ?? []) out.push(t('Panel „{title}“ ({on})', { title: p.title, on: p.on === 'contact' ? t('Kontakt') : t('Deal') }));
+  for (const w of e.widgets ?? []) out.push(t('Widget „{title}“', { title: w.title }));
+  for (const a of e.actions ?? []) out.push(t('Automations-Schritt „{label}“', { label: a.label }));
+  for (const j of e.jobs ?? []) out.push(t('Job „{label}“', { label: j.label }));
   return out;
 }
 
@@ -120,6 +122,7 @@ export function download(name: string, text: string) {
 }
 
 function PluginCard({ p }: { p: PluginBrief }) {
+  const t = useT('b7werk');
   const errors = p.health?.errors_7d ?? 0;
   return (
     <Link to={`werkstatt/plugins/${p.id}`} className="wk-row card wk-plugin" tour="wk-plugin-card">
@@ -131,9 +134,9 @@ function PluginCard({ p }: { p: PluginBrief }) {
         <div className="muted small">{p.description}</div>
         <div className="wk-badges">
           <ScopeBadge scope={p.scope} />
-          {p.status !== 'active' && <Badge tone={p.status === 'killed' ? 'red' : 'purple'}>{STATUS_LABEL[p.status] ?? p.status}</Badge>}
-          {p.active_here && !p.enabled_here && <Badge tone="gray">ausgeschaltet</Badge>}
-          {errors > 0 && <Badge tone="yellow">{errors} Fehler (7 Tage)</Badge>}
+          {p.status !== 'active' && <Badge tone={p.status === 'killed' ? 'red' : 'purple'}>{t(STATUS_LABEL[p.status] ?? p.status)}</Badge>}
+          {p.active_here && !p.enabled_here && <Badge tone="gray">{t('ausgeschaltet')}</Badge>}
+          {errors > 0 && <Badge tone="yellow">{t('{errors} Fehler (7 Tage)', { errors })}</Badge>}
           {entrySummary(p.entries).slice(0, 2).map((s) => (
             <span key={s} className="muted small">
               {s}
@@ -146,6 +149,7 @@ function PluginCard({ p }: { p: PluginBrief }) {
 }
 
 export function PluginsTab({ me }: { me?: WerkstattMe }) {
+  const t = useT('b7werk');
   const list = useLoad(() => api.get<{ plugins: PluginBrief[] }>('/api/plugins'), []);
   const examples = useLoad(() => api.get<Example[]>('/api/plugins/examples'), []);
   const [example, setExample] = useState<Example>();
@@ -156,7 +160,7 @@ export function PluginsTab({ me }: { me?: WerkstattMe }) {
   const others = plugins.filter((p) => !p.can_manage);
   const install = async (e: Example) => {
     setBusy(true);
-    const r = await act(() => api.post(`/api/plugins/examples/${e.key}/install`, { consent: e.scopes.map((s) => s.key) }), `„${e.name}“ ist eingerichtet`);
+    const r = await act(() => api.post(`/api/plugins/examples/${e.key}/install`, { consent: e.scopes.map((s) => s.key) }), t('„{name}“ ist eingerichtet', { name: e.name }));
     setBusy(false);
     if (r) {
       setExample(undefined);
@@ -169,7 +173,7 @@ export function PluginsTab({ me }: { me?: WerkstattMe }) {
     <>
       <div className="actions" style={{ justifyContent: 'flex-end', marginBottom: 10 }}>
         <button className="btn secondary" data-tour="wk-import" onClick={() => setImporting(true)}>
-          <Icon name="upload" size={14} /> Plugin importieren
+          <Icon name="upload" size={14} /> {t('Plugin importieren')}
         </button>
       </div>
       {list.loading && !list.data ? (
@@ -183,11 +187,11 @@ export function PluginsTab({ me }: { me?: WerkstattMe }) {
               ))}
             </div>
           ) : (
-            <Empty tour="wk-plugins-empty">Du hast noch kein Plugin. Probiere unten ein Beispiel aus oder lass dir einen Wunsch bauen.</Empty>
+            <Empty tour="wk-plugins-empty">{t('Du hast noch kein Plugin. Probiere unten ein Beispiel aus oder lass dir einen Wunsch bauen.')}</Empty>
           )}
           {others.length > 0 && (
             <>
-              <h3>Von anderen für diesen Sub-Account</h3>
+              <h3>{t('Von anderen für diesen Sub-Account')}</h3>
               <div className="wk-list">
                 {others.map((p) => (
                   <PluginCard key={p.id} p={p} />
@@ -197,8 +201,8 @@ export function PluginsTab({ me }: { me?: WerkstattMe }) {
           )}
         </>
       )}
-      <h3>Beispiele zum Ausprobieren</h3>
-      <p className="muted small">Fertige Plugins – so sieht ein Ergebnis aus. Sie laufen zuerst nur für dich und lassen sich jederzeit entfernen.{me && !me.can_build ? ` (${me.reason})` : ''}</p>
+      <h3>{t('Beispiele zum Ausprobieren')}</h3>
+      <p className="muted small">{t('Fertige Plugins – so sieht ein Ergebnis aus. Sie laufen zuerst nur für dich und lassen sich jederzeit entfernen.')}{me && !me.can_build ? ` (${me.reason})` : ''}</p>
       <div className="wk-examples" data-tour="wk-examples">
         {(examples.data ?? []).map((e) => (
           <div className="card wk-example" key={e.key}>
@@ -215,18 +219,18 @@ export function PluginsTab({ me }: { me?: WerkstattMe }) {
             <div className="actions" style={{ marginTop: 10 }}>
               {e.installed ? (
                 <Link to={`werkstatt/plugins/${e.installed}`} className="btn secondary small">
-                  Eingerichtet – ansehen
+                  {t('Eingerichtet – ansehen')}
                 </Link>
               ) : (
                 <button className="btn small" disabled={!me?.can_build} onClick={() => setExample(e)}>
-                  Einrichten
+                  {t('Einrichten')}
                 </button>
               )}
             </div>
           </div>
         ))}
       </div>
-      {example && <ConsentModal title={`„${example.name}“ einrichten`} intro={example.wish} scopes={example.scopes} confirm="Einrichten" busy={busy} onConfirm={() => install(example)} onClose={() => setExample(undefined)} />}
+      {example && <ConsentModal title={t('„{name}“ einrichten', { name: example.name })} intro={example.wish} scopes={example.scopes} confirm={t('Einrichten')} busy={busy} onConfirm={() => install(example)} onClose={() => setExample(undefined)} />}
       {importing && <ImportModal onClose={() => setImporting(false)} onDone={(id) => (setImporting(false), void refreshPlugins(), navigate(`werkstatt/plugins/${id}`))} />}
     </>
   );
@@ -243,6 +247,7 @@ interface Preview {
   pro_required: boolean;
 }
 function ImportModal({ onClose, onDone }: { onClose: () => void; onDone: (id: string) => void }) {
+  const t = useT('b7werk');
   const [text, setText] = useState('');
   const [pv, setPv] = useState<Preview>();
   const [ok, setOk] = useState(false);
@@ -257,7 +262,7 @@ function ImportModal({ onClose, onDone }: { onClose: () => void; onDone: (id: st
   };
   const check = async () => {
     const bundle = parse();
-    if (!bundle) return void act(async () => Promise.reject(new Error('Das ist kein gültiges JSON.')));
+    if (!bundle) return void act(async () => Promise.reject(new Error(t('Das ist kein gültiges JSON.'))));
     setBusy(true);
     const r = await act(() => api.post<Preview>('/api/plugins/import/preview', { bundle }));
     setBusy(false);
@@ -268,13 +273,13 @@ function ImportModal({ onClose, onDone }: { onClose: () => void; onDone: (id: st
   const run = async () => {
     if (!pv) return;
     setBusy(true);
-    const r = await act(() => api.post<PluginBrief>('/api/plugins/import', { bundle: parse(), consent: pv.scopes.map((s) => s.key), accept_unverified: pv.signature.state === 'signed' ? undefined : unverified }), 'Plugin importiert');
+    const r = await act(() => api.post<PluginBrief>('/api/plugins/import', { bundle: parse(), consent: pv.scopes.map((s) => s.key), accept_unverified: pv.signature.state === 'signed' ? undefined : unverified }), t('Plugin importiert'));
     setBusy(false);
     if (r) onDone(r.id);
   };
   return (
     <Modal
-      title="Plugin importieren"
+      title={t('Plugin importieren')}
       wide
       onClose={onClose}
       footer={
@@ -284,22 +289,22 @@ function ImportModal({ onClose, onDone }: { onClose: () => void; onDone: (id: st
               Zurück
             </button>
             <button className="btn" disabled={!ok || busy || pv.signature.state === 'invalid' || pv.pro_required || (pv.signature.state !== 'signed' && !unverified)} onClick={run}>
-              Importieren
+              {t('Importieren')}
             </button>
           </>
         ) : (
           <button className="btn" disabled={busy || text.trim().length < 20} onClick={check}>
-            Prüfen
+            {t('Prüfen')}
           </button>
         )
       }
     >
       {!pv ? (
         <>
-          <p className="muted small">Ein Plugin-Paket (.gohigh-plugin.json) von einer anderen Installation. Es wird vor dem Einrichten genauso geprüft wie ein selbst gebautes.</p>
+          <p className="muted small">{t('Ein Plugin-Paket (.gohigh-plugin.json) von einer anderen Installation. Es wird vor dem Einrichten genauso geprüft wie ein selbst gebautes.')}</p>
           <input type="file" accept=".json,application/json" onChange={(e) => e.target.files?.[0]?.text().then(setText)} />
-          <Field label="oder hier einfügen">
-            <Textarea value={text} onChange={setText} rows={8} placeholder='{ "format": "gohigh-plugin", … }' />
+          <Field label={t('oder hier einfügen')}>
+            <Textarea value={text} onChange={setText} rows={8} placeholder={t('{ "format": "gohigh-plugin", … }')} />
           </Field>
         </>
       ) : (
@@ -310,11 +315,11 @@ function ImportModal({ onClose, onDone }: { onClose: () => void; onDone: (id: st
           <p className="muted">{pv.description}</p>
           <p className="muted small">{entrySummary(pv.entries).join(' · ')}</p>
           <SignatureNotice sig={pv.signature} proRequired={pv.pro_required} />
-          {pv.signature.state !== 'signed' && pv.signature.state !== 'invalid' && <Check checked={unverified} onChange={setUnverified} label="Ich weiß, dass dieses Paket ungeprüft ist, und installiere es auf eigene Verantwortung." />}
-          {!pv.intact && <div className="card notice-card">Die Prüfsumme des Pakets stimmt nicht – der Inhalt wurde seit dem Export verändert. Prüfe, woher es kommt.</div>}
-          <h4>Das Plugin darf</h4>
+          {pv.signature.state !== 'signed' && pv.signature.state !== 'invalid' && <Check checked={unverified} onChange={setUnverified} label={t('Ich weiß, dass dieses Paket ungeprüft ist, und installiere es auf eigene Verantwortung.')} />}
+          {!pv.intact && <div className="card notice-card">{t('Die Prüfsumme des Pakets stimmt nicht – der Inhalt wurde seit dem Export verändert. Prüfe, woher es kommt.')}</div>}
+          <h4>{t('Das Plugin darf')}</h4>
           <ScopeList scopes={pv.scopes} />
-          <Check checked={ok} onChange={setOk} label="Ich habe die Berechtigungen gelesen und stimme zu." />
+          <Check checked={ok} onChange={setOk} label={t('Ich habe die Berechtigungen gelesen und stimme zu.')} />
         </>
       )}
     </Modal>
@@ -324,6 +329,7 @@ function ImportModal({ onClose, onDone }: { onClose: () => void; onDone: (id: st
 // --- one plugin ---------------------------------------------------------------------------------------------------------
 
 export function PluginDetail({ id }: { id: string }) {
+  const t = useT('b7werk');
   const r = useLoad(() => api.get<PluginFull>(`/api/plugins/${id}`), [id]);
   const me = useLoad(() => api.get<WerkstattMe>('/api/werkstatt/me'), []);
   const [modal, setModal] = useState<'change' | 'uninstall' | 'kill' | 'publish' | 'core' | 'rollback' | null>(null);
@@ -337,7 +343,7 @@ export function PluginDetail({ id }: { id: string }) {
   }, [id]);
   const p = r.data;
   if (r.loading && !p) return <Spinner />;
-  if (!p) return <Empty action={<Link to="werkstatt/plugins">Zu den Plugins</Link>}>{r.error || 'Plugin nicht gefunden.'}</Empty>;
+  if (!p) return <Empty action={<Link to="werkstatt/plugins">{t('Zu den Plugins')}</Link>}>{r.error || t('Plugin nicht gefunden.')}</Empty>;
   const admin = !!me.data?.admin;
   const manage = p.can_manage;
   const done = async (fn: () => Promise<unknown>, ok: string) => {
@@ -348,7 +354,7 @@ export function PluginDetail({ id }: { id: string }) {
   };
   const mf = p.manifest;
   const current = new Set(mf?.scopes ?? []);
-  const activate = (v: VersionBrief, consent?: string[]) => done(() => api.post(`/api/plugins/${p.id}/versions/${v.id}/activate`, { consent: consent ?? v.scopes }), `Version ${v.version} ist aktiv`);
+  const activate = (v: VersionBrief, consent?: string[]) => done(() => api.post(`/api/plugins/${p.id}/versions/${v.id}/activate`, { consent: consent ?? v.scopes }), t('Version {version} ist aktiv', { version: v.version }));
   const rollTo = (v: VersionBrief) => (v.scopes.some((s) => !current.has(s)) ? setRoll(v) : void activate(v));
   const exportIt = async () => {
     const text = await act(() => api.text('GET', `/api/plugins/${p.id}/export`));
@@ -358,7 +364,7 @@ export function PluginDetail({ id }: { id: string }) {
   return (
     <div className="wk-detail">
       <p>
-        <Link to="werkstatt/plugins">← Alle Plugins</Link>
+        <Link to="werkstatt/plugins">{t('← Alle Plugins')}</Link>
       </p>
       <PageHead title={p.name} sub={p.description}>
         {p.active_here && p.enabled_here && mf?.entries.page && (
@@ -372,87 +378,87 @@ export function PluginDetail({ id }: { id: string }) {
           </button>
         )}
         {p.active_here && (
-          <button className="btn secondary" onClick={() => done(() => api.post(`/api/plugins/${p.id}/toggle`, { enabled: !p.enabled_here }), p.enabled_here ? 'Ausgeschaltet' : 'Eingeschaltet')}>
-            <Icon name="power" size={14} /> {p.enabled_here ? 'Ausschalten' : 'Einschalten'}
+          <button className="btn secondary" onClick={() => done(() => api.post(`/api/plugins/${p.id}/toggle`, { enabled: !p.enabled_here }), p.enabled_here ? t('Ausgeschaltet') : t('Eingeschaltet'))}>
+            <Icon name="power" size={14} /> {p.enabled_here ? t('Ausschalten') : t('Einschalten')}
           </button>
         )}
       </PageHead>
       <div className="wk-badges" style={{ marginBottom: 12 }}>
         <ScopeBadge scope={p.scope} />
-        <Badge tone={p.status === 'active' ? 'green' : p.status === 'killed' ? 'red' : 'purple'}>{STATUS_LABEL[p.status] ?? p.status}</Badge>
-        <span className="muted small">Version {p.version} · {p.origin === 'ai' ? 'von der KI gebaut' : p.origin === 'example' ? 'Beispiel' : p.origin === 'import' ? 'importiert' : 'von Hand'}</span>
-        {p.core_status && <Badge tone="purple">Kernfeature: {p.core_status === 'shipped' ? NAMES.inCore : 'vorgeschlagen'}</Badge>}
-        {p.owner && <span className="muted small">von {p.owner.user} ({p.owner.location})</span>}
+        <Badge tone={p.status === 'active' ? 'green' : p.status === 'killed' ? 'red' : 'purple'}>{t(STATUS_LABEL[p.status] ?? p.status)}</Badge>
+        <span className="muted small">{t('Version {version} ·', { version: p.version })} {p.origin === 'ai' ? t('von der KI gebaut') : p.origin === 'example' ? t('Beispiel') : p.origin === 'import' ? t('importiert') : t('von Hand')}</span>
+        {p.core_status && <Badge tone="purple">{t('Kernfeature:')} {p.core_status === 'shipped' ? NAMES.inCore : t('vorgeschlagen')}</Badge>}
+        {p.owner && <span className="muted small">{t('von {user} ({location})', { user: p.owner.user, location: p.owner.location })}</span>}
       </div>
       {p.status === 'killed' && (
         <div className="card notice-card" data-tour="wk-killed">
-          <strong>Automatisch abgeschaltet.</strong> {p.killed_reason}
+          <strong>{t('Automatisch abgeschaltet.')}</strong> {p.killed_reason}
           {(admin || (manage && p.versions.filter((v) => v.status === 'checked').length > 1)) && (
             <p style={{ marginBottom: 0 }} className="actions">
               {manage && p.versions.filter((v) => v.status === 'checked').length > 1 && (
                 <button className="btn small" onClick={() => setModal('rollback')}>
-                  <Icon name="undo" size={14} /> Zurückrollen auf die Vorversion
+                  <Icon name="undo" size={14} /> {t('Zurückrollen auf die Vorversion')}
                 </button>
               )}
               {admin && (
-                <button className="btn secondary small" onClick={() => done(() => api.post(`/api/plugins/${p.id}/revive`), 'Wieder eingeschaltet')}>
-                  Wieder einschalten
+                <button className="btn secondary small" onClick={() => done(() => api.post(`/api/plugins/${p.id}/revive`), t('Wieder eingeschaltet'))}>
+                  {t('Wieder einschalten')}
                 </button>
               )}
             </p>
           )}
         </div>
       )}
-      {p.status === 'in_core' && <div className="card notice-card">Diese Funktion ist {NAMES.inCore} (ab Version {p.core_version}). Das Plugin ist abgelöst.</div>}
+      {p.status === 'in_core' && <div className="card notice-card">{t('Diese Funktion ist {inCore} (ab Version {core_version}). Das Plugin ist abgelöst.', { inCore: NAMES.inCore, core_version: p.core_version })}</div>}
 
       <div className="grid2">
         <div className="card">
-          <h3>Berechtigungen</h3>
+          <h3>{t('Berechtigungen')}</h3>
           <ScopeList scopes={p.scopes} />
-          <h4>Wo es auftaucht</h4>
+          <h4>{t('Wo es auftaucht')}</h4>
           <ul className="wk-entries">
             {entrySummary(p.manifest?.entries ?? p.entries).map((s) => (
               <li key={s}>{s}</li>
             ))}
-            {mf?.server && <li>Server-Logik: {mf.server.mode === 'script' ? 'Skript in der Sandbox' : 'deklarative Schritte'}</li>}
+            {mf?.server && <li>{t('Server-Logik:')} {mf.server.mode === 'script' ? t('Skript in der Sandbox') : t('deklarative Schritte')}</li>}
           </ul>
         </div>
         <div className="card" data-tour="wk-rollout">
-          <h3>Verfügbar für</h3>
+          <h3>{t('Verfügbar für')}</h3>
           <p>
             <ScopeBadge scope={p.scope} />
           </p>
-          <p className="muted small">Privat → Sub-Account → Agentur-weit → {NAMES.marktplatz}. Jede Stufe macht das Plugin für mehr Menschen verfügbar; es läuft immer mit den Rechten der jeweiligen Person.</p>
+          <p className="muted small">{t('Privat → Sub-Account → Agentur-weit → {marktplatz}. Jede Stufe macht das Plugin für mehr Menschen verfügbar; es läuft immer mit den Rechten der jeweiligen Person.', { marktplatz: NAMES.marktplatz })}</p>
           <div className="actions">
             {manage && p.scope === 'private' && p.status === 'active' && (
-              <button className="btn secondary small" onClick={() => confirmAsk(`„${p.name}“ für alle Personen dieses Sub-Accounts freigeben?`) && done(() => api.post(`/api/plugins/${p.id}/scope`, { scope: 'location' }), 'Für den Sub-Account freigegeben')}>
-                Für den Sub-Account freigeben
+              <button className="btn secondary small" onClick={() => confirmAsk(t('„{name}“ für alle Personen dieses Sub-Accounts freigeben?', { name: p.name })) && done(() => api.post(`/api/plugins/${p.id}/scope`, { scope: 'location' }), t('Für den Sub-Account freigegeben'))}>
+                {t('Für den Sub-Account freigeben')}
               </button>
             )}
             {admin && p.scope === 'location' && p.status === 'active' && (
-              <button className="btn secondary small" onClick={() => confirmAsk(`„${p.name}“ in allen Sub-Accounts der Agentur verfügbar machen?`) && done(() => api.post(`/api/plugins/${p.id}/scope`, { scope: 'agency' }), 'Agentur-weit freigegeben')}>
-                Agentur-weit freigeben
+              <button className="btn secondary small" onClick={() => confirmAsk(t('„{name}“ in allen Sub-Accounts der Agentur verfügbar machen?', { name: p.name })) && done(() => api.post(`/api/plugins/${p.id}/scope`, { scope: 'agency' }), t('Agentur-weit freigegeben'))}>
+                {t('Agentur-weit freigeben')}
               </button>
             )}
             {manage && (p.scope === 'location' || (p.scope === 'agency' && admin)) && (
-              <button className="btn ghost small" onClick={() => done(() => api.post(`/api/plugins/${p.id}/scope`, { scope: 'private' }), 'Wieder privat')}>
-                Wieder privat
+              <button className="btn ghost small" onClick={() => done(() => api.post(`/api/plugins/${p.id}/scope`, { scope: 'private' }), t('Wieder privat'))}>
+                {t('Wieder privat')}
               </button>
             )}
             {admin && p.scope !== 'marketplace' && p.status === 'active' && (
               <button className="btn small" data-tour="wk-publish" onClick={() => setModal('publish')}>
-                <Icon name="store" size={14} /> Im {NAMES.marktplatz} veröffentlichen
+                <Icon name="store" size={14} /> {t('Im {marktplatz} veröffentlichen', { marktplatz: NAMES.marktplatz })}
                 {me.data && !me.data.license.pro && <ProMark />}
               </button>
             )}
             {p.scope === 'marketplace' && (
               <Link to={`marktplatz/${p.id}`} className="btn secondary small">
-                Im {NAMES.marktplatz} ansehen
+                {t('Im {marktplatz} ansehen', { marktplatz: NAMES.marktplatz })}
               </Link>
             )}
             {admin && p.status !== 'in_core' && (
               <button className="btn secondary small" data-tour="wk-core" onClick={() => setModal('core')}>
-                <Icon name="rocket" size={14} /> Als Kernfeature vorschlagen
+                <Icon name="rocket" size={14} /> {t('Als Kernfeature vorschlagen')}
               </button>
             )}
           </div>
@@ -461,7 +467,7 @@ export function PluginDetail({ id }: { id: string }) {
 
       {p.active_here && p.enabled_here && mf?.entries.page && p.status === 'active' && (
         <div className="card">
-          <h3>Vorschau</h3>
+          <h3>{t('Vorschau')}</h3>
           <PluginFrame pluginId={p.id} entry="page" title={p.name} height={320} />
         </div>
       )}
@@ -470,31 +476,31 @@ export function PluginDetail({ id }: { id: string }) {
 
       {manage && h && (
         <div className="card" data-tour="wk-health">
-          <h3>Gesundheit</h3>
+          <h3>{t('Gesundheit')}</h3>
           <SortableGrid id="werkstatt.health" className="stats">
-            <Stat label="Installationen" value={h.installs} />
-            <Stat label="Nutzung (30 Tage)" value={h.usage_30d} sub={`${h.usage_7d} in 7 Tagen`} />
-            <Stat label="Fehler (7 Tage)" value={h.errors_7d} sub={`${h.errors_24h} in 24 Std.`} />
-            <Stat label="Stimmen" value={h.votes} sub={h.rating !== null ? `Bewertung ${h.rating}/5 (${h.reviews})` : 'noch keine Bewertung'} />
-            <Stat label="Antwortzeit (24 Std.)" value={h.avg_ms_24h ? `${h.avg_ms_24h} ms` : '–'} sub={h.error_rate_24h ? `${Math.round(h.error_rate_24h * 100)} % Fehler` : 'keine Fehler'} />
+            <Stat label={t('Installationen')} value={h.installs} />
+            <Stat label={t('Nutzung (30 Tage)')} value={h.usage_30d} sub={t('{usage_7d} in 7 Tagen', { usage_7d: h.usage_7d })} />
+            <Stat label={t('Fehler (7 Tage)')} value={h.errors_7d} sub={t('{errors_24h} in 24 Std.', { errors_24h: h.errors_24h })} />
+            <Stat label={t('Stimmen')} value={h.votes} sub={h.rating !== null ? t('Bewertung {rating}/5 ({reviews})', { rating: h.rating, reviews: h.reviews }) : t('noch keine Bewertung')} />
+            <Stat label={t('Antwortzeit (24 Std.)')} value={h.avg_ms_24h ? `${h.avg_ms_24h} ms` : '–'} sub={h.error_rate_24h ? t('{v1} % Fehler', { v1: Math.round(h.error_rate_24h * 100) }) : t('keine Fehler')} />
           </SortableGrid>
           {h.last_error && (
             <p className="muted small">
-              Letzter Fehler {ago(h.last_error_at)}: {h.last_error}
+              {t('Letzter Fehler {v1}: {last_error}', { v1: ago(h.last_error_at), last_error: h.last_error })}
             </p>
           )}
           {p.runs && p.runs.length > 0 && (
             <details>
-              <summary>Letzte Läufe</summary>
+              <summary>{t('Letzte Läufe')}</summary>
               <div className="table-wrap">
                 <table>
                   <tbody>
                     {p.runs.map((x, i) => (
                       <tr key={i}>
                         <td>{dt(x.created_at)}</td>
-                        <td>{x.kind === 'job' ? 'Job' : 'Aktion'} {x.entry_id}</td>
+                        <td>{x.kind === 'job' ? t('Job') : t('Aktion')} {x.entry_id}</td>
                         <td>
-                          <Badge tone={x.status === 'ok' ? 'green' : 'red'}>{x.status === 'ok' ? 'ok' : 'Fehler'}</Badge>
+                          <Badge tone={x.status === 'ok' ? 'green' : 'red'}>{x.status === 'ok' ? 'ok' : t('Fehler')}</Badge>
                         </td>
                         <td className="muted small">{x.detail}</td>
                         <td className="muted small">{x.ms} ms</td>
@@ -508,12 +514,12 @@ export function PluginDetail({ id }: { id: string }) {
           <p style={{ marginBottom: 0 }} className="actions">
             {manage && p.versions.filter((v) => v.status === 'checked').length > 1 && (
               <button className="btn secondary small" data-tour="wk-rollback" onClick={() => setModal('rollback')}>
-                <Icon name="undo" size={14} /> Zurückrollen auf die Vorversion
+                <Icon name="undo" size={14} /> {t('Zurückrollen auf die Vorversion')}
               </button>
             )}
             {admin && p.status === 'active' && (
               <button className="btn danger small" onClick={() => setModal('kill')}>
-                Notausschalter: sofort abschalten
+                {t('Notausschalter: sofort abschalten')}
               </button>
             )}
           </p>
@@ -522,15 +528,15 @@ export function PluginDetail({ id }: { id: string }) {
 
       {manage && (
         <div className="card" data-tour="wk-versions">
-          <h3>Versionen</h3>
+          <h3>{t('Versionen')}</h3>
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Version</th>
-                  <th>Änderung und Siegel</th>
-                  <th>Von</th>
-                  <th>Stand</th>
+                  <th>{t('Version')}</th>
+                  <th>{t('Änderung und Siegel')}</th>
+                  <th>{t('Von')}</th>
+                  <th>{t('Stand')}</th>
                   <th />
                 </tr>
               </thead>
@@ -543,18 +549,18 @@ export function PluginDetail({ id }: { id: string }) {
                     <td>
                       {v.changelog || '–'}
                       <DiffList d={v.diff} />
-                      {v.status !== 'checked' && v.issues.length > 0 && <div className="muted small">Prüfung fehlgeschlagen: {v.issues[0]}</div>}
+                      {v.status !== 'checked' && v.issues.length > 0 && <div className="muted small">{t('Prüfung fehlgeschlagen: {v1}', { v1: v.issues[0] })}</div>}
                       <VersionBadges b={v.badges} />
                     </td>
-                    <td>{SOURCE_LABEL[v.source] ?? v.source}</td>
+                    <td>{t(SOURCE_LABEL[v.source] ?? v.source)}</td>
                     <td className="muted small">{dt(v.created_at)}</td>
                     <td>
                       {!v.active && v.status === 'checked' && p.status === 'active' && (
                         <button className="btn secondary small" onClick={() => rollTo(v)}>
-                          Zu dieser Version
+                          {t('Zu dieser Version')}
                         </button>
                       )}
-                      {v.status !== 'checked' && <Badge tone="red">nicht bestanden</Badge>}
+                      {v.status !== 'checked' && <Badge tone="red">{t('nicht bestanden')}</Badge>}
                     </td>
                   </tr>
                 ))}
@@ -566,11 +572,11 @@ export function PluginDetail({ id }: { id: string }) {
 
       {manage && p.installs && p.installs.length > 0 && (
         <div className="card">
-          <h3>Installationen</h3>
+          <h3>{t('Installationen')}</h3>
           <ul className="wk-entries">
             {p.installs.map((i) => (
               <li key={i.id}>
-                {i.location} · {i.private ? 'nur für die Autorin bzw. den Autor' : 'ganzer Sub-Account'} {!i.enabled && <Badge tone="gray">aus</Badge>}
+                {i.location} · {i.private ? t('nur für die Autorin bzw. den Autor') : t('ganzer Sub-Account')} {!i.enabled && <Badge tone="gray">aus</Badge>}
               </li>
             ))}
           </ul>
@@ -579,21 +585,21 @@ export function PluginDetail({ id }: { id: string }) {
 
       <div className="actions" style={{ marginTop: 16 }}>
         <button className="btn secondary small" onClick={exportIt}>
-          <Icon name="download" size={14} /> Exportieren (JSON)
+          <Icon name="download" size={14} /> {t('Exportieren (JSON)')}
         </button>
         {p.active_here && (
           <button className="btn secondary small" onClick={() => setModal('uninstall')}>
-            Deinstallieren
+            {t('Deinstallieren')}
           </button>
         )}
         {manage && (
-          <button className="btn danger small" onClick={() => confirmAsk(`„${p.name}“ mit allen Versionen endgültig löschen?`) && act(() => api.del(`/api/plugins/${p.id}`), 'Gelöscht').then((x) => x && (void refreshPlugins(), navigate('werkstatt/plugins')))}>
+          <button className="btn danger small" onClick={() => confirmAsk(t('„{name}“ mit allen Versionen endgültig löschen?', { name: p.name })) && act(() => api.del(`/api/plugins/${p.id}`), 'Gelöscht').then((x) => x && (void refreshPlugins(), navigate('werkstatt/plugins')))}>
             Löschen
           </button>
         )}
         {p.wish && (
           <Link to={`wishes/${p.wish.id}`} className="btn ghost small">
-            Wunsch: {p.wish.title}
+            {t('Wunsch: {title}', { title: p.wish.title })}
           </Link>
         )}
       </div>
@@ -606,10 +612,10 @@ export function PluginDetail({ id }: { id: string }) {
       {modal === 'core' && <CoreProposalModal plugin={{ id: p.id, name: p.name }} onClose={() => setModal(null)} onDone={() => (setModal(null), navigate('werkstatt/core'))} />}
       {roll && (
         <ConsentModal
-          title={`Zu Version ${roll.version} wechseln`}
-          intro="Diese Version fragt zusätzliche Berechtigungen an."
+          title={t('Zu Version {version} wechseln', { version: roll.version })}
+          intro={t('Diese Version fragt zusätzliche Berechtigungen an.')}
           scopes={scopeInfos(roll.scopes)}
-          confirm="Version aktivieren"
+          confirm={t('Version aktivieren')}
           onConfirm={() => (void activate(roll), setRoll(undefined))}
           onClose={() => setRoll(undefined)}
         />
@@ -619,6 +625,7 @@ export function PluginDetail({ id }: { id: string }) {
 }
 
 function ChangeModal({ p, onClose }: { p: PluginFull; onClose: () => void }) {
+  const t = useT('b7werk');
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const est = useLoad(() => api.get<{ typical_usd: number; max_usd: number }>('/api/werkstatt/estimate?kind=change'), []);
@@ -638,18 +645,18 @@ function ChangeModal({ p, onClose }: { p: PluginFull; onClose: () => void }) {
             Abbrechen
           </button>
           <button className="btn" disabled={busy || text.trim().length < 5} onClick={go}>
-            <Icon name="hammer" size={14} /> Neue Version bauen
+            <Icon name="hammer" size={14} /> {t('Neue Version bauen')}
           </button>
         </>
       }
     >
-      <p className="muted small">Beschreibe, was anders sein soll. Es entsteht eine neue Version; die bisherige bleibt in der Versionsliste und lässt sich jederzeit wieder aktivieren.</p>
-      <Field label="Was soll sich ändern?">
-        <Textarea value={text} onChange={setText} rows={5} placeholder="z. B. Zeige die Geburtstage der nächsten 30 Tage statt 14." />
+      <p className="muted small">{t('Beschreibe, was anders sein soll. Es entsteht eine neue Version; die bisherige bleibt in der Versionsliste und lässt sich jederzeit wieder aktivieren.')}</p>
+      <Field label={t('Was soll sich ändern?')}>
+        <Textarea value={text} onChange={setText} rows={5} placeholder={t('z. B. Zeige die Geburtstage der nächsten 30 Tage statt 14.')} />
       </Field>
       {est.data && (
         <p className="muted small">
-          Geschätzte KI-Kosten: etwa {usd(est.data.typical_usd)}, höchstens {usd(est.data.max_usd)}. Fragt die neue Version zusätzliche Berechtigungen an, wirst du vor dem Aktivieren gefragt.
+          {t('Geschätzte KI-Kosten: etwa {v1}, höchstens {v2}. Fragt die neue Version zusätzliche Berechtigungen an, wirst du vor dem Aktivieren gefragt.', { v1: usd(est.data.typical_usd), v2: usd(est.data.max_usd) })}
         </p>
       )}
     </Modal>
@@ -657,6 +664,7 @@ function ChangeModal({ p, onClose }: { p: PluginFull; onClose: () => void }) {
 }
 
 function UninstallModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => void; onDone: () => void }) {
+  const t = useT('b7werk');
   const [cleanup, setCleanup] = useState(false);
   const [busy, setBusy] = useState(false);
   const go = async () => {
@@ -664,13 +672,13 @@ function UninstallModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => 
     const r = await act(() => api.post<{ removed: number; failed: number }>(`/api/plugins/${p.id}/uninstall`, { cleanup }));
     setBusy(false);
     if (r) {
-      toast(cleanup ? `Deinstalliert, ${r.removed} Einträge entfernt${r.failed ? `, ${r.failed} nicht` : ''}` : 'Deinstalliert');
+      toast(cleanup ? t('Deinstalliert, {removed} Einträge entfernt{v2}', { removed: r.removed, v2: r.failed ? t(', {failed} nicht', { failed: r.failed }) : '' }) : t('Deinstalliert'));
       onDone();
     }
   };
   return (
     <Modal
-      title={`„${p.name}“ deinstallieren`}
+      title={t('„{name}“ deinstallieren', { name: p.name })}
       onClose={onClose}
       footer={
         <>
@@ -678,36 +686,37 @@ function UninstallModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => 
             Abbrechen
           </button>
           <button className="btn danger" disabled={busy} onClick={go}>
-            Deinstallieren
+            {t('Deinstallieren')}
           </button>
         </>
       }
     >
-      <p>Das Plugin verschwindet aus diesem Sub-Account. Der Code bleibt in der {NAMES.werkstatt}, falls du es wieder brauchst.</p>
-      <Check checked={cleanup} onChange={setCleanup} label={`Auch aufräumen: vom Plugin angelegte Datensätze (${p.created_count ?? 0}) und gespeicherte Plugin-Daten entfernen`} />
+      <p>{t('Das Plugin verschwindet aus diesem Sub-Account. Der Code bleibt in der {werkstatt}, falls du es wieder brauchst.', { werkstatt: NAMES.werkstatt })}</p>
+      <Check checked={cleanup} onChange={setCleanup} label={t('Auch aufräumen: vom Plugin angelegte Datensätze ({v1}) und gespeicherte Plugin-Daten entfernen', { v1: p.created_count ?? 0 })} />
     </Modal>
   );
 }
 
 function KillModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => void; onDone: () => void }) {
+  const t = useT('b7werk');
   const [reason, setReason] = useState('');
   return (
     <Modal
-      title="Plugin abschalten"
+      title={t('Plugin abschalten')}
       onClose={onClose}
       footer={
         <>
           <button className="btn secondary" onClick={onClose}>
             Abbrechen
           </button>
-          <button className="btn danger" onClick={async () => (await act(() => api.post(`/api/plugins/${p.id}/kill`, { reason }), 'Abgeschaltet')) && onDone()}>
-            Sofort abschalten
+          <button className="btn danger" onClick={async () => (await act(() => api.post(`/api/plugins/${p.id}/kill`, { reason }), t('Abgeschaltet'))) && onDone()}>
+            {t('Sofort abschalten')}
           </button>
         </>
       }
     >
-      <p>„{p.name}“ wird in allen Sub-Accounts angehalten (Seiten, Panels, Widgets, Jobs, Automations-Schritte). Du kannst es später wieder einschalten.</p>
-      <Field label="Grund (sehen die Betroffenen)">
+      <p>{t('„{name}“ wird in allen Sub-Accounts angehalten (Seiten, Panels, Widgets, Jobs, Automations-Schritte). Du kannst es später wieder einschalten.', { name: p.name })}</p>
+      <Field label={t('Grund (sehen die Betroffenen)')}>
         <Textarea value={reason} onChange={setReason} rows={2} />
       </Field>
     </Modal>
@@ -717,6 +726,7 @@ function KillModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => void;
 
 /** One-click rollback: the version before runs again (installs, the Marktplatz listing and a killed plugin included). */
 function RollbackModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => void; onDone: () => void }) {
+  const t = useT('b7werk');
   const [busy, setBusy] = useState(false);
   const checked = p.versions.filter((v) => v.status === 'checked');
   const cur = checked.findIndex((v) => v.active);
@@ -726,13 +736,13 @@ function RollbackModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => v
     const r = await act(() => api.post<{ from: string; to: string; unpublished: boolean; revived: boolean }>(`/api/plugins/${p.id}/rollback`, {}));
     setBusy(false);
     if (r) {
-      toast(`Zurückgerollt: Version ${r.to} läuft wieder${r.revived ? ' (wieder eingeschaltet)' : ''}${r.unpublished ? `; aus dem ${NAMES.marktplatz} genommen (die ältere Version war dort nie geprüft)` : ''}`);
+      toast(t('Zurückgerollt: Version {to} läuft wieder{v2}{v3}', { to: r.to, v2: r.revived ? t(' (wieder eingeschaltet)') : '', v3: r.unpublished ? t('; aus dem {marktplatz} genommen (die ältere Version war dort nie geprüft)', { marktplatz: NAMES.marktplatz }) : '' }));
       onDone();
     }
   };
   return (
     <Modal
-      title={`„${p.name}“ zurückrollen`}
+      title={t('„{name}“ zurückrollen', { name: p.name })}
       onClose={onClose}
       footer={
         <>
@@ -740,7 +750,7 @@ function RollbackModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => v
             Abbrechen
           </button>
           <button className="btn" data-tour="wk-rollback-ok" disabled={busy || !target} onClick={go}>
-            <Icon name="undo" size={14} /> Zurückrollen
+            <Icon name="undo" size={14} /> {t('Zurückrollen')}
           </button>
         </>
       }
@@ -748,13 +758,13 @@ function RollbackModal({ p, onClose, onDone }: { p: PluginFull; onClose: () => v
       {target ? (
         <>
           <p>
-            Version <strong>{p.version}</strong> wird durch die Vorversion <strong>{target.version}</strong> ersetzt – für dich, für alle, die das Plugin installiert haben, und im {NAMES.marktplatz}. Ein abgeschaltetes Plugin läuft danach wieder.
+            {t('Version')} <strong>{p.version}</strong> {t('wird durch die Vorversion')} <strong>{target.version}</strong> {t('ersetzt – für dich, für alle, die das Plugin installiert haben, und im {marktplatz}. Ein abgeschaltetes Plugin läuft danach wieder.', { marktplatz: NAMES.marktplatz })}
           </p>
           <VersionBadges b={target.badges} />
-          <p className="muted small">Die jetzige Version bleibt in der Versionsliste und lässt sich jederzeit wieder aktivieren. Berechtigungen, die du schon bestätigt hast, werden nicht erneut abgefragt.</p>
+          <p className="muted small">{t('Die jetzige Version bleibt in der Versionsliste und lässt sich jederzeit wieder aktivieren. Berechtigungen, die du schon bestätigt hast, werden nicht erneut abgefragt.')}</p>
         </>
       ) : (
-        <p>Es gibt keine ältere geprüfte Version, auf die zurückgerollt werden könnte.</p>
+        <p>{t('Es gibt keine ältere geprüfte Version, auf die zurückgerollt werden könnte.')}</p>
       )}
     </Modal>
   );
