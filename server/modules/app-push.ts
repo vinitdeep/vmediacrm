@@ -21,11 +21,14 @@ import type { PushSink } from './push.js';
  */
 
 export type PushMode = 'relay' | 'own' | 'off';
-export const DEFAULT_RELAY = 'https://gohyperlevel.com';
+/** V Media CRM: no third-party relay by default – nothing leaves the server unless PGHL_PUSH_RELAY_URL is set. */
+export const DEFAULT_RELAY = '';
 
 export function pushMode(env: NodeJS.ProcessEnv = process.env): PushMode {
   const m = String(env.PGHL_PUSH_MODE ?? '').trim().toLowerCase();
-  return m === 'own' || m === 'off' ? m : 'relay';
+  if (m === 'own') return 'own';
+  // Relay only when explicitly chosen AND a relay URL is configured; default is off (no upstream calls).
+  return m === 'relay' && String(env.PGHL_PUSH_RELAY_URL ?? '').trim() ? 'relay' : 'off';
 }
 export const relayUrl = (env: NodeJS.ProcessEnv = process.env) => String(env.PGHL_PUSH_RELAY_URL ?? '').trim().replace(/\/+$/, '') || DEFAULT_RELAY;
 

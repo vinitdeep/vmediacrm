@@ -426,8 +426,8 @@ describe('landing page (PGHL_LANDING=1)', () => {
     expect(home).toMatch(/<meta property="og:image" content="http:\/\/localhost\/landing\/og-en\.png">/);
     expect(home).toContain('<link rel="alternate" hreflang="de" href="http://localhost/de">');
     expect(home).toContain('codex mcp add gohyperlevel --url https://localhost/mcp');
-    expect(home).toContain('curl -fsSL https://raw.githubusercontent.com/BAISESYSTEMS/GoHyperLevel/main/scripts/install.sh | bash');
-    expect(home).toContain('https://demo.gohyperlevel.com');
+    expect(home).toContain('curl -fsSL https://raw.githubusercontent.com/vinitdeep/vmediacrm/main/scripts/install.sh | bash');
+    expect(home).toContain('https://vinitdeep.github.io/vmediacrm/');
     // Prices: list prices without cloud mode, VAT note, white-label headline of the Agentur plan.
     for (const s of ['€49.99', '€99.99', '€199', 'or €479 a year', 'or €959 a year', 'or €1,910 a year', 'Stripe Tax', 'White-label on the Agency plan']) expect(home, s).toContain(s);
     const de = await (await get('/de')).text();
@@ -511,7 +511,7 @@ describe('landing page (PGHL_LANDING=1)', () => {
       expect(body).toContain(h(a.jarvis.h2));
       expect(body.match(/<li class="card"><span class="usp-i">/g)).toHaveLength(9);
       expect(body).toContain(`<b>${ACADEMY.chapters}</b>`);
-      expect(body).toContain('https://github.com/BAISESYSTEMS/GoHyperLevel/blob/main/CONTRIBUTING.md');
+      expect(body).toContain('https://github.com/vinitdeep/vmediacrm/blob/main/CONTRIBUTING.md');
       expect(body).toContain('label%3A%22good+first+issue%22');
       expect(body).toContain(`· ${a.builtWith}</span>`);
       // live numbers: themes and icon packs from the appearance model, workflow counts like the catalogue

@@ -1,6 +1,6 @@
 # Security policy
 
-HyperLevel stores customer data, credentials for e-mail, SMS, payment and AI providers, and runs on the
+V Media CRM stores customer data, credentials for e-mail, SMS, payment and AI providers, and runs on the
 public internet. We take security reports seriously and appreciate responsible disclosure.
 
 ## Reporting a vulnerability
@@ -10,15 +10,14 @@ public internet. We take security reports seriously and appreciate responsible d
 Report privately through GitHub's security advisories:
 
 1. Open the repository's **Security** tab → **Report a vulnerability**
-   (`https://github.com/BAISESYSTEMS/GoHyperLevel/security/advisories/new`).
+   (`https://github.com/vinitdeep/vmediacrm/security/advisories/new`).
 2. Describe the issue, the affected version (`GET /api/version`), steps to reproduce and the impact.
    A proof of concept is welcome; please use your own test instance and fictional data.
 
 <a id="contact"></a>
 ### Contact
 
-If you cannot use GitHub advisories, write to **security@gohyperlevel.com** (placeholder until the mailbox
-is live – GitHub advisories are the preferred channel). This address is also the contact for Code of Conduct reports.
+If you cannot use GitHub advisories, write to **hello@vmediaproduction.com** (GitHub advisories are the preferred channel). This address is also the contact for Code of Conduct reports.
 
 ## What to expect
 

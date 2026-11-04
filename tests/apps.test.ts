@@ -3,6 +3,7 @@ import { startTestApp } from './helpers.js';
 import { minimalMessage, RateLimiter, sectionOf, type NativeMessage } from '../server/services/native-push.js';
 import { appConfig, cleanInstanceUrl, emailDomain, onColor } from '../server/services/app-brand.js';
 import { compareVersions } from '../server/modules/desktop-app.js';
+import { pushMode } from '../server/modules/app-push.js';
 
 /**
  * Gray-label apps (docs/apps.md): discovery document, cloud directory, push relay (registration, minimal payloads, limits,
@@ -40,7 +41,7 @@ beforeAll(async () => {
   await relay.setup();
   delete process.env.PGHL_PUSH_RELAY;
   delete process.env.PGHL_APP_DIRECTORY;
-  delete process.env.PGHL_PUSH_MODE;
+  process.env.PGHL_PUSH_MODE = 'relay';
   process.env.PGHL_PUSH_RELAY_URL = relay.base;
   inst = await startTestApp({ baseUrl: 'https://crm.agentur.de' });
   const me = await inst.setup();
@@ -75,6 +76,12 @@ describe('pure helpers', () => {
     expect(l.take('b', 2, 3)).toBe(false);
     t = 60_000;
     expect(l.take('a', 2)).toBe(true);
+  });
+  it('push is off by default – no third-party relay unless explicitly configured', () => {
+    expect(pushMode({})).toBe('off');
+    expect(pushMode({ PGHL_PUSH_MODE: 'relay' })).toBe('off');
+    expect(pushMode({ PGHL_PUSH_MODE: 'relay', PGHL_PUSH_RELAY_URL: 'https://push.example.com' })).toBe('relay');
+    expect(pushMode({ PGHL_PUSH_MODE: 'own' })).toBe('own');
   });
   it('builds the app config and parses addresses', () => {
     const c = appConfig({ name: 'X', color: '#ffcc00', logo_url: '/uploads/l.png', mark_url: 'javascript:alert(1)' }, 'https://crm.x.de', { mode: 'relay', content: 'generic', providers: ['fcm'] });
@@ -259,7 +266,7 @@ describe('own keys (PGHL_PUSH_MODE=own)', () => {
       expect(sent).toHaveLength(1);
       expect(sent[0]).toMatchObject({ target: { provider: 'apns', token: 'apns-own-ffffffffffffffffffffffff' }, msg: { kind: 'tasks', title: 'Neue Aufgabe', body: '', url: '/app/tasks' } });
     } finally {
-      delete process.env.PGHL_PUSH_MODE;
+      process.env.PGHL_PUSH_MODE = 'relay';
       delete inst.app.services.nativePushTransport;
     }
   });

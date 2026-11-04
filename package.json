@@ -4,13 +4,14 @@
   "private": true,
   "description": "V Media CRM – the self-hosted CRM of V Media Production: contacts, pipelines, inbox, funnels, automations, AI and 340+ MCP tools. Based on GoHyperLevel (AGPL-3.0).",
   "license": "AGPL-3.0-only",
-  "homepage": "https://github.com/BAISESYSTEMS/GoHyperLevel#readme",
+  "author": "V Media Production (https://vmediaproduction.com)",
+  "homepage": "https://github.com/vinitdeep/vmediacrm#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BAISESYSTEMS/GoHyperLevel.git"
+    "url": "git+https://github.com/vinitdeep/vmediacrm.git"
   },
   "bugs": {
-    "url": "https://github.com/BAISESYSTEMS/GoHyperLevel/issues"
+    "url": "https://github.com/vinitdeep/vmediacrm/issues"
   },
   "keywords": [
     "crm",

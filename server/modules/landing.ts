@@ -36,7 +36,7 @@ import { TOOLS } from './mcp.js';
  */
 
 const PRODUCT = 'V Media CRM';
-const STARS_API = 'https://api.github.com/repos/BAISESYSTEMS/GoHyperLevel';
+const STARS_API = 'https://api.github.com/repos/vinitdeep/vmediacrm';
 const STARS_TTL = 6 * 3600_000;
 /** Screenshots (scripts/landing-assets.mjs makes them): the hero's crossfade and the spotlights' pictures, by key. */
 const SHOTS: Record<ShotKey, string> = {
@@ -133,7 +133,7 @@ export const landingModule: Module = {
       if (stars.busy) return force ? stars.busy.then(() => refreshStars(true)) : stars.busy;
       if (!force && Date.now() - stars.at < STARS_TTL) return Promise.resolve();
       const f: typeof fetch = app.services.landingFetch ?? fetch;
-      stars.busy = f(STARS_API, { headers: { accept: 'application/vnd.github+json', 'user-agent': 'gohyperlevel-landing' }, signal: AbortSignal.timeout(5000) })
+      stars.busy = f(STARS_API, { headers: { accept: 'application/vnd.github+json', 'user-agent': 'vmedia-crm-landing' }, signal: AbortSignal.timeout(5000) })
         .then((r) => (r.ok ? r.json() : null))
         .then((j: any) => {
           if (typeof j?.stargazers_count === 'number' && j.stargazers_count >= 0) stars.n = j.stargazers_count;

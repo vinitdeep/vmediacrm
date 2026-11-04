@@ -1,9 +1,9 @@
-# HyperLevel Individual Contributor License Agreement
+# V Media CRM Individual Contributor License Agreement
 
 Version 1.0 · based on the Apache Software Foundation Individual Contributor License Agreement (ICLA)
 
-Thank you for contributing to HyperLevel (the "Project", https://github.com/BAISESYSTEMS/GoHyperLevel).
-This agreement makes clear which rights you grant to the Project's maintainer (the "Maintainer") for your
+Thank you for contributing to V Media CRM (the "Project", https://github.com/vinitdeep/vmediacrm).
+This agreement makes clear which rights you grant to the Project's maintainer, V Media Production (the "Maintainer") for your
 contributions. You keep the copyright in your contributions; the agreement only grants a licence.
 
 You accept it by commenting on your first pull request with the sentence the CLA Assistant asks for
@@ -27,7 +27,7 @@ works.
 
 The Project is published under the GNU Affero General Public License v3.0. You agree that the Maintainer may
 **additionally license Your Contributions under other terms, including proprietary or commercial licences**
-(for example to offer HyperLevel under a dual licence). Every version of the Project the Maintainer publishes
+(for example to offer V Media CRM under a dual licence). Every version of the Project the Maintainer publishes
 as open source keeps Your Contribution available under an OSI-approved licence.
 
 ## 4. Patent licence

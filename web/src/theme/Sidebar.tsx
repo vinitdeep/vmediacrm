@@ -134,7 +134,7 @@ export function Sidebar({ session, cur, route, open, entries, childrenOf, preloa
   const wideLogo = (sideDark ? b.logo_dark_url : '') || b.logo_url;
   const mark = (sideDark ? b.mark_dark_url : '') || b.mark_url;
   const showName = b.show_name !== 'no' || (!wideLogo && !mark);
-  // No own logo: the HyperLevel icon, never an initial (theme/brand-icon.ts).
+  // No own logo: the V Media CRM icon, never an initial (theme/brand-icon.ts).
   const fallback = <img className="brand-mark" src={PRODUCT_ICON} alt="" />;
 
   // Menu: entries the person may use, minus the hidden ones (unless "show all"), headings only above a visible entry.

@@ -22,10 +22,10 @@ RUN npm run build \
  && rm -rf node_modules/.cache
 
 FROM node:${NODE_VERSION}-alpine AS runtime
-LABEL org.opencontainers.image.title="HyperLevel" \
-      org.opencontainers.image.description="The open-source, self-hosted alternative to GoHighLevel and HubSpot" \
+LABEL org.opencontainers.image.title="V Media CRM" \
+      org.opencontainers.image.description="V Media CRM by V Media Production – based on HyperLevel (AGPL-3.0)" \
       org.opencontainers.image.licenses="AGPL-3.0-only" \
-      org.opencontainers.image.source="https://github.com/BAISESYSTEMS/GoHyperLevel"
+      org.opencontainers.image.source="https://github.com/vinitdeep/vmediacrm"
 ENV NODE_ENV=production \
     PGHL_DATA_DIR=/data \
     PGHL_BEHIND_PROXY=1 \

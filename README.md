@@ -157,6 +157,8 @@ Set `PGHL_BASE_URL` to the public address – every link the CRM sends (bookings
 
 ## License and credits
 
+Copyright © 2026 **V Media Production**. All modifications and additions.
+
 V Media CRM is based on **[GoHyperLevel](https://github.com/BAISESYSTEMS/GoHyperLevel)** and, like it, licensed under
 the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0-only); see [NOTICE](NOTICE) for the attribution and
 third-party notices. Because it is AGPL software that people use over a network, everyone who uses this instance must
