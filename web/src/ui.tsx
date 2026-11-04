@@ -416,8 +416,9 @@ export function PageHead({ title, children, sub }: { title: string; children?: R
     return () => clearTimeout(timer);
   }, []);
   return (
-    <div className="page-head" data-tour="page-head" ref={ref}>
+    <div className="page-head studio-page-body" data-tour="page-head" ref={ref}>
       <div data-tour="page-title">
+        <span className="studio-page-mark" aria-hidden="true"><i /><i /><i /></span>
         <h1>{title}</h1>
         {sub && <p className="muted">{sub}</p>}
       </div>
