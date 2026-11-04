@@ -82,6 +82,7 @@ import { CommandPalette } from './nav';
 import { InstallHint, registerPwa } from './pwa';
 // iPhone, iPad and foldables (docs/ios-web-app.md): bottom bar, number on the app icon, viewport/keyboard handling; the rest is a lazy chunk.
 import './ios/ios.css';
+import './theme/atelier.css';
 import { useAppBadge } from './ios/badge';
 import { MasterDetail } from './ios/MasterDetail';
 import { modKey } from './ios/shortcuts';
@@ -455,11 +456,13 @@ function Shell({ session, children }: { session: Session; children: ReactNode })
   const cur = route[0] ?? (session.user.role === 'admin' ? 'agency' : navFor(session).find((n) => n[0] !== 'group')?.[0] ?? 'dashboard');
   // Once the page is up and the browser is idle: the most used pages, so the first click needs no download.
   useEffect(() => whenIdle(() => ['dashboard', 'contacts', 'conversations', 'opportunities', 'calendars', 'tasks'].filter((r) => r !== cur && navFor(session).some((n) => n[0] === r)).forEach(preloadRoute), { delay: 6000 }), []);
+  // Specialist surfaces are shared by lazy feature routes, not the first shell download.
+  useEffect(() => { if (cur !== 'dashboard') void import('./theme/atelier-modules.css'); }, [cur]);
   const nav = translateNav(t, navFor(session));
   useEffect(() => void startNavSession(), []);
   useEffect(() => trackVisit(cur), [cur]);
   return (
-    <div className={`shell${focus ? ' focus-mode' : ''}`}>
+    <div className={`shell studio-shell${focus ? ' focus-mode' : ''}`}>
       {open && <div className="side-scrim" onClick={() => setOpen(false)} aria-hidden="true" />}
       {focus && (
         <Later>
@@ -467,7 +470,7 @@ function Shell({ session, children }: { session: Session; children: ReactNode })
         </Later>
       )}
       <Sidebar session={session} cur={cur} route={route} open={open} entries={nav} childrenOf={NAV_CHILDREN} preload={preloadRoute} />
-      <div className="main" data-dept={DEPT_OF_ROUTE[cur]}>
+      <div className="main" data-dept={DEPT_OF_ROUTE[cur]} data-route={cur}>
         <div className="topbar">
           <button className="btn secondary small menu-btn" data-tour="menu" onClick={() => setOpen(!open)} aria-label={t('Menü')} aria-expanded={open} aria-controls="side-nav">
             <Menu size={18} />
@@ -475,6 +478,11 @@ function Shell({ session, children }: { session: Session; children: ReactNode })
           <Later>
             <FocusEnter place="top" />
           </Later>
+          <nav className="studio-breadcrumb" aria-label={t('Arbeitsfläche')}>
+            <a href={`${BASE}/dashboard`} onClick={(e) => { if (!e.metaKey && !e.ctrlKey && e.button === 0) { e.preventDefault(); navigate('dashboard'); } }}>{t('Arbeitsfläche')}</a>
+            <span aria-hidden="true">/</span>
+            <strong aria-current="page">{nav.find((n) => n[0] === cur)?.[2] ?? cur}</strong>
+          </nav>
           <Search />
           <button className="btn secondary small jump-btn" data-tour="jump" onClick={() => window.dispatchEvent(new Event('pghl:palette'))} title={t('Projekt, Seite oder Claude-Sitzung (Strg+K)')}>
             <SearchIcon size={14} /> {t('Springen')} <kbd>{t(modKey(navigator.platform ?? '', navigator.userAgent))} K</kbd>

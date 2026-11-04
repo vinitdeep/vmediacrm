@@ -8,14 +8,14 @@
     var o = raw ? JSON.parse(raw) : null;
     var p = o && o.p;
     var legacy = localStorage.getItem('pghl.theme');
-    var mode = p ? p.mode : legacy === 'dark' || legacy === 'light' ? legacy : 'system';
+    var mode = p ? p.mode : legacy === 'dark' || legacy === 'light' ? legacy : 'light';
     var dark = mode === 'dark' || (mode !== 'light' && !!window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
     if (!p) {
       // No saved look yet (first visit, signed out): the CSS fallbacks are the default theme, V Media Studio;
       // the browser bar takes its ink sidebar colour.
       if (mode !== 'system') r.setAttribute('data-theme', mode);
       var m0 = document.querySelector('meta[name="theme-color"]');
-      if (m0) m0.setAttribute('content', '#0c0b0b');
+      if (m0) m0.setAttribute('content', '#191f2a');
       return;
     }
     r.setAttribute('data-theme', dark ? 'dark' : 'light');
@@ -27,6 +27,7 @@
     r.setAttribute('data-spatial', o.spatial ? '1' : '0');
     r.setAttribute('data-density', o.spatial ? 'comfortable' : p.density);
     r.setAttribute('data-font', p.font);
+    r.setAttribute('data-font-family', p.font_family || '');
     r.setAttribute('data-icons', p.icons);
     var css = o.css && (dark ? o.css.dark : o.css.light);
     if (css) {

@@ -1,6 +1,14 @@
 import type { Catalog } from '../registry';
 
 export default {
+  'Aa': 'Aa',
+  "Schriftart": "Font family",
+  "Wähle eine von zehn Schriftarten für Navigation, Überschriften und Text. Deine Auswahl wird automatisch gespeichert.": "Choose from ten fonts for navigation, headings and text. Your selection saves automatically.",
+  "Aktuell: {name}": "Current: {name}",
+  "Design-Standard": "Design default",
+  "Design-Schrift wiederherstellen": "Use design default",
+  "Kontakte · Aufgaben · Umsatz": "Contacts · Tasks · Revenue",
+
   'Hell': 'Light',
   'Dunkel': 'Dark',
   'Wie das System': 'Same as system',
@@ -46,7 +54,7 @@ export default {
   'Marketing': 'Marketing',
   'Service': 'Service',
   'Agentur': 'Agency',
-  'Tiefschwarze Studio-Seitenleiste, Crimson-Akzent und warmes Neutral – der Look von V Media.': 'Deep black studio sidebar, crimson accent and a warm neutral – the V Media look.',
+  'Helles Atelier, dunkle Navigation, Koralle und Pastell – der kreative Look von V Media.': 'A bright atelier, charcoal navigation, coral and pastels – the creative V Media look.',
   'Klassisch Blau': 'Classic Blue',
   'Klar, blau, dunkle Seitenleiste – der klassische Look.': 'Clean, blue, dark sidebar – the classic look.',
   'Nordlicht': 'Northern Lights',

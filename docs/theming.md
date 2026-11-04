@@ -355,3 +355,8 @@ The Android app is a WebView on the same pages: it follows theme, accent, dark m
 Headless Chromium against the seeded demo (`npm run screenshots` renders the README images). For theme work:
 sign in as the demo user, `PATCH /api/appearance` with the look to check, load a page and screenshot – the
 repository's `scripts/screenshots.mjs` shows the setup.
+
+## Font families
+
+Appearance offers ten locally hosted font families separately from text size. The font_family preference is allowlisted, saved per user, cached for startup, and governed by the existing density/text lock. An empty value retains the original design typography. FontPicker.tsx previews every choice; typography.ts loads only selected faces outside Appearance and applies the selected family to navigation, headings and body text.
+

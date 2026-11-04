@@ -25,7 +25,7 @@ export interface LookInput {
 /** The themes that take the agency's brand colour as their accent: the default (V Media Studio) and the classic standard. */
 export const STANDARD_THEMES: readonly ThemeId[] = ['vmedia', 'gohigh'];
 /** Brand colours that mean "not chosen" (the built-in defaults) and so keep the theme's own accent. */
-const UNSET_BRAND = [THEMES.vmedia.light.accent, THEMES.gohigh.light.accent];
+const UNSET_BRAND = ['#c8191f', THEMES.vmedia.light.accent, THEMES.gohigh.light.accent];
 
 /** The accent that applies: the person's pick, else the agency's colour on the standard theme, else the theme's own. */
 export function resolveAccent(look: LookInput, dark: boolean): string {

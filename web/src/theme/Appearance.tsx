@@ -11,6 +11,7 @@ import { THEME_LIST, type ModeTokens } from './themes';
 import { SpatialCard } from '../xr/SpatialCard';
 import { GoalCard } from '../areas/GoalSetup';
 import { useT } from '../i18n';
+import { FontPicker } from './FontPicker';
 
 /**
  * Einstellungen → Darstellung: theme gallery with live mini previews, hell/dunkel/system, accent colour,
@@ -330,6 +331,10 @@ export function Appearance() {
             </button>
           ))}
         </div>
+      </Section>
+
+      <Section title={tt('Schriftart')} tour="appearance-font-family" lock={L.density} hint={tt('Wähle eine von zehn Schriftarten für Navigation, Überschriften und Text. Deine Auswahl wird automatisch gespeichert.')} >
+        <FontPicker value={p.font_family} locked={!!L.density} />
       </Section>
 
       <Section title={tt('Dichte und Schrift')} tour="appearance-density" lock={L.density}>

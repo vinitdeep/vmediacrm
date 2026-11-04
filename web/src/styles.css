@@ -3,15 +3,15 @@
 @import '@fontsource-variable/plus-jakarta-sans/wght.css';
 :root {
   /* Fallbacks before the generated theme CSS is there (first visit, signed out): the default theme, V Media Studio. */
-  --bg: #f6f4f1;
+  --bg: #f7f8fc;
   --panel: #ffffff;
-  --text: #17130f;
-  --muted: #5f5750;
-  --line: #e8e3dc;
-  --brand: #c8191f;
-  --brand-soft: #fbeeee;
-  --side: #0c0b0b;
-  --side-text: #d8d2cb;
+  --text: #1a2231;
+  --muted: #626d80;
+  --line: #e7eaf1;
+  --brand: #cf432d;
+  --brand-soft: #fcece8;
+  --side: #191f2a;
+  --side-text: #dce2ed;
   /* status colours as text (≥ 4.5:1 – theme/css.ts makes them readable on every theme); the -fill ones carry white text */
   --green: #047857;
   --red: #d71f22;

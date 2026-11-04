@@ -5,6 +5,7 @@ import { registerIconPack, setIconPack } from '../icons';
 import { toastError } from '../ui';
 import { currentXr, spatialActive } from '../xr/detect';
 import { buildBoth, modeTokens, type LookInput } from './css';
+import { fontFamilyCss, loadFontFamily } from './typography';
 
 /**
  * The look of this browser: the effective preferences (from the server, cached in localStorage so that
@@ -112,6 +113,9 @@ export function applyLook(p: Prefs, brandColor = state.brandColor, remember = tr
   const isDark = resolveDark(p.mode);
   const spatial = spatialOf(p);
   const css = buildBoth(lookOf(p, brandColor));
+  const typography = fontFamilyCss(p.font_family);
+  css.light += typography;
+  css.dark += typography;
   root.dataset.theme = isDark ? 'dark' : 'light';
   root.dataset.themeId = p.theme;
   root.dataset.deptMode = p.dept;
@@ -121,6 +125,8 @@ export function applyLook(p: Prefs, brandColor = state.brandColor, remember = tr
   // The Raum-Modus builds on the roomy density (its tokens in xr/spatial.css make it roomier still).
   root.dataset.density = spatial ? 'comfortable' : p.density;
   root.dataset.font = p.font;
+  root.dataset.fontFamily = p.font_family || '';
+  void loadFontFamily(p.font_family).catch(() => { /* Keep the bundled fallback if a font chunk is unavailable offline. */ });
   root.dataset.icons = p.icons;
   const el = styleEl();
   if (el) el.textContent = isDark ? css.dark : css.light;

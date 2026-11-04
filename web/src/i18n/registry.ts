@@ -197,7 +197,7 @@ export const NAMESPACES = {
   b4calc: { complete: true, files: ['pages/Calc.tsx', 'pages/CalcCharts.tsx', 'pages/CalcInputs.tsx', 'pages/CalcResults.tsx'] },
   // end b4
 
-  b7theme: { complete: true, files: ['theme/Appearance.tsx', 'theme/BrandingLook.tsx', 'theme/depts.ts', 'theme/Profiles.tsx', 'theme/themes.ts'] },
+  b7theme: { complete: true, files: ['theme/Appearance.tsx', 'theme/BrandingLook.tsx', 'theme/depts.ts', 'theme/Profiles.tsx', 'theme/themes.ts', 'theme/FontPicker.tsx'] },
   b7undo: { complete: true, files: ['undo/shared.ts', 'undo/Undo.tsx#ConflictDialog,Changes,Row,HistoryPanel,UndoLayer'] },
   b7team: { complete: true, files: ['pages/TeamCalendarEditor.tsx', 'pages/TeamCalendarKit.tsx', 'pages/TeamInboxSettings.tsx'] },
   b7video: { complete: true, files: ['pages/VideoStudio.tsx', 'pages/VideoRecycle.tsx'] },

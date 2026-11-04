@@ -41,10 +41,10 @@ export const THEMES: Record<ThemeId, ThemeDef> = {
   vmedia: {
     id: 'vmedia',
     name: 'V Media Studio',
-    blurb: 'Tiefschwarze Studio-Seitenleiste, Crimson-Akzent und warmes Neutral – der Look von V Media.',
+    blurb: 'Helles Atelier, dunkle Navigation, Koralle und Pastell – der kreative Look von V Media.',
     //        bg         panel      text       muted      line       side       sideText   accent
-    light: m('#f6f4f1', '#ffffff', '#17130f', '#5f5750', '#e8e3dc', '#0c0b0b', '#d8d2cb', '#c8191f'),
-    dark: m('#0d0c0c', '#171515', '#f3efeb', '#a8a19a', '#2b2726', '#080707', '#d6d0ca', '#d91c24'),
+    light: m('#f7f8fc', '#ffffff', '#1a2231', '#626d80', '#e7eaf1', '#191f2a', '#dce2ed', '#cf432d'),
+    dark: m('#10151f', '#1a2230', '#f0f3fa', '#a6b0c1', '#2a3548', '#141a24', '#dce2ed', '#ff8b70'),
   },
   gohigh: {
     id: 'gohigh',

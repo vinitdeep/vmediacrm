@@ -4,6 +4,7 @@ import {
   DEPT_LEVELS,
   DEPT_PALETTES,
   FONT_SIZES,
+  FONT_FAMILIES,
   ICON_PACKS,
   LOCK_KEYS,
   LOCK_LABELS,
@@ -23,6 +24,7 @@ import { Check, Field, Input, Select, Spinner, act, useLoad } from '../ui';
 import { THEME_LIST, themeById } from './themes';
 import { isHex } from './color';
 import { PRODUCT_ICON } from './brand-icon';
+import { FONT_NAMES } from './typography';
 import { useT } from '../i18n';
 
 /**
@@ -150,7 +152,7 @@ export function BrandingLook({ locationId }: { locationId?: string }) {
   const inherited = look.data.agency?.defaults ?? {};
   const setD = <K extends keyof Prefs>(k: K, v: Prefs[K] | undefined) => setDraft((d) => (d ? { ...d, defaults: { ...d.defaults, [k]: v } } : d));
   const unset = client ? tt('wie Agentur') : tt('nicht vorgegeben');
-  const sel = <K extends 'theme' | 'mode' | 'dept' | 'dept_palette' | 'sidebar' | 'icons' | 'density' | 'font'>(k: K, options: [string, string][]) => (
+  const sel = <K extends 'theme' | 'mode' | 'dept' | 'dept_palette' | 'sidebar' | 'icons' | 'density' | 'font' | 'font_family'>(k: K, options: [string, string][]) => (
     <Select value={(draft.defaults[k] as string) ?? ''} onChange={(x) => setD(k, (x || undefined) as Prefs[K] | undefined)} options={[['', `– ${unset}${client && inherited[k] ? `: ${options.find((o) => o[0] === inherited[k])?.[1] ?? ''}` : ''} –`], ...options]} />
   );
   const lockState = (k: LockKey): string => (draft.locks[k] === undefined ? '' : draft.locks[k] ? 'lock' : 'free');
@@ -220,6 +222,7 @@ export function BrandingLook({ locationId }: { locationId?: string }) {
         <div className="grid2">
           <Field label={tt('Dichte')}>{sel('density', DENSITIES.map((d) => [d, { compact: tt('Kompakt'), normal: tt('Normal'), comfortable: tt('Komfortabel') }[d]!]))}</Field>
           <Field label={tt('Schriftgröße')}>{sel('font', FONT_SIZES.map((f) => [f, { small: tt('Klein'), normal: tt('Normal'), large: tt('Groß') }[f]!]))}</Field>
+          <Field label={tt('Schriftart')}>{sel('font_family', FONT_FAMILIES.map((id) => [id, FONT_NAMES[id]] as [string, string]))}</Field>
         </div>,
       )}
       {row(

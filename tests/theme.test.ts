@@ -307,7 +307,7 @@ describe('boot script', () => {
   });
 
   it('survives an empty or damaged cache and still honours the old light/dark setting', () => {
-    expect(run({}).attrs).toEqual({});
+    expect(run({}).attrs).toEqual({ 'data-theme': 'light' });
     expect(run({ 'pghl.look': '{not json' }).attrs).toEqual({});
     expect(run({ 'pghl.theme': 'dark' }).attrs).toEqual({ 'data-theme': 'dark' });
   });

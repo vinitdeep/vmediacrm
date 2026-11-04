@@ -51,6 +51,10 @@ export type Density = (typeof DENSITIES)[number];
 export const FONT_SIZES = ['small', 'normal', 'large'] as const;
 export type FontSize = (typeof FONT_SIZES)[number];
 
+/** Locally hosted CRM typefaces. Empty font_family keeps the design default. */
+export const FONT_FAMILIES = ['inter', 'plus-jakarta-sans', 'manrope', 'dm-sans', 'source-sans-3', 'public-sans', 'nunito-sans', 'work-sans', 'roboto', 'open-sans'] as const;
+export type FontFamily = (typeof FONT_FAMILIES)[number];
+
 /** Raum-Modus (spatial UI for headsets and glasses, docs/xr.md): automatic on XR devices, always on, or off. */
 export const SPATIAL_MODES = ['auto', 'on', 'off'] as const;
 export type SpatialMode = (typeof SPATIAL_MODES)[number];
@@ -235,6 +239,7 @@ export interface Prefs {
   icons: IconPackId;
   density: Density;
   font: FontSize;
+  font_family: FontFamily | '';
   /** Raum-Modus: 'auto' = on when an XR device is detected (visionOS, Quest, Android XR), 'on' / 'off' = the person's choice. */
   spatial: SpatialMode;
   /** Hidden menu entries (route ids from MODULE_IDS). A view preference, not a permission. */
@@ -258,15 +263,16 @@ export interface Prefs {
 
 export const PREF_DEFAULTS: Prefs = {
   theme: 'vmedia',
-  mode: 'system',
+  mode: 'light',
   accent: '',
-  dept: 'subtle',
+  dept: 'off',
   dept_palette: 'harmonic',
   dept_tint: false,
   sidebar: 'full',
   icons: 'line',
   density: 'normal',
   font: 'normal',
+  font_family: '',
   spatial: 'auto',
   hidden: [],
   profile: '',
@@ -304,6 +310,7 @@ export const LOCK_OF: Record<keyof Prefs, LockKey | null> = {
   icons: 'icons',
   density: 'density',
   font: 'density',
+  font_family: 'density',
   // A property of the device a person wears, not of the agency's brand: never locked.
   spatial: null,
   hidden: 'modules',
@@ -371,6 +378,9 @@ export function cleanPrefs(input: unknown): Partial<{ [K in keyof Prefs]: Prefs[
         break;
       case 'font':
         out.font = oneOf(FONT_SIZES, v, 'Schriftgröße');
+        break;
+      case 'font_family':
+        out.font_family = v === '' ? '' : oneOf(FONT_FAMILIES, v, 'Schriftart');
         break;
       case 'spatial':
         out.spatial = oneOf(SPATIAL_MODES, v, 'Raum-Modus');
