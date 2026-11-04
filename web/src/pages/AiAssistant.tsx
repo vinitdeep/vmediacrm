@@ -60,8 +60,10 @@ export function AiSettings() {
   if (!s || !info.data) return info.error ? <Empty>{info.error}</Empty> : <Spinner />;
   const d = info.data;
   // OpenAI chosen (modules/ai-providers.ts): the Anthropic key and model fields step aside.
-  const savedOpenai = d.provider?.id === 'openai';
-  const openai = (picked ?? d.provider?.id) === 'openai';
+  // Any non-Claude provider (OpenAI, Gemini, Groq) replaces the Anthropic key and model fields.
+  const notClaude = (id: string | null | undefined) => !!id && id !== 'anthropic';
+  const savedOpenai = notClaude(d.provider?.id);
+  const openai = notClaude(picked ?? d.provider?.id);
   const set = (p: any) => setS({ ...s, ...p });
   const save = async (extra: any = {}) => {
     // An unsaved provider choice (and OpenAI key/model) is saved first, so „einschalten“ checks the right key.
@@ -94,8 +96,8 @@ export function AiSettings() {
           <strong>{t('KI-Assistent')} {d.settings.enabled ? <Badge tone="green">{t('an')}</Badge> : <Badge>{t('aus')}</Badge>}</strong>
           <div className="muted small">
             {d.settings.enabled
-              ? t('{model} · Live-Chat-Bot: {v2}{gerade}', { model: savedOpenai ? t('OpenAI · {model}', { model: d.provider.model }) : (d.models.find((m: any) => m.id === d.settings.model)?.label ?? d.settings.model), v2: MODES.find(([k]) => k === d.settings.bot_mode)?.[1] ?? '', gerade: d.settings.bot_mode !== 'off' ? (d.bot_active_now ? t(' (antwortet gerade)') : t(' (schweigt gerade)')) : '' })
-              : t('Vorschläge, Zusammenfassungen und Chat-Bot mit {Claude} – mit deinem eigenen {Anthropic}-Schlüssel.', { Claude: savedOpenai ? t('OpenAI (GPT)') : 'Claude', Anthropic: savedOpenai ? 'OpenAI' : 'Anthropic' })}
+              ? t('{model} · Live-Chat-Bot: {v2}{gerade}', { model: savedOpenai ? `${d.provider.label} · ${d.provider.model}` : (d.models.find((m: any) => m.id === d.settings.model)?.label ?? d.settings.model), v2: MODES.find(([k]) => k === d.settings.bot_mode)?.[1] ?? '', gerade: d.settings.bot_mode !== 'off' ? (d.bot_active_now ? t(' (antwortet gerade)') : t(' (schweigt gerade)')) : '' })
+              : t('Vorschläge, Zusammenfassungen und Chat-Bot mit {Claude} – mit deinem eigenen {Anthropic}-Schlüssel.', { Claude: savedOpenai ? d.provider.label : 'Claude', Anthropic: savedOpenai ? d.provider.label : 'Anthropic' })}
           </div>
         </div>
         <div className="ai-usage-mini">

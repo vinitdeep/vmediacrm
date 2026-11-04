@@ -174,6 +174,63 @@ describe('aiRun with OpenAI', () => {
   });
 });
 
+describe('Google Gemini and Groq (free tiers)', () => {
+  const chat = (text: string, model: string): Reply => ({ status: 200, json: { id: 'c1', object: 'chat.completion', model, choices: [{ index: 0, message: { role: 'assistant', content: text }, finish_reason: 'stop' }], usage: { prompt_tokens: 100, completion_tokens: 20 } } });
+  const GKEY = 'AIzaSyTestKey-abcdefghijklmnopqrstuv';
+  const QKEY = 'gsk_testkeyabcdefghijklmnopqrstuvwxyz';
+  it('offers both, validates and seals their keys, and runs reply suggestions through their OpenAI-compatible APIs', async () => {
+    const s = (await t.api.get('/api/ai/provider')).data;
+    expect(s.providers.map((p: any) => p.id)).toEqual(['anthropic', 'openai', 'gemini', 'groq']);
+    expect(s.compat.gemini).toMatchObject({ key_set: false, effective_model: 'gemini-2.5-flash', key_url: 'https://aistudio.google.com/app/apikey' });
+    expect(s.compat.groq).toMatchObject({ key_set: false, effective_model: 'llama-3.3-70b-versatile', key_url: 'https://console.groq.com/keys' });
+    expect((await t.api.put('/api/ai/provider', { gemini_key: 'sk-not-gemini-abcdefghijklmnop' })).data.error).toContain('AIza');
+    expect((await t.api.put('/api/ai/provider', { groq_key: 'nope' })).data.error).toContain('gsk_');
+
+    const g = await t.api.put('/api/ai/provider', { provider: 'gemini', gemini_key: GKEY });
+    expect(g.data).toMatchObject({ provider: 'gemini', effective: 'gemini', compat: { gemini: { key_set: true, key_hint: '…stuv', key_source: 'account' } } });
+    expect(JSON.stringify(g.data)).not.toContain(GKEY);
+    respond = (_b, url) => (url.endsWith('/models') ? { status: 200, json: { data: [] } } : chat('Hallo von Gemini', 'gemini-2.5-flash'));
+    expect((await t.api.post('/api/ai/provider/test', { provider: 'gemini' })).data).toMatchObject({ ok: true, model: 'gemini-2.5-flash' });
+    expect(calls.at(-1)!.url).toBe('https://generativelanguage.googleapis.com/v1beta/openai/models');
+    const r = await t.api.post('/api/ai/suggest', { conversation_id: convId });
+    expect(r.status).toBe(200);
+    expect(r.data.text).toBe('Hallo von Gemini');
+    const req = calls.at(-1)!;
+    expect(req.url).toBe('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions');
+    expect(req.headers.authorization).toBe(`Bearer ${GKEY}`);
+    expect(req.body.model).toBe('gemini-2.5-flash');
+    expect(claudeCalls).toHaveLength(0);
+
+    await t.api.put('/api/ai/provider', { provider: 'groq', groq_key: QKEY, groq_model: 'qwen/qwen3-32b' });
+    respond = () => chat('Hallo von Groq', 'qwen/qwen3-32b');
+    const q = await t.api.post('/api/ai/suggest', { conversation_id: convId });
+    expect(q.data.text).toBe('Hallo von Groq');
+    expect(calls.at(-1)!.url).toBe('https://api.groq.com/openai/v1/chat/completions');
+    expect(calls.at(-1)!.headers.authorization).toBe(`Bearer ${QKEY}`);
+    expect(calls.at(-1)!.body.model).toBe('qwen/qwen3-32b');
+    // the Gemini key stays stored while Groq is active
+    expect((await t.api.get('/api/ai/provider')).data.compat.gemini.key_set).toBe(true);
+
+    // removing the key: the assistant says which one is missing
+    await t.api.put('/api/ai/provider', { groq_key: null });
+    const none = await t.api.post('/api/ai/suggest', { conversation_id: convId });
+    expect(none.status).toBe(409);
+    expect(none.data.error).toContain('Groq');
+    await t.api.put('/api/ai/provider', { provider: 'openai', gemini_key: null });
+  });
+  it('the agency can make Gemini the default with one key for all sub-accounts', async () => {
+    await t.api.put('/api/ai/provider', { provider: '' });
+    const ag = await t.api.put('/api/agency/ai-provider', { provider: 'gemini', gemini_key: GKEY });
+    expect(ag.data).toMatchObject({ provider: 'gemini', compat: { gemini: { key_set: true, key_source: 'agency' } } });
+    expect((await t.api.get('/api/ai/provider')).data).toMatchObject({ effective: 'gemini', source: 'agency', compat: { gemini: { key_set: false, key_source: 'agency' } } });
+    respond = () => chat('Agentur-Gemini', 'gemini-2.5-flash');
+    expect((await t.api.post('/api/ai/suggest', { conversation_id: convId })).data.text).toBe('Agentur-Gemini');
+    expect(calls.at(-1)!.headers.authorization).toBe(`Bearer ${GKEY}`);
+    await t.api.put('/api/agency/ai-provider', { provider: 'anthropic', gemini_key: null });
+    await t.api.put('/api/ai/provider', { provider: 'openai' });
+  });
+});
+
 describe('provider switch and agency default', () => {
   it('a sub-account can go back to Claude; the agency default and its key apply where nothing is set', async () => {
     await t.api.put('/api/ai/settings', { api_key: AKEY });

@@ -66,21 +66,97 @@ function OpenAiKeyField({ info, keyValue, setKey, onClear }: { info: any; keyVal
   );
 }
 
+const COMPAT_IDS = ['gemini', 'groq'] as const;
+type CompatId = (typeof COMPAT_IDS)[number];
+const isCompat = (p: string | null | undefined): p is CompatId => p === 'gemini' || p === 'groq';
+const COMPAT_HINT: Record<CompatId, string> = {
+  gemini: 'Free key from Google AI Studio (no card needed; free tier with rate limits).',
+  groq: 'Free key from the Groq console (no card needed; free tier with rate limits).',
+};
+
+/** Key + model + test for Google Gemini or Groq (OpenAI-compatible, modules/ai-providers.ts). */
+function CompatFields({ id, info, keyValue, setKey, model, setModel, onClear, testPath }: { id: CompatId; info: any; keyValue: string; setKey: (v: string) => void; model: string; setModel: (v: string) => void; onClear: () => void; testPath: string }) {
+  const t = useT('b4ai');
+  const [edit, setEdit] = useState(false);
+  const source: Record<string, string> = { agency: t('Schlüssel der Agentur'), server: t('Schlüssel des Servers') };
+  return (
+    <>
+      <div className="grid2">
+        <Field
+          label={`${info.label} API key`}
+          hint={
+            <>
+              {COMPAT_HINT[id]}{' '}
+              <a href={info.key_url} target="_blank" rel="noreferrer">
+                {t('Get a free key')} ↗
+              </a>
+              {'. '}
+              {t('Er wird verschlüsselt gespeichert und nie wieder angezeigt.')}
+            </>
+          }
+        >
+          {info.key_set && !edit ? (
+            <div className="row" style={{ alignItems: 'center' }}>
+              <Badge tone="green">{t('hinterlegt')} {info.key_hint}</Badge>
+              <button className="btn small secondary" onClick={() => setEdit(true)}>
+                {t('Ersetzen')}
+              </button>
+              <button className="btn small secondary" onClick={() => confirmAsk(`Remove the ${info.label} key?`) && onClear()}>
+                {t('Entfernen')}
+              </button>
+            </div>
+          ) : (
+            <>
+              <Input type="password" autoComplete="off" value={keyValue} onChange={setKey} placeholder={info.key_source && info.key_source !== 'account' ? t('leer = {key_source}', { key_source: source[info.key_source] }) : info.key_placeholder} />
+              {!info.key_set && info.key_source && info.key_source !== 'account' && <small className="muted">{t('Ohne eigenen Schlüssel wird der')} {source[info.key_source]} genutzt.</small>}
+            </>
+          )}
+        </Field>
+        <Field label={`${info.label} model`} hint={id === 'gemini' ? 'Gemini 2.5 Flash is fast and free-tier friendly; Pro for harder tasks.' : 'Llama 3.3 70B is a good all-rounder; any Groq model ID works as free text.'}>
+          <ModelPicker value={model} onChange={setModel} models={info.models} fallback={info.default_model} />
+        </Field>
+      </div>
+      <div className="row">
+        <button
+          className="btn secondary"
+          disabled={!keyValue.trim() && !info.key_source}
+          onClick={async () => {
+            const r = await act(() => api.post(testPath, { provider: id, key: keyValue.trim() || undefined, model: model || undefined }));
+            if (r) toast(t('Verbindung ok – {model} erreichbar', { model: r.model }));
+          }}
+        >
+          Test {info.label}
+        </button>
+      </div>
+    </>
+  );
+}
+
 /** Card at the top of Einstellungen → KI-Assistent → Einrichtung. */
-export function AiProviderCard({ onChange, onPick, onDraft, version = 0 }: { onChange: () => void; onPick?: (provider: 'anthropic' | 'openai') => void; onDraft?: (body: Record<string, string> | null) => void; version?: number }) {
+export function AiProviderCard({ onChange, onPick, onDraft, version = 0 }: { onChange: () => void; onPick?: (provider: string) => void; onDraft?: (body: Record<string, string> | null) => void; version?: number }) {
   const t = useT('b4ai');
   const p = useLoad(() => api.get<any>('/api/ai/provider'), [version]);
   const [provider, setProvider] = useState('');
   const [model, setModel] = useState('');
   const [key, setKey] = useState('');
+  const [cModel, setCModel] = useState<Record<CompatId, string>>({ gemini: '', groq: '' });
+  const [cKey, setCKey] = useState<Record<CompatId, string>>({ gemini: '', groq: '' });
   useEffect(() => {
-    if (p.data) (setProvider(p.data.provider), setModel(p.data.openai.model), setKey(''));
+    if (p.data) (setProvider(p.data.provider), setModel(p.data.openai.model), setKey(''), setCModel({ gemini: p.data.compat?.gemini?.model ?? '', groq: p.data.compat?.groq?.model ?? '' }), setCKey({ gemini: '', groq: '' }));
   }, [p.data]);
+  const compatBody = () => {
+    const b: Record<string, string> = {};
+    for (const id of COMPAT_IDS) {
+      b[`${id}_model`] = cModel[id];
+      if (cKey[id].trim()) b[`${id}_key`] = cKey[id].trim();
+    }
+    return b;
+  };
   // Unsaved changes go along with the page's main „Speichern“ too.
-  const dirty = !!p.data && (provider !== p.data.provider || model !== p.data.openai.model || !!key.trim());
+  const dirty = !!p.data && (provider !== p.data.provider || model !== p.data.openai.model || !!key.trim() || COMPAT_IDS.some((id) => cModel[id] !== (p.data.compat?.[id]?.model ?? '') || !!cKey[id].trim()));
   useEffect(() => {
-    onDraft?.(dirty ? { provider, openai_model: model, ...(key.trim() ? { openai_key: key.trim() } : {}) } : null);
-  }, [dirty, provider, model, key]);
+    onDraft?.(dirty ? { provider, openai_model: model, ...(key.trim() ? { openai_key: key.trim() } : {}), ...compatBody() } : null);
+  }, [dirty, provider, model, key, cModel, cKey]);
   // The settings below follow the provider picked here, saved or not.
   const effective = p.data ? provider || p.data.agency_default : null;
   useEffect(() => {
@@ -90,7 +166,7 @@ export function AiProviderCard({ onChange, onPick, onDraft, version = 0 }: { onC
   const d = p.data;
   const label = (id: string) => d.providers.find((x: any) => x.id === id)?.label ?? id;
   const save = async (extra: any = {}) => {
-    const r = await act(() => api.put('/api/ai/provider', { provider, openai_model: model, ...(key.trim() ? { openai_key: key.trim() } : {}), ...extra }), t('Gespeichert'));
+    const r = await act(() => api.put('/api/ai/provider', { provider, openai_model: model, ...(key.trim() ? { openai_key: key.trim() } : {}), ...compatBody(), ...extra }), t('Gespeichert'));
     if (r) (p.setData(r), setKey(''), onChange());
   };
   return (
@@ -101,8 +177,20 @@ export function AiProviderCard({ onChange, onPick, onDraft, version = 0 }: { onC
         </p>
       )}
       <Field label={t('KI-Anbieter')} hint={t('„Wie die Agentur“ folgt dem Standard der Agentur (gerade: {agency_default}). Vorschläge, Chat-Bot, Workflows, Telefonagent, Video-Recycling und App-Diktat nutzen alle diesen Anbieter.', { agency_default: label(d.agency_default) })}>
-        <Select value={provider} onChange={setProvider} options={[['', t('Wie die Agentur ({agency_default})', { agency_default: label(d.agency_default) })], ['anthropic', 'Anthropic (Claude)'], ['openai', 'OpenAI (GPT)']]} />
+        <Select value={provider} onChange={setProvider} options={[['', t('Wie die Agentur ({agency_default})', { agency_default: label(d.agency_default) })], ['anthropic', 'Anthropic (Claude)'], ['openai', 'OpenAI (GPT)'], ['gemini', 'Google Gemini (free tier)'], ['groq', 'Groq (free tier)']]} />
       </Field>
+      {isCompat(effective) && d.compat?.[effective] && (
+        <CompatFields
+          id={effective}
+          info={d.compat[effective]}
+          keyValue={cKey[effective]}
+          setKey={(v) => setCKey({ ...cKey, [effective]: v })}
+          model={cModel[effective]}
+          setModel={(v) => setCModel({ ...cModel, [effective]: v })}
+          onClear={() => save({ [`${effective}_key`]: null })}
+          testPath="/api/ai/provider/test"
+        />
+      )}
       {effective === 'openai' && (
         <div className="grid2">
           <OpenAiKeyField info={d.openai} keyValue={key} setKey={setKey} onClear={() => save({ openai_key: null })} />
@@ -140,12 +228,19 @@ export function AgencyAiProvider() {
   const [provider, setProvider] = useState('anthropic');
   const [model, setModel] = useState('');
   const [key, setKey] = useState('');
+  const [cModel, setCModel] = useState<Record<CompatId, string>>({ gemini: '', groq: '' });
+  const [cKey, setCKey] = useState<Record<CompatId, string>>({ gemini: '', groq: '' });
   useEffect(() => {
-    if (p.data) (setProvider(p.data.provider), setModel(p.data.openai.model));
+    if (p.data) (setProvider(p.data.provider), setModel(p.data.openai.model), setCModel({ gemini: p.data.compat?.gemini?.model ?? '', groq: p.data.compat?.groq?.model ?? '' }), setCKey({ gemini: '', groq: '' }));
   }, [p.data]);
   if (!p.data) return <Spinner />;
   const save = async (extra: any = {}) => {
-    const r = await act(() => api.put('/api/agency/ai-provider', { provider, openai_model: model, ...(key.trim() ? { openai_key: key.trim() } : {}), ...extra }), t('Gespeichert'));
+    const cb: Record<string, string> = {};
+    for (const id of COMPAT_IDS) {
+      cb[`${id}_model`] = cModel[id];
+      if (cKey[id].trim()) cb[`${id}_key`] = cKey[id].trim();
+    }
+    const r = await act(() => api.put('/api/agency/ai-provider', { provider, openai_model: model, ...(key.trim() ? { openai_key: key.trim() } : {}), ...cb, ...extra }), t('Gespeichert'));
     if (r) (p.setData(r), setKey(''));
   };
   return (
@@ -155,8 +250,20 @@ export function AgencyAiProvider() {
       </h2>
       <p className="muted small">{t('Gilt für den KI-Assistenten jedes Sub-Accounts, der unter Einstellungen → KI-Assistent nichts Eigenes gewählt hat. Ein Agentur-Schlüssel für OpenAI wird dann von allen genutzt – Limits und Protokoll bleiben je Sub-Account.')}</p>
       <Field label={t('Anbieter')}>
-        <Select value={provider} onChange={setProvider} options={[['anthropic', 'Anthropic (Claude)'], ['openai', 'OpenAI (GPT)']]} />
+        <Select value={provider} onChange={setProvider} options={[['anthropic', 'Anthropic (Claude)'], ['openai', 'OpenAI (GPT)'], ['gemini', 'Google Gemini (free tier)'], ['groq', 'Groq (free tier)']]} />
       </Field>
+      {isCompat(provider) && p.data.compat?.[provider] && (
+        <CompatFields
+          id={provider}
+          info={p.data.compat[provider]}
+          keyValue={cKey[provider]}
+          setKey={(v) => setCKey({ ...cKey, [provider]: v })}
+          model={cModel[provider]}
+          setModel={(v) => setCModel({ ...cModel, [provider]: v })}
+          onClear={() => save({ [`${provider}_key`]: null })}
+          testPath="/api/agency/ai-provider/test"
+        />
+      )}
       {provider === 'openai' && (
         <>
           <OpenAiKeyField info={p.data.openai} keyValue={key} setKey={setKey} onClear={() => save({ openai_key: null })} />
