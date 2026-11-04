@@ -140,7 +140,7 @@ function PagePicker({ current, onPick, onClose }: { current: string; onPick: (ro
         {PAGES.map(([route, label]) => (
           <button key={route} type="button" role="listitem" className={`ws-page${route === head ? ' on' : ''}`} onClick={() => (onPick(route), onClose())}>
             <Icon name={(route === 'agent' ? 'bot' : route === 'conversations' ? 'conversations' : route === 'opportunities' ? 'opportunities' : route === 'pm' ? 'gantt' : route === 'dashboard' ? 'dashboard' : route === 'contacts' ? 'contacts' : route === 'boards' ? 'boards' : route === 'calendars' ? 'calendars' : route === 'tasks' ? 'tasks' : route === 'canvas' ? 'canvas' : 'columns3') as any} size={18} />
-            <span>{label}</span>
+            <span>{tt(label)}</span>
             {route === head && <span className="small muted">{tt('aktuell')}</span>}
           </button>
         ))}
@@ -287,7 +287,7 @@ export function Workspace({ renderPage }: { renderPage: (route: string[]) => Rea
   const max = width ? maxPanelsFor(width) : XR_LIMITS.workspacePanels;
   const sizes = state.panels.map((p) => p.size);
   const setSizes = (next: number[]) => setState((s) => ({ ...s, panels: s.panels.map((p, i) => ({ ...p, size: next[i] })) }));
-  const labels = state.panels.map((p) => routeLabel(p.route));
+  const labels = state.panels.map((p) => tt(routeLabel(p.route)));
 
   const bar = (
     <header className="ws-bar" data-tour="ws-bar">

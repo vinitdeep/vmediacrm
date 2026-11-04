@@ -25,13 +25,66 @@
 .ws-split:focus-visible { outline: 2px solid var(--brand-ring); outline-offset: -2px; border-radius: 8px; }
 
 /* pages built for the whole window use the panel instead */
-.ws-body .inbox { height: max(420px, calc(100vh - var(--ws-chrome))); height: max(420px, calc(100dvh - var(--ws-chrome))); }
 .ws-body .kcol { max-height: max(380px, calc(100vh - var(--ws-chrome) - 40px)); max-height: max(380px, calc(100dvh - var(--ws-chrome) - 40px)); }
+
+/* Page header inside a panel: the panel's own header already names the page, so the page title steps down to a
+   section title, the decorative mark goes and the actions get compact – the content gets the room. */
+.ws-body { padding: 18px 20px 22px; }
+:root .ws .ws-body .page-head { gap: 10px 16px; flex-wrap: wrap; align-items: center; padding-bottom: 14px; margin-bottom: 16px; }
+:root .ws .ws-body .page-head h1 { font-size: 22px; line-height: 1.2; letter-spacing: -.02em; }
+:root .ws .ws-body .page-head p.muted { font-size: 12.5px; margin-top: 2px; }
+:root .ws .ws-body .page-head .studio-page-mark { display: none; }
+:root .ws .ws-body .page-head .actions { gap: 8px; flex-wrap: wrap; }
+:root .ws .ws-body .page-head .actions .btn,
+:root .ws .ws-body .page-head .actions .tx-btn { min-height: 36px; padding: 0 12px; font-size: 13px; border-radius: 9px; }
+
+/* Inbox inside a panel: fills the panel to its bottom edge (no fixed viewport maths, no second scrollbar). */
+.ws-body:has(> .inbox) { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 18px; }
+.ws-body:has(> .inbox) > .page-head { flex: none; }
+:root .ws .ws-body > .inbox { flex: 1 1 auto; height: auto; min-height: 420px; }
+
+.ws-body .inbox .chan-filter { flex-wrap: wrap; overflow: visible; row-gap: 6px; }
+/* empty conversation pane: the hint sits in the middle of the pane instead of a box glued to the top */
+.ws-body .inbox .thread > .empty:only-child { flex: 1; display: grid; place-content: center; justify-items: center; margin: 16px; }
+
+/* The inbox's own breakpoints look at the window; inside a panel the panel width decides (container queries). */
+@container (min-width: 1100px) {
+  :root .ws .ws-body .inbox.tx { grid-template-columns: 220px minmax(300px, 360px) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+  :root .ws .ws-body .inbox.tx .tx-rail { grid-column: auto; flex-direction: column !important; border-right: 1px solid var(--line) !important; border-bottom: 0; padding: 8px !important; overflow-y: auto; }
+}
+/* medium panels: the folder rail collapses to icons with a count badge, list and conversation share the rest */
+@container (min-width: 640px) and (max-width: 1099.98px) {
+  :root .ws .ws-body .inbox.tx,
+  :root .ws .ws-body .inbox.tx:has(> .ai-panel) { grid-template-columns: 64px minmax(260px, 1fr) minmax(0, 1.25fr); grid-template-rows: minmax(0, 1fr); }
+  :root .ws .ws-body .inbox.tx > .ai-panel { display: none; }
+  :root .ws .ws-body .inbox.tx .tx-rail { grid-column: auto; flex-direction: column !important; align-items: center; gap: 4px; padding: 10px 6px !important; border-right: 1px solid var(--line) !important; border-bottom: 0; overflow-x: hidden; overflow-y: auto; }
+  :root .ws .ws-body .inbox.tx .tx-view { position: relative; justify-content: center; width: 48px; min-height: 44px; padding: 0; gap: 0; }
+  :root .ws .ws-body .inbox.tx .tx-view.on { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand) 35%, transparent); }
+  :root .ws .ws-body .inbox.tx .tx-view-label { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  :root .ws .ws-body .inbox.tx .tx-count { position: absolute; top: 3px; right: 1px; min-width: 18px; height: 16px; padding: 0 4px; font-size: 10px; line-height: 14px; }
+}
+/* narrow panels: one column, folders as a scrolling row on top */
+@container (max-width: 639.98px) {
+  :root .ws .ws-body .inbox, :root .ws .ws-body .inbox.tx, :root .ws .ws-body .inbox.tx:has(> .ai-panel) { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(200px, 1fr) auto; }
+  :root .ws .ws-body .inbox.tx > .ai-panel { display: none; }
+  :root .ws .ws-body .inbox.tx .tx-rail { grid-column: 1 / -1; flex-direction: row !important; overflow-x: auto; overflow-y: hidden; border-right: 0 !important; border-bottom: 1px solid var(--line); padding: 6px 8px !important; }
+  :root .ws .ws-body .inbox.tx .tx-view { flex: none; }
+  :root .ws .ws-body .inbox .list { border-right: 0; border-bottom: 1px solid var(--line); }
+  :root .ws .ws-body .inbox.tx { grid-template-rows: auto minmax(180px, .8fr) minmax(0, 1.2fr); }
+  :root .ws .ws-body .inbox .thread { min-height: 0; }
+  /* nothing opened yet: the list gets the whole height */
+  :root .ws .ws-body .inbox.tx:has(> .thread > .empty:only-child) { grid-template-rows: auto minmax(0, 1fr); }
+  :root .ws .ws-body .inbox .thread:has(> .empty:only-child) { display: none; }
+  :root .ws .ws-body .inbox .list { border-bottom: 0; }
+  .ws-body .tx-keys-btn { display: none; }
+}
 @container (max-width: 700px) {
-  .inbox { grid-template-columns: 1fr; height: auto; }
-  .inbox .list { max-height: 240px; border-right: 0; border-bottom: 1px solid var(--line); }
   .grid2, .grid3 { grid-template-columns: 1fr; }
 }
+
+/* Tables in a panel: a calmer row height so a list shows more than a handful of records. */
+.ws-body table.t td { padding-top: 11px; padding-bottom: 11px; }
+.ws-body .table-wrap { border-radius: 12px; }
 
 /* the agent inside a panel: the same chat, no drawer */
 .ws-agent { height: 100%; display: flex; }

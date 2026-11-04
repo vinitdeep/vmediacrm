@@ -122,4 +122,17 @@ export default {
   'Ansicht': 'View',
   'Dieses Gerät bietet kein WebXR – du siehst die 3D-Vorschau.': 'This device does not offer WebXR – you see the 3D preview.',
   'Maus ziehen: drehen · Rad: Zoom · Panel ziehen: verschieben (beim Ziehen: Rad näher/ferner, Umschalt+Rad größer/kleiner) · Pfeiltasten: drehen · Esc: schließen': 'Drag mouse: rotate · Wheel: zoom · Drag panel: move (while dragging: wheel closer/further, Shift+wheel larger/smaller) · Arrow keys: rotate · Esc: close',
+  // page names in the panel header and the page chooser
+  'Posteingang': 'Conversations',
+  'Kontakte': 'Contacts',
+  'Aufgaben': 'Tasks',
+  'Projektplanung': 'Project planning',
+  'Kalender': 'Calendar',
+  'KI-Agent': 'AI agent',
+  'Firmen': 'Companies',
+  'Rechnungen': 'Invoices',
+  'Kampagnen': 'Campaigns',
+  'Automationen': 'Workflows',
+  'Team-Chat': 'Team chat',
+  'Berichte': 'Reports',
 } satisfies Catalog;
