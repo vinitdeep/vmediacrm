@@ -47,7 +47,19 @@ Dev mode: `npm run dev` (api + vite). Deploy options: `docs/deploy/` (needs a VP
    into JSX text/attributes, and `data-label` is checked. Commit `463d3da`.
 9. **Repo hygiene** – forced LF line endings (`.gitattributes eol=lf`, `core.autocrlf=false`); CRLF broke tests on Windows.
 
+10. **Audit + copyright (2026-11-04, `2717299`)** – no telemetry/backdoors found. Push relay to gohyperlevel.com now OFF by
+   default (`PGHL_PUSH_MODE=relay` + `PGHL_PUSH_RELAY_URL` both required). Upstream links → vinitdeep/vmediacrm. V Media
+   Production is copyright holder of modifications (NOTICE/README/CLA/SECURITY); upstream line MUST stay (AGPL).
+   Codespace runs `PGHL_DEMO_MODE=1` (published demo login can't change users/keys/backups; ALL outbound blocked → AI,
+   email, SMS don't work there by design).
+11. **Gemini + Groq (2026-11-04, `862156f`)** – Settings → AI assistant → AI providers: `gemini`/`groq` via their
+   OpenAI-compatible APIs (`server/modules/ai-providers.ts`, column `compat` JSON with sealed keys), env fallbacks
+   `PGHL_GEMINI_API_KEY` / `PGHL_GROQ_API_KEY`. Tests in `tests/ai-openai.test.ts`.
+
 ## In progress / pending
+- **Real private deploy** – the Codespace is a demo only. A real instance needs its own server, HTTPS,
+  `PGHL_ADMIN_EMAIL`/`PGHL_ADMIN_PASSWORD` set BEFORE exposing (first visitor can otherwise claim admin), no demo seed,
+  and `PGHL_BEHIND_PROXY=1` only behind a proxy that appends X-Forwarded-For (Dockerfile sets it by default – remove for bare `docker run`).
 - **Server-side German still left** (separate pass): e-mails the server sends, public booking/form/invoice/portal pages,
   workflow trigger/action catalogue names, server error messages, starter templates, demo seed content, the Apps /
   Integrations catalogue (`server/modules/integrations-catalog.ts`), AI model + voice names, deliverability checklist,

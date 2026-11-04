@@ -70,28 +70,31 @@ const COMPAT_IDS = ['gemini', 'groq'] as const;
 type CompatId = (typeof COMPAT_IDS)[number];
 const isCompat = (p: string | null | undefined): p is CompatId => p === 'gemini' || p === 'groq';
 const COMPAT_HINT: Record<CompatId, string> = {
-  gemini: 'Free key from Google AI Studio (no card needed; free tier with rate limits).',
-  groq: 'Free key from the Groq console (no card needed; free tier with rate limits).',
+  gemini: 'Kostenloser Schlüssel aus Google AI Studio (ohne Karte; Gratis-Kontingent mit Ratenlimits).',
+  groq: 'Kostenloser Schlüssel aus der Groq-Konsole (ohne Karte; Gratis-Kontingent mit Ratenlimits).',
+};
+const COMPAT_MODEL_HINT: Record<CompatId, string> = {
+  gemini: 'Gemini 2.5 Flash ist schnell und passt zum Gratis-Kontingent; Pro für schwierigere Aufgaben.',
+  groq: 'Llama 3.3 70B ist ein guter Allrounder; jede Groq-Modell-ID geht als Freitext.',
 };
 
 /** Key + model + test for Google Gemini or Groq (OpenAI-compatible, modules/ai-providers.ts). */
 function CompatFields({ id, info, keyValue, setKey, model, setModel, onClear, testPath }: { id: CompatId; info: any; keyValue: string; setKey: (v: string) => void; model: string; setModel: (v: string) => void; onClear: () => void; testPath: string }) {
   const t = useT('b4ai');
   const [edit, setEdit] = useState(false);
-  const source: Record<string, string> = { agency: t('Schlüssel der Agentur'), server: t('Schlüssel des Servers') };
+  const source: Record<string, string> = { agency: t('Schlüssel der Agentur'), server: t('Schlüssel des Servers ({env})', { env: id === 'gemini' ? 'PGHL_GEMINI_API_KEY' : 'PGHL_GROQ_API_KEY' }) };
   return (
     <>
       <div className="grid2">
         <Field
-          label={`${info.label} API key`}
+          label={t('{label}-API-Schlüssel', { label: info.label })}
           hint={
             <>
-              {COMPAT_HINT[id]}{' '}
+              {t(COMPAT_HINT[id])}{' '}
               <a href={info.key_url} target="_blank" rel="noreferrer">
-                {t('Get a free key')} ↗
+                {t('Kostenlosen Schlüssel holen')} ↗
               </a>
-              {'. '}
-              {t('Er wird verschlüsselt gespeichert und nie wieder angezeigt.')}
+              {t('. Er wird verschlüsselt gespeichert und nie wieder angezeigt.')}
             </>
           }
         >
@@ -101,7 +104,7 @@ function CompatFields({ id, info, keyValue, setKey, model, setModel, onClear, te
               <button className="btn small secondary" onClick={() => setEdit(true)}>
                 {t('Ersetzen')}
               </button>
-              <button className="btn small secondary" onClick={() => confirmAsk(`Remove the ${info.label} key?`) && onClear()}>
+              <button className="btn small secondary" onClick={() => confirmAsk(t('{label}-Schlüssel entfernen?', { label: info.label })) && onClear()}>
                 {t('Entfernen')}
               </button>
             </div>
@@ -112,7 +115,7 @@ function CompatFields({ id, info, keyValue, setKey, model, setModel, onClear, te
             </>
           )}
         </Field>
-        <Field label={`${info.label} model`} hint={id === 'gemini' ? 'Gemini 2.5 Flash is fast and free-tier friendly; Pro for harder tasks.' : 'Llama 3.3 70B is a good all-rounder; any Groq model ID works as free text.'}>
+        <Field label={t('{label}-Modell', { label: info.label })} hint={t(COMPAT_MODEL_HINT[id])}>
           <ModelPicker value={model} onChange={setModel} models={info.models} fallback={info.default_model} />
         </Field>
       </div>
@@ -125,7 +128,7 @@ function CompatFields({ id, info, keyValue, setKey, model, setModel, onClear, te
             if (r) toast(t('Verbindung ok – {model} erreichbar', { model: r.model }));
           }}
         >
-          Test {info.label}
+          {t('{label} testen', { label: info.label })}
         </button>
       </div>
     </>
